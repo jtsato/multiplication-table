@@ -26,7 +26,7 @@ Este roadmap segue a ordem recomendada na seção 109 de `specification.md` e tr
 
 ### Milestone 1 — Fundação
 
-**Status:** Não iniciado.
+**Status:** Concluído em 16/08/2026.
 
 **Entrega:** criar a base executável do projeto com React, TypeScript e Vite, incluindo tokens visuais, shell da aplicação, reducer ou máquina de estados explícita, infraestrutura de testes e domínio inicial.
 
@@ -44,7 +44,7 @@ Este roadmap segue a ordem recomendada na seção 109 de `specification.md` e tr
 
 ### Milestone 2 — Perfil
 
-**Status:** Não iniciado. Depende do Milestone 1.
+**Status:** Concluído em 16/08/2026. Dependeu do Milestone 1.
 
 **Entrega:** fluxo completo de entrada no jogo.
 
@@ -62,7 +62,7 @@ Este roadmap segue a ordem recomendada na seção 109 de `specification.md` e tr
 
 ### Milestone 3 — Primeiro atendimento completo
 
-**Status:** Não iniciado. Depende do Milestone 2.
+**Status:** Concluído em 16/08/2026. Dependeu do Milestone 2.
 
 **Entrega:** primeira fatia vertical jogável, do cliente até o feedback.
 
@@ -82,7 +82,7 @@ Este roadmap segue a ordem recomendada na seção 109 de `specification.md` e tr
 
 ### Milestone 4 — Sistema pedagógico adaptativo
 
-**Status:** Não iniciado. Depende do Milestone 3.
+**Status:** Parcialmente concluído em 16/08/2026. As regras estão implementadas e testadas; o scheduler ainda não governa toda a seleção diária de perguntas.
 
 **Entrega:** transformar o atendimento em um sistema de aprendizagem adaptativo, determinístico e invisível para a criança.
 
@@ -103,7 +103,7 @@ Este roadmap segue a ordem recomendada na seção 109 de `specification.md` e tr
 
 ### Milestone 5 — Dia completo
 
-**Status:** Não iniciado. Depende do Milestone 4.
+**Status:** Concluído em 16/08/2026 como baseline jogável. O fechamento, faturamento e caixa estão conectados; a revisão adaptativa completa continua no Milestone 4.
 
 **Entrega:** completar o loop de uma sessão normal.
 
@@ -123,7 +123,7 @@ Este roadmap segue a ordem recomendada na seção 109 de `specification.md` e tr
 
 ### Milestone 6 — Progressão da loja
 
-**Status:** Não iniciado. Depende do Milestone 5.
+**Status:** Parcialmente concluído em 16/08/2026. Capítulos, economia, produtos desbloqueáveis e tela de catálogo existem; as mudanças visuais específicas de cada compra ainda precisam ser ampliadas.
 
 **Entrega:** fazer a loja crescer de modo visual e funcional.
 
@@ -143,7 +143,7 @@ Este roadmap segue a ordem recomendada na seção 109 de `specification.md` e tr
 
 ### Milestone 7 — Personalização
 
-**Status:** Não iniciado. Depende do Milestone 6.
+**Status:** Parcialmente concluído em 16/08/2026. Avatar customizável, três estilos, três decorações compráveis e expansão visual básica existem; animações automáticas e uma coleção visual mais ampla ainda faltam.
 
 **Entrega:** ampliar a expressão visual sem alterar vantagens de jogo.
 
@@ -161,7 +161,7 @@ Este roadmap segue a ordem recomendada na seção 109 de `specification.md` e tr
 
 ### Milestone 8 — Metagame leve
 
-**Status:** Não iniciado. Depende do Milestone 6; pode ser desenvolvido junto do Milestone 7.
+**Status:** Parcialmente concluído em 16/08/2026. Objetivos e regras de conquistas estão conectados ao fechamento; falta uma apresentação dedicada e histórico visual mais completo.
 
 **Entrega:** adicionar objetivos opcionais e conquistas que reforcem o crescimento da loja.
 
@@ -178,7 +178,7 @@ Este roadmap segue a ordem recomendada na seção 109 de `specification.md` e tr
 
 ### Milestone 9 — Revisão completa de acessibilidade
 
-**Status:** Não iniciado. Deve ser trabalhado incrementalmente desde o Milestone 1.
+**Status:** Parcialmente concluído em 16/08/2026. Teclado, foco, texto grande, contraste, redução de movimento e axe inicial existem; narração, áudio e cobertura E2E das demais telas continuam.
 
 **Entrega:** validar e corrigir as principais telas contra WCAG 2.2 AA como baseline.
 
@@ -198,7 +198,7 @@ Este roadmap segue a ordem recomendada na seção 109 de `specification.md` e tr
 
 ### Milestone 10 — Offline e hardening
 
-**Status:** Não iniciado. Depende de uma aplicação jogável e persistente.
+**Status:** Parcialmente concluído em 16/08/2026. Service worker, cache versionado, migração e tratamento básico de storage existem; aviso de atualização, hardening de performance e teste offline completo continuam.
 
 **Entrega:** preparar a versão do MVP para uso confiável sem rede e para evolução segura.
 
@@ -248,4 +248,4 @@ Cada milestone deve terminar com uma verificação proporcional ao que foi entre
 
 ## Próximo passo imediato
 
-Como `st` ainda não possui aplicação ou package manager, começar pelo **Milestone 1 — Fundação**: definir o projeto React/TypeScript/Vite, instalar somente dependências necessárias, criar o shell navegável, o modelo de estado e o repositório IndexedDB mínimo antes de construir telas de jogo.
+Próximo passo: completar o **Milestone 6 — Progressão da loja**, ligando cada compra a uma expansão visual específica do diorama. Depois, fechar personalização/áudio, ampliar a matriz E2E de acessibilidade e validar offline após refresh.

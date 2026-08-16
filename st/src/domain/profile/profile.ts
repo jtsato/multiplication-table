@@ -25,8 +25,10 @@ export type StoreState = {
   unlockedProducts: string[];
   purchasedProducts: string[];
   cosmetics: string[];
-  style: "sunrise" | "ocean" | "garden";
+  style: StoreStyle;
 };
+
+export type StoreStyle = "sunrise" | "ocean" | "garden";
 
 export type ObjectiveHistory = {
   completed: string[];
@@ -53,6 +55,7 @@ export type PlayerProfile = {
 export type CreateProfileInput = {
   nickname: string;
   storeId: StoreId;
+  style?: StoreStyle;
   id?: string;
   avatar?: Partial<AvatarConfig>;
   accessibility?: Partial<AccessibilitySettings>;
@@ -92,7 +95,7 @@ export function createProfile(input: CreateProfileInput): PlayerProfile {
       unlockedProducts: initialProductIds(input.storeId),
       purchasedProducts: [],
       cosmetics: [],
-      style: "sunrise",
+      style: input.style ?? "sunrise",
     },
     chapter: 1,
     day: 1,

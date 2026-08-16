@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import ReactThreeTestRenderer from '@react-three/test-renderer';
 import { Physics } from '@react-three/rapier';
+import { KeyboardBridge } from './KeyboardBridge';
 
 type SceneRenderer = Awaited<ReturnType<typeof ReactThreeTestRenderer.create>>;
 
@@ -16,7 +17,14 @@ type SceneRenderer = Awaited<ReturnType<typeof ReactThreeTestRenderer.create>>;
  *    grafo, nao a simulacao. Testar o solver seria testar o Rapier, nao o jogo.
  */
 export async function renderScene(children: ReactNode): Promise<SceneRenderer> {
-  const renderer = await ReactThreeTestRenderer.create(<Physics paused>{children}</Physics>);
+  const renderer = await ReactThreeTestRenderer.create(
+    <Physics paused>
+      {/* A ponte de teclado mora na raiz do app; um teste que monta so uma slice
+          precisa dela para que `keydown` continue virando acao do jogo. */}
+      <KeyboardBridge />
+      {children}
+    </Physics>,
+  );
 
   for (let attempt = 0; attempt < 60; attempt += 1) {
     if (renderer.scene.allChildren.length > 0) break;

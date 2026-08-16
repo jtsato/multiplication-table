@@ -157,8 +157,7 @@ export function ResourcesView() {
     const active = state.activeChallenge;
     if (active && active.purpose === 'colher') {
       const alvo = state.nodes.find((node) => node.id === active.targetId);
-      const longe =
-        !alvo || distanceSqXZ(playerTransform, alvo.position) > CANCEL_RANGE_SQ;
+      const longe = !alvo || distanceSqXZ(playerTransform, alvo.position) > CANCEL_RANGE_SQ;
       if (longe) state.cancelChallenge();
     }
   });

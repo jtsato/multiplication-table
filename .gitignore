@@ -41,3 +41,8 @@ Desktop.ini
 
 # Pacotes locais
 *.tgz
+
+# Artefatos do Playwright (99)
+**/e2e/.resultados/
+**/playwright-report/
+**/.playwright/

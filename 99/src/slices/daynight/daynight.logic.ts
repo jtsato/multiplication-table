@@ -162,9 +162,17 @@ const PHASE_LIGHTING: Record<DayPhase, { from: SkyConfig; to: SkyConfig }> = {
     to: {
       skyColor: palette.skyNight,
       sunColor: palette.sunNight,
-      // Nunca zero: no escuro absoluto o jogo fica injogavel fora da fogueira.
-      sunIntensity: 0.22,
-      ambientIntensity: 0.2,
+      /**
+       * Luar: escuro o bastante para dar medo, claro o bastante para jogar.
+       *
+       * Calibrado olhando o jogo rodando. Com 0.22/0.2 o teste automatizado
+       * passava — a asserçao so exige "maior que zero" — mas a tela ficava
+       * praticamente preta: nao dava para ver o terreno, os inimigos nem o
+       * proprio personagem. Numero que passa em teste nao e o mesmo que numero
+       * que funciona.
+       */
+      sunIntensity: 0.62,
+      ambientIntensity: 0.5,
       elevation: 0.05,
     },
   },
@@ -172,8 +180,9 @@ const PHASE_LIGHTING: Record<DayPhase, { from: SkyConfig; to: SkyConfig }> = {
     from: {
       skyColor: palette.skyNight,
       sunColor: palette.sunNight,
-      sunIntensity: 0.22,
-      ambientIntensity: 0.2,
+      // Mesmos valores do fim da noite: as fases tem que emendar sem salto.
+      sunIntensity: 0.62,
+      ambientIntensity: 0.5,
       elevation: 0.05,
     },
     to: {
@@ -189,16 +198,21 @@ const PHASE_LIGHTING: Record<DayPhase, { from: SkyConfig; to: SkyConfig }> = {
 /**
  * Configuracao de ceu e luz para uma posicao do ciclo.
  *
- * A noite usa uma curva ao quadrado no escurecimento: a percepcao de brilho nao
- * e linear, e uma interpolacao reta faria o entardecer parecer travado e a noite
- * cair de repente.
+ * A noite escurece por uma raiz quadrada: rapido no comeco, estavel depois.
+ *
+ * A primeira versao usava `raw * raw`, que faz o oposto — o ceu ficava com cara
+ * de entardecer durante quase toda a fase e so escurecia no fim. Ficava
+ * estranho ver o HUD anunciar "Noite", os inimigos surgirem e o ceu ainda
+ * laranja. Com a raiz, o escuro chega logo depois da virada e se mantem, que e
+ * o que a fase promete.
  */
 export function skyConfigFor(position: number): SkyConfig {
   const t = normalizePosition(position);
   const phase = phaseFor(t);
   const { from, to } = PHASE_LIGHTING[phase];
   const raw = phaseProgress(t);
-  const eased = phase === 'noite' ? raw * raw : raw;
+  // Chega a noite fechada com ~45% da fase e fica la ate o amanhecer.
+  const eased = phase === 'noite' ? Math.min(1, raw * 2.2) : raw;
 
   return {
     skyColor: mixHex(from.skyColor, to.skyColor, eased),

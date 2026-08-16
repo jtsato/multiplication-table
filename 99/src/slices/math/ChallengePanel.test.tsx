@@ -6,6 +6,7 @@ import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom/vitest';
 import { useGameStore } from '../../app/store';
 import { ChallengePanel } from './ChallengePanel';
+import { KeyboardBridge } from '../../test/KeyboardBridge';
 
 /**
  * `drei/Html` precisa do contexto do R3F e de um canvas WebGL para se posicionar
@@ -27,7 +28,12 @@ describe('ChallengePanel', () => {
   });
 
   it('nao renderiza nada sem desafio nem feedback', () => {
-    const { container } = render(<ChallengePanel />);
+    const { container } = render(
+      <>
+        <KeyboardBridge />
+        <ChallengePanel />
+      </>,
+    );
     expect(container).toBeEmptyDOMElement();
   });
 
@@ -36,7 +42,12 @@ describe('ChallengePanel', () => {
     state().startChallenge(node);
     const challenge = state().activeChallenge!;
 
-    render(<ChallengePanel />);
+    render(
+      <>
+        <KeyboardBridge />
+        <ChallengePanel />
+      </>,
+    );
 
     expect(screen.getByText(challenge.prompt)).toBeInTheDocument();
     expect(screen.getByText(challenge.question)).toBeInTheDocument();
@@ -52,7 +63,12 @@ describe('ChallengePanel', () => {
     state().startChallenge(node);
     const challenge = state().activeChallenge!;
 
-    render(<ChallengePanel />);
+    render(
+      <>
+        <KeyboardBridge />
+        <ChallengePanel />
+      </>,
+    );
     await user.click(screen.getByRole('button', { name: String(challenge.answer) }));
 
     expect(state().inventory[node.kind]).toBe(challenge.answer);
@@ -66,7 +82,12 @@ describe('ChallengePanel', () => {
     const challenge = state().activeChallenge!;
     const errada = challenge.options.find((o) => o !== challenge.answer)!;
 
-    render(<ChallengePanel />);
+    render(
+      <>
+        <KeyboardBridge />
+        <ChallengePanel />
+      </>,
+    );
     await user.click(screen.getByRole('button', { name: String(errada) }));
 
     expect(state().feedback?.correct).toBe(false);
@@ -82,7 +103,12 @@ describe('ChallengePanel', () => {
     const challenge = state().activeChallenge!;
     const posicao = challenge.options.indexOf(challenge.answer);
 
-    render(<ChallengePanel />);
+    render(
+      <>
+        <KeyboardBridge />
+        <ChallengePanel />
+      </>,
+    );
     await user.keyboard(`{${posicao + 1}}`);
 
     expect(state().feedback?.correct).toBe(true);
@@ -94,7 +120,12 @@ describe('ChallengePanel', () => {
     state().startChallenge(alvo());
     const challenge = state().activeChallenge!;
 
-    render(<ChallengePanel />);
+    render(
+      <>
+        <KeyboardBridge />
+        <ChallengePanel />
+      </>,
+    );
     await user.click(screen.getByRole('button', { name: String(challenge.answer) }));
 
     expect(screen.getByText('Isso!')).toBeInTheDocument();
@@ -106,7 +137,12 @@ describe('ChallengePanel', () => {
     try {
       state().startChallenge(alvo());
       const challenge = state().activeChallenge!;
-      const { container } = render(<ChallengePanel />);
+      const { container } = render(
+        <>
+          <KeyboardBridge />
+          <ChallengePanel />
+        </>,
+      );
 
       state().answerChallenge(challenge.answer);
       await vi.advanceTimersByTimeAsync(2000);

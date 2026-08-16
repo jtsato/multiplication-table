@@ -17,4 +17,10 @@ describe("local player profiles", () => {
     expect(profile).not.toHaveProperty("email");
     expect(profile.mathProgress["1x1"]).toBeDefined();
   });
+
+  it("persists the chosen store style as cosmetic state", () => {
+    const profile = createProfile({ nickname: "Construtor Pixel", storeId: "technology", style: "ocean", id: "player-style" });
+
+    expect(profile.store.style).toBe("ocean");
+  });
 });

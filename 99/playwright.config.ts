@@ -36,6 +36,7 @@ export default defineConfig({
   projects: [
     {
       name: 'desktop',
+      testMatch: /desktop\.spec\.ts/,
       use: {
         ...devices['Desktop Chrome'],
         viewport: { width: 1280, height: 800 },
@@ -53,6 +54,7 @@ export default defineConfig({
     },
     {
       name: 'celular',
+      testMatch: /celular\.spec\.ts/,
       use: {
         ...devices['Pixel 5'],
         launchOptions: {

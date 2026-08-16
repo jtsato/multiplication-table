@@ -16,7 +16,15 @@ export function GameCanvas({ isTouch = false }: { isTouch?: boolean }) {
   return (
     <Canvas
       shadows
-      camera={{ position: [0, 8, 14], fov: 55, near: 0.1, far: 200 }}
+      /**
+       * Campo de visao maior no celular.
+       *
+       * `fov` no Three e vertical. Numa tela em retrato, isso deixa o campo
+       * *horizontal* estreitissimo — o personagem enche a tela e nao da para ver
+       * os recursos em volta. Abrir para 70 devolve a nocao de onde as coisas
+       * estao sem precisar mexer a camera o tempo todo.
+       */
+      camera={{ position: [0, 8, 14], fov: isTouch ? 70 : 55, near: 0.1, far: 200 }}
       /**
        * Qualidade por tipo de aparelho.
        *

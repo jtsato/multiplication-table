@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useSyncExternalStore } from 'react';
 
 /**
  * Acoes do jogo, independentes de como foram acionadas.
@@ -82,6 +82,10 @@ export const KEY_BINDINGS: Record<string, GameAction> = {
  */
 export function useKeyboardBindings(): void {
   useEffect(() => {
+    // Sem DOM nao ha teclado. Acontece nos testes de cena, que rodam em node —
+    // e o guarda evita que a slice inteira precise de jsdom so por causa disto.
+    if (typeof window === 'undefined') return;
+
     const onKeyDown = (event: KeyboardEvent) => {
       const action = KEY_BINDINGS[event.code];
       if (!action || event.repeat) return;
@@ -93,6 +97,36 @@ export function useKeyboardBindings(): void {
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
   }, []);
+}
+
+const CONSULTA_TOQUE = '(pointer: coarse)';
+
+function assinarTipoDePonteiro(aoMudar: () => void): () => void {
+  if (typeof window === 'undefined') return () => {};
+  const consulta = window.matchMedia(CONSULTA_TOQUE);
+  consulta.addEventListener('change', aoMudar);
+  return () => consulta.removeEventListener('change', aoMudar);
+}
+
+function lerTipoDePonteiro(): boolean {
+  if (typeof window === 'undefined') return false;
+  return window.matchMedia(CONSULTA_TOQUE).matches;
+}
+
+/**
+ * O aparelho e de toque?
+ *
+ * `pointer: coarse` e mais confiavel que farejar o user agent: descreve o
+ * apontador de fato em uso, entao celulares e tablets entram e um desktop com
+ * tela sensivel ao toque mas com mouse fica de fora.
+ *
+ * Implementado com `useSyncExternalStore`, e nao com `useState` + `useEffect`:
+ * `matchMedia` e exatamente o tipo de fonte externa para o qual esse hook
+ * existe. A versao com efeito chamava `setState` de forma sincrona no corpo do
+ * efeito, que dispara renderizacao em cascata (regra react-hooks/set-state-in-effect).
+ */
+export function useIsTouchDevice(): boolean {
+  return useSyncExternalStore(assinarTipoDePonteiro, lerTipoDePonteiro, () => false);
 }
 
 /**

@@ -111,11 +111,36 @@ async function rumo(page: Page) {
 }
 
 /**
- * Piloto automatico: caminha ate destacar um recurso.
+ * Coloca o jogador ao lado de um recurso disponivel e espera o destaque acender.
  *
- * Corrige o rumo a cada passo em vez de calcular a rota de uma vez — o jogador
- * e um corpo fisico, entao esbarrao em cerca ou pedra desvia a trajetoria e uma
- * rota fixa erraria o alvo. Com a camera em yaw 0, W anda para -Z e D para +X.
+ * Monta a cena em vez de atravessar a ilha correndo: caminhar depende da
+ * velocidade do WebGL por software e deixava a suite lenta e instavel. Andar de
+ * verdade continua coberto pelo teste proprio; aqui o que se testa e o que vem
+ * depois de chegar perto.
+ */
+export async function ficarAoLadoDeUmRecurso(page: Page): Promise<string> {
+  const alvo = await page.evaluate(() => {
+    const ponte = window.__tabuada!;
+    const no = ponte.store.getState().nodes.find((n) => !n.depleted)!;
+    // 1,2 m ao lado: dentro do alcance de 3,2 e sem ficar dentro do objeto.
+    ponte.teleportar!(no.position.x + 1.2, no.position.z);
+    return no.id;
+  });
+
+  await page.waitForFunction(
+    (id) => window.__tabuada!.store.getState().highlightedNodeId === id,
+    alvo,
+    { timeout: 15_000 },
+  );
+
+  return alvo;
+}
+
+/**
+ * Piloto automatico: caminha de fato ate um recurso, corrigindo o rumo.
+ *
+ * Mantido para o caso de se querer exercitar a locomocao ponta a ponta. Os
+ * testes de colheita usam `ficarAoLadoDeUmRecurso`, que e determinístico.
  */
 export async function andarAteUmRecurso(page: Page, tentativas = 90): Promise<void> {
   for (let passo = 0; passo < tentativas; passo += 1) {
@@ -182,9 +207,7 @@ export async function responderPeloEnunciado(page: Page, certo: boolean): Promis
   const valores = (await botoes.all()).map((_, i) => i);
   expect(valores.length).toBeGreaterThan(0);
 
-  const rotulos = await Promise.all(
-    (await botoes.all()).map((b) => b.getAttribute('aria-label')),
-  );
+  const rotulos = await Promise.all((await botoes.all()).map((b) => b.getAttribute('aria-label')));
   const numerosNaTela = rotulos.map(Number);
   expect(numerosNaTela).toContain(esperado);
 
@@ -194,35 +217,62 @@ export async function responderPeloEnunciado(page: Page, certo: boolean): Promis
   return esperado;
 }
 
-/** Toque real via CDP — `page.touchscreen` so faz toque simples, sem arrasto. */
-export async function arrastarDedo(
-  page: Page,
-  de: { x: number; y: number },
-  para: { x: number; y: number },
-  passos = 8,
-): Promise<void> {
-  const cdp = await page.context().newCDPSession(page);
-
-  await cdp.send('Input.dispatchTouchEvent', {
-    type: 'touchStart',
-    touchPoints: [{ x: de.x, y: de.y, id: 1 }],
-  });
-
-  for (let i = 1; i <= passos; i += 1) {
-    const t = i / passos;
-    await cdp.send('Input.dispatchTouchEvent', {
-      type: 'touchMove',
-      touchPoints: [{ x: de.x + (para.x - de.x) * t, y: de.y + (para.y - de.y) * t, id: 1 }],
-    });
-    await page.waitForTimeout(16);
-  }
+export interface Dedo {
+  encostar: (em: Ponto) => Promise<void>;
+  arrastarAte: (destino: Ponto, passos?: number) => Promise<void>;
+  soltar: () => Promise<void>;
 }
 
-/** Solta o dedo que `arrastarDedo` deixou pressionado. */
-export async function soltarDedo(page: Page, em: { x: number; y: number }): Promise<void> {
+interface Ponto {
+  x: number;
+  y: number;
+}
+
+/**
+ * Um dedo de verdade, via CDP.
+ *
+ * `page.touchscreen` so faz toque simples, sem arrasto — e o joystick precisa de
+ * arrasto. O CDP emite eventos de toque nativos, que o Chromium converte nos
+ * mesmos `pointerdown`/`pointermove` de um dedo real.
+ *
+ * A sessao CDP e criada uma vez e reaproveitada pelo gesto inteiro. Criar uma
+ * sessao nova so para soltar o dedo faz o Chromium responder
+ * "Must send a TouchStart first": o toque em andamento pertence a sessao que o
+ * iniciou.
+ */
+export async function usarDedo(page: Page): Promise<Dedo> {
   const cdp = await page.context().newCDPSession(page);
-  await cdp.send('Input.dispatchTouchEvent', {
-    type: 'touchEnd',
-    touchPoints: [{ x: em.x, y: em.y, id: 1 }],
-  });
+  let atual: Ponto = { x: 0, y: 0 };
+
+  const enviar = (type: 'touchStart' | 'touchMove' | 'touchEnd', ponto: Ponto) =>
+    cdp.send('Input.dispatchTouchEvent', {
+      type,
+      touchPoints: type === 'touchEnd' ? [] : [{ x: ponto.x, y: ponto.y, id: 1 }],
+    });
+
+  return {
+    async encostar(em) {
+      atual = em;
+      await enviar('touchStart', em);
+    },
+    async arrastarAte(destino, passos = 8) {
+      const de = atual;
+      for (let i = 1; i <= passos; i += 1) {
+        const t = i / passos;
+        atual = { x: de.x + (destino.x - de.x) * t, y: de.y + (destino.y - de.y) * t };
+        await enviar('touchMove', atual);
+        await page.waitForTimeout(16);
+      }
+    },
+    async soltar() {
+      await enviar('touchEnd', atual);
+    },
+  };
+}
+
+/** Centro de um elemento na tela, para mirar o dedo. */
+export async function centroDe(page: Page, seletor: string): Promise<Ponto> {
+  const caixa = await page.locator(seletor).boundingBox();
+  expect(caixa).not.toBeNull();
+  return { x: caixa!.x + caixa!.width / 2, y: caixa!.y + caixa!.height / 2 };
 }

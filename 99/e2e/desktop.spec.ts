@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 import {
-  andarAteUmRecurso,
+  ficarAoLadoDeUmRecurso,
   esperarJogoPronto,
   lerEstado,
   responderPeloEnunciado,
@@ -78,7 +78,7 @@ test.describe('partida no computador', () => {
   });
 
   test('colher: aproximar, resolver a conta e receber o recurso', async ({ page }) => {
-    await andarAteUmRecurso(page);
+    await ficarAoLadoDeUmRecurso(page);
 
     const perto = await lerEstado(page);
     expect(perto.destacado).not.toBeNull();
@@ -104,13 +104,12 @@ test.describe('partida no computador', () => {
     await page.screenshot({ path: 'e2e/telas/06-acertou.png' });
 
     const depois = await lerEstado(page);
-    const total =
-      depois.inventario.madeira + depois.inventario.fruta + depois.inventario.pedra;
+    const total = depois.inventario.madeira + depois.inventario.fruta + depois.inventario.pedra;
     expect(total).toBe(esperado);
   });
 
   test('errar rende menos, revela a resposta e nao deixa de maos vazias', async ({ page }) => {
-    await andarAteUmRecurso(page);
+    await ficarAoLadoDeUmRecurso(page);
     await page.keyboard.press('KeyE');
     await expect(page.locator('.challenge')).toBeVisible();
 
@@ -124,8 +123,7 @@ test.describe('partida no computador', () => {
     await page.screenshot({ path: 'e2e/telas/07-errou.png' });
 
     const depois = await lerEstado(page);
-    const total =
-      depois.inventario.madeira + depois.inventario.fruta + depois.inventario.pedra;
+    const total = depois.inventario.madeira + depois.inventario.fruta + depois.inventario.pedra;
     expect(total).toBeGreaterThanOrEqual(1);
     expect(total).toBeLessThan(certa);
   });
@@ -163,7 +161,15 @@ test.describe('partida no computador', () => {
     const noite = await lerEstado(page);
     expect(noite.fase).toBe('noite');
     expect(noite.inimigos).toBeGreaterThan(0);
-    await page.screenshot({ path: 'e2e/telas/10-noite.png' });
+    await page.screenshot({ path: 'e2e/telas/10-anoitecendo.png' });
+
+    // Meio da noite: e aqui que o clima tem que estar escuro de verdade.
+    await page.evaluate(() => {
+      window.__tabuada!.clock.seconds = 0.75 * 180;
+    });
+    await page.waitForTimeout(600);
+    expect((await lerEstado(page)).fase).toBe('noite');
+    await page.screenshot({ path: 'e2e/telas/10b-noite-fechada.png' });
 
     await page.evaluate(() => {
       window.__tabuada!.clock.seconds = 0.9 * 180;

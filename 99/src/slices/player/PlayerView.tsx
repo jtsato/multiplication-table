@@ -78,9 +78,7 @@ function usePointerYaw(yawRef: RefObject<number>) {
       // O dedo percorre menos pixels que o mouse: o toque precisa girar mais
       // por pixel para a camera nao parecer travada.
       const sensitivity =
-        event.pointerType === 'touch'
-          ? PLAYER.touchYawSensitivity
-          : PLAYER.pointerYawSensitivity;
+        event.pointerType === 'touch' ? PLAYER.touchYawSensitivity : PLAYER.pointerYawSensitivity;
       yawRef.current += (event.clientX - lastX) * sensitivity;
       lastX = event.clientX;
     };
@@ -140,6 +138,20 @@ export function PlayerView() {
   const camera = useThree((state) => state.camera);
 
   usePointerYaw(yawRef);
+
+  /**
+   * Registra o teleporte na ponte de depuracao.
+   *
+   * `PlayerView` e o unico lugar com acesso ao corpo do Rapier. Zera a
+   * velocidade junto: sem isso o corpo chegaria no destino ainda deslizando.
+   */
+  useEffect(() => {
+    if (typeof window === 'undefined' || !window.__tabuada) return;
+    window.__tabuada.teleportar = (x, z) => {
+      bodyRef.current?.setTranslation({ x, y: 1.2, z }, true);
+      bodyRef.current?.setLinvel({ x: 0, y: 0, z: 0 }, true);
+    };
+  }, []);
 
   useFrame((_, rawDelta) => {
     const body = bodyRef.current;

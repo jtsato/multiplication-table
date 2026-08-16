@@ -1,8 +1,8 @@
 import { Suspense, lazy } from 'react';
 import { Hud } from './Hud';
 import { OutcomeOverlay } from './OutcomeOverlay';
-import { TouchControls, useIsTouchDevice } from './TouchControls';
-import { useKeyboardBindings } from '../shared/input';
+import { TouchControls } from './TouchControls';
+import { useIsTouchDevice, useKeyboardBindings } from '../shared/input';
 import './loading.css';
 
 /**

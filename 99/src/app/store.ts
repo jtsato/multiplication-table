@@ -4,7 +4,6 @@ import { createDayNightSlice, type DayNightSlice } from '../slices/daynight/dayn
 import { createEnemiesSlice, type EnemiesSlice } from '../slices/enemies/enemies.store';
 import { dayNightClock } from '../slices/daynight/dayNightClock';
 import { playerTransform } from '../slices/player/playerTransform';
-import { playerTransform as transformDoBarrel } from '../slices/player';
 import { createMathSlice, type MathSlice } from '../slices/math/math.store';
 import { createResourcesSlice, type ResourcesSlice } from '../slices/resources/resources.store';
 import { createWorldSlice, type WorldSlice } from '../slices/world/world.store';
@@ -46,8 +45,15 @@ declare global {
       store: typeof useGameStore;
       transform: typeof playerTransform;
       clock: typeof dayNightClock;
-      /** Mesmo objeto visto pelo barrel — serve para detectar duplicacao de modulo. */
-      transformViaBarrel: typeof playerTransform;
+      /**
+       * Leva o jogador a um ponto do mapa.
+       *
+       * Registrado por `PlayerView`, que e quem tem o corpo do Rapier. Serve
+       * para o teste ponta a ponta montar a cena — "de pe ao lado de uma
+       * arvore" — sem depender de atravessar a ilha correndo, o que tornava a
+       * suite lenta e instavel. Andar de verdade tem teste proprio.
+       */
+      teleportar?: (x: number, z: number) => void;
     };
   }
 }
@@ -57,7 +63,6 @@ if (typeof window !== 'undefined') {
     store: useGameStore,
     transform: playerTransform,
     clock: dayNightClock,
-    transformViaBarrel: transformDoBarrel,
   };
 }
 

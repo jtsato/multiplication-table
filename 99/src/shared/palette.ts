@@ -36,7 +36,7 @@ export const palette = {
   // Ceu por fase do ciclo
   skyDay: '#8fd4ff',
   skyDusk: '#f2925c',
-  skyNight: '#111a33',
+  skyNight: '#1b2a52',
   skyDawn: '#ffb98a',
 
   // Luz do sol por fase

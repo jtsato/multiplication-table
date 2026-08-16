@@ -6,81 +6,74 @@
 
 ## Resumo
 
-O trabalho ainda está na fase de especificação. O diretório `st` contém apenas o arquivo `specification.md`; não existe implementação executável do jogo nesse diretório. Portanto, nenhum milestone do roadmap foi iniciado e nenhum critério de aceite do MVP pode ser considerado atendido.
+O MVP já saiu da fase de especificação e possui uma aplicação React/TypeScript/Vite executável. O loop vertical está implementado até o fechamento do dia: criar perfil → escolher loja/avatar → atender clientes → calcular multiplicação → receber pistas → faturar → atualizar caixa.
+
+Os primeiros cinco milestones têm uma implementação funcional ou uma baseline testada. Progressão, personalização avançada, áudio/narração, cobertura completa de acessibilidade e hardening ainda são parciais.
 
 ## Evidências encontradas
 
 | Área | Estado | Evidência em `st` |
 | --- | --- | --- |
-| Especificação | Presente | `specification.md` contém visão do produto, requisitos, milestones e critérios de aceite. |
-| Aplicação web | Ausente | Não há `src/`, `index.html` ou entrypoint. |
-| Package manager | Ausente | Não há `package.json` nem lockfile. |
-| Configuração | Ausente | Não há configuração local de Vite, TypeScript, ESLint, Vitest ou Playwright. |
-| Interface | Ausente | Não há componentes, telas, estilos ou assets próprios. |
-| Domínio matemático | Ausente | Não há fatos, distratores, pistas, domínio, scheduler ou RNG implementados. |
-| Estado do jogo | Ausente | Não há reducer, máquina de estados ou sessão de atendimento. |
-| Perfis | Ausente | Não há criação, seleção ou persistência de jogadores. |
-| Economia e progressão | Ausente | Não há clientes, produtos, caixa, capítulos, melhorias, cosméticos ou conquistas. |
-| Persistência | Ausente | Não há camada IndexedDB, `schemaVersion`, migrações ou autosave. |
-| Offline | Ausente | Não há service worker nem estratégia de cache. |
-| Testes | Ausente | Não há testes unitários, de componente, E2E ou de acessibilidade. |
-| Documentação de execução | Ausente em `st` | Não há README local com instalação, comandos ou limitações. |
+| Especificação | Presente | `specification.md` contém visão, requisitos, milestones e aceite. |
+| Aplicação web | Implementada | `src/main.tsx`, `src/app/App.tsx`, `index.html`. |
+| Package manager | Implementado | `package.json` e `package-lock.json` com scripts de dev, build e verificação. |
+| Interface | Implementada | Telas de perfil, criação, loja, atendimento, produtos e configurações; visual de blocos em CSS. |
+| Domínio matemático | Implementado | Fatos, RNG seedado, distratores, pistas, domínio, comutatividade e scheduler em `src/domain/math`. |
+| Estado do jogo | Implementado | `DaySession` explícita em `src/domain/game/session.ts`. |
+| Perfis | Implementado | Criação e seleção de múltiplos perfis locais, avatar, loja e preferências. |
+| Economia e progressão | Parcialmente implementado | Faturamento, caixa, compras, capítulos, objetivos, conquistas, estilos, decorações e blocos de expansão têm baseline; a apresentação avançada ainda falta. |
+| Persistência | Implementada | IndexedDB com `schemaVersion`, migração, listagem, atualização, autosave e `close()`. |
+| Offline | Baseline implementada | `public/sw.js` e registro em produção cacheiam o app shell e recursos GET. |
+| Testes | Implementados | 15 arquivos Vitest/29 testes, smoke E2E e scan axe na seleção de perfil. |
+| Documentação | Implementada | `README.md`, `docs/ARCHITECTURE.md`, `docs/ACCESSIBILITY.md` e `docs/ADAPTIVE-MATH.md`. |
 
-## O que já está definido
+## Funcionalidades jogáveis atuais
 
-`specification.md` já estabelece:
-
-- o objetivo pedagógico de ensinar multiplicação dentro da fantasia de uma loja;
-- o loop principal de atendimento, cálculo, feedback, faturamento e crescimento;
-- quatro lojas temáticas e seus catálogos iniciais e desbloqueáveis;
-- sessões de 5–6 clientes, sem cronômetro no modo normal;
-- alternativas múltiplas com três respostas e distratores pedagógicos;
-- ajuda progressiva e ausência de punição por erro;
-- perfis locais múltiplos, IndexedDB, versionamento de save e autosave;
-- acessibilidade WCAG 2.2 AA como baseline, com teclado, foco, zoom, leitor de tela, áudio alternativo e movimento reduzido;
-- funcionamento offline após o primeiro carregamento completo;
-- a ordem de implementação em dez milestones;
-- os comandos e a verificação final esperados quando a aplicação existir.
-
-## O que ainda precisa ser construído
-
-Para sair do estado atual e alcançar o MVP, é necessário implementar, em ordem vertical:
-
-1. a fundação React/TypeScript/Vite e a infraestrutura de testes;
-2. o modelo de estado, conteúdo e persistência IndexedDB;
-3. o fluxo de perfil, avatar, loja e acessibilidade inicial;
-4. um atendimento completo jogável;
-5. o motor adaptativo de matemática, distratores e pistas;
-6. o dia completo com fechamento e caixa;
-7. capítulos, produtos, melhorias e expansão visual;
-8. personalização, objetivos e conquistas;
-9. a revisão completa de acessibilidade;
-10. service worker, offline, migrações, tratamento de falhas e hardening.
+- criação de perfil sem dados pessoais;
+- apelido, sugestões, avatar em blocos e escolha entre Livraria, Loja de Arte, Loja de Esportes e Tecnologia & Robótica;
+- 5–6 clientes determinísticos por dia;
+- cálculo direto e separação de produtos por clique/toque/teclado;
+- três alternativas, distratores pedagógicos e posição variável;
+- mensagem de erro respeitosa, representação concreta, soma repetida e solução final;
+- registro da venda, fechamento do dia e entrada do faturamento no caixa;
+- compra de produtos desbloqueáveis;
+- capítulos por dias, objetivo opcional e conquistas por marcos da loja;
+- refresh preservando o perfil via IndexedDB;
+- primeira camada de texto grande, contraste reforçado, redução de movimento, foco visível e feedback semântico.
 
 ## Estado de execução e verificação
 
-Não é possível executar `npm run dev`, `npm run lint`, `npm run typecheck`, `npm run test`, `npm run build` ou `npm run test:e2e` a partir de `st`, porque ainda não existe `package.json` nem aplicação configurada. Esses comandos devem ser adicionados e executados a partir do Milestone 1.
+Executado em 16/08/2026:
 
-Também não há evidência local para afirmar que o jogo abre no navegador, salva progresso, funciona offline, atende clientes, calcula vendas ou passa por testes de acessibilidade.
+```text
+npm run lint       PASS
+npm run typecheck  PASS
+npm test           PASS — 15 arquivos, 28 testes
+npm run build      PASS — Vite produziu dist/
+npm run test:e2e   PASS — 2 testes Chromium, incluindo axe
+```
+
+O Playwright precisou de execução fora do sandbox porque o ambiente bloqueou o Chromium com `spawn EPERM`; depois da autorização, os dois testes passaram. O navegador integrado da sessão não estava disponível, então a inspeção visual foi feita pelo Chromium do Playwright.
 
 ## Contexto do Git
 
-O diretório de trabalho Git é o diretório-pai `C:\Dev\00-work\multiplication-table`, e não `st` isoladamente. A inspeção encontrou outros diretórios irmãos e alterações fora do escopo atual. Eles não foram tratados como implementação da Lojinha Maluca e não foram modificados.
+O checkout Git fica no diretório-pai `C:\Dev\00-work\multiplication-table`, e `st` não é um worktree isolado. A implementação foi limitada a `st`; diretórios irmãos e alterações preexistentes fora desse escopo não foram modificados.
 
-No estado verificado, `specification.md` e os documentos deste diretório pertencem ao trabalho em andamento de `st`; alterações existentes em outros diretórios devem ser preservadas e avaliadas separadamente.
+Os arquivos de `st` continuam como alterações não commitadas do trabalho em andamento. Nenhum reset, checkout destrutivo ou alteração em arquivos irmãos foi realizado.
 
-## Riscos e decisões pendentes
+## Lacunas conhecidas
 
-- **Base técnica ainda não criada:** a primeira decisão operacional é inicializar a aplicação dentro de `st`, para que o roadmap e a implementação tenham a mesma raiz.
-- **Ausência de convenções locais:** como não há package manager ou configuração em `st`, as escolhas de React, TypeScript, Vite, testes e lint devem ser registradas no Milestone 1.
-- **Escopo amplo:** a especificação cobre dez milestones; o primeiro objetivo executável deve ser a fatia vertical de um atendimento, sem tentar construir todo o metagame antes de validar o loop principal.
-- **Estado Git compartilhado:** qualquer implementação deve continuar limitada a `st` e evitar arquivos dos diretórios irmãos.
-- **Assets:** a identidade visual precisa ser criada internamente com CSS/SVG/formas geométricas, respeitando a proibição de assets protegidos.
+- narração e efeitos de áudio ainda não estão conectados aos eventos, embora o perfil já tenha preferências de áudio;
+- estilos selecionáveis, três decorações compráveis e expansão visual básica já existem; animações automáticas do avatar ainda faltam;
+- não há uma tela dedicada de conquistas nem um aviso de nova versão do service worker;
+- o scan axe automatizado cobre a seleção de perfil; as demais telas precisam entrar na matriz E2E;
+- a cobertura E2E ainda não percorre um dia inteiro, erro com quatro níveis de pista, compra, refresh e offline real;
+- o scheduler e o domínio de mastery estão testados, mas a seleção diária ainda usa a seed da sessão diretamente em vez de consultar todo o histórico de fatos.
 
 ## Próximo passo recomendado
 
-Iniciar o **Milestone 1 — Fundação**, criando o projeto executável mínimo, o contrato de estado e o repositório IndexedDB com teste de criação, atualização, carregamento e migração. Depois disso, avançar para o fluxo de perfil e só então para o primeiro atendimento jogável.
+Continuar pelo **Milestone 6**, conectando cada compra a uma mudança visual específica no diorama e consolidando a progressão. Em seguida, fechar cosméticos/áudio, ampliar os testes E2E de acessibilidade e validar o comportamento offline após refresh.
 
 ## Definição de estado atualizado
 
-Este arquivo deve ser revisado a cada milestone. Uma funcionalidade só deve mudar de “ausente” para “implementada” quando houver código no diretório `st`, teste ou verificação correspondente e evidência registrada aqui.
+Uma funcionalidade só deve mudar para “implementada” quando houver código em `st`, teste ou verificação correspondente e evidência registrada aqui. Este arquivo deve ser revisado a cada milestone concluído.

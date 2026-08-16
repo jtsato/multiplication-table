@@ -1,45 +1,3 @@
-/* Telas estreitas: painéis menores e recuo respeitando o notch. */
-@media (max-width: 720px), (max-height: 480px) {
-  .hud {
-    padding: max(10px, env(safe-area-inset-top)) max(10px, env(safe-area-inset-right)) 10px
-      max(10px, env(safe-area-inset-left));
-    font-size: 12px;
-  }
-
-  .hud__panel {
-    padding: 7px 10px;
-    border-radius: 8px;
-  }
-
-  .hud__panel--inventory {
-    gap: 4px;
-    min-width: 128px;
-  }
-
-  .hud__phase strong {
-    font-size: 14px;
-  }
-
-  .hud__resource strong {
-    font-size: 14px;
-  }
-
-  .hud__recipes {
-    display: none;
-  }
-}
-
-/* No toque, o rodapé sobe: joystick e botões ocupam o pé da tela. */
-.hud__bottom--touch {
-  bottom: 116px;
-}
-
-@media (max-height: 430px) {
-  .hud__bottom--touch {
-    bottom: 96px;
-  }
-}
-
 .hud {
   position: fixed;
   inset: 0;
@@ -234,4 +192,46 @@
   padding: 1px 7px;
   font-weight: 700;
   font-family: inherit;
+}
+
+/* Telas estreitas: painéis menores e recuo respeitando o notch. */
+@media (max-width: 720px), (max-height: 480px) {
+  .hud {
+    padding: max(10px, env(safe-area-inset-top)) max(10px, env(safe-area-inset-right)) 10px
+      max(10px, env(safe-area-inset-left));
+    font-size: 12px;
+  }
+
+  .hud__panel {
+    padding: 7px 10px;
+    border-radius: 8px;
+  }
+
+  .hud__panel--inventory {
+    gap: 4px;
+    min-width: 128px;
+  }
+
+  .hud__phase strong {
+    font-size: 14px;
+  }
+
+  .hud__resource strong {
+    font-size: 14px;
+  }
+
+  .hud__recipes {
+    display: none;
+  }
+}
+
+/* No toque, o rodapé sobe: joystick e botões ocupam o pé da tela. */
+.hud__bottom--touch {
+  bottom: 116px;
+}
+
+@media (max-height: 430px) {
+  .hud__bottom--touch {
+    bottom: 96px;
+  }
 }

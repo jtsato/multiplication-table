@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { useGameStore } from './store';
 import {
   applyDeadzone,
@@ -13,28 +13,6 @@ import './touch.css';
 
 /** Raio util do joystick, em pixels. Casado com o tamanho da base no CSS. */
 const JOYSTICK_RADIUS = 56;
-
-/**
- * Detecta aparelho de toque.
- *
- * `pointer: coarse` e mais confiavel que farejar o user agent: descreve o
- * apontador de fato em uso, entao tablets e celulares entram e um desktop com
- * tela sensivel ao toque mas com mouse fica de fora.
- */
-export function useIsTouchDevice(): boolean {
-  const [isTouch, setIsTouch] = useState(false);
-
-  useEffect(() => {
-    const query = window.matchMedia('(pointer: coarse)');
-    setIsTouch(query.matches);
-
-    const onChange = (event: MediaQueryListEvent) => setIsTouch(event.matches);
-    query.addEventListener('change', onChange);
-    return () => query.removeEventListener('change', onChange);
-  }, []);
-
-  return isTouch;
-}
 
 /**
  * Joystick analogico do polegar esquerdo.
