@@ -6,21 +6,26 @@ import { describe, expect, it } from 'vitest';
 const css = readFileSync(resolve(process.cwd(), 'src/styles/global.css'), 'utf8');
 
 describe('interface background', () => {
-  it('defines the navy grid tokens', () => {
-    expect(css).toContain('--color-bg: #172f6b;');
-    expect(css).toContain('--color-bg-grid: rgba(255, 255, 255, 0.08);');
-    expect(css).toContain('--color-text-on-dark: #f4f7ff;');
-    expect(css).toContain('--color-text-soft-on-dark: #cbd8f5;');
+  it('carries the design system token block verbatim', () => {
+    expect(css).toContain('--bg: #ffffff;');
+    expect(css).toContain('--surface: #f7f7f7;');
+    expect(css).toContain('--fg: #3c3c3c;');
+    expect(css).toContain('--accent: #58cc02;');
+    expect(css).toContain('--elev-raised: 0 4px 0 #d7d7d7;');
+    expect(css).toContain('--ease-standard: cubic-bezier(0.34, 1.56, 0.64, 1);');
   });
 
-  it('applies a static 52 pixel grid to the body shell', () => {
-    expect(css).toContain('background-color: var(--color-bg);');
-    expect(css).toContain(
-      'linear-gradient(var(--color-bg-grid) 1px, transparent 1px)',
-    );
-    expect(css).toContain(
-      'linear-gradient(90deg, var(--color-bg-grid) 1px, transparent 1px)',
-    );
-    expect(css).toContain('background-size: 52px 52px;');
+  it('uses the untinted Snow canvas on the shell', () => {
+    expect(css).toContain('background: var(--bg);');
+    expect(css).toContain('color: var(--fg);');
+    // O canvas nunca e tingido: a grade azul-marinho anterior foi removida.
+    expect(css).not.toContain('--color-bg-grid');
+    expect(css).not.toContain('background-size: 52px 52px;');
+  });
+
+  it('bridges the legacy screen tokens onto the Snow canvas', () => {
+    expect(css).toContain('--color-bg: var(--bg);');
+    expect(css).toContain('--color-text-on-dark: var(--fg);');
+    expect(css).toContain('--color-text-soft-on-dark: var(--muted);');
   });
 });
