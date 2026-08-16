@@ -13,4 +13,17 @@ describe("offline registration", () => {
   it("does nothing when service workers are unavailable", async () => {
     await expect(registerServiceWorker(undefined)).resolves.toBeUndefined();
   });
+
+  it("notifies the app when an updated worker is waiting", async () => {
+    const onUpdate = vi.fn();
+    const registration = {
+      waiting: {},
+      addEventListener: vi.fn(),
+    };
+    const register = vi.fn().mockResolvedValue(registration);
+
+    await registerServiceWorker({ register }, onUpdate);
+
+    expect(onUpdate).toHaveBeenCalledOnce();
+  });
 });

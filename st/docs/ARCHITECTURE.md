@@ -10,7 +10,7 @@ content → domain → app/screens → UI
 
 - `content/` contém lojas, produtos e clientes, sem estado de sessão.
 - `domain/` contém regras puras de matemática, economia, sessão, progresso e perfil.
-- `infrastructure/` contém IndexedDB e service worker.
+- `infrastructure/` contém IndexedDB, áudio opcional e service worker.
 - `app/` compõe as telas e coordena persistência, navegação e eventos.
 - `styles/` concentra a identidade visual de blocos, tokens implícitos e estados de acessibilidade.
 
@@ -35,7 +35,7 @@ Eventos de autosave já conectados:
 - resposta de atendimento;
 - fechamento do dia;
 - compra de produto;
-- configuração de acessibilidade.
+- configuração de acessibilidade e áudio.
 
 O repositório migra o formato atual para a versão 1 e expõe `close()` para liberar a conexão em testes e encerramentos controlados.
 
@@ -45,4 +45,4 @@ O repositório migra o formato atual para a versão 1 e expõe `close()` para li
 
 ## Dependências
 
-React + TypeScript + Vite formam a aplicação; `idb` encapsula IndexedDB; Vitest e Testing Library cobrem domínio e componentes; Playwright + axe cobrem o smoke E2E e a tela inicial.
+React + TypeScript + Vite formam a aplicação; `idb` encapsula IndexedDB; Vitest e Testing Library cobrem domínio e componentes; Playwright + axe cobrem o smoke E2E, a tela inicial e os fluxos de refresh/offline.

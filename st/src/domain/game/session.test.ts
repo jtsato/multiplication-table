@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { getStore } from "../../content/stores";
+import { createFact, listFacts } from "../math/facts";
+import { createFactProgress, type FactProgress } from "../math/mastery";
+import { chooseNextFact } from "../math/scheduler";
 import { createDaySession, continueAfterFeedback, getCurrentVisit, submitAnswer } from "./session";
 
 describe("shop day session", () => {
@@ -31,5 +34,24 @@ describe("shop day session", () => {
     expect(answered.revenue).toBe(getCurrentVisit(question).sale.total);
     expect(answered.completedVisits).toBe(1);
     expect(continueAfterFeedback(answered).currentIndex).toBe(1);
+  });
+
+  it("uses the adaptive scheduler to contextualize a due fact in a visit", () => {
+    const target = createFact(5, 7);
+    const progress: FactProgress[] = listFacts().map((fact) => fact.a === target.a && fact.b === target.b
+      ? createFactProgress(fact)
+      : {
+          ...createFactProgress(fact),
+          state: "mastered",
+          mastery: 1,
+          independentCorrect: 3,
+          independentDays: [1, 2],
+          lastSeenDay: 1,
+        });
+    const scheduled = chooseNextFact(progress, 1, 10, 37);
+    const session = createDaySession(getStore("bookstore"), 1, 37, undefined, progress);
+
+    expect(scheduled).toEqual(target);
+    expect(session.visits.some((visit) => visit.fact.a === target.a && visit.fact.b === target.b)).toBe(true);
   });
 });

@@ -8,7 +8,7 @@
 
 O MVP já saiu da fase de especificação e possui uma aplicação React/TypeScript/Vite executável. O loop vertical está implementado até o fechamento do dia: criar perfil → escolher loja/avatar → atender clientes → calcular multiplicação → receber pistas → faturar → atualizar caixa.
 
-Os primeiros cinco milestones têm uma implementação funcional ou uma baseline testada. Progressão, personalização avançada, áudio/narração, cobertura completa de acessibilidade e hardening ainda são parciais.
+Os primeiros oito milestones têm uma implementação funcional ou uma baseline testada. O loop adaptativo, áudio/narração, animações acessíveis, conquistas visuais e o caminho offline principal estão implementados; revisão manual de acessibilidade e hardening final ainda são parciais.
 
 ## Evidências encontradas
 
@@ -21,10 +21,10 @@ Os primeiros cinco milestones têm uma implementação funcional ou uma baseline
 | Domínio matemático | Implementado | Fatos, RNG seedado, distratores, pistas, domínio, comutatividade e scheduler em `src/domain/math`. |
 | Estado do jogo | Implementado | `DaySession` explícita em `src/domain/game/session.ts`. |
 | Perfis | Implementado | Criação e seleção de múltiplos perfis locais, avatar, loja e preferências. |
-| Economia e progressão | Parcialmente implementado | Faturamento, caixa, compras, capítulos, objetivos, conquistas, estilos, decorações e blocos de expansão têm baseline; a apresentação avançada ainda falta. |
+| Economia e progressão | Implementado como baseline | Faturamento, caixa, compras, capítulos, objetivos, conquistas, catálogo visual, estilos, decorações e blocos de expansão têm apresentação persistida. |
 | Persistência | Implementada | IndexedDB com `schemaVersion`, migração, listagem, atualização, autosave e `close()`. |
-| Offline | Baseline implementada | `public/sw.js` e registro em produção cacheiam o app shell e recursos GET. |
-| Testes | Implementados | 15 arquivos Vitest/29 testes, smoke E2E e scan axe na seleção de perfil. |
+| Offline | Implementada no fluxo principal | `public/sw.js`, registro em produção, aviso de atualização e teste E2E offline após refresh cobrem o caminho principal. |
+| Testes | Implementados | 18 arquivos Vitest/37 testes, 7 testes E2E Chromium e scan axe na seleção de perfil. |
 | Documentação | Implementada | `README.md`, `docs/ARCHITECTURE.md`, `docs/ACCESSIBILITY.md` e `docs/ADAPTIVE-MATH.md`. |
 
 ## Funcionalidades jogáveis atuais
@@ -38,6 +38,11 @@ Os primeiros cinco milestones têm uma implementação funcional ou uma baseline
 - registro da venda, fechamento do dia e entrada do faturamento no caixa;
 - compra de produtos desbloqueáveis;
 - capítulos por dias, objetivo opcional e conquistas por marcos da loja;
+- seleção diária contextualizada pelo histórico adaptativo do perfil;
+- sons de feedback e narração opcional configuráveis na tela de ajustes;
+- animação de repouso e comemoração do avatar, desativadas com movimento reduzido;
+- tela dedicada de conquistas com marcos opcionais e sem nota de desempenho;
+- saldo visível no catálogo antes e depois das compras;
 - refresh preservando o perfil via IndexedDB;
 - primeira camada de texto grande, contraste reforçado, redução de movimento, foco visível e feedback semântico.
 
@@ -48,12 +53,12 @@ Executado em 16/08/2026:
 ```text
 npm run lint       PASS
 npm run typecheck  PASS
-npm test           PASS — 15 arquivos, 28 testes
+npm test           PASS — 18 arquivos, 37 testes
 npm run build      PASS — Vite produziu dist/
-npm run test:e2e   PASS — 2 testes Chromium, incluindo axe
+npm run test:e2e   PASS — 7 testes Chromium, incluindo axe, pistas, compra, conquistas, refresh e offline
 ```
 
-O Playwright precisou de execução fora do sandbox porque o ambiente bloqueou o Chromium com `spawn EPERM`; depois da autorização, os dois testes passaram. O navegador integrado da sessão não estava disponível, então a inspeção visual foi feita pelo Chromium do Playwright.
+O navegador integrado da sessão não estava disponível; a validação E2E foi feita pelo Chromium do Playwright contra o build de produção servido pelo preview.
 
 ## Contexto do Git
 
@@ -63,16 +68,14 @@ Os arquivos de `st` continuam como alterações não commitadas do trabalho em a
 
 ## Lacunas conhecidas
 
-- narração e efeitos de áudio ainda não estão conectados aos eventos, embora o perfil já tenha preferências de áudio;
-- estilos selecionáveis, três decorações compráveis e expansão visual básica já existem; animações automáticas do avatar ainda faltam;
-- não há uma tela dedicada de conquistas nem um aviso de nova versão do service worker;
+- o aviso de atualização do service worker existe, mas a avaliação manual da troca segura e cenários extremos de storage ainda falta;
 - o scan axe automatizado cobre a seleção de perfil; as demais telas precisam entrar na matriz E2E;
-- a cobertura E2E ainda não percorre um dia inteiro, erro com quatro níveis de pista, compra, refresh e offline real;
-- o scheduler e o domínio de mastery estão testados, mas a seleção diária ainda usa a seed da sessão diretamente em vez de consultar todo o histórico de fatos.
+- falta revisão manual com leitor de tela, zoom de 200% e diferentes larguras/tablets;
+- falta uma revisão final de performance, quota excedida e dados persistidos inválidos.
 
 ## Próximo passo recomendado
 
-Continuar pelo **Milestone 6**, conectando cada compra a uma mudança visual específica no diorama e consolidando a progressão. Em seguida, fechar cosméticos/áudio, ampliar os testes E2E de acessibilidade e validar o comportamento offline após refresh.
+Continuar pelo **Milestone 9/10**, ampliando axe para as telas principais e revisando performance/storage no hardening final.
 
 ## Definição de estado atualizado
 

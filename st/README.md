@@ -29,11 +29,12 @@ O Playwright precisa de um Chromium instalado. Em um ambiente novo, execute `npx
 - dia com 5–6 clientes, cálculo direto e separação visual de produtos;
 - três alternativas com distratores pedagógicos e posição variável;
 - feedback respeitoso e pistas progressivas após erros;
-- domínio de fatos, comutatividade, bandas internas e scheduler determinístico;
+- domínio de fatos, comutatividade, bandas internas e scheduler determinístico conectado ao histórico do perfil;
 - fechamento de dia, faturamento, saldo, capítulos, objetivos e conquistas;
-- catálogo com produtos desbloqueáveis e mudanças persistidas;
+- catálogo com produtos desbloqueáveis, saldo visível e mudanças persistidas;
+- sons de feedback, narração opcional e animações acessíveis do avatar;
 - IndexedDB com `schemaVersion`, migração, autosave e tratamento básico de falha;
-- service worker para continuar após o primeiro carregamento completo;
+- service worker com cache versionado, aviso de atualização e suporte offline após o primeiro carregamento completo;
 - teclado, foco visível, zoom, texto grande, contraste reforçado e movimento reduzido.
 
 ## Arquitetura
@@ -46,7 +47,5 @@ Perfis ficam somente no IndexedDB local `lojinha-maluca`. Nenhum login, servidor
 
 ## Limitações conhecidas
 
-- a narração e os efeitos sonoros ainda estão representados no modelo de configurações, mas não possuem camada de áudio completa;
-- cosméticos adicionais e animações automáticas do avatar ainda são uma camada visual inicial;
-- a verificação E2E cobre o bootstrap, início do dia e axe na tela inicial; os demais fluxos continuam cobertos por testes de domínio e componente;
-- a atualização segura do service worker está preparada pelo cache versionado, mas ainda não exibe um aviso de nova versão na interface.
+- o scan axe automatizado ainda precisa cobrir catálogo, atendimento, configurações, conquistas e fechamento do dia;
+- avaliação manual com leitor de tela, zoom de 200%, tablets e cenários extremos de quota/storage continua pendente.

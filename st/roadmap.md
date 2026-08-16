@@ -82,7 +82,7 @@ Este roadmap segue a ordem recomendada na seção 109 de `specification.md` e tr
 
 ### Milestone 4 — Sistema pedagógico adaptativo
 
-**Status:** Parcialmente concluído em 16/08/2026. As regras estão implementadas e testadas; o scheduler ainda não governa toda a seleção diária de perguntas.
+**Status:** Concluído em 16/08/2026. As regras estão implementadas, testadas e conectadas à seleção contextual das visitas usando o histórico de fatos do perfil.
 
 **Entrega:** transformar o atendimento em um sistema de aprendizagem adaptativo, determinístico e invisível para a criança.
 
@@ -103,7 +103,7 @@ Este roadmap segue a ordem recomendada na seção 109 de `specification.md` e tr
 
 ### Milestone 5 — Dia completo
 
-**Status:** Concluído em 16/08/2026 como baseline jogável. O fechamento, faturamento e caixa estão conectados; a revisão adaptativa completa continua no Milestone 4.
+**Status:** Concluído em 16/08/2026. O fechamento, faturamento, caixa e seleção adaptativa estão conectados ao loop diário.
 
 **Entrega:** completar o loop de uma sessão normal.
 
@@ -143,7 +143,7 @@ Este roadmap segue a ordem recomendada na seção 109 de `specification.md` e tr
 
 ### Milestone 7 — Personalização
 
-**Status:** Parcialmente concluído em 16/08/2026. Avatar customizável, três estilos, três decorações compráveis e expansão visual básica existem; animações automáticas e uma coleção visual mais ampla ainda faltam.
+**Status:** Parcialmente concluído em 16/08/2026. Avatar customizável, três estilos, três decorações compráveis, expansão visual básica e animações com redução de movimento existem; comemorações específicas para compras e uma coleção visual mais ampla ainda faltam.
 
 **Entrega:** ampliar a expressão visual sem alterar vantagens de jogo.
 
@@ -161,7 +161,7 @@ Este roadmap segue a ordem recomendada na seção 109 de `specification.md` e tr
 
 ### Milestone 8 — Metagame leve
 
-**Status:** Parcialmente concluído em 16/08/2026. Objetivos e regras de conquistas estão conectados ao fechamento; falta uma apresentação dedicada e histórico visual mais completo.
+**Status:** Concluído em 16/08/2026 como baseline. Objetivos, regras de conquistas, histórico visual dedicado e camadas opcionais estão conectados ao crescimento da loja.
 
 **Entrega:** adicionar objetivos opcionais e conquistas que reforcem o crescimento da loja.
 
@@ -178,7 +178,7 @@ Este roadmap segue a ordem recomendada na seção 109 de `specification.md` e tr
 
 ### Milestone 9 — Revisão completa de acessibilidade
 
-**Status:** Parcialmente concluído em 16/08/2026. Teclado, foco, texto grande, contraste, redução de movimento e axe inicial existem; narração, áudio e cobertura E2E das demais telas continuam.
+**Status:** Parcialmente concluído em 16/08/2026. Teclado, foco, texto grande, contraste, redução de movimento, áudio/narração configuráveis e axe inicial existem; a cobertura automatizada de axe ainda precisa incluir as demais telas e falta avaliação manual completa.
 
 **Entrega:** validar e corrigir as principais telas contra WCAG 2.2 AA como baseline.
 
@@ -198,7 +198,7 @@ Este roadmap segue a ordem recomendada na seção 109 de `specification.md` e tr
 
 ### Milestone 10 — Offline e hardening
 
-**Status:** Parcialmente concluído em 16/08/2026. Service worker, cache versionado, migração e tratamento básico de storage existem; aviso de atualização, hardening de performance e teste offline completo continuam.
+**Status:** Parcialmente concluído em 16/08/2026. Service worker, cache versionado, migração, aviso de atualização e teste offline após refresh existem; hardening de performance e cenários extremos de storage continuam.
 
 **Entrega:** preparar a versão do MVP para uso confiável sem rede e para evolução segura.
 
@@ -248,4 +248,4 @@ Cada milestone deve terminar com uma verificação proporcional ao que foi entre
 
 ## Próximo passo imediato
 
-Próximo passo: completar o **Milestone 6 — Progressão da loja**, ligando cada compra a uma expansão visual específica do diorama. Depois, fechar personalização/áudio, ampliar a matriz E2E de acessibilidade e validar offline após refresh.
+Próximo passo: ampliar a apresentação de progressão e conquistas, incluir axe nas telas de loja, catálogo e atendimento e revisar performance/storage antes do fechamento do MVP.

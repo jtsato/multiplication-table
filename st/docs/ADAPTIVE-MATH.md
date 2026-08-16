@@ -57,3 +57,5 @@ Estados:
 ## Scheduler
 
 Fatos novos têm prioridade. Fatos em consolidação recebem pontuação conforme domínio e dias desde a última exposição. Fatos dominados só retornam quando a janela espaçada vence. Empates usam a seed da sessão.
+
+No início de cada visita, `createDaySession` consulta o `mathProgress` persistido no perfil e transforma o fato escolhido em uma situação de quantidade × preço sempre que houver produto compatível na loja. Quando nenhum fator está disponível como preço, a sessão mantém a seleção contextual determinística como fallback. A criança não vê pontuação, estado ou a seed do scheduler.

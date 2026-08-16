@@ -15,19 +15,23 @@ import {
 } from "../domain/game/session";
 import { purchaseProduct } from "../domain/economy/economy";
 import { evaluateAchievements } from "../domain/game/achievements";
+import { getAchievementProgress } from "../domain/game/achievementCatalog";
 import { createDailyObjective } from "../domain/game/objectives";
 import { getChapterForDay } from "../domain/game/progression";
 import {
   createProfile,
   type AccessibilitySettings,
+  type AudioSettings,
   type AvatarConfig,
   type CreateProfileInput,
   type PlayerProfile,
   type StoreStyle,
 } from "../domain/profile/profile";
 import { ProfileRepository } from "../infrastructure/storage/repository";
+import { narrate, playFeedbackTone } from "../infrastructure/audio/audio";
+import { getAvatarMotionClass, type AvatarMotion } from "./avatarMotion";
 
-type Screen = "profiles" | "create" | "store" | "game" | "shop" | "settings";
+type Screen = "profiles" | "create" | "store" | "game" | "shop" | "settings" | "achievements";
 
 export type AppProps = {
   repository?: ProfileRepository;
@@ -42,6 +46,7 @@ export function App({ repository }: AppProps) {
   const [notice, setNotice] = useState<string>("");
   const [loading, setLoading] = useState(true);
   const [storageError, setStorageError] = useState<string>("");
+  const [updateAvailable, setUpdateAvailable] = useState(false);
 
   useEffect(() => {
     let mounted = true;
@@ -59,6 +64,12 @@ export function App({ repository }: AppProps) {
       mounted = false;
     };
   }, [storage]);
+
+  useEffect(() => {
+    const handleUpdate = () => setUpdateAvailable(true);
+    window.addEventListener("lojinha-update-available", handleUpdate);
+    return () => window.removeEventListener("lojinha-update-available", handleUpdate);
+  }, []);
 
   function persistProfile(profile: PlayerProfile): void {
     setActiveProfile(profile);
@@ -82,7 +93,7 @@ export function App({ repository }: AppProps) {
     if (!activeProfile) return;
     const store = getStore(activeProfile.store.storeId);
     const daySeed = activeProfile.day * 101 + activeProfile.id.length * 7;
-    setSession(createDaySession(store, activeProfile.day, daySeed, activeProfile.store.unlockedProducts));
+    setSession(createDaySession(store, activeProfile.day, daySeed, activeProfile.store.unlockedProducts, Object.values(activeProfile.mathProgress)));
     setNotice("");
     setScreen("game");
   }
@@ -92,6 +103,13 @@ export function App({ repository }: AppProps) {
     const visit = getCurrentVisit(session);
     const correct = value === visit.fact.answer;
     const nextSession = submitAnswer(session, value);
+    playFeedbackTone(correct ? "success" : "error", activeProfile.audio.effects);
+    narrate(
+      correct
+        ? `Muito bem! ${visit.quantity} vezes ${visit.product.price} e igual a ${visit.fact.answer}.`
+        : `Vamos tentar de novo. ${getHint(visit.fact, session.errorsForCurrent).text}`,
+      activeProfile.audio.narration,
+    );
     const progress = activeProfile.mathProgress[factKey(visit.fact)] as FactProgress;
     const nextProgress = applyAttempt(progress, {
       outcome: correct ? "correct" : "incorrect",
@@ -173,9 +191,9 @@ export function App({ repository }: AppProps) {
     setNotice("A decoração nova já pode aparecer na loja!");
   }
 
-  function saveAccessibility(settings: AccessibilitySettings): void {
+  function saveSettings(settings: AccessibilitySettings, audio: AudioSettings): void {
     if (!activeProfile) return;
-    persistProfile({ ...activeProfile, accessibility: settings, updatedAt: new Date().toISOString() });
+    persistProfile({ ...activeProfile, accessibility: settings, audio, updatedAt: new Date().toISOString() });
     setScreen("store");
   }
 
@@ -186,13 +204,15 @@ export function App({ repository }: AppProps) {
 
   return (
     <div className={`app-shell ${activeProfile?.accessibility.largeText ? "large-text" : ""} ${activeProfile?.accessibility.highContrast ? "high-contrast" : ""}`}>
+      {updateAvailable && <div className="update-notice" role="status">Uma versão nova está pronta. Atualize quando terminar esta atividade. <button className="secondary-button" onClick={() => window.location.reload()}>Atualizar</button></div>}
       {storageError && <div className="storage-warning" role="alert">{storageError}</div>}
       {screen === "profiles" && <ProfileSelect profiles={profiles} onCreate={() => setScreen("create")} onSelect={(profile) => { setActiveProfile(profile); setScreen("store"); }} />}
       {screen === "create" && <ProfileCreate onCancel={() => setScreen("profiles")} onCreate={handleCreate} />}
-      {screen === "store" && activeProfile && <StoreOverview profile={activeProfile} notice={notice} onStart={startDay} onShop={() => setScreen("shop")} onSettings={() => setScreen("settings")} onSwitch={() => { setActiveProfile(null); setScreen("profiles"); }} />}
+      {screen === "store" && activeProfile && <StoreOverview profile={activeProfile} notice={notice} onStart={startDay} onShop={() => setScreen("shop")} onSettings={() => setScreen("settings")} onAchievements={() => setScreen("achievements")} onSwitch={() => { setActiveProfile(null); setScreen("profiles"); }} />}
       {screen === "game" && activeProfile && session && <GameScreen profile={activeProfile} session={session} onStartQuestion={() => setSession((current) => current ? { ...current, phase: "question" } : current)} onSelectQuantity={(quantity) => setSession((current) => current ? selectQuantity(current, quantity) : current)} onAnswer={answerQuestion} onRetry={() => setSession((current) => current ? retryQuestion(current) : current)} onContinue={() => setSession((current) => current ? continueAfterFeedback(current) : current)} onLeave={() => setScreen("store")} onFinish={finishDay} />}
       {screen === "shop" && activeProfile && <ShopScreen profile={activeProfile} onBack={() => setScreen("store")} onPurchase={purchaseProductById} onCosmeticPurchase={purchaseCosmetic} />}
-      {screen === "settings" && activeProfile && <SettingsScreen profile={activeProfile} onBack={() => setScreen("store")} onSave={saveAccessibility} />}
+      {screen === "achievements" && activeProfile && <AchievementsScreen profile={activeProfile} onBack={() => setScreen("store")} />}
+      {screen === "settings" && activeProfile && <SettingsScreen profile={activeProfile} onBack={() => setScreen("store")} onSave={saveSettings} />}
     </div>
   );
 }
@@ -206,7 +226,7 @@ function ProfileSelect({ profiles, onCreate, onSelect }: { profiles: PlayerProfi
       <p className="lead">Cada compra esconde uma conta. Vamos descobrir quanto custa?</p>
       <section className="profile-panel" aria-labelledby="players-title">
         <h2 id="players-title">Quem vai jogar?</h2>
-        {profiles.length === 0 ? <p className="muted">Ainda não há jogadores neste dispositivo.</p> : <div className="profile-grid">{profiles.map((profile) => <button className="profile-card" key={profile.id} onClick={() => onSelect(profile)}><Avatar avatar={profile.avatar} size="small" /><span><strong>{profile.nickname}</strong><small>{getStore(profile.store.storeId).name} · Dia {profile.day}</small></span></button>)}</div>}
+        {profiles.length === 0 ? <p className="muted">Ainda não há jogadores neste dispositivo.</p> : <div className="profile-grid">{profiles.map((profile) => <button className="profile-card" key={profile.id} onClick={() => onSelect(profile)}><Avatar avatar={profile.avatar} size="small" reducedMotion={profile.accessibility.reducedMotion} /><span><strong>{profile.nickname}</strong><small>{getStore(profile.store.storeId).name} · Dia {profile.day}</small></span></button>)}</div>}
         <button className="primary-button" onClick={onCreate}>Criar novo jogador</button>
       </section>
     </main>
@@ -240,7 +260,7 @@ function ProfileCreate({ onCancel, onCreate }: { onCancel: () => void; onCreate:
 
         <fieldset>
           <legend>Personalize seu avatar</legend>
-          <div className="avatar-editor"><Avatar avatar={avatar} size="large" /><div className="select-grid"><label>Visual<select value={avatar.skin} onChange={(event) => setAvatar({ ...avatar, skin: event.target.value as AvatarConfig["skin"] })}><option value="sunny">Dourado</option><option value="warm">Quente</option><option value="deep">Profundo</option></select></label><label>Cabelo<select value={avatar.hair} onChange={(event) => setAvatar({ ...avatar, hair: event.target.value as AvatarConfig["hair"] })}><option value="curly">Cacheado</option><option value="short">Curto</option><option value="long">Longo</option></select></label><label>Roupa<select value={avatar.outfit} onChange={(event) => setAvatar({ ...avatar, outfit: event.target.value as AvatarConfig["outfit"] })}><option value="apron">Avental</option><option value="jacket">Jaqueta</option><option value="overalls">Jardineira</option></select></label><label>Acessório<select value={avatar.accessory} onChange={(event) => setAvatar({ ...avatar, accessory: event.target.value as AvatarConfig["accessory"] })}><option value="none">Nenhum</option><option value="cap">Boné</option><option value="glasses">Óculos</option><option value="headphones">Fones</option></select></label></div></div>
+          <div className="avatar-editor"><Avatar avatar={avatar} size="large" reducedMotion={reducedMotion} /><div className="select-grid"><label>Visual<select value={avatar.skin} onChange={(event) => setAvatar({ ...avatar, skin: event.target.value as AvatarConfig["skin"] })}><option value="sunny">Dourado</option><option value="warm">Quente</option><option value="deep">Profundo</option></select></label><label>Cabelo<select value={avatar.hair} onChange={(event) => setAvatar({ ...avatar, hair: event.target.value as AvatarConfig["hair"] })}><option value="curly">Cacheado</option><option value="short">Curto</option><option value="long">Longo</option></select></label><label>Roupa<select value={avatar.outfit} onChange={(event) => setAvatar({ ...avatar, outfit: event.target.value as AvatarConfig["outfit"] })}><option value="apron">Avental</option><option value="jacket">Jaqueta</option><option value="overalls">Jardineira</option></select></label><label>Acessório<select value={avatar.accessory} onChange={(event) => setAvatar({ ...avatar, accessory: event.target.value as AvatarConfig["accessory"] })}><option value="none">Nenhum</option><option value="cap">Boné</option><option value="glasses">Óculos</option><option value="headphones">Fones</option></select></label></div></div>
         </fieldset>
 
         <fieldset><legend>Configurações rápidas</legend><label className="check-row"><input type="checkbox" checked={reducedMotion} onChange={(event) => setReducedMotion(event.target.checked)} /> Reduzir movimento</label><label className="check-row"><input type="checkbox" checked={largeText} onChange={(event) => setLargeText(event.target.checked)} /> Usar texto grande</label></fieldset>
@@ -250,7 +270,7 @@ function ProfileCreate({ onCancel, onCreate }: { onCancel: () => void; onCreate:
   );
 }
 
-function StoreOverview({ profile, notice, onStart, onShop, onSettings, onSwitch }: { profile: PlayerProfile; notice: string; onStart: () => void; onShop: () => void; onSettings: () => void; onSwitch: () => void }) {
+function StoreOverview({ profile, notice, onStart, onShop, onSettings, onAchievements, onSwitch }: { profile: PlayerProfile; notice: string; onStart: () => void; onShop: () => void; onSettings: () => void; onAchievements: () => void; onSwitch: () => void }) {
   const store = getStore(profile.store.storeId);
   const objective = createDailyObjective(profile.day + profile.id.length);
   const objectiveDone = profile.objectives.completed.includes(objective.id);
@@ -258,9 +278,9 @@ function StoreOverview({ profile, notice, onStart, onShop, onSettings, onSwitch 
     <main className="game-screen">
       <header className="topbar"><div><p className="eyebrow">Sua loja</p><h1>{store.name}</h1></div><div className="cash-badge" aria-label={`Saldo R$ ${profile.cash}`}>R$ {profile.cash}</div></header>
       {notice && <div className="notice" role="status">{notice}</div>}
-      <section className={`diorama style-${profile.store.style}`} style={{ "--store-color": store.color } as React.CSSProperties} aria-label={`Diorama da ${store.name}`}><div className="diorama-sky" /><div className="block-shelf shelf-one" /><div className="block-shelf shelf-two" /><div className="counter" /><div className="expansion-blocks" aria-hidden="true">{profile.store.purchasedProducts.map((productId) => <span key={productId} />)}</div><Avatar avatar={profile.avatar} size="large" /></section>
+      <section className={`diorama style-${profile.store.style}`} style={{ "--store-color": store.color } as React.CSSProperties} aria-label={`Diorama da ${store.name}`}><div className="diorama-sky" /><div className="block-shelf shelf-one" /><div className="block-shelf shelf-two" /><div className="counter" /><div className="expansion-blocks" aria-hidden="true">{profile.store.purchasedProducts.map((productId) => <span key={productId} />)}</div><Avatar avatar={profile.avatar} size="large" reducedMotion={profile.accessibility.reducedMotion} /></section>
       <section className="store-actions"><div><p className="eyebrow">Dia {profile.day} · Capítulo {profile.chapter}</p><h2>Pronta para atender?</h2><p className="muted">Atenda 5 ou 6 clientes e faça sua loja crescer.</p><div className="objective-line"><strong>Objetivo opcional: {objective.title}</strong><span>{objectiveDone ? "Concluído" : objective.description}</span></div><p className="achievement-line">Conquistas da loja: <strong>{profile.achievements.length}</strong></p></div><button className="primary-button" onClick={onStart}>Começar dia</button></section>
-      <nav className="bottom-actions" aria-label="Ações da loja"><button onClick={onShop}>Produtos novos</button><button onClick={onSettings}>Configurações</button><button onClick={onSwitch}>Trocar jogador</button></nav>
+      <nav className="bottom-actions" aria-label="Ações da loja"><button onClick={onShop}>Produtos novos</button><button onClick={onAchievements}>Conquistas</button><button onClick={onSettings}>Configurações</button><button onClick={onSwitch}>Trocar jogador</button></nav>
     </main>
   );
 }
@@ -274,7 +294,7 @@ function GameScreen({ profile, session, onStartQuestion, onSelectQuantity, onAns
   return (
     <main className="game-screen service-screen">
       <header className="service-header"><button className="text-button" aria-label="Voltar para a loja" onClick={onLeave}>× Voltar para a loja</button><span>Cliente {session.completedVisits + 1} de {session.visits.length}</span><strong>R$ {session.revenue}</strong></header>
-      <section className="customer-card"><Avatar avatar={profile.avatar} size="small" /><div><p className="eyebrow">{visit.customer.name} chegou</p><h1>{visit.customer.phrase}</h1><p className="customer-request">Quero <strong>{visit.quantity} {visit.product.name.toLowerCase()}</strong>.</p></div></section>
+      <section className="customer-card"><Avatar avatar={profile.avatar} size="small" motion={session.feedback?.kind === "correct" ? "celebrate" : "idle"} reducedMotion={profile.accessibility.reducedMotion} /><div><p className="eyebrow">{visit.customer.name} chegou</p><h1>{visit.customer.phrase}</h1><p className="customer-request">Quero <strong>{visit.quantity} {visit.product.name.toLowerCase()}</strong>.</p></div></section>
       {session.phase === "customer" && <section className="question-card intro-card"><p>Vamos descobrir quanto custa a compra.</p><button className="primary-button" onClick={onStartQuestion}>Ver a conta</button></section>}
       {session.phase === "product-select" && <section className="question-card"><p className="eyebrow">Separe os produtos</p><h2>Quantos {visit.product.name.toLowerCase()}?</h2><div className="product-counter"><button aria-label="Remover produto" onClick={() => onSelectQuantity(session.selectedQuantity - 1)} disabled={session.selectedQuantity === 0}>−</button><div className="product-pile" aria-label={`${session.selectedQuantity} de ${visit.quantity} produtos separados`}>{Array.from({ length: session.selectedQuantity }, (_, index) => <span key={index} aria-hidden="true" className="mini-block" />)}</div><button aria-label="Adicionar produto" onClick={() => onSelectQuantity(session.selectedQuantity + 1)} disabled={session.selectedQuantity === visit.quantity}>+</button></div><p className="muted">{session.selectedQuantity} de {visit.quantity} separados</p></section>}
       {(session.phase === "question" || session.phase === "feedback") && <section className="question-card"><p className="equation-context">{visit.quantity} × R$ {visit.product.price}</p><h2>Quanto devo cobrar?</h2><div className="alternatives" role="group" aria-label="Alternativas de resposta">{alternatives.map((alternative) => <button key={alternative.value} className="answer-button" onClick={() => session.phase === "question" && onAnswer(alternative.value)} disabled={session.phase === "feedback"}>{`R$ ${alternative.value}`}</button>)}</div>{session.phase === "feedback" && session.feedback?.kind === "incorrect" && <div className="hint-box" role="status"><strong>Ainda não fechou a conta.</strong><p>{hint.text}</p>{session.errorsForCurrent >= 4 ? <button className="secondary-button" onClick={() => onAnswer(visit.fact.answer)}>Usar a conta completa para continuar</button> : <button className="secondary-button" onClick={onRetry}>Tentar de novo</button>}</div>}{session.phase === "feedback" && session.feedback?.kind === "correct" && <div className="success-box" role="status"><strong>✓ R$ {visit.fact.answer} — certo!</strong><p>Esse valor entrou nas vendas da loja.</p><button className="primary-button" onClick={onContinue}>{session.completedVisits === session.visits.length ? "Ver fechamento" : "Próximo cliente"}</button></div>}</section>}
@@ -282,16 +302,22 @@ function GameScreen({ profile, session, onStartQuestion, onSelectQuantity, onAns
   );
 }
 
+function AchievementsScreen({ profile, onBack }: { profile: PlayerProfile; onBack: () => void }) {
+  const achievements = getAchievementProgress(profile.achievements);
+  return <main className="form-screen"><button className="text-button" onClick={onBack}>← Voltar para a loja</button><p className="eyebrow">Marcos da loja</p><h1>Conquistas</h1><p className="muted">Cada marco acompanha o crescimento da loja, sem nota ou competição.</p><div className="product-grid">{achievements.map((achievement) => <article className={`product-card achievement-card ${achievement.unlocked ? "unlocked" : "locked"}`} key={achievement.id}><span className="product-icon" aria-hidden="true">{achievement.unlocked ? "✓" : "○"}</span><h2>{achievement.title}</h2><p>{achievement.description}</p><strong>{achievement.unlocked ? "Conquistada" : "Em descoberta"}</strong></article>)}</div></main>;
+}
+
 function ShopScreen({ profile, onBack, onPurchase, onCosmeticPurchase }: { profile: PlayerProfile; onBack: () => void; onPurchase: (productId: string, cost: number) => void; onCosmeticPurchase: (cosmeticId: string, cost: number) => void }) {
   const store = getStore(profile.store.storeId);
-  return <main className="form-screen"><button className="text-button" onClick={onBack}>← Voltar para a loja</button><p className="eyebrow">Catálogo</p><h1>Produtos novos</h1><p className="muted">Escolha o que vai aparecer na próxima expansão.</p><div className="product-grid">{store.products.map((product) => { const unlocked = profile.store.unlockedProducts.includes(product.id); return <article className={`product-card ${unlocked ? "unlocked" : ""}`} key={product.id}><span className="product-icon" aria-hidden="true">▦</span><h2>{product.name}</h2><p>Preço de venda: R$ {product.price}</p>{unlocked ? <strong>Disponível</strong> : <button className="secondary-button" onClick={() => onPurchase(product.id, product.unlockCost ?? 80)}>Comprar por R$ {product.unlockCost}</button>}</article>; })}</div><h2 className="section-title">Decorações</h2><div className="product-grid">{[{ id: "banner", name: "Faixa colorida", cost: 40 }, { id: "plant", name: "Vaso geométrico", cost: 60 }, { id: "lamp", name: "Luz de balcão", cost: 80 }].map((cosmetic) => { const owned = profile.store.cosmetics.includes(cosmetic.id); return <article className="product-card" key={cosmetic.id}><span className="product-icon" aria-hidden="true">✦</span><h2>{cosmetic.name}</h2><p>Uma mudança visual para a loja.</p>{owned ? <strong>Na coleção</strong> : <button className="secondary-button" onClick={() => onCosmeticPurchase(cosmetic.id, cosmetic.cost)}>Comprar por R$ {cosmetic.cost}</button>}</article>; })}</div></main>;
+  return <main className="form-screen"><button className="text-button" onClick={onBack}>← Voltar para a loja</button><header className="topbar"><div><p className="eyebrow">Catálogo</p><h1>Produtos novos</h1></div><div className="cash-badge" aria-label={`Saldo R$ ${profile.cash}`}>R$ {profile.cash}</div></header><p className="muted">Escolha o que vai aparecer na próxima expansão.</p><div className="product-grid">{store.products.map((product) => { const unlocked = profile.store.unlockedProducts.includes(product.id); return <article className={`product-card ${unlocked ? "unlocked" : ""}`} key={product.id}><span className="product-icon" aria-hidden="true">▦</span><h2>{product.name}</h2><p>Preço de venda: R$ {product.price}</p>{unlocked ? <strong>Disponível</strong> : <button className="secondary-button" onClick={() => onPurchase(product.id, product.unlockCost ?? 80)}>Comprar por R$ {product.unlockCost}</button>}</article>; })}</div><h2 className="section-title">Decorações</h2><div className="product-grid">{[{ id: "banner", name: "Faixa colorida", cost: 40 }, { id: "plant", name: "Vaso geométrico", cost: 60 }, { id: "lamp", name: "Luz de balcão", cost: 80 }].map((cosmetic) => { const owned = profile.store.cosmetics.includes(cosmetic.id); return <article className="product-card" key={cosmetic.id}><span className="product-icon" aria-hidden="true">✦</span><h2>{cosmetic.name}</h2><p>Uma mudança visual para a loja.</p>{owned ? <strong>Na coleção</strong> : <button className="secondary-button" onClick={() => onCosmeticPurchase(cosmetic.id, cosmetic.cost)}>Comprar por R$ {cosmetic.cost}</button>}</article>; })}</div></main>;
 }
 
-function SettingsScreen({ profile, onBack, onSave }: { profile: PlayerProfile; onBack: () => void; onSave: (settings: AccessibilitySettings) => void }) {
+function SettingsScreen({ profile, onBack, onSave }: { profile: PlayerProfile; onBack: () => void; onSave: (settings: AccessibilitySettings, audio: AudioSettings) => void }) {
   const [settings, setSettings] = useState(profile.accessibility);
-  return <main className="form-screen"><button className="text-button" onClick={onBack}>← Voltar para a loja</button><p className="eyebrow">Ajustes</p><h1>Configurações</h1><fieldset><legend>Acessibilidade</legend><label className="check-row"><input type="checkbox" checked={settings.reducedMotion} onChange={(event) => setSettings({ ...settings, reducedMotion: event.target.checked })} /> Reduzir movimento</label><label className="check-row"><input type="checkbox" checked={settings.largeText} onChange={(event) => setSettings({ ...settings, largeText: event.target.checked })} /> Texto grande</label><label className="check-row"><input type="checkbox" checked={settings.highContrast} onChange={(event) => setSettings({ ...settings, highContrast: event.target.checked })} /> Contraste reforçado</label></fieldset><button className="primary-button" onClick={() => onSave(settings)}>Salvar configurações</button></main>;
+  const [audio, setAudio] = useState(profile.audio);
+  return <main className="form-screen"><button className="text-button" onClick={onBack}>← Voltar para a loja</button><p className="eyebrow">Ajustes</p><h1>Configurações</h1><fieldset><legend>Acessibilidade</legend><label className="check-row"><input type="checkbox" checked={settings.reducedMotion} onChange={(event) => setSettings({ ...settings, reducedMotion: event.target.checked })} /> Reduzir movimento</label><label className="check-row"><input type="checkbox" checked={settings.largeText} onChange={(event) => setSettings({ ...settings, largeText: event.target.checked })} /> Texto grande</label><label className="check-row"><input type="checkbox" checked={settings.highContrast} onChange={(event) => setSettings({ ...settings, highContrast: event.target.checked })} /> Contraste reforçado</label></fieldset><fieldset><legend>Áudio e narração</legend><label className="check-row"><input type="checkbox" checked={audio.effects} onChange={(event) => setAudio({ ...audio, effects: event.target.checked })} /> Sons de feedback</label><label className="check-row"><input type="checkbox" checked={audio.narration} onChange={(event) => setAudio({ ...audio, narration: event.target.checked })} /> Narração</label></fieldset><button className="primary-button" onClick={() => onSave(settings, audio)}>Salvar configurações</button></main>;
 }
 
-function Avatar({ avatar, size }: { avatar: AvatarConfig; size: "small" | "large" }) {
-  return <div className={`avatar avatar-${size} skin-${avatar.skin} hair-${avatar.hair} outfit-${avatar.outfit}`} aria-label="Avatar do lojista"><span className="avatar-hair" aria-hidden="true" /><span className="avatar-face" aria-hidden="true" /><span className="avatar-body" aria-hidden="true" /><span className="avatar-accessory" aria-hidden="true">{avatar.accessory === "cap" ? "⌒" : avatar.accessory === "glasses" ? "◌" : avatar.accessory === "headphones" ? "◡" : ""}</span></div>;
+function Avatar({ avatar, size, motion = "idle", reducedMotion = false }: { avatar: AvatarConfig; size: "small" | "large"; motion?: AvatarMotion; reducedMotion?: boolean }) {
+  return <div className={`avatar avatar-${size} skin-${avatar.skin} hair-${avatar.hair} outfit-${avatar.outfit} ${getAvatarMotionClass(reducedMotion, motion)}`} aria-label="Avatar do lojista"><span className="avatar-hair" aria-hidden="true" /><span className="avatar-face" aria-hidden="true" /><span className="avatar-body" aria-hidden="true" /><span className="avatar-accessory" aria-hidden="true">{avatar.accessory === "cap" ? "⌒" : avatar.accessory === "glasses" ? "◌" : avatar.accessory === "headphones" ? "◡" : ""}</span></div>;
 }

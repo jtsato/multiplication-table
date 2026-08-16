@@ -1,7 +1,9 @@
 import { CUSTOMERS, type Product, type StoreDefinition } from "../../content/stores";
 import { calculateSale, type Sale } from "../economy/economy";
 import { createFact, type MultiplicationFact } from "../math/facts";
+import type { FactProgress } from "../math/mastery";
 import { seededRandom, seededShuffle } from "../math/rng";
+import { chooseNextFact } from "../math/scheduler";
 
 export type ServiceMode = "direct" | "product-select";
 
@@ -34,17 +36,25 @@ export type DaySession = {
   feedback?: SessionFeedback;
 };
 
-export function createDaySession(store: StoreDefinition, day: number, seed: number, unlockedProductIds?: string[]): DaySession {
+export function createDaySession(
+  store: StoreDefinition,
+  day: number,
+  seed: number,
+  unlockedProductIds?: string[],
+  progress?: FactProgress[],
+): DaySession {
   const availableProducts = store.products.filter(
     (product) => product.initiallyAvailable || unlockedProductIds?.includes(product.id),
   );
   const count = seededRandom(seed + day) > 0.45 ? 6 : 5;
   const customers = seededShuffle(CUSTOMERS, seed + day).slice(0, count);
   const visits = customers.map((customer, index) => {
-    const product = seededShuffle(availableProducts, seed + index * 19)[0];
-    const quantity = 1 + Math.floor(seededRandom(seed + index * 29 + day) * 10);
+    const scheduledFact = progress?.length ? chooseNextFact(progress, day, 10, seed + index) : undefined;
+    const contextualProduct = scheduledFact ? findProductForFact(availableProducts, scheduledFact, seed + index * 19) : undefined;
+    const product = contextualProduct?.product ?? seededShuffle(availableProducts, seed + index * 19)[0];
+    const quantity = contextualProduct?.quantity ?? (1 + Math.floor(seededRandom(seed + index * 29 + day) * 10));
     const mode: ServiceMode = seededRandom(seed + index * 31) > 0.5 ? "product-select" : "direct";
-    const fact = createFact(quantity, product.price);
+    const fact = contextualProduct?.fact ?? createFact(quantity, product.price);
     return { customer, product, quantity, mode, fact, sale: calculateSale(quantity, product.price) };
   });
 
@@ -59,6 +69,15 @@ export function createDaySession(store: StoreDefinition, day: number, seed: numb
     revenue: 0,
     completedVisits: 0,
   };
+}
+
+function findProductForFact(products: Product[], fact: MultiplicationFact, seed: number): { product: Product; quantity: number; fact: MultiplicationFact } | undefined {
+  const product = seededShuffle(products.filter((candidate) => candidate.price === fact.b), seed)[0]
+    ?? seededShuffle(products.filter((candidate) => candidate.price === fact.a), seed)[0];
+  if (!product) return undefined;
+
+  const quantity = product.price === fact.b ? fact.a : fact.b;
+  return { product, quantity, fact: createFact(quantity, product.price) };
 }
 
 export function getCurrentVisit(session: DaySession): CustomerVisit {
