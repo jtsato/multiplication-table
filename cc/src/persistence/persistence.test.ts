@@ -113,7 +113,7 @@ describe('normalizeState', () => {
     expect(state.player.avatar.hair).toBe('short');
     expect(state.player.avatar.base).toBe('boy');
     expect(state.settings.locale).toBe('en-US');
-    expect(state.settings.musicEnabled).toBe(true);
+    expect(state.settings.musicEnabled).toBe(false);
     expect(state.progress.currentTable).toBe(2);
     // Acertos nunca podem passar do total de tentativas.
     expect(state.statistics.totalCorrect).toBe(10);
@@ -253,6 +253,7 @@ describe('LocalStorageProgressRepository', () => {
         player: {
           name: '',
           avatar: { base: 'girl', skin: 'skin1', hair: 'long', outfit: 'pink', accessory: 'crown' },
+          mascotId: 'bloco',
           createdAt: '2026-01-01T00:00:00.000Z',
           onboardingCompleted: true,
           tutorialSeen: true,

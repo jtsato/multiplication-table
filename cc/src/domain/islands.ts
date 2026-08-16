@@ -224,8 +224,7 @@ export const ISLANDS: readonly IslandDefinition[] = TABLES.map((table) => {
     palette: PALETTES[biome],
     decor: DECOR_BY_BIOME[biome],
     mapPosition: MAP_POSITIONS[table] ?? { x: 500, y: 300 },
-    // A primeira ilha e o tutorial: menos alternativas, menos carga cognitiva.
-    optionCount: table === 2 ? 3 : 4,
+    optionCount: 4,
   };
 });
 

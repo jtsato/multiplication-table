@@ -6,6 +6,7 @@ import {
   SKIN_TONES,
 } from '../domain/avatar';
 import { ACHIEVEMENTS } from '../domain/achievements';
+import { MASCOT_IDS } from '../domain/mascots';
 import { CURRENT_SCHEMA_VERSION, createDefaultState } from '../domain/defaultState';
 import { FIRST_TABLE, TABLES } from '../domain/facts';
 import { parseFactKey } from '../domain/facts';
@@ -142,6 +143,7 @@ function normalizePlayer(raw: unknown, fallback: PlayerProfile, mark: Mark): Pla
     createdAt: coerceIsoDate(record.createdAt, fallback.createdAt, mark) ?? fallback.createdAt,
     onboardingCompleted: coerceBoolean(record.onboardingCompleted, false, mark),
     tutorialSeen: coerceBoolean(record.tutorialSeen, false, mark),
+    mascotId: coerceOneOf(record.mascotId, MASCOT_IDS, fallback.mascotId, mark),
     avatar: {
       base: coerceOneOf(avatarRecord.base, AVATAR_BASES, fallback.avatar.base, mark),
       skin: coerceOneOf(avatarRecord.skin, SKIN_TONES, fallback.avatar.skin, mark),

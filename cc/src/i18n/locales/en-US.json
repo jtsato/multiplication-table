@@ -69,6 +69,14 @@
       "skin2": "Tone 2",
       "skin3": "Tone 3",
       "skin4": "Tone 4"
+    },
+    "mascotLabel": "Companion",
+    "mascot": {
+      "bloco": "Block",
+      "brasa": "Ember",
+      "folha": "Leaf",
+      "flor": "Blossom",
+      "cristal": "Crystal"
     }
   },
   "map": {
@@ -268,13 +276,16 @@
     "resetMessage": "Your islands, achievements and character will be erased. This cannot be undone.",
     "resetConfirm": "Yes, erase everything",
     "resetCancel": "No, go back",
-    "storageWarning": "This browser is not saving progress. It will be lost when you close the tab."
+    "storageWarning": "This browser is not saving progress. It will be lost when you close the tab.",
+    "mute": "Mute sound",
+    "unmute": "Unmute sound"
   },
   "a11y": {
     "starFilled": "Star earned",
     "starEmpty": "Star not earned",
     "islandLocked": "Locked island",
     "answerOption": "Option {{value}}",
-    "buildProgress": "Build {{percent}} percent done"
+    "buildProgress": "Build {{percent}} percent done",
+    "heroWave": "Tap to wave"
   }
 }

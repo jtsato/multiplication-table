@@ -43,8 +43,11 @@ const SOUNDS: Record<SoundName, Note[]> = {
   ],
 };
 
-/** Melodia de fundo: escala pentatonica maior, sem meio-tom, sempre agradavel. */
-const MUSIC_NOTES = [523, 587, 659, 784, 880, 784, 659, 587];
+/**
+ * Melodia de fundo: frase mais longa em pentatonica maior, com pausas (0),
+ * para nao virar um loop curto e repetitivo de subida-e-descida.
+ */
+const MUSIC_NOTES = [523, 659, 784, 1047, 880, 784, 659, 587, 0, 659, 880, 784, 659, 523, 587, 0];
 const MUSIC_STEP_MS = 420;
 
 export interface AudioService {
@@ -59,7 +62,7 @@ export interface AudioService {
 export function createAudioService(): AudioService {
   let context: AudioContext | null = null;
   let soundEnabled = true;
-  let musicEnabled = true;
+  let musicEnabled = false;
   let musicTimer: ReturnType<typeof setInterval> | null = null;
   let musicStep = 0;
 
@@ -123,6 +126,10 @@ export function createAudioService(): AudioService {
     musicTimer = setInterval(() => {
       const frequency = MUSIC_NOTES[musicStep % MUSIC_NOTES.length] ?? 523;
       musicStep += 1;
+      // 0 e uma pausa: da respiro a frase em vez de tocar nota por cima dela.
+      if (frequency === 0) {
+        return;
+      }
       playNote(
         { frequency, delay: 0, duration: 0.34, type: 'sine', gain: 0.05 },
         // A melodia fica bem abaixo dos efeitos para nao competir com eles.

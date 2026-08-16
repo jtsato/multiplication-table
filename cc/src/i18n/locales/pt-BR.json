@@ -69,6 +69,14 @@
       "skin2": "Tom 2",
       "skin3": "Tom 3",
       "skin4": "Tom 4"
+    },
+    "mascotLabel": "Companheiro",
+    "mascot": {
+      "bloco": "Bloco",
+      "brasa": "Brasa",
+      "folha": "Folha",
+      "flor": "Flor",
+      "cristal": "Cristal"
     }
   },
   "map": {
@@ -268,13 +276,16 @@
     "resetMessage": "Suas ilhas, conquistas e personagem serão apagados. Isso não pode ser desfeito.",
     "resetConfirm": "Sim, apagar tudo",
     "resetCancel": "Não, voltar",
-    "storageWarning": "Este navegador não está salvando o progresso. Ele será perdido ao fechar a aba."
+    "storageWarning": "Este navegador não está salvando o progresso. Ele será perdido ao fechar a aba.",
+    "mute": "Desligar o som",
+    "unmute": "Ligar o som"
   },
   "a11y": {
     "starFilled": "Estrela conquistada",
     "starEmpty": "Estrela não conquistada",
     "islandLocked": "Ilha bloqueada",
     "answerOption": "Alternativa {{value}}",
-    "buildProgress": "Construção {{percent}} por cento pronta"
+    "buildProgress": "Construção {{percent}} por cento pronta",
+    "heroWave": "Toque para acenar"
   }
 }

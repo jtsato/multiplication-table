@@ -1,7 +1,14 @@
 import { createInitialAchievements } from './achievements';
 import { createInitialProgress } from './progression';
 import { createInitialStatistics } from './statistics';
-import type { AvatarConfig, GameSettings, GameState, Locale, PlayerProfile } from './types';
+import type {
+  AvatarConfig,
+  GameSettings,
+  GameState,
+  Locale,
+  MascotId,
+  PlayerProfile,
+} from './types';
 
 /**
  * Versao atual do schema salvo.
@@ -17,10 +24,12 @@ export const DEFAULT_AVATAR: AvatarConfig = {
   accessory: 'none',
 };
 
+export const DEFAULT_MASCOT_ID: MascotId = 'bloco';
+
 export function createDefaultSettings(locale: Locale): GameSettings {
   return {
     locale,
-    musicEnabled: true,
+    musicEnabled: false,
     soundEffectsEnabled: true,
     reducedMotion: false,
   };
@@ -30,6 +39,7 @@ export function createDefaultPlayer(now: Date = new Date()): PlayerProfile {
   return {
     name: '',
     avatar: { ...DEFAULT_AVATAR },
+    mascotId: DEFAULT_MASCOT_ID,
     createdAt: now.toISOString(),
     onboardingCompleted: false,
     tutorialSeen: false,

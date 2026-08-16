@@ -1,0 +1,435 @@
+<style>
+  :root {
+    --ink: #173451;
+    --muted: #70839a;
+    --line: #dce8ef;
+    --bg: #eef8fc;
+  }
+  .visual-board {
+    color: var(--ink);
+  }
+  .visual-board h2 {
+    margin-bottom: 0.35rem;
+  }
+  .visual-board .subtitle {
+    margin-bottom: 1.4rem;
+  }
+  .visual-options {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+  }
+  .visual-option {
+    background: white;
+    border: 2px solid var(--line);
+    border-radius: 18px;
+    padding: 0.8rem;
+    cursor: pointer;
+    transition: 160ms ease;
+  }
+  .visual-option:hover,
+  .visual-option.selected {
+    border-color: #2f9cf4;
+    box-shadow: 0 10px 24px rgba(43, 123, 173, 0.16);
+    transform: translateY(-2px);
+  }
+  .visual-option h3 {
+    font-size: 1rem;
+    margin: 0.7rem 0 0.25rem;
+  }
+  .visual-option p {
+    color: var(--muted);
+    font-size: 0.78rem;
+    line-height: 1.35;
+    margin: 0;
+  }
+  .mock-map {
+    background: var(--bg);
+    border-radius: 13px;
+    padding: 0.55rem;
+    display: grid;
+    gap: 0.45rem;
+  }
+  .mock-map--tiles {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .mock-island {
+    min-width: 0;
+    min-height: 93px;
+    border-radius: 11px;
+    background: rgba(255, 255, 255, 0.96);
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 3px 0 rgba(156, 181, 194, 0.18);
+  }
+  .mock-art {
+    height: 55px;
+    display: grid;
+    place-items: center;
+    position: relative;
+  }
+  .mock-art svg {
+    width: 44px;
+    height: 44px;
+    overflow: visible;
+  }
+  .mock-number {
+    position: absolute;
+    right: 4px;
+    bottom: 4px;
+    width: 20px;
+    height: 20px;
+    display: grid;
+    place-items: center;
+    background: #fff;
+    color: #607287;
+    border-radius: 6px;
+    font-weight: 800;
+    font-size: 0.7rem;
+  }
+  .mock-name {
+    font-size: 0.59rem;
+    font-weight: 800;
+    text-align: center;
+    color: #28445f;
+    padding: 0 0.25rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .mock-lock {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    background: rgba(50, 65, 82, 0.39);
+    color: white;
+    font-size: 1.2rem;
+  }
+  .mock-map--mini {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .mock-map--mini .mock-island {
+    min-height: 114px;
+    display: grid;
+    grid-template-columns: 43% 57%;
+    align-items: stretch;
+  }
+  .mock-map--mini .mock-art {
+    height: auto;
+    min-height: 114px;
+  }
+  .mock-map--mini .mock-name {
+    align-self: center;
+    text-align: left;
+    padding: 0.4rem;
+    white-space: normal;
+    font-size: 0.63rem;
+  }
+  .mock-map--mini .mock-number {
+    bottom: 5px;
+    right: 5px;
+  }
+  .mock-map--badge {
+    grid-template-columns: repeat(3, 1fr);
+    padding: 0.7rem;
+    gap: 0.7rem;
+  }
+  .mock-map--badge .mock-island {
+    min-height: 100px;
+    display: grid;
+    place-items: center;
+  }
+  .mock-map--badge .mock-art {
+    height: 80px;
+    width: 80px;
+    border-radius: 50%;
+    margin-top: 0.35rem;
+    box-shadow: inset 0 -7px 0 rgba(0, 0, 0, 0.07);
+  }
+  .mock-map--badge .mock-name {
+    padding: 0 0.2rem 0.45rem;
+  }
+  .fields {
+    background: #a7e974;
+  }
+  .forest {
+    background: #b9d0bf;
+  }
+  .mountains {
+    background: #c5d8df;
+  }
+  .beach {
+    background: #e9e3d1;
+  }
+  .magic {
+    background: #cdc7dc;
+  }
+  .caves {
+    background: #b4b7bf;
+  }
+  .ice {
+    background: #dcecf2;
+  }
+  .volcano {
+    background: #d5c2b8;
+  }
+  .city {
+    background: #e8e2c9;
+  }
+  @media (max-width: 900px) {
+    .visual-options {
+      grid-template-columns: 1fr;
+    }
+    .visual-option {
+      max-width: 520px;
+    }
+  }
+</style>
+
+<div class="visual-board">
+  <h2>Qual linguagem representa melhor cada ilha?</h2>
+  <p class="subtitle">
+    As três opções variam o desenho dos cards, mas mantêm o número e o estado de desbloqueio fáceis
+    de localizar.
+  </p>
+
+  <div class="visual-options">
+    <div class="visual-option" data-choice="biome-symbol" onclick="toggleSelect(this)">
+      <div class="label">A · MAIS PRÓXIMA DA REFERÊNCIA</div>
+      <div class="mock-map mock-map--tiles">
+        <div class="mock-island">
+          <div class="mock-art fields">
+            <svg viewBox="0 0 64 64">
+              <path d="M32 50V34" stroke="#579642" stroke-width="5" />
+              <path d="M25 50h14" stroke="#579642" stroke-width="4" />
+              <circle cx="32" cy="27" r="10" fill="#e7b1f2" />
+              <circle cx="22" cy="32" r="8" fill="#d794ea" />
+              <circle cx="42" cy="32" r="8" fill="#d794ea" />
+              <circle cx="32" cy="38" r="8" fill="#cc8de0" />
+              <circle cx="32" cy="29" r="5" fill="#ff9e32" /></svg
+            ><span class="mock-number">2</span>
+          </div>
+          <div class="mock-name">Campos</div>
+        </div>
+        <div class="mock-island">
+          <div class="mock-art forest">
+            <svg viewBox="0 0 64 64">
+              <path d="M32 10 18 35h8L15 49h34L38 35h8z" fill="#789c83" />
+              <path d="M29 49h6v6h-6z" fill="#7d715d" /></svg
+            ><span class="mock-number">3</span>
+          </div>
+          <div class="mock-name">Floresta</div>
+          <div class="mock-lock">🔒</div>
+        </div>
+        <div class="mock-island">
+          <div class="mock-art mountains">
+            <svg viewBox="0 0 64 64">
+              <path d="m32 10 23 25-23 24L9 35z" fill="#8da0b9" />
+              <path d="m32 10 12 25-12 24-12-24z" fill="#d9e6ed" />
+              <path d="m9 35h46L43 35 32 45 21 35z" fill="#afc5d0" /></svg
+            ><span class="mock-number">4</span>
+          </div>
+          <div class="mock-name">Cristal</div>
+          <div class="mock-lock">🔒</div>
+        </div>
+        <div class="mock-island">
+          <div class="mock-art beach">
+            <svg viewBox="0 0 64 64">
+              <path d="M12 46h40" stroke="#8e7b67" stroke-width="5" />
+              <path d="M32 16v30" stroke="#8e7b67" stroke-width="3" />
+              <path d="M32 18 17 39h15z" fill="#f7f3e5" />
+              <path d="M32 22 45 39H32z" fill="#f2dfae" /></svg
+            ><span class="mock-number">5</span>
+          </div>
+          <div class="mock-name">Praia</div>
+          <div class="mock-lock">🔒</div>
+        </div>
+        <div class="mock-island">
+          <div class="mock-art magic">
+            <svg viewBox="0 0 64 64">
+              <path d="M32 10 38 27 54 32 38 37 32 54 26 37 10 32l16-5z" fill="#f5e39a" />
+              <path d="m15 16 2 6 6 2-6 2-2 6-2-6-6-2 6-2z" fill="#fff0b5" /></svg
+            ><span class="mock-number">6</span>
+          </div>
+          <div class="mock-name">Bosque Mágico</div>
+          <div class="mock-lock">🔒</div>
+        </div>
+        <div class="mock-island">
+          <div class="mock-art ice">
+            <svg viewBox="0 0 64 64" stroke="#9db7c7" stroke-width="3" stroke-linecap="round">
+              <path
+                d="M32 10v44M13 21l38 22M13 43l38-22M20 14l12 18 12-18M20 50l12-18 12 18"
+              /></svg
+            ><span class="mock-number">8</span>
+          </div>
+          <div class="mock-name">Vale Gelado</div>
+          <div class="mock-lock">🔒</div>
+        </div>
+      </div>
+      <h3>Símbolo único por bioma</h3>
+      <p>
+        Mais legível e próximo da Imagem 2. Cada ilha ganha um emblema memorável e o card fica mais
+        leve.
+      </p>
+    </div>
+
+    <div class="visual-option" data-choice="mini-landmark" onclick="toggleSelect(this)">
+      <div class="label">B · BLOCO + PERSONALIDADE</div>
+      <div class="mock-map mock-map--mini">
+        <div class="mock-island">
+          <div class="mock-art fields">
+            <svg viewBox="0 0 64 64">
+              <path d="M13 48h38v7H13zM19 40h26v8H19zM25 32h14v8H25z" fill="#76bd52" />
+              <circle cx="32" cy="24" r="8" fill="#e5b0ed" />
+              <circle cx="23" cy="29" r="6" fill="#cf8dde" />
+              <circle cx="41" cy="29" r="6" fill="#cf8dde" />
+              <circle cx="32" cy="29" r="4" fill="#ff9e32" /></svg
+            ><span class="mock-number">2</span>
+          </div>
+          <div class="mock-name">Campos Floridos</div>
+        </div>
+        <div class="mock-island">
+          <div class="mock-art forest">
+            <svg viewBox="0 0 64 64">
+              <path d="M32 9 15 36h10L13 51h38L39 36h10z" fill="#578a70" />
+              <path d="M29 51h6v5h-6z" fill="#786a58" /></svg
+            ><span class="mock-number">3</span>
+          </div>
+          <div class="mock-name">Floresta dos Rios</div>
+          <div class="mock-lock">🔒</div>
+        </div>
+        <div class="mock-island">
+          <div class="mock-art mountains">
+            <svg viewBox="0 0 64 64">
+              <path d="m32 8 24 27-24 21L8 35z" fill="#65758f" />
+              <path d="m32 8 13 27-13 21-13-21z" fill="#cfdde7" />
+              <path d="M8 35h48L43 35 32 44 21 35z" fill="#9cb7c5" /></svg
+            ><span class="mock-number">4</span>
+          </div>
+          <div class="mock-name">Montanhas de Cristal</div>
+          <div class="mock-lock">🔒</div>
+        </div>
+        <div class="mock-island">
+          <div class="mock-art beach">
+            <svg viewBox="0 0 64 64">
+              <path d="M9 47h46v7H9z" fill="#b9a27d" />
+              <path d="M32 14v33" stroke="#8d7664" stroke-width="3" />
+              <path d="M32 17 16 40h16z" fill="#fff9e7" />
+              <path d="M32 21 45 40H32z" fill="#e9d8aa" /></svg
+            ><span class="mock-number">5</span>
+          </div>
+          <div class="mock-name">Praia do Porto</div>
+          <div class="mock-lock">🔒</div>
+        </div>
+        <div class="mock-island">
+          <div class="mock-art magic">
+            <svg viewBox="0 0 64 64">
+              <path d="M32 8 39 27 56 32 39 37 32 56 25 37 8 32l17-5z" fill="#f3d889" />
+              <path d="m15 13 3 8 8 3-8 3-3 8-3-8-8-3 8-3z" fill="#fff3bd" /></svg
+            ><span class="mock-number">6</span>
+          </div>
+          <div class="mock-name">Bosque Mágico</div>
+          <div class="mock-lock">🔒</div>
+        </div>
+        <div class="mock-island">
+          <div class="mock-art volcano">
+            <svg viewBox="0 0 64 64">
+              <path d="m11 52 15-30h12l15 30z" fill="#716074" />
+              <path d="m25 23 7-10 7 10z" fill="#e6e5dc" />
+              <path d="M27 34h10l-5 12z" fill="#ef9a88" /></svg
+            ><span class="mock-number">9</span>
+          </div>
+          <div class="mock-name">Vulcão dos Blocos</div>
+          <div class="mock-lock">🔒</div>
+        </div>
+      </div>
+      <h3>Mini landmark em pixel art</h3>
+      <p>
+        Preserva a linguagem de blocos da Imagem 1, mas troca a silhueta de cada ilha para evitar
+        repetição.
+      </p>
+    </div>
+
+    <div class="visual-option" data-choice="badge-emblem" onclick="toggleSelect(this)">
+      <div class="label">C · EMBLEMAS COLECIONÁVEIS</div>
+      <div class="mock-map mock-map--badge">
+        <div class="mock-island">
+          <div class="mock-art fields">
+            <svg viewBox="0 0 64 64">
+              <path d="M32 50V34" stroke="#579642" stroke-width="5" />
+              <circle cx="32" cy="26" r="10" fill="#e7b1f2" />
+              <circle cx="23" cy="32" r="8" fill="#d794ea" />
+              <circle cx="41" cy="32" r="8" fill="#d794ea" />
+              <circle cx="32" cy="37" r="7" fill="#cc8de0" />
+              <circle cx="32" cy="29" r="5" fill="#ff9e32" />
+            </svg>
+          </div>
+          <span class="mock-number">2</span>
+          <div class="mock-name">Campos</div>
+        </div>
+        <div class="mock-island">
+          <div class="mock-art forest">
+            <svg viewBox="0 0 64 64">
+              <path d="M32 8 15 36h10L13 51h38L39 36h10z" fill="#6d987b" />
+              <path d="M29 51h6v5h-6z" fill="#786a58" />
+            </svg>
+          </div>
+          <span class="mock-number">3</span>
+          <div class="mock-name">Floresta</div>
+          <div class="mock-lock">🔒</div>
+        </div>
+        <div class="mock-island">
+          <div class="mock-art mountains">
+            <svg viewBox="0 0 64 64">
+              <path d="m32 9 22 26-22 22L10 35z" fill="#8494ac" />
+              <path d="m32 9 12 26-12 22-12-22z" fill="#d9e6ed" />
+            </svg>
+          </div>
+          <span class="mock-number">4</span>
+          <div class="mock-name">Cristal</div>
+          <div class="mock-lock">🔒</div>
+        </div>
+        <div class="mock-island">
+          <div class="mock-art beach">
+            <svg viewBox="0 0 64 64">
+              <path d="M32 13v37" stroke="#927963" stroke-width="3" />
+              <path d="M32 17 15 41h17z" fill="#f6f0db" />
+              <path d="M32 22 46 41H32z" fill="#e9d8aa" />
+            </svg>
+          </div>
+          <span class="mock-number">5</span>
+          <div class="mock-name">Praia</div>
+          <div class="mock-lock">🔒</div>
+        </div>
+        <div class="mock-island">
+          <div class="mock-art magic">
+            <svg viewBox="0 0 64 64">
+              <path d="M32 9 39 27 55 32 39 37 32 55 25 37 9 32l16-5z" fill="#f4dc8e" />
+            </svg>
+          </div>
+          <span class="mock-number">6</span>
+          <div class="mock-name">Mágica</div>
+          <div class="mock-lock">🔒</div>
+        </div>
+        <div class="mock-island">
+          <div class="mock-art city">
+            <svg viewBox="0 0 64 64">
+              <path d="M15 52V30h12v22M27 52V22h13v30M40 52V32h10v20" fill="#ad8ea4" />
+              <path d="M33 22v-7l5 7z" fill="#876b83" />
+              <path d="M31 41h5v11h-5z" fill="#7e6382" />
+            </svg>
+          </div>
+          <span class="mock-number">10</span>
+          <div class="mock-name">Cidade Final</div>
+          <div class="mock-lock">🔒</div>
+        </div>
+      </div>
+      <h3>Emblema colecionável</h3>
+      <p>
+        Transforma cada ilha em uma peça de coleção, com mais destaque e leitura de progresso por
+        conjunto.
+      </p>
+    </div>
+  </div>
+</div>

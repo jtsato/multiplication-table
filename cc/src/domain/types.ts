@@ -40,6 +40,11 @@ export type HairStyleId = 'short' | 'long' | 'curly' | 'ponytail';
 export type OutfitColorId = 'red' | 'blue' | 'green' | 'purple' | 'orange' | 'pink';
 export type AccessoryId = 'none' | 'cap' | 'glasses' | 'crown';
 
+/** Companheiro escolhido para acompanhar o personagem nas missoes. */
+export type MascotId = 'bloco' | 'brasa' | 'folha' | 'flor' | 'cristal';
+/** Formato do enfeite no topo do mascote; um por companheiro. */
+export type MascotKind = 'antenna' | 'flame' | 'leaf' | 'petals' | 'crystal';
+
 /**
  * Aparencia do personagem. Puramente cosmetico: nada aqui influencia
  * dificuldade, conteudo pedagogico ou progressao.
@@ -56,6 +61,8 @@ export interface PlayerProfile {
   /** Nome opcional; o MVP nao pede nome, mas o campo ja existe. */
   name: string;
   avatar: AvatarConfig;
+  /** Companheiro que acompanha o personagem durante as missoes. */
+  mascotId: MascotId;
   createdAt: string;
   /** Falso ate o jogador concluir a criacao de personagem. */
   onboardingCompleted: boolean;

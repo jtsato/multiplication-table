@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
 import { audioService } from '../audio/audioService';
 import { getIsland } from '../domain/islands';
 import type { MissionDefinition } from '../domain/missions';
@@ -38,6 +38,13 @@ interface LevelScreenProps {
 const CORRECT_PAUSE_MS = 950;
 /** Tempo com a dica na tela antes de liberar nova tentativa. */
 const WRONG_PAUSE_MS = 1500;
+
+/** Papel picado do acerto: posicoes fixas, so a cor muda por ilha. */
+const CONFETTI_PIECES = Array.from({ length: 12 }, (_, index) => ({
+  left: (index * 8.5 + 4) % 100,
+  delay: (index % 5) * 0.05,
+  drift: index % 2 === 0 ? -(20 + (index % 3) * 10) : 20 + (index % 3) * 10,
+}));
 
 /**
  * A fase.
@@ -185,10 +192,35 @@ export function LevelScreen({
           decor={island.decor}
           progress={progress}
           avatar={state.player.avatar}
+          mascotId={state.player.mascotId}
           celebrating={level.phase === 'correct'}
           reducedMotion={reducedMotion}
           ariaLabel={t('a11y.buildProgress', { percent: Math.round(progress * 100) })}
         />
+
+        {level.phase === 'correct' && !reducedMotion && (
+          <div className="level__confetti" aria-hidden="true">
+            {CONFETTI_PIECES.map((piece, index) => (
+              <span
+                key={index}
+                className="confetti confetti--burst"
+                style={
+                  {
+                    left: `${piece.left}%`,
+                    background: [
+                      island.palette.accent,
+                      island.palette.accentSoft,
+                      '#ffd23f',
+                      '#ffffff',
+                    ][index % 4],
+                    animationDelay: `${piece.delay}s`,
+                    '--confetti-drift': `${piece.drift}px`,
+                  } as CSSProperties
+                }
+              />
+            ))}
+          </div>
+        )}
       </div>
 
       {level.phase === 'briefing' && (

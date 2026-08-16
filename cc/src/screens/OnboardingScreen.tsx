@@ -9,20 +9,23 @@ import {
   SKIN_COLORS,
   SKIN_TONES,
 } from '../domain/avatar';
-import { DEFAULT_AVATAR } from '../domain/defaultState';
-import { SUPPORTED_LOCALES, type AvatarConfig, type Locale } from '../domain/types';
+import { DEFAULT_AVATAR, DEFAULT_MASCOT_ID } from '../domain/defaultState';
+import { getMascotDefinition, MASCOT_IDS } from '../domain/mascots';
+import { SUPPORTED_LOCALES, type AvatarConfig, type Locale, type MascotId } from '../domain/types';
 import { localeMeta } from '../i18n/translate';
 import { useTranslation } from '../i18n/I18nProvider';
 import { Avatar } from '../art/Avatar';
+import { Mascot } from '../art/Mascot';
 import { Button } from '../ui/Button';
 import { OptionPicker } from '../ui/OptionPicker';
 
 interface OnboardingScreenProps {
   locale: Locale;
   onLocaleChange: (locale: Locale) => void;
-  onFinish: (avatar: AvatarConfig) => void;
+  onFinish: (avatar: AvatarConfig, mascotId: MascotId) => void;
   /** Modo edicao: entra direto na customizacao, sem escolher idioma. */
   initialAvatar?: AvatarConfig;
+  initialMascotId?: MascotId;
   editing?: boolean;
   onCancel?: () => void;
 }
@@ -38,12 +41,14 @@ export function OnboardingScreen({
   onLocaleChange,
   onFinish,
   initialAvatar,
+  initialMascotId,
   editing = false,
   onCancel,
 }: OnboardingScreenProps) {
   const { t } = useTranslation();
   const [step, setStep] = useState<Step>(editing ? 'customize' : 'language');
   const [avatar, setAvatar] = useState<AvatarConfig>(initialAvatar ?? DEFAULT_AVATAR);
+  const [mascotId, setMascotId] = useState<MascotId>(initialMascotId ?? DEFAULT_MASCOT_ID);
 
   const patch = (changes: Partial<AvatarConfig>) =>
     setAvatar((current) => ({ ...current, ...changes }));
@@ -159,6 +164,18 @@ export function OnboardingScreen({
                 onChange={(accessory) => patch({ accessory })}
                 labelFor={(option) => t(`onboarding.accessory.${option}`)}
               />
+
+              <OptionPicker
+                legend={t('onboarding.mascotLabel')}
+                options={MASCOT_IDS}
+                value={mascotId}
+                onChange={setMascotId}
+                labelFor={(option) => t(`onboarding.mascot.${option}`)}
+                renderSwatch={(option) => {
+                  const definition = getMascotDefinition(option);
+                  return <Mascot palette={definition.colors} kind={definition.kind} size={40} />;
+                }}
+              />
             </div>
 
             <div className="onboarding__actions">
@@ -166,7 +183,12 @@ export function OnboardingScreen({
                 variant="secondary"
                 size="lg"
                 icon="🎲"
-                onClick={() => setAvatar(randomAvatar((max) => Math.floor(Math.random() * max)))}
+                onClick={() => {
+                  setAvatar(randomAvatar((max) => Math.floor(Math.random() * max)));
+                  setMascotId(
+                    MASCOT_IDS[Math.floor(Math.random() * MASCOT_IDS.length)] ?? DEFAULT_MASCOT_ID,
+                  );
+                }}
               >
                 {t('onboarding.surprise')}
               </Button>
@@ -177,7 +199,7 @@ export function OnboardingScreen({
                 </Button>
               )}
 
-              <Button size="lg" onClick={() => onFinish(avatar)}>
+              <Button size="lg" onClick={() => onFinish(avatar, mascotId)}>
                 {editing ? t('common.confirm') : t('onboarding.start')}
               </Button>
             </div>

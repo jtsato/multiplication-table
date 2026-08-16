@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { audioService } from './audio/audioService';
 import { getMission, missionsForTable, type MissionDefinition } from './domain/missions';
 import { nextMissionForTable } from './domain/progression';
-import type { AvatarConfig } from './domain/types';
+import type { AvatarConfig, MascotId } from './domain/types';
 import { toMissionResult, type LevelState } from './game/levelSession';
 import { I18nProvider } from './i18n/I18nProvider';
 import { GameProvider, useGame, type MissionCompletion } from './state/GameProvider';
@@ -16,6 +16,7 @@ import { OnboardingScreen } from './screens/OnboardingScreen';
 import { SettingsScreen } from './screens/SettingsScreen';
 import { SplashScreen } from './screens/SplashScreen';
 import { WorldMapScreen } from './screens/WorldMapScreen';
+import { SoundToggle } from './ui/SoundToggle';
 import './styles/global.css';
 
 type Screen =
@@ -125,134 +126,152 @@ function Game() {
   }, [finished, state.progress]);
 
   const handleOnboardingFinish = useCallback(
-    (avatar: AvatarConfig) => {
-      game.completeOnboarding(avatar);
+    (avatar: AvatarConfig, mascotId: MascotId) => {
+      game.completeOnboarding(avatar, mascotId);
       setScreen('map');
     },
     [game],
   );
 
-  if (screen === 'splash') {
-    return <SplashScreen ready={ready} onDone={leaveSplash} />;
-  }
+  const toggleSound = useCallback(() => {
+    const next = !state.settings.soundEffectsEnabled;
+    game.setSoundEffectsEnabled(next);
+    game.setMusicEnabled(next);
+  }, [game, state.settings.soundEffectsEnabled]);
 
-  if (screen === 'onboarding') {
-    return (
-      <OnboardingScreen
-        locale={state.settings.locale}
-        onLocaleChange={game.setLocale}
-        onFinish={handleOnboardingFinish}
+  const content = (() => {
+    if (screen === 'splash') {
+      return <SplashScreen ready={ready} onDone={leaveSplash} />;
+    }
+
+    if (screen === 'onboarding') {
+      return (
+        <OnboardingScreen
+          locale={state.settings.locale}
+          onLocaleChange={game.setLocale}
+          onFinish={handleOnboardingFinish}
+        />
+      );
+    }
+
+    if (screen === 'editCharacter') {
+      return (
+        <OnboardingScreen
+          editing
+          locale={state.settings.locale}
+          initialAvatar={state.player.avatar}
+          initialMascotId={state.player.mascotId}
+          onLocaleChange={game.setLocale}
+          onCancel={() => setScreen('home')}
+          onFinish={(avatar, mascotId) => {
+            game.updateAvatar(avatar, mascotId);
+            setScreen('home');
+          }}
+        />
+      );
+    }
+
+    const home = (
+      <HomeScreen
+        state={state}
+        onPlay={() => setScreen('map')}
+        onAchievements={() => setScreen('achievements')}
+        onSettings={() => setScreen('settings')}
+        onEditCharacter={() => setScreen('editCharacter')}
       />
     );
-  }
 
-  if (screen === 'editCharacter') {
-    return (
-      <OnboardingScreen
-        editing
-        locale={state.settings.locale}
-        initialAvatar={state.player.avatar}
-        onLocaleChange={game.setLocale}
-        onCancel={() => setScreen('home')}
-        onFinish={(avatar) => {
-          game.updateAvatar(avatar);
-          setScreen('home');
-        }}
-      />
+    const map = (
+      <WorldMapScreen state={state} onBack={() => setScreen('home')} onEnterIsland={startIsland} />
     );
-  }
 
-  const home = (
-    <HomeScreen
-      state={state}
-      onPlay={() => setScreen('map')}
-      onAchievements={() => setScreen('achievements')}
-      onSettings={() => setScreen('settings')}
-      onEditCharacter={() => setScreen('editCharacter')}
-    />
-  );
+    if (screen === 'home') {
+      return home;
+    }
 
-  const map = (
-    <WorldMapScreen state={state} onBack={() => setScreen('home')} onEnterIsland={startIsland} />
-  );
-
-  if (screen === 'home') {
-    return home;
-  }
-
-  if (screen === 'map') {
-    return map;
-  }
-
-  if (screen === 'level') {
-    const mission = activeMissionId ? getMission(activeMissionId) : undefined;
-    if (!mission) {
+    if (screen === 'map') {
       return map;
     }
-    return (
-      <LevelScreen
-        // Remontar a fase ao trocar de missao zera a sessao anterior.
-        key={mission.id}
-        state={state}
-        mission={mission}
-        onAnswer={game.recordAnswer}
-        onFinish={handleFinishMission}
-        onExit={() => setScreen('map')}
-        onTutorialSeen={game.markTutorialSeen}
-      />
-    );
-  }
 
-  if (screen === 'result' && finished) {
-    return (
-      <LevelResultScreen
-        state={state}
-        mission={finished.mission}
-        level={finished.level}
-        completion={finished.completion}
-        onNextMission={handleNextMission}
-        onBackToMap={() => setScreen('map')}
-      />
-    );
-  }
+    if (screen === 'level') {
+      const mission = activeMissionId ? getMission(activeMissionId) : undefined;
+      if (!mission) {
+        return map;
+      }
+      return (
+        <LevelScreen
+          // Remontar a fase ao trocar de missao zera a sessao anterior.
+          key={mission.id}
+          state={state}
+          mission={mission}
+          onAnswer={game.recordAnswer}
+          onFinish={handleFinishMission}
+          onExit={() => setScreen('map')}
+          onTutorialSeen={game.markTutorialSeen}
+        />
+      );
+    }
 
-  if (screen === 'islandComplete' && finished) {
-    return (
-      <IslandCompleteScreen
-        state={state}
-        table={finished.mission.table}
-        unlockedTable={finished.completion.unlockedTable}
-        onBackToMap={() => setScreen('map')}
-      />
-    );
-  }
+    if (screen === 'result' && finished) {
+      return (
+        <LevelResultScreen
+          state={state}
+          mission={finished.mission}
+          level={finished.level}
+          completion={finished.completion}
+          onNextMission={handleNextMission}
+          onBackToMap={() => setScreen('map')}
+        />
+      );
+    }
 
-  if (screen === 'achievements') {
-    return <AchievementsScreen state={state} onBack={() => setScreen('home')} />;
-  }
+    if (screen === 'islandComplete' && finished) {
+      return (
+        <IslandCompleteScreen
+          state={state}
+          table={finished.mission.table}
+          unlockedTable={finished.completion.unlockedTable}
+          onBackToMap={() => setScreen('map')}
+        />
+      );
+    }
 
-  if (screen === 'settings') {
-    return (
-      <SettingsScreen
-        state={state}
-        storageAvailable={game.storageAvailable}
-        onBack={() => setScreen('home')}
-        onLocaleChange={game.setLocale}
-        onMusicChange={game.setMusicEnabled}
-        onSoundChange={game.setSoundEffectsEnabled}
-        onMotionChange={game.setReducedMotion}
-        onReset={() => {
-          game.resetProgress();
-          setFinished(null);
-          setActiveMissionId(null);
-          setScreen('onboarding');
-        }}
-      />
-    );
-  }
+    if (screen === 'achievements') {
+      return <AchievementsScreen state={state} onBack={() => setScreen('home')} />;
+    }
 
-  // Estado inesperado: volta para um lugar seguro em vez de tela branca.
-  return home;
+    if (screen === 'settings') {
+      return (
+        <SettingsScreen
+          state={state}
+          storageAvailable={game.storageAvailable}
+          onBack={() => setScreen('home')}
+          onLocaleChange={game.setLocale}
+          onMusicChange={game.setMusicEnabled}
+          onSoundChange={game.setSoundEffectsEnabled}
+          onMotionChange={game.setReducedMotion}
+          onReset={() => {
+            game.resetProgress();
+            setFinished(null);
+            setActiveMissionId(null);
+            setScreen('onboarding');
+          }}
+        />
+      );
+    }
+
+    // Estado inesperado: volta para um lugar seguro em vez de tela branca.
+    return home;
+  })();
+
+  return (
+    <>
+      {content}
+      {screen !== 'splash' && (
+        <SoundToggle muted={!state.settings.soundEffectsEnabled} onToggle={toggleSound} />
+      )}
+    </>
+  );
 }
 
 /** Ponte entre o estado do jogo e o idioma das telas. */

@@ -12,7 +12,7 @@ import { evaluateAchievements } from '../domain/achievements';
 import { createDefaultState } from '../domain/defaultState';
 import { applyMissionResult, type MissionResult } from '../domain/progression';
 import { recordAnswer as recordAnswerStat, startSession } from '../domain/statistics';
-import type { AchievementId, AvatarConfig, GameState, Locale } from '../domain/types';
+import type { AchievementId, AvatarConfig, GameState, Locale, MascotId } from '../domain/types';
 import { detectLocale } from '../i18n/translate';
 import { LocalStorageProgressRepository } from '../persistence/localStorageRepository';
 import type { LoadSource, ProgressRepository } from '../persistence/ProgressRepository';
@@ -47,8 +47,8 @@ interface GameContextValue {
   setMusicEnabled: (enabled: boolean) => void;
   setSoundEffectsEnabled: (enabled: boolean) => void;
   setReducedMotion: (enabled: boolean) => void;
-  completeOnboarding: (avatar: AvatarConfig) => void;
-  updateAvatar: (avatar: AvatarConfig) => void;
+  completeOnboarding: (avatar: AvatarConfig, mascotId: MascotId) => void;
+  updateAvatar: (avatar: AvatarConfig, mascotId: MascotId) => void;
   markTutorialSeen: () => void;
   selectTable: (table: number) => void;
   recordAnswer: (factKey: string, wasCorrect: boolean) => void;
@@ -153,18 +153,18 @@ export function GameProvider({ children, repository }: GameProviderProps) {
   );
 
   const completeOnboarding = useCallback(
-    (avatar: AvatarConfig) => {
+    (avatar: AvatarConfig, mascotId: MascotId) => {
       update((current) => ({
         ...current,
-        player: { ...current.player, avatar, onboardingCompleted: true },
+        player: { ...current.player, avatar, mascotId, onboardingCompleted: true },
       }));
     },
     [update],
   );
 
   const updateAvatar = useCallback(
-    (avatar: AvatarConfig) => {
-      update((current) => ({ ...current, player: { ...current.player, avatar } }));
+    (avatar: AvatarConfig, mascotId: MascotId) => {
+      update((current) => ({ ...current, player: { ...current.player, avatar, mascotId } }));
     },
     [update],
   );
