@@ -6,7 +6,7 @@
 
 **Architecture:** O workflow será executado na raiz, validará cada projeto com seus scripts existentes, copiará os quatro diretórios `dist/` para um artefato `site/<projeto>/` e copiará a página inicial versionada em `pages/index.html`. O deploy usará as actions oficiais do GitHub Pages fixadas em SHAs completos.
 
-**Tech Stack:** GitHub Actions, GitHub Pages, Node.js 20, npm, Vite, Vitest e Node.js test runner.
+**Tech Stack:** GitHub Actions, GitHub Pages, Node.js 24, npm, Vite, Vitest e Node.js test runner.
 
 ## Global Constraints
 
