@@ -23,7 +23,8 @@ comportamento responsivo existente em celulares deve permanecer compatível.
 
 - A tela usa a altura real disponível do viewport, com fallback para navegadores
   que não suportam `dvh`.
-- O cenário mantém a proporção do `viewBox` e é centralizado.
+- O cenário mantém a proporção `5:3` do `viewBox` (`360 × 216`) e é
+  centralizado.
 - A largura do cenário é limitada pela largura disponível e pelo espaço vertical
   da janela, evitando que uma janela desktop larga e baixa produza um cenário
   excessivamente alto ou recorte o painel abaixo.
@@ -43,7 +44,7 @@ layout na tela `.level`:
 2. permitir que a área de conteúdo tenha `min-height: 0`, evitando que o
    tamanho intrínseco do SVG impeça o flex layout de se ajustar;
 3. transformar `.level__stage` em uma área flexível e centralizada;
-4. dimensionar `.scene` com sua proporção natural de 2:1, limitando sua largura
+4. dimensionar `.scene` com sua proporção natural de 5:3, limitando sua largura
    pela altura disponível do viewport em telas desktop;
 5. remover a dependência de uma combinação de `width: 100%` com `max-height` que
    pode deixar o SVG com dimensões incompatíveis e recortar seu conteúdo;
@@ -54,8 +55,8 @@ layout na tela `.level`:
 
 O `SceneView` não precisa receber estado novo nem medir a janela. O atributo
 `preserveAspectRatio` será mantido compatível com a composição atual; a caixa
-CSS do SVG será dimensionada na mesma proporção do `viewBox` para que o cenário
-inteiro permaneça visível.
+CSS do SVG será dimensionada na mesma proporção 5:3 do `viewBox` para que o
+cenário inteiro permaneça visível.
 
 ## Validação
 
