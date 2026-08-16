@@ -21,12 +21,12 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
-          node-version: 20
+          node-version: 24
           cache: npm
           cache-dependency-path: |
             cc/package-lock.json
@@ -65,7 +65,7 @@ jobs:
           npm run build
 
       - name: Configure GitHub Pages
-        uses: actions/configure-pages@v5
+        uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5
 
       - name: Assemble Pages artifact
         shell: bash
@@ -77,45 +77,11 @@ jobs:
           cp -R co/dist/. site/co/
           cp -R cw/dist/. site/cw/
           cp -R gt/dist/. site/gt/
-
-          cat > site/index.html <<'EOF'
-          <!doctype html>
-          <html lang="pt-BR">
-            <head>
-              <meta charset="UTF-8" />
-              <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-              <meta name="description" content="Projetos de jogos educativos de tabuada." />
-              <title>Projetos de Tabuada</title>
-              <style>
-                :root { color-scheme: light; font-family: system-ui, sans-serif; }
-                body { margin: 0; min-height: 100vh; background: #f4f7fb; color: #172033; }
-                main { width: min(960px, calc(100% - 32px)); margin: 0 auto; padding: 64px 0; }
-                h1 { margin: 0 0 12px; font-size: clamp(2rem, 5vw, 3.5rem); }
-                p { color: #526078; font-size: 1.1rem; }
-                ul { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; padding: 24px 0 0; list-style: none; }
-                a { display: block; padding: 24px; border: 1px solid #dce4f0; border-radius: 16px; background: #fff; color: #2456c6; font-weight: 700; text-decoration: none; box-shadow: 0 8px 24px rgb(35 58 100 / 8%); }
-                a:hover, a:focus-visible { border-color: #2456c6; transform: translateY(-2px); }
-              </style>
-            </head>
-            <body>
-              <main>
-                <h1>Projetos de Tabuada</h1>
-                <p>Escolha uma das experiências educativas:</p>
-                <ul>
-                  <li><a href="./cc/">Ilhas da Tabuada</a></li>
-                  <li><a href="./co/">Blocky Tables</a></li>
-                  <li><a href="./cw/">Bloquilha</a></li>
-                  <li><a href="./gt/">Tabuada em Blocos</a></li>
-                </ul>
-              </main>
-            </body>
-          </html>
-          EOF
-
+          cp pages/index.html site/index.html
           touch site/.nojekyll
 
       - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3
         with:
           path: site
 
@@ -129,4 +95,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@cd2ce8fcbc39b97be8ca5fce6e763baed58fa128 # v5.0.0

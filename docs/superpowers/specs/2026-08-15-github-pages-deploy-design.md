@@ -13,14 +13,16 @@ O workflow do GitHub Actions fará checkout do repositório, instalará as depen
 - `/cw/`
 - `/gt/`
 
-O artefato também terá um `index.html` na raiz com links para cada projeto. O deploy será feito pelas actions oficiais de Pages (`configure-pages`, `upload-pages-artifact` e `deploy-pages`).
+O artefato também terá uma página inicial versionada em `pages/index.html`, copiada para a raiz do artefato com links para cada projeto. O deploy será feito pelas actions oficiais de Pages (`configure-pages`, `upload-pages-artifact` e `deploy-pages`).
 
 ## Alterações de configuração
 
 - Criar um `.gitignore` na raiz para dependências, builds, caches, cobertura, arquivos locais, IDE e sistema operacional.
-- Criar `.github/workflows/pages.yml` com permissões mínimas para Pages, concorrência de deploy e execução em `push` na branch `main` e manualmente.
+- Criar `pages/index.html` como página inicial versionada do site.
+- Criar `.github/workflows/pages.yml` com permissões mínimas para Pages, concorrência de deploy, execução em `push` na branch `main` e manualmente, e actions fixadas em SHAs completos.
 - Ajustar `co/vite.config.ts` para `base: './'`, mantendo os assets relativos quando o app for servido em `/co/`.
 - Manter `cc`, `cw` e `gt` com seus caminhos relativos já existentes.
+- O workflow deve copiar `pages/index.html` para `site/index.html`, sem gerar HTML em tempo de execução.
 
 ## Verificação
 

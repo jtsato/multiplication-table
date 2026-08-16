@@ -4,7 +4,7 @@
 
 **Goal:** Preparar o repositório raiz para ignorar artefatos comuns e publicar `cc`, `co`, `cw` e `gt` no mesmo site do GitHub Pages.
 
-**Architecture:** O workflow será executado na raiz, validará cada projeto com seus scripts existentes, copiará os quatro diretórios `dist/` para um artefato `site/<projeto>/` e gerará uma página inicial com links. O deploy usará as actions oficiais do GitHub Pages.
+**Architecture:** O workflow será executado na raiz, validará cada projeto com seus scripts existentes, copiará os quatro diretórios `dist/` para um artefato `site/<projeto>/` e copiará a página inicial versionada em `pages/index.html`. O deploy usará as actions oficiais do GitHub Pages fixadas em SHAs completos.
 
 **Tech Stack:** GitHub Actions, GitHub Pages, Node.js 20, npm, Vite, Vitest e Node.js test runner.
 
@@ -15,6 +15,7 @@
 - O workflow deve executar os testes/checks existentes antes do deploy.
 - Não alterar a lógica, o conteúdo ou o visual dos aplicativos.
 - O diretório `site/` é gerado apenas para o artefato do deploy e deve ser ignorado pelo Git.
+- A página inicial deve ser mantida como arquivo versionado, sem heredoc ou HTML gerado no workflow.
 
 ---
 
@@ -62,6 +63,7 @@ Expected: pelo menos uma referência relativa aos assets do build.
 ### Task 3: Criar o workflow de Pages
 
 **Files:**
+- Create: `pages/index.html`
 - Create: `.github/workflows/pages.yml`
 
 **Interfaces:**
@@ -85,7 +87,7 @@ gt: npm test && npm run check && npm run build
 
 - [x] **Step 3: Montar e enviar o artefato**
 
-Copiar cada `dist/` para seu diretório em `site/`, gerar uma página inicial sem dependências externas, usar `actions/configure-pages@v5` e `actions/upload-pages-artifact@v3`.
+Copiar cada `dist/` para seu diretório em `site/`, copiar `pages/index.html` para `site/index.html`, usar `actions/configure-pages` e `actions/upload-pages-artifact` fixadas em SHAs completos.
 
 - [x] **Step 4: Publicar o artefato**
 
