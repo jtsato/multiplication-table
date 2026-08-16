@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, type CSSProperties } from 'react';
 import { audioService } from '../audio/audioService';
 import { getIsland } from '../domain/islands';
 import { getIslandProgress, isArchipelagoComplete } from '../domain/progression';
@@ -8,6 +8,15 @@ import { IslandBadge } from '../art/IslandBadge';
 import { Mascot } from '../art/Mascot';
 import { Button } from '../ui/Button';
 import { Stars } from '../ui/Stars';
+
+const CONFETTI_PIECES = Array.from({ length: 28 }, (_, index) => ({
+  shape: (['strip', 'dot', 'square'] as const)[index % 3],
+  left: `${(index * 13 + 5) % 100}%`,
+  delay: `${(index % 9) * 0.17}s`,
+  duration: `${2.6 + (index % 5) * 0.24}s`,
+  rotation: `${(index * 37) % 180}deg`,
+  colorIndex: index % 6,
+}));
 
 interface IslandCompleteScreenProps {
   state: GameState;
@@ -27,6 +36,14 @@ export function IslandCompleteScreen({
   const island = getIsland(table);
   const progress = getIslandProgress(state.progress, table);
   const finishedEverything = isArchipelagoComplete(state.progress);
+  const confettiColors = [
+    island.palette.accent,
+    island.palette.accentSoft,
+    '#ffd23f',
+    '#ff8fa3',
+    '#7bc9ff',
+    '#ffffff',
+  ];
 
   useEffect(() => {
     audioService.play('unlock');
@@ -40,15 +57,20 @@ export function IslandCompleteScreen({
       }}
     >
       <div className="island-complete__confetti" aria-hidden="true">
-        {Array.from({ length: 14 }, (_, index) => (
+        {CONFETTI_PIECES.map((piece, index) => (
           <span
             key={index}
-            className="confetti"
-            style={{
-              left: `${(index * 7 + 4) % 100}%`,
-              background: [island.palette.accent, island.palette.accentSoft, '#ffffff'][index % 3],
-              animationDelay: `${(index % 7) * 0.22}s`,
-            }}
+            aria-hidden="true"
+            className={`confetti confetti--${piece.shape}`}
+            style={
+              {
+                left: piece.left,
+                background: confettiColors[piece.colorIndex],
+                '--confetti-delay': piece.delay,
+                '--confetti-duration': piece.duration,
+                '--confetti-rotation': piece.rotation,
+              } as CSSProperties
+            }
           />
         ))}
       </div>

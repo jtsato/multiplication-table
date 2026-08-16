@@ -1,9 +1,13 @@
-import { useId, useMemo } from 'react';
+import { useEffect, useId, useMemo, useRef, useState } from 'react';
+import { audioService } from '../audio/audioService';
 import type { BiomePalette, DecorKind } from '../domain/islands';
+import { getMascotDefinition } from '../domain/mascots';
 import type { SceneType } from '../domain/missions';
-import type { AvatarConfig } from '../domain/types';
+import type { AvatarConfig, MascotId } from '../domain/types';
+import { useTranslation } from '../i18n/I18nProvider';
 import { Avatar } from './Avatar';
 import { Decor } from './Decor';
+import { Mascot } from './Mascot';
 import {
   buildSceneBlocks,
   GROUND_Y,
@@ -12,6 +16,7 @@ import {
   sceneHasWater,
   UNIT,
   visibleBlockCount,
+  type SceneBlock,
 } from './scenes';
 
 /**
@@ -30,10 +35,16 @@ interface SceneViewProps {
   /** 0..1 - fracao da construcao concluida. */
   progress: number;
   avatar: AvatarConfig;
+  mascotId: MascotId;
   celebrating?: boolean;
   reducedMotion?: boolean;
   ariaLabel?: string;
 }
+
+const HERO_SIZE = 60;
+const HERO_BASE_X = 30;
+const COMPANION_SIZE = 30;
+const WAVE_DURATION_MS = 600;
 
 /** Trecho de agua sob as cenas que atravessam um rio ou o mar. */
 function waterSpan(scene: SceneType): { x: number; width: number } | null {
@@ -44,6 +55,22 @@ function waterSpan(scene: SceneType): { x: number; width: number } | null {
     return { x: 7 * UNIT, width: 17 * UNIT };
   }
   return null;
+}
+
+/** Posicao horizontal do personagem: junto ao bloco mais novo, ou do outro lado ao terminar. */
+function heroTargetX(blocks: SceneBlock[], visible: number, walksAcross: boolean): number {
+  if (walksAcross) {
+    return SCENE_WIDTH - 60;
+  }
+  if (visible <= 0) {
+    return HERO_BASE_X;
+  }
+  const latest = blocks[visible - 1];
+  if (!latest) {
+    return HERO_BASE_X;
+  }
+  const target = latest.x - 34;
+  return Math.min(SCENE_WIDTH - 50, Math.max(HERO_BASE_X, target));
 }
 
 function Clouds({ reducedMotion }: { reducedMotion: boolean }) {
@@ -71,11 +98,13 @@ export function SceneView({
   decor,
   progress,
   avatar,
+  mascotId,
   celebrating = false,
   reducedMotion = false,
   ariaLabel,
 }: SceneViewProps) {
   const gradientId = useId();
+  const { t } = useTranslation();
   const blocks = useMemo(() => buildSceneBlocks(scene, palette), [scene, palette]);
   const visible = visibleBlockCount(blocks.length, progress);
   const water = waterSpan(scene);
@@ -83,12 +112,54 @@ export function SceneView({
 
   // Ao terminar uma ponte, o personagem atravessa para o outro lado.
   const walksAcross = complete && sceneHasWater(scene);
+  const heroX = useMemo(
+    () => heroTargetX(blocks, visible, walksAcross),
+    [blocks, visible, walksAcross],
+  );
+  const companion = useMemo(() => getMascotDefinition(mascotId), [mascotId]);
+  const companionX = Math.max(0, heroX - 18);
+  const companionY = GROUND_Y - HERO_SIZE - COMPANION_SIZE + 8;
+
+  const [waving, setWaving] = useState(false);
+  const waveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(
+    () => () => {
+      if (waveTimer.current !== null) {
+        clearTimeout(waveTimer.current);
+      }
+    },
+    [],
+  );
+
+  const waveAtHero = () => {
+    if (celebrating) {
+      return;
+    }
+    audioService.play('click');
+    setWaving(true);
+    if (waveTimer.current !== null) {
+      clearTimeout(waveTimer.current);
+    }
+    waveTimer.current = setTimeout(() => setWaving(false), WAVE_DURATION_MS);
+  };
+
+  const heroAnchorClass = reducedMotion
+    ? undefined
+    : ['scene__hero-anchor', walksAcross ? 'scene__hero--crossing' : ''].filter(Boolean).join(' ');
+
+  const heroClass = [
+    'scene__hero',
+    celebrating && !reducedMotion ? 'scene__hero--celebrating' : '',
+    !celebrating && waving && !reducedMotion ? 'scene__hero--waving' : '',
+  ]
+    .filter(Boolean)
+    .join(' ');
 
   return (
     <svg
       className="scene"
       viewBox={`0 0 ${SCENE_WIDTH} ${SCENE_HEIGHT}`}
-      preserveAspectRatio="xMidYMax meet"
+      preserveAspectRatio="xMidYMax slice"
       shapeRendering="crispEdges"
       role="img"
       aria-label={ariaLabel}
@@ -176,23 +247,42 @@ export function SceneView({
         ))}
       </g>
 
+      {/* Companheiro: flutua acima e atras do personagem, seguindo ate o bloco mais novo. */}
+      <g
+        transform={`translate(${companionX}, ${companionY})`}
+        className={reducedMotion ? undefined : 'scene__companion-anchor'}
+      >
+        <g className={reducedMotion ? undefined : 'scene__companion-bob'}>
+          <Mascot
+            palette={companion.colors}
+            kind={companion.kind}
+            mood={celebrating ? 'cheering' : waving ? 'waving' : 'happy'}
+            size={COMPANION_SIZE}
+          />
+        </g>
+      </g>
+
       {/*
         Dois grupos de proposito: o de fora posiciona o personagem com o
-        atributo `transform`, o de dentro recebe as animacoes CSS. Se as duas
-        coisas ficassem no mesmo elemento, o transform do CSS apagaria o
-        posicionamento do atributo.
+        atributo `transform` (e anda ate o bloco mais novo), o de dentro
+        recebe as animacoes CSS. Se as duas coisas ficassem no mesmo
+        elemento, o transform do CSS apagaria o posicionamento do atributo.
       */}
-      <g transform={`translate(30, ${GROUND_Y - 60})`}>
+      <g transform={`translate(${heroX}, ${GROUND_Y - HERO_SIZE})`} className={heroAnchorClass}>
         <g
-          className={[
-            'scene__hero',
-            celebrating && !reducedMotion ? 'scene__hero--celebrating' : '',
-            walksAcross ? 'scene__hero--crossing' : '',
-          ]
-            .filter(Boolean)
-            .join(' ')}
+          role="button"
+          tabIndex={0}
+          aria-label={t('a11y.heroWave')}
+          className={heroClass}
+          onClick={waveAtHero}
+          onKeyDown={(event) => {
+            if (event.key === 'Enter' || event.key === ' ') {
+              event.preventDefault();
+              waveAtHero();
+            }
+          }}
         >
-          <Avatar avatar={avatar} size={60} />
+          <Avatar avatar={avatar} size={HERO_SIZE} />
         </g>
       </g>
     </svg>
