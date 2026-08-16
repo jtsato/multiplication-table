@@ -1,0 +1,53 @@
+.loading {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  /* Mesmo azul de céu do jogo: a transição para a cena não pisca. */
+  background: linear-gradient(180deg, #8fd4ff 0%, #5cb85c 100%);
+  color: #10203a;
+  text-align: center;
+}
+
+.loading__sun {
+  width: 62px;
+  height: 62px;
+  margin-bottom: 12px;
+  border-radius: 50%;
+  background: #fff6e0;
+  box-shadow: 0 0 0 10px rgba(255, 246, 224, 0.35);
+  animation: loading-pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes loading-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.9;
+  }
+  50% {
+    transform: scale(1.12);
+    opacity: 1;
+  }
+}
+
+.loading__title {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 800;
+}
+
+.loading__text {
+  margin: 0;
+  opacity: 0.75;
+}
+
+/* Quem prefere menos movimento não precisa da pulsação. */
+@media (prefers-reduced-motion: reduce) {
+  .loading__sun {
+    animation: none;
+  }
+}

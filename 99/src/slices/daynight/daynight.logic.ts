@@ -1,0 +1,223 @@
+import { palette } from '../../shared/palette';
+
+export type DayPhase = 'dia' | 'entardecer' | 'noite' | 'amanhecer';
+
+export const DAYNIGHT = {
+  /**
+   * Duracao de um ciclo completo, em segundos.
+   *
+   * Curto de proposito: uma POC precisa caber em uma sessao de teste. Tres
+   * minutos dao tempo de colher, construir e enfrentar a noite sem virar espera.
+   */
+  cycleSeconds: 180,
+} as const;
+
+/**
+ * Fronteiras das fases, como fracao do ciclo (0 a 1).
+ *
+ * O dia ocupa mais da metade: e nele que a crianca resolve contas e constroi.
+ * A noite e curta e tensa.
+ */
+export const PHASE_BOUNDS = {
+  dia: { start: 0, end: 0.5 },
+  entardecer: { start: 0.5, end: 0.62 },
+  noite: { start: 0.62, end: 0.88 },
+  amanhecer: { start: 0.88, end: 1 },
+} as const;
+
+/**
+ * Avanca o relogio e da a volta ao fim do ciclo.
+ *
+ * Recebe e devolve segundos absolutos desde o inicio da partida; quem precisa da
+ * posicao dentro do ciclo usa `cyclePosition`. `delta` negativo e ignorado — um
+ * relogio que anda para tras quebraria a contagem de dias.
+ */
+export function advanceClock(clock: number, delta: number): number {
+  if (!Number.isFinite(delta) || delta <= 0) return clock;
+  return clock + delta;
+}
+
+/**
+ * Traz uma posicao qualquer para o intervalo [0, 1).
+ *
+ * O `+ 1` so entra quando o valor e negativo. A forma aparentemente mais curta,
+ * `((t % 1) + 1) % 1`, faz duas operacoes de ponto flutuante a mais e desloca
+ * valores exatos: `0.88` vira `0.8799999999999999`, o que colocava a fronteira
+ * exata de uma fase na fase anterior.
+ */
+function normalizePosition(position: number): number {
+  const t = position % 1;
+  return t < 0 ? t + 1 : t;
+}
+
+/** Posicao dentro do ciclo atual, de 0 (nascer do sol) a 1. */
+export function cyclePosition(clock: number, cycleSeconds = DAYNIGHT.cycleSeconds): number {
+  return normalizePosition((clock % cycleSeconds) / cycleSeconds);
+}
+
+/** Quantos ciclos completos ja se passaram. */
+export function dayNumber(clock: number, cycleSeconds = DAYNIGHT.cycleSeconds): number {
+  return Math.floor(clock / cycleSeconds) + 1;
+}
+
+/** Fase correspondente a uma posicao do ciclo. */
+export function phaseFor(position: number): DayPhase {
+  const t = normalizePosition(position);
+  if (t < PHASE_BOUNDS.dia.end) return 'dia';
+  if (t < PHASE_BOUNDS.entardecer.end) return 'entardecer';
+  if (t < PHASE_BOUNDS.noite.end) return 'noite';
+  return 'amanhecer';
+}
+
+/** Progresso dentro da fase atual, de 0 a 1. */
+export function phaseProgress(position: number): number {
+  const t = normalizePosition(position);
+  const bounds = PHASE_BOUNDS[phaseFor(t)];
+  return (t - bounds.start) / (bounds.end - bounds.start);
+}
+
+/** Segundos restantes ate a proxima fase. */
+export function secondsUntilNextPhase(clock: number, cycleSeconds = DAYNIGHT.cycleSeconds): number {
+  const t = cyclePosition(clock, cycleSeconds);
+  const bounds = PHASE_BOUNDS[phaseFor(t)];
+  return (bounds.end - t) * cycleSeconds;
+}
+
+/** Interpolacao linear entre dois numeros. */
+function lerp(from: number, to: number, t: number): number {
+  return from + (to - from) * t;
+}
+
+/**
+ * Interpola duas cores hexadecimais canal a canal.
+ *
+ * Feito na mao, sobre inteiros, em vez de usar `THREE.Color`: assim a logica do
+ * ciclo continua pura e testavel em ambiente node, sem importar o motor grafico.
+ */
+export function mixHex(from: string, to: string, t: number): string {
+  const clamped = Math.min(1, Math.max(0, t));
+  const a = parseInt(from.slice(1), 16);
+  const b = parseInt(to.slice(1), 16);
+
+  const channel = (shift: number) =>
+    Math.round(lerp((a >> shift) & 0xff, (b >> shift) & 0xff, clamped));
+
+  const value = (channel(16) << 16) | (channel(8) << 8) | channel(0);
+  return `#${value.toString(16).padStart(6, '0')}`;
+}
+
+export interface SkyConfig {
+  skyColor: string;
+  sunColor: string;
+  /** Intensidade da luz direcional. */
+  sunIntensity: number;
+  /** Intensidade da luz hemisferica. */
+  ambientIntensity: number;
+  /** Altura do sol, de 0 (horizonte) a 1 (a pino). */
+  elevation: number;
+}
+
+/** Cor e forca da luz em cada fase, nos seus extremos. */
+const PHASE_LIGHTING: Record<DayPhase, { from: SkyConfig; to: SkyConfig }> = {
+  dia: {
+    from: {
+      skyColor: palette.skyDay,
+      sunColor: palette.sunDay,
+      sunIntensity: 2.1,
+      ambientIntensity: 1.1,
+      elevation: 0.75,
+    },
+    to: {
+      skyColor: palette.skyDay,
+      sunColor: palette.sunDay,
+      sunIntensity: 2.1,
+      ambientIntensity: 1.1,
+      elevation: 1,
+    },
+  },
+  entardecer: {
+    from: {
+      skyColor: palette.skyDay,
+      sunColor: palette.sunDay,
+      sunIntensity: 2.1,
+      ambientIntensity: 1.1,
+      elevation: 0.75,
+    },
+    to: {
+      skyColor: palette.skyDusk,
+      sunColor: palette.sunDusk,
+      sunIntensity: 0.9,
+      ambientIntensity: 0.55,
+      elevation: 0.12,
+    },
+  },
+  noite: {
+    from: {
+      skyColor: palette.skyDusk,
+      sunColor: palette.sunDusk,
+      sunIntensity: 0.9,
+      ambientIntensity: 0.55,
+      elevation: 0.12,
+    },
+    to: {
+      skyColor: palette.skyNight,
+      sunColor: palette.sunNight,
+      // Nunca zero: no escuro absoluto o jogo fica injogavel fora da fogueira.
+      sunIntensity: 0.22,
+      ambientIntensity: 0.2,
+      elevation: 0.05,
+    },
+  },
+  amanhecer: {
+    from: {
+      skyColor: palette.skyNight,
+      sunColor: palette.sunNight,
+      sunIntensity: 0.22,
+      ambientIntensity: 0.2,
+      elevation: 0.05,
+    },
+    to: {
+      skyColor: palette.skyDay,
+      sunColor: palette.sunDay,
+      sunIntensity: 2.1,
+      ambientIntensity: 1.1,
+      elevation: 0.75,
+    },
+  },
+};
+
+/**
+ * Configuracao de ceu e luz para uma posicao do ciclo.
+ *
+ * A noite usa uma curva ao quadrado no escurecimento: a percepcao de brilho nao
+ * e linear, e uma interpolacao reta faria o entardecer parecer travado e a noite
+ * cair de repente.
+ */
+export function skyConfigFor(position: number): SkyConfig {
+  const t = normalizePosition(position);
+  const phase = phaseFor(t);
+  const { from, to } = PHASE_LIGHTING[phase];
+  const raw = phaseProgress(t);
+  const eased = phase === 'noite' ? raw * raw : raw;
+
+  return {
+    skyColor: mixHex(from.skyColor, to.skyColor, eased),
+    sunColor: mixHex(from.sunColor, to.sunColor, eased),
+    sunIntensity: lerp(from.sunIntensity, to.sunIntensity, eased),
+    ambientIntensity: lerp(from.ambientIntensity, to.ambientIntensity, eased),
+    elevation: lerp(from.elevation, to.elevation, eased),
+  };
+}
+
+/** Rotulo da fase para o HUD. */
+export const PHASE_LABELS: Record<DayPhase, string> = {
+  dia: 'Dia',
+  entardecer: 'Entardecer',
+  noite: 'Noite',
+  amanhecer: 'Amanhecer',
+};
+
+/** A escuridao ja chegou ao ponto de fazer os inimigos aparecerem? */
+export function isDangerous(phase: DayPhase): boolean {
+  return phase === 'noite';
+}

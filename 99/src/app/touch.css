@@ -1,0 +1,130 @@
+.touch {
+  position: fixed;
+  inset: 0;
+  /* A camada toda é transparente ao toque; só joystick e botões capturam.
+     Assim arrastar em qualquer outro ponto continua girando a câmera. */
+  pointer-events: none;
+  z-index: 5;
+}
+
+/* --- Joystick (polegar esquerdo) --- */
+
+.touch__joystick {
+  position: absolute;
+  left: max(20px, env(safe-area-inset-left));
+  bottom: max(24px, env(safe-area-inset-bottom));
+  width: 132px;
+  height: 132px;
+  border-radius: 50%;
+  background: rgba(14, 20, 32, 0.42);
+  border: 2px solid rgba(255, 255, 255, 0.28);
+  backdrop-filter: blur(3px);
+  pointer-events: auto;
+  /* Sem isto o navegador interpreta o arrasto como rolagem da página. */
+  touch-action: none;
+  display: grid;
+  place-items: center;
+}
+
+.touch__knob {
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  background: rgba(255, 230, 109, 0.92);
+  border: 2px solid rgba(14, 20, 32, 0.35);
+  /* Sem transição: o bastão tem que colar no dedo. */
+  will-change: transform;
+}
+
+/* --- Botões de ação (polegar direito) --- */
+
+.touch__actions {
+  position: absolute;
+  right: max(20px, env(safe-area-inset-right));
+  bottom: max(24px, env(safe-area-inset-bottom));
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: flex-end;
+  gap: 10px;
+  pointer-events: auto;
+}
+
+.touch__button {
+  min-width: 96px;
+  /* 48px é o alvo mínimo recomendado para toque; aqui fica bem acima. */
+  min-height: 56px;
+  padding: 8px 16px;
+  border-radius: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.28);
+  background: rgba(14, 20, 32, 0.82);
+  color: #f5f7fa;
+  font-family: inherit;
+  font-size: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  touch-action: none;
+  backdrop-filter: blur(3px);
+  transition: transform 0.08s ease;
+}
+
+.touch__button:active {
+  transform: scale(0.94);
+}
+
+.touch__button strong {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.touch__button small {
+  font-size: 11px;
+  opacity: 0.65;
+}
+
+.touch__button:disabled {
+  opacity: 0.38;
+}
+
+.touch__button--interagir {
+  background: rgba(255, 230, 109, 0.92);
+  border-color: #fff;
+  color: #0e1420;
+}
+
+.touch__button--confirmar {
+  background: rgba(63, 191, 111, 0.92);
+  border-color: #fff;
+  color: #0e1420;
+}
+
+.touch__button--cancelar {
+  background: rgba(255, 107, 107, 0.9);
+  border-color: #fff;
+  color: #0e1420;
+}
+
+/* Em paisagem baixa (celular deitado) o espaço vertical é escasso. */
+@media (max-height: 430px) {
+  .touch__joystick {
+    width: 108px;
+    height: 108px;
+  }
+
+  .touch__knob {
+    width: 48px;
+    height: 48px;
+  }
+
+  .touch__button {
+    min-height: 46px;
+    min-width: 84px;
+    padding: 6px 12px;
+  }
+
+  .touch__actions {
+    gap: 8px;
+  }
+}

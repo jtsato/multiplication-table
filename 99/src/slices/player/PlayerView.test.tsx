@@ -1,0 +1,75 @@
+// @vitest-environment jsdom
+// PlayerView escuta teclado e ponteiro em `window`; sem DOM os efeitos lancam.
+import { useEffect } from 'react';
+import { useThree } from '@react-three/fiber';
+import { beforeEach, describe, expect, it } from 'vitest';
+import type { Camera } from 'three';
+import { renderScene } from '../../test/sceneHarness';
+import { PlayerView } from './PlayerView';
+import { followCameraTarget } from './player.logic';
+import { playerTransform, resetPlayerTransform } from './playerTransform';
+import { vec3 } from '../../shared/vec';
+
+/** Captura a camera do R3F para o teste poder inspecionar a suavizacao. */
+function CameraProbe({ onReady }: { onReady: (camera: Camera) => void }) {
+  const camera = useThree((state) => state.camera);
+  // Chaves obrigatorias: um retorno implicito faria o React tratar o valor
+  // devolvido como funcao de limpeza.
+  useEffect(() => {
+    onReady(camera);
+  }, [camera, onReady]);
+  return null;
+}
+
+/**
+ * Verifica a fiacao do laco de quadro, que os testes de funcao pura nao alcancam:
+ * que `useFrame` roda, que a posicao do corpo chega em `playerTransform` e que a
+ * camera converge para o alvo calculado.
+ *
+ * A fisica fica pausada no harness, entao o corpo permanece no ponto de spawn —
+ * o que aqui e uma vantagem: da um alvo conhecido para conferir a camera.
+ */
+describe('PlayerView', () => {
+  beforeEach(() => {
+    resetPlayerTransform();
+  });
+
+  it('publica a posicao do corpo em playerTransform a cada quadro', async () => {
+    const renderer = await renderScene(<PlayerView />);
+    await renderer.advanceFrames(2, 1 / 60);
+
+    // Spawn definido em PlayerView: [0, 2, 0].
+    expect(playerTransform.y).toBeCloseTo(2, 1);
+    expect(playerTransform.x).toBeCloseTo(0, 5);
+    expect(playerTransform.z).toBeCloseTo(0, 5);
+    expect(playerTransform.yaw).toBe(0);
+
+    await renderer.unmount();
+  });
+
+  it('converge a camera para a posicao de seguimento', async () => {
+    let camera: Camera | null = null;
+    const renderer = await renderScene(
+      <>
+        <CameraProbe
+          onReady={(instance) => {
+            camera = instance;
+          }}
+        />
+        <PlayerView />
+      </>,
+    );
+
+    // Suavizacao exponencial: tres segundos de quadros levam a camera ao alvo.
+    await renderer.advanceFrames(180, 1 / 60);
+
+    const expected = followCameraTarget(vec3(0, 2, 0), 0);
+    const actual = camera as Camera | null;
+    expect(actual).not.toBeNull();
+    expect(actual!.position.x).toBeCloseTo(expected.x, 1);
+    expect(actual!.position.y).toBeCloseTo(expected.y, 1);
+    expect(actual!.position.z).toBeCloseTo(expected.z, 1);
+
+    await renderer.unmount();
+  });
+});

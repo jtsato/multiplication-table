@@ -1,0 +1,78 @@
+.outcome {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  /* Esta camada precisa de clique — ao contrario do HUD, que e transparente
+     ao mouse para nao atrapalhar o giro da camera. */
+  pointer-events: auto;
+  background: rgba(8, 12, 20, 0.72);
+  backdrop-filter: blur(3px);
+  animation: outcome-fade 0.35s ease-out;
+}
+
+@keyframes outcome-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.outcome__card {
+  width: min(420px, 88vw);
+  padding: 32px 28px;
+  border-radius: 18px;
+  background: #131c2e;
+  border: 2px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+  text-align: center;
+}
+
+.outcome--venceu .outcome__card {
+  border-color: #3fbf6f;
+}
+
+.outcome--perdeu .outcome__card {
+  border-color: #ff6b6b;
+}
+
+.outcome__title {
+  margin: 0 0 10px;
+  font-size: 30px;
+}
+
+.outcome--venceu .outcome__title {
+  color: #6be398;
+}
+
+.outcome--perdeu .outcome__title {
+  color: #ff9d9d;
+}
+
+.outcome__text {
+  margin: 0 0 22px;
+  opacity: 0.85;
+  line-height: 1.55;
+}
+
+.outcome__button {
+  padding: 12px 28px;
+  border-radius: 999px;
+  border: none;
+  background: #ffe66d;
+  color: #0e1420;
+  font-size: 17px;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  transition: transform 0.12s ease;
+}
+
+.outcome__button:hover,
+.outcome__button:focus-visible {
+  transform: translateY(-2px);
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
