@@ -1,0 +1,197 @@
+{
+  "app": {
+    "title": "Bloquilha",
+    "tagline": "The times-table archipelago"
+  },
+  "common": {
+    "play": "Play",
+    "back": "Back",
+    "continue": "Continue",
+    "close": "Close",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "next": "Next",
+    "start": "Start",
+    "loading": "Loading the archipelago...",
+    "stars": "{{count}} of 3 stars"
+  },
+  "home": {
+    "play": "Play",
+    "achievements": "Achievements",
+    "settings": "Settings",
+    "greeting": "Hi, {{name}}!",
+    "greetingAnonymous": "Hi, builder!",
+    "continueHint": "Your next island: {{island}}"
+  },
+  "onboarding": {
+    "languageTitle": "Pick your language",
+    "characterTitle": "Who is building with us?",
+    "customizeTitle": "Make it yours",
+    "nameTitle": "What should we call you?",
+    "namePlaceholder": "Your name",
+    "nameSkip": "Skip",
+    "confirm": "That's the one!",
+    "welcome": "Welcome to Bloquilha!"
+  },
+  "character": {
+    "base": {
+      "sprout": "Sprout",
+      "pebble": "Pebble"
+    },
+    "skin": "Skin",
+    "hair": "Hair",
+    "outfit": "Outfit",
+    "accessory": "Accessory",
+    "accessoryNone": "None",
+    "accessoryCap": "Cap",
+    "accessoryCrown": "Crown",
+    "accessoryBand": "Headband",
+    "accessoryGoggles": "Goggles"
+  },
+  "map": {
+    "title": "Archipelago",
+    "subtitle": "Pick an island to build",
+    "overall": "Islands finished: {{done}} of {{total}}",
+    "enter": "Enter island",
+    "status": {
+      "locked": "Locked",
+      "available": "Open",
+      "inProgress": "Building",
+      "completed": "Finished"
+    },
+    "lockedHint": "Finish {{island}} to open this island.",
+    "missionCount": "{{done}} of {{total}} missions"
+  },
+  "islands": {
+    "2": { "name": "Island of 2", "biome": "Flower Fields" },
+    "3": { "name": "Island of 3", "biome": "Creek Forest" },
+    "4": { "name": "Island of 4", "biome": "Crystal Mountains" },
+    "5": { "name": "Island of 5", "biome": "Harbor Beach" },
+    "6": { "name": "Island of 6", "biome": "Magic Grove" },
+    "7": { "name": "Island of 7", "biome": "Deep Caverns" },
+    "8": { "name": "Island of 8", "biome": "Frozen Plain" },
+    "9": { "name": "Island of 9", "biome": "Volcano Land" },
+    "10": { "name": "Island of 10", "biome": "Great Block City" }
+  },
+  "missions": {
+    "bridge": {
+      "title": "The broken bridge",
+      "brief": "The river cut the path! Let's put the bridge blocks back."
+    },
+    "tower": {
+      "title": "The great tower",
+      "brief": "Every correct answer stacks a new layer. Let's reach the top!"
+    },
+    "lighthouse": {
+      "title": "The dark lighthouse",
+      "brief": "Boats need the light. Fix the lighthouse piece by piece."
+    },
+    "trees": {
+      "title": "Plant the woods",
+      "brief": "This part of the island is empty. Let's plant block trees!"
+    },
+    "boat": {
+      "title": "The block boat",
+      "brief": "We still need the hull and the sail to set sail."
+    },
+    "gate": {
+      "title": "The locked gate",
+      "brief": "The gate only opens when every piece is back in place."
+    },
+    "windmill": {
+      "title": "The still windmill",
+      "brief": "Let's build the blades so the windmill spins again."
+    },
+    "house": {
+      "title": "The mascot's house",
+      "brief": "Our friend needs a roof. Let's build it!"
+    },
+    "fence": {
+      "title": "The field fence",
+      "brief": "The block sheep ran off. Let's close the fence."
+    },
+    "finalBadge": "Final challenge"
+  },
+  "play": {
+    "question": "{{a}} × {{b}} = ?",
+    "progress": "Question {{current}} of {{total}}",
+    "piecesLeft": "{{count}} pieces to go",
+    "correct": ["That's it!", "Block in place!", "Nice one!", "Perfect!", "Another piece done!"],
+    "wrong": ["So close! Let's try again.", "Almost there. Check the hint!", "No worries, try again."],
+    "hintTitle": "Look at the blocks: {{a}} groups of {{b}}",
+    "hintCount": "{{a}} × {{b}} = {{answer}}",
+    "tryAgain": "Try again",
+    "leave": "Leave mission",
+    "leaveConfirm": "Leave now? This mission's progress won't be saved.",
+    "tutorial": {
+      "step1": "Tap the right answer to place a block.",
+      "step2": "Missed it? No problem: you get a hint and another try.",
+      "step3": "Finish the build and the island changes!"
+    }
+  },
+  "result": {
+    "title": "Mission complete!",
+    "correct": "Correct",
+    "wrong": "Missed",
+    "accuracy": "Accuracy",
+    "starsEarned": "Stars earned",
+    "nextMission": "Next mission",
+    "backToMap": "Back to map",
+    "replay": "Play again"
+  },
+  "islandComplete": {
+    "title": "{{island}} complete!",
+    "subtitle": "The island looks great with your builds.",
+    "unlocked": "New island unlocked: {{island}}",
+    "allDone": "You finished the whole archipelago! What a builder!",
+    "backToMap": "Go to the map"
+  },
+  "achievements": {
+    "title": "Achievements",
+    "unlockedCount": "{{done}} of {{total}} achievements",
+    "locked": "Not earned yet",
+    "firstCorrect": {
+      "name": "First block",
+      "description": "Get your first multiplication right."
+    },
+    "tenCorrect": {
+      "name": "Stack of ten",
+      "description": "Answer 10 multiplications correctly."
+    },
+    "streakFive": {
+      "name": "Five in a row",
+      "description": "Get 5 questions right in a row."
+    },
+    "firstIsland": {
+      "name": "First island",
+      "description": "Finish the Island of 2."
+    },
+    "fiftyCorrect": {
+      "name": "Block master",
+      "description": "Answer 50 multiplications correctly."
+    },
+    "allIslands": {
+      "name": "Archipelago champion",
+      "description": "Finish every island."
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "language": "Language",
+    "music": "Music",
+    "sound": "Sound effects",
+    "motion": "Fewer animations",
+    "on": "On",
+    "off": "Off",
+    "reset": "Erase progress",
+    "resetTitle": "Erase all progress?",
+    "resetBody": "You will lose islands, stars and achievements. This cannot be undone.",
+    "resetConfirm": "Yes, erase everything",
+    "statistics": "Your stats",
+    "totalQuestions": "Questions answered",
+    "totalCorrect": "Correct answers",
+    "bestStreak": "Best streak",
+    "practice": "Worth practicing",
+    "practiceEmpty": "No tricky multiplication right now. Great job!"
+  }
+}

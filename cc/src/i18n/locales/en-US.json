@@ -1,0 +1,280 @@
+{
+  "meta": {
+    "name": "English (US)",
+    "flag": "🇺🇸"
+  },
+  "common": {
+    "play": "Play",
+    "back": "Back",
+    "continue": "Continue",
+    "close": "Close",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "next": "Next",
+    "loading": "Loading...",
+    "of": "of"
+  },
+  "splash": {
+    "title": "Times Table Islands",
+    "tagline": "Build a world of blocks while you learn the times tables"
+  },
+  "home": {
+    "greeting": "Hello, explorer!",
+    "subtitle": "Your archipelago is waiting",
+    "play": "Play",
+    "achievements": "Achievements",
+    "settings": "Settings",
+    "progress": "{{completed}} of {{total}} islands completed",
+    "changeCharacter": "Change character"
+  },
+  "onboarding": {
+    "languageTitle": "Choose your language",
+    "languageSubtitle": "You can change it later in settings",
+    "characterTitle": "Who is exploring the islands?",
+    "characterSubtitle": "Pick your character",
+    "customizeTitle": "Make it yours",
+    "customizeSubtitle": "Pick your colors and an accessory",
+    "skinLabel": "Skin tone",
+    "hairLabel": "Hair",
+    "outfitLabel": "Outfit color",
+    "accessoryLabel": "Accessory",
+    "surprise": "Surprise me!",
+    "start": "Start the adventure",
+    "base": {
+      "boy": "Boy",
+      "girl": "Girl"
+    },
+    "hair": {
+      "short": "Short",
+      "long": "Long",
+      "curly": "Curly",
+      "ponytail": "Ponytail"
+    },
+    "outfit": {
+      "red": "Red",
+      "blue": "Blue",
+      "green": "Green",
+      "purple": "Purple",
+      "orange": "Orange",
+      "pink": "Pink"
+    },
+    "accessory": {
+      "none": "None",
+      "cap": "Cap",
+      "glasses": "Glasses",
+      "crown": "Crown"
+    },
+    "skin": {
+      "skin1": "Tone 1",
+      "skin2": "Tone 2",
+      "skin3": "Tone 3",
+      "skin4": "Tone 4"
+    }
+  },
+  "map": {
+    "title": "Archipelago Map",
+    "subtitle": "Pick an island to explore",
+    "enter": "Enter the island",
+    "review": "Revisit island",
+    "status": {
+      "locked": "Locked",
+      "available": "Unlocked",
+      "inProgress": "In progress",
+      "completed": "Completed"
+    },
+    "lockedHint": "Finish the {{table}} times table to open this island",
+    "missions": "{{completed}} of {{total}} missions",
+    "stars": "{{count}} of 3 stars",
+    "tableLabel": "{{table}} times table"
+  },
+  "islands": {
+    "2": { "name": "Blooming Fields", "biome": "Green fields and flowers" },
+    "3": { "name": "River Forest", "biome": "Woods and streams" },
+    "4": { "name": "Crystal Mountains", "biome": "Peaks and crystals" },
+    "5": { "name": "Harbor Beach", "biome": "Sand and boats" },
+    "6": { "name": "Magic Grove", "biome": "Enchanted forest" },
+    "7": { "name": "Glowing Caves", "biome": "Bright caverns" },
+    "8": { "name": "Frozen Lands", "biome": "Ice and snow" },
+    "9": { "name": "Volcano Isle", "biome": "Rocks and lava" },
+    "10": { "name": "Grand City", "biome": "The great block city" }
+  },
+  "missions": {
+    "finalBadge": "Final challenge",
+    "counter": "Mission {{order}} of {{total}}",
+    "bridge": {
+      "title": "The broken bridge",
+      "brief": "The river cut the path! Let's rebuild the bridge, block by block.",
+      "done": "The bridge is finished! Now we can cross."
+    },
+    "tower": {
+      "title": "The great tower",
+      "brief": "Every correct answer raises one more layer of the tower.",
+      "done": "The tower stands tall and you can see the whole archipelago!"
+    },
+    "lighthouse": {
+      "title": "The dark lighthouse",
+      "brief": "The lighthouse stopped shining. Let's fix it piece by piece.",
+      "done": "The lighthouse is lit! Its beam sweeps over the sea."
+    },
+    "trees": {
+      "title": "Plant the grove",
+      "brief": "This part of the island is empty. Let's plant some block trees.",
+      "done": "The grove grew full of leaves!"
+    },
+    "house": {
+      "title": "The block house",
+      "brief": "Someone needs a home. Let's build a colorful house.",
+      "done": "The house is ready and the chimney is already puffing!"
+    },
+    "gate": {
+      "title": "The locked gate",
+      "brief": "A giant gate blocks the way. Every correct answer opens a piece.",
+      "done": "The gate swung open! The path is clear."
+    },
+    "boat": {
+      "title": "The block boat",
+      "brief": "Let's build a boat to sail to the next beach.",
+      "done": "The boat is afloat and the sail is up!"
+    },
+    "fence": {
+      "title": "The farm fence",
+      "brief": "The wind knocked the fence down. Let's raise every post.",
+      "done": "The fence is whole again!"
+    },
+    "windmill": {
+      "title": "The still windmill",
+      "brief": "The windmill needs new blades to spin again.",
+      "done": "The windmill is spinning in the wind!"
+    },
+    "crystal": {
+      "title": "The crystal tower",
+      "brief": "A giant crystal can light up the whole island. Let's build it!",
+      "done": "The crystal glowed and lit up everything around!"
+    }
+  },
+  "game": {
+    "question": "What is {{a}} × {{b}}?",
+    "questionCounter": "Question {{current}} of {{total}}",
+    "chooseAnswer": "Pick the right answer",
+    "blocks": "Blocks placed: {{placed}} of {{total}}",
+    "quit": "Leave mission",
+    "quitTitle": "Leave now?",
+    "quitMessage": "Your progress in this mission will not be saved, but the islands you already finished stay yours.",
+    "quitConfirm": "Leave anyway",
+    "quitCancel": "Keep playing",
+    "showAnswer": "The right answer is {{answer}}. Tap it to keep going!",
+    "hintTitle": "Look: {{a}} groups of {{b}}",
+    "hintCount": "That is {{answer}} blocks in total",
+    "startMission": "Start",
+    "tutorial": {
+      "step1": "Tap the right answer.",
+      "step2": "Every correct answer places blocks in the scene.",
+      "step3": "Finish the build to complete the mission!"
+    }
+  },
+  "feedback": {
+    "correct": {
+      "0": "That's it!",
+      "1": "Great job!",
+      "2": "Perfect!",
+      "3": "You did it!"
+    },
+    "wrong": {
+      "0": "Almost! Let's try again.",
+      "1": "So close! Give it another go.",
+      "2": "Not that one. Check the hint!",
+      "3": "Try once more, you've got this!"
+    }
+  },
+  "result": {
+    "title": "Mission complete!",
+    "correct": "First-try answers",
+    "mistakes": "Extra tries",
+    "accuracy": "Accuracy",
+    "islandProgress": "Island progress",
+    "nextMission": "Next mission",
+    "backToMap": "Back to the map",
+    "newAchievements": "New achievements!"
+  },
+  "islandComplete": {
+    "title": "Island complete!",
+    "subtitle": "You mastered the {{table}} times table!",
+    "unlocked": "New island unlocked: {{island}}",
+    "allDone": "You finished the whole archipelago! Congratulations!",
+    "keepPracticing": "A few facts will come back so you can keep practicing.",
+    "backToMap": "See the map"
+  },
+  "achievements": {
+    "title": "Achievements",
+    "subtitle": "{{unlocked}} of {{total}} unlocked",
+    "locked": "Not earned yet",
+    "statsTitle": "Your stats",
+    "totalQuestions": "Answers given",
+    "totalCorrect": "Correct answers",
+    "bestStreak": "Best streak",
+    "playSessions": "Times you played",
+    "toughest": "Facts to practice",
+    "toughestEmpty": "No tricky facts right now. Keep it up!",
+    "list": {
+      "firstCorrect": {
+        "name": "First answer",
+        "description": "Got your first multiplication right"
+      },
+      "firstMission": {
+        "name": "First build",
+        "description": "Completed your first mission"
+      },
+      "tenCorrect": {
+        "name": "Ten right",
+        "description": "Answered 10 multiplications correctly"
+      },
+      "streakFive": {
+        "name": "Streak of 5",
+        "description": "Got 5 questions right in a row"
+      },
+      "tableTwoDone": {
+        "name": "Two times table",
+        "description": "Completed the 2 times table island"
+      },
+      "fiftyCorrect": {
+        "name": "Fifty right",
+        "description": "Answered 50 multiplications correctly"
+      },
+      "streakTen": {
+        "name": "Streak of 10",
+        "description": "Got 10 questions right in a row"
+      },
+      "halfArchipelago": {
+        "name": "Halfway there",
+        "description": "Completed 5 islands of the archipelago"
+      },
+      "allIslands": {
+        "name": "Island master",
+        "description": "Completed every island of the archipelago"
+      }
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "language": "Language",
+    "music": "Music",
+    "sound": "Sound effects",
+    "motion": "Reduce animations",
+    "on": "On",
+    "off": "Off",
+    "dangerZone": "Start over",
+    "reset": "Erase my progress",
+    "resetTitle": "Erase all progress?",
+    "resetMessage": "Your islands, achievements and character will be erased. This cannot be undone.",
+    "resetConfirm": "Yes, erase everything",
+    "resetCancel": "No, go back",
+    "storageWarning": "This browser is not saving progress. It will be lost when you close the tab."
+  },
+  "a11y": {
+    "starFilled": "Star earned",
+    "starEmpty": "Star not earned",
+    "islandLocked": "Locked island",
+    "answerOption": "Option {{value}}",
+    "buildProgress": "Build {{percent}} percent done"
+  }
+}

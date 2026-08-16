@@ -1,0 +1,207 @@
+{
+  "app": {
+    "title": "Bloquilha",
+    "tagline": "O arquipélago das tabuadas"
+  },
+  "common": {
+    "play": "Jogar",
+    "back": "Voltar",
+    "continue": "Continuar",
+    "close": "Fechar",
+    "cancel": "Cancelar",
+    "confirm": "Confirmar",
+    "next": "Próximo",
+    "start": "Começar",
+    "loading": "Carregando o arquipélago...",
+    "stars": "{{count}} de 3 estrelas"
+  },
+  "home": {
+    "play": "Jogar",
+    "achievements": "Conquistas",
+    "settings": "Configurações",
+    "greeting": "Oi, {{name}}!",
+    "greetingAnonymous": "Oi, construtor!",
+    "continueHint": "Sua próxima ilha: {{island}}"
+  },
+  "onboarding": {
+    "languageTitle": "Escolha seu idioma",
+    "characterTitle": "Quem vai construir com a gente?",
+    "customizeTitle": "Deixe do seu jeito",
+    "nameTitle": "Como você quer ser chamado?",
+    "namePlaceholder": "Seu nome",
+    "nameSkip": "Pular",
+    "confirm": "É esse!",
+    "welcome": "Bem-vindo à Bloquilha!"
+  },
+  "character": {
+    "base": {
+      "sprout": "Broto",
+      "pebble": "Seixo"
+    },
+    "skin": "Pele",
+    "hair": "Cabelo",
+    "outfit": "Roupa",
+    "accessory": "Acessório",
+    "accessoryNone": "Nenhum",
+    "accessoryCap": "Boné",
+    "accessoryCrown": "Coroa",
+    "accessoryBand": "Faixa",
+    "accessoryGoggles": "Óculos"
+  },
+  "map": {
+    "title": "Arquipélago",
+    "subtitle": "Escolha uma ilha para construir",
+    "overall": "Ilhas concluídas: {{done}} de {{total}}",
+    "enter": "Entrar na ilha",
+    "status": {
+      "locked": "Bloqueada",
+      "available": "Liberada",
+      "inProgress": "Em construção",
+      "completed": "Concluída"
+    },
+    "lockedHint": "Termine a {{island}} para abrir esta ilha.",
+    "missionCount": "{{done}} de {{total}} missões"
+  },
+  "islands": {
+    "2": { "name": "Ilha do 2", "biome": "Campos Floridos" },
+    "3": { "name": "Ilha do 3", "biome": "Floresta dos Riachos" },
+    "4": { "name": "Ilha do 4", "biome": "Montanhas de Cristal" },
+    "5": { "name": "Ilha do 5", "biome": "Praia do Porto" },
+    "6": { "name": "Ilha do 6", "biome": "Bosque Mágico" },
+    "7": { "name": "Ilha do 7", "biome": "Cavernas Fundas" },
+    "8": { "name": "Ilha do 8", "biome": "Planície Gelada" },
+    "9": { "name": "Ilha do 9", "biome": "Terra do Vulcão" },
+    "10": { "name": "Ilha do 10", "biome": "Grande Cidade de Blocos" }
+  },
+  "missions": {
+    "bridge": {
+      "title": "A ponte quebrada",
+      "brief": "O rio cortou o caminho! Vamos colocar os blocos da ponte de volta."
+    },
+    "tower": {
+      "title": "A grande torre",
+      "brief": "Cada acerto empilha uma camada. Vamos até lá em cima!"
+    },
+    "lighthouse": {
+      "title": "O farol apagado",
+      "brief": "Os barcos precisam da luz. Conserte o farol pedaço por pedaço."
+    },
+    "trees": {
+      "title": "Plantar a mata",
+      "brief": "Esta parte da ilha ficou vazia. Vamos plantar árvores de bloco!"
+    },
+    "boat": {
+      "title": "O barco de blocos",
+      "brief": "Falta montar o casco e a vela para navegar."
+    },
+    "gate": {
+      "title": "O portão trancado",
+      "brief": "O portão só abre quando todas as peças voltarem ao lugar."
+    },
+    "windmill": {
+      "title": "O moinho parado",
+      "brief": "Vamos montar as pás para o moinho girar de novo."
+    },
+    "house": {
+      "title": "A casa do mascote",
+      "brief": "Nosso amigo precisa de um teto. Bora construir!"
+    },
+    "fence": {
+      "title": "A cerca do campo",
+      "brief": "As ovelhas de bloco fugiram. Vamos fechar a cerca."
+    },
+    "finalBadge": "Desafio final"
+  },
+  "play": {
+    "question": "{{a}} × {{b}} = ?",
+    "progress": "Pergunta {{current}} de {{total}}",
+    "piecesLeft": "Faltam {{count}} peças",
+    "correct": [
+      "Isso aí!",
+      "Bloco no lugar!",
+      "Você mandou bem!",
+      "Perfeito!",
+      "Mais um pedaço pronto!"
+    ],
+    "wrong": [
+      "Quase! Vamos tentar de novo.",
+      "Opa, quase lá. Olhe a dica!",
+      "Sem problema, tente outra vez."
+    ],
+    "hintTitle": "Olhe os blocos: {{a}} grupos de {{b}}",
+    "hintCount": "{{a}} × {{b}} = {{answer}}",
+    "tryAgain": "Tentar de novo",
+    "leave": "Sair da missão",
+    "leaveConfirm": "Sair agora? O progresso desta missão não será salvo.",
+    "tutorial": {
+      "step1": "Toque na resposta certa para colocar um bloco.",
+      "step2": "Errou? Sem problema: aparece uma dica e você tenta de novo.",
+      "step3": "Complete a construção e a ilha muda!"
+    }
+  },
+  "result": {
+    "title": "Missão concluída!",
+    "correct": "Acertos",
+    "wrong": "Erros",
+    "accuracy": "Aproveitamento",
+    "starsEarned": "Estrelas ganhas",
+    "nextMission": "Próxima missão",
+    "backToMap": "Voltar ao mapa",
+    "replay": "Jogar de novo"
+  },
+  "islandComplete": {
+    "title": "{{island}} concluída!",
+    "subtitle": "A ilha ficou linda com as suas construções.",
+    "unlocked": "Nova ilha liberada: {{island}}",
+    "allDone": "Você terminou todo o arquipélago! Que construtor!",
+    "backToMap": "Ir para o mapa"
+  },
+  "achievements": {
+    "title": "Conquistas",
+    "unlockedCount": "{{done}} de {{total}} conquistas",
+    "locked": "Ainda não conquistada",
+    "firstCorrect": {
+      "name": "Primeiro bloco",
+      "description": "Acerte a sua primeira multiplicação."
+    },
+    "tenCorrect": {
+      "name": "Pilha de dez",
+      "description": "Acerte 10 multiplicações."
+    },
+    "streakFive": {
+      "name": "Cinco em sequência",
+      "description": "Acerte 5 perguntas seguidas."
+    },
+    "firstIsland": {
+      "name": "Primeira ilha",
+      "description": "Conclua a Ilha do 2."
+    },
+    "fiftyCorrect": {
+      "name": "Mestre dos blocos",
+      "description": "Acerte 50 multiplicações."
+    },
+    "allIslands": {
+      "name": "Rei do arquipélago",
+      "description": "Conclua todas as ilhas."
+    }
+  },
+  "settings": {
+    "title": "Configurações",
+    "language": "Idioma",
+    "music": "Música",
+    "sound": "Efeitos sonoros",
+    "motion": "Menos animações",
+    "on": "Ligado",
+    "off": "Desligado",
+    "reset": "Apagar progresso",
+    "resetTitle": "Apagar todo o progresso?",
+    "resetBody": "Você vai perder as ilhas, as estrelas e as conquistas. Não dá para desfazer.",
+    "resetConfirm": "Sim, apagar tudo",
+    "statistics": "Suas estatísticas",
+    "totalQuestions": "Perguntas respondidas",
+    "totalCorrect": "Acertos",
+    "bestStreak": "Melhor sequência",
+    "practice": "Para praticar mais",
+    "practiceEmpty": "Nenhuma multiplicação difícil por enquanto. Muito bem!"
+  }
+}

@@ -1,0 +1,280 @@
+{
+  "meta": {
+    "name": "Português (Brasil)",
+    "flag": "🇧🇷"
+  },
+  "common": {
+    "play": "Jogar",
+    "back": "Voltar",
+    "continue": "Continuar",
+    "close": "Fechar",
+    "cancel": "Cancelar",
+    "confirm": "Confirmar",
+    "next": "Avançar",
+    "loading": "Carregando...",
+    "of": "de"
+  },
+  "splash": {
+    "title": "Ilhas da Tabuada",
+    "tagline": "Construa um mundo de blocos aprendendo a tabuada"
+  },
+  "home": {
+    "greeting": "Olá, explorador!",
+    "subtitle": "Seu arquipélago está esperando",
+    "play": "Jogar",
+    "achievements": "Conquistas",
+    "settings": "Configurações",
+    "progress": "{{completed}} de {{total}} ilhas concluídas",
+    "changeCharacter": "Mudar personagem"
+  },
+  "onboarding": {
+    "languageTitle": "Escolha seu idioma",
+    "languageSubtitle": "Você pode mudar depois nas configurações",
+    "characterTitle": "Quem vai explorar as ilhas?",
+    "characterSubtitle": "Escolha seu personagem",
+    "customizeTitle": "Deixe do seu jeito",
+    "customizeSubtitle": "Escolha as cores e um acessório",
+    "skinLabel": "Tom de pele",
+    "hairLabel": "Cabelo",
+    "outfitLabel": "Cor da roupa",
+    "accessoryLabel": "Acessório",
+    "surprise": "Surpresa!",
+    "start": "Começar aventura",
+    "base": {
+      "boy": "Menino",
+      "girl": "Menina"
+    },
+    "hair": {
+      "short": "Curto",
+      "long": "Comprido",
+      "curly": "Cacheado",
+      "ponytail": "Rabo de cavalo"
+    },
+    "outfit": {
+      "red": "Vermelho",
+      "blue": "Azul",
+      "green": "Verde",
+      "purple": "Roxo",
+      "orange": "Laranja",
+      "pink": "Rosa"
+    },
+    "accessory": {
+      "none": "Nenhum",
+      "cap": "Boné",
+      "glasses": "Óculos",
+      "crown": "Coroa"
+    },
+    "skin": {
+      "skin1": "Tom 1",
+      "skin2": "Tom 2",
+      "skin3": "Tom 3",
+      "skin4": "Tom 4"
+    }
+  },
+  "map": {
+    "title": "Mapa do Arquipélago",
+    "subtitle": "Escolha uma ilha para explorar",
+    "enter": "Entrar na ilha",
+    "review": "Revisar ilha",
+    "status": {
+      "locked": "Bloqueada",
+      "available": "Liberada",
+      "inProgress": "Em andamento",
+      "completed": "Concluída"
+    },
+    "lockedHint": "Conclua a tabuada do {{table}} para abrir esta ilha",
+    "missions": "{{completed}} de {{total}} missões",
+    "stars": "{{count}} de 3 estrelas",
+    "tableLabel": "Tabuada do {{table}}"
+  },
+  "islands": {
+    "2": { "name": "Campos Floridos", "biome": "Campos verdes e flores" },
+    "3": { "name": "Floresta dos Rios", "biome": "Floresta e riachos" },
+    "4": { "name": "Montanhas de Cristal", "biome": "Montanhas e cristais" },
+    "5": { "name": "Praia do Porto", "biome": "Praia e barcos" },
+    "6": { "name": "Bosque Mágico", "biome": "Floresta encantada" },
+    "7": { "name": "Cavernas Brilhantes", "biome": "Cavernas iluminadas" },
+    "8": { "name": "Terras Geladas", "biome": "Gelo e neve" },
+    "9": { "name": "Ilha do Vulcão", "biome": "Rochas e lava" },
+    "10": { "name": "Cidade Final", "biome": "A grande cidade de blocos" }
+  },
+  "missions": {
+    "finalBadge": "Desafio final",
+    "counter": "Missão {{order}} de {{total}}",
+    "bridge": {
+      "title": "A ponte quebrada",
+      "brief": "O rio cortou o caminho! Vamos reconstruir a ponte, bloco por bloco.",
+      "done": "A ponte ficou pronta! Agora dá para atravessar."
+    },
+    "tower": {
+      "title": "A grande torre",
+      "brief": "Cada resposta certa levanta mais uma camada da torre.",
+      "done": "A torre está de pé e dá para ver o arquipélago inteiro!"
+    },
+    "lighthouse": {
+      "title": "O farol apagado",
+      "brief": "O farol parou de brilhar. Vamos consertar cada parte dele.",
+      "done": "O farol acendeu! A luz gira sobre o mar."
+    },
+    "trees": {
+      "title": "Plantar o bosque",
+      "brief": "Este pedaço da ilha está vazio. Vamos plantar árvores de bloco.",
+      "done": "O bosque cresceu cheio de folhas!"
+    },
+    "house": {
+      "title": "A casinha de blocos",
+      "brief": "Alguém precisa de um lar. Vamos construir uma casa bem colorida.",
+      "done": "A casa ficou pronta e a chaminé já solta fumacinha!"
+    },
+    "gate": {
+      "title": "O portão trancado",
+      "brief": "Um portão gigante bloqueia o caminho. Cada acerto abre um pedaço.",
+      "done": "O portão se abriu! O caminho está livre."
+    },
+    "boat": {
+      "title": "O barco de blocos",
+      "brief": "Vamos montar um barco para navegar até a próxima praia.",
+      "done": "O barco está flutuando e a vela está no alto!"
+    },
+    "fence": {
+      "title": "A cerca da fazenda",
+      "brief": "A cerca caiu com o vento. Vamos levantar cada estaca.",
+      "done": "A cerca ficou inteirinha de novo!"
+    },
+    "windmill": {
+      "title": "O moinho parado",
+      "brief": "O moinho precisa de pás novas para voltar a girar.",
+      "done": "O moinho está girando com o vento!"
+    },
+    "crystal": {
+      "title": "A torre de cristal",
+      "brief": "Um cristal gigante pode iluminar a ilha inteira. Vamos montá-lo!",
+      "done": "O cristal brilhou e iluminou tudo ao redor!"
+    }
+  },
+  "game": {
+    "question": "Quanto é {{a}} × {{b}}?",
+    "questionCounter": "Pergunta {{current}} de {{total}}",
+    "chooseAnswer": "Escolha a resposta certa",
+    "blocks": "Blocos colocados: {{placed}} de {{total}}",
+    "quit": "Sair da missão",
+    "quitTitle": "Quer sair agora?",
+    "quitMessage": "Seu progresso nesta missão não será salvo, mas as ilhas já conquistadas continuam suas.",
+    "quitConfirm": "Sair mesmo assim",
+    "quitCancel": "Continuar jogando",
+    "showAnswer": "A resposta certa é {{answer}}. Toque nela para continuar!",
+    "hintTitle": "Olha só: {{a}} grupos de {{b}}",
+    "hintCount": "São {{answer}} blocos no total",
+    "startMission": "Começar",
+    "tutorial": {
+      "step1": "Toque na resposta certa.",
+      "step2": "Cada acerto coloca blocos no cenário.",
+      "step3": "Termine a construção para concluir a missão!"
+    }
+  },
+  "feedback": {
+    "correct": {
+      "0": "Isso mesmo!",
+      "1": "Muito bem!",
+      "2": "Perfeito!",
+      "3": "Você conseguiu!"
+    },
+    "wrong": {
+      "0": "Quase! Vamos tentar de novo.",
+      "1": "Opa, quase lá! Tente outra vez.",
+      "2": "Não foi essa. Olha a dica!",
+      "3": "Tente mais uma vez, você consegue!"
+    }
+  },
+  "result": {
+    "title": "Missão concluída!",
+    "correct": "Acertos de primeira",
+    "mistakes": "Tentativas extras",
+    "accuracy": "Aproveitamento",
+    "islandProgress": "Progresso da ilha",
+    "nextMission": "Próxima missão",
+    "backToMap": "Voltar ao mapa",
+    "newAchievements": "Novas conquistas!"
+  },
+  "islandComplete": {
+    "title": "Ilha concluída!",
+    "subtitle": "Você dominou a tabuada do {{table}}!",
+    "unlocked": "Nova ilha liberada: {{island}}",
+    "allDone": "Você concluiu todo o arquipélago! Parabéns!",
+    "keepPracticing": "Algumas contas ainda vão aparecer de novo para você treinar.",
+    "backToMap": "Ver o mapa"
+  },
+  "achievements": {
+    "title": "Conquistas",
+    "subtitle": "{{unlocked}} de {{total}} desbloqueadas",
+    "locked": "Ainda não conquistada",
+    "statsTitle": "Suas estatísticas",
+    "totalQuestions": "Respostas dadas",
+    "totalCorrect": "Acertos",
+    "bestStreak": "Melhor sequência",
+    "playSessions": "Vezes que você jogou",
+    "toughest": "Contas para treinar",
+    "toughestEmpty": "Nenhuma conta difícil por enquanto. Continue assim!",
+    "list": {
+      "firstCorrect": {
+        "name": "Primeiro acerto",
+        "description": "Acertou sua primeira multiplicação"
+      },
+      "firstMission": {
+        "name": "Primeira construção",
+        "description": "Concluiu sua primeira missão"
+      },
+      "tenCorrect": {
+        "name": "Dez acertos",
+        "description": "Acertou 10 multiplicações"
+      },
+      "streakFive": {
+        "name": "Sequência de 5",
+        "description": "Acertou 5 perguntas seguidas"
+      },
+      "tableTwoDone": {
+        "name": "Tabuada do 2",
+        "description": "Concluiu a ilha da tabuada do 2"
+      },
+      "fiftyCorrect": {
+        "name": "Cinquenta acertos",
+        "description": "Acertou 50 multiplicações"
+      },
+      "streakTen": {
+        "name": "Sequência de 10",
+        "description": "Acertou 10 perguntas seguidas"
+      },
+      "halfArchipelago": {
+        "name": "Meio caminho",
+        "description": "Concluiu 5 ilhas do arquipélago"
+      },
+      "allIslands": {
+        "name": "Mestre das ilhas",
+        "description": "Concluiu todas as ilhas do arquipélago"
+      }
+    }
+  },
+  "settings": {
+    "title": "Configurações",
+    "language": "Idioma",
+    "music": "Música",
+    "sound": "Efeitos sonoros",
+    "motion": "Reduzir animações",
+    "on": "Ligado",
+    "off": "Desligado",
+    "dangerZone": "Recomeçar do zero",
+    "reset": "Apagar meu progresso",
+    "resetTitle": "Apagar todo o progresso?",
+    "resetMessage": "Suas ilhas, conquistas e personagem serão apagados. Isso não pode ser desfeito.",
+    "resetConfirm": "Sim, apagar tudo",
+    "resetCancel": "Não, voltar",
+    "storageWarning": "Este navegador não está salvando o progresso. Ele será perdido ao fechar a aba."
+  },
+  "a11y": {
+    "starFilled": "Estrela conquistada",
+    "starEmpty": "Estrela não conquistada",
+    "islandLocked": "Ilha bloqueada",
+    "answerOption": "Alternativa {{value}}",
+    "buildProgress": "Construção {{percent}} por cento pronta"
+  }
+}

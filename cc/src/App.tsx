@@ -1,0 +1,279 @@
+import { useCallback, useEffect, useState } from 'react';
+import { audioService } from './audio/audioService';
+import { getMission, missionsForTable, type MissionDefinition } from './domain/missions';
+import { nextMissionForTable } from './domain/progression';
+import type { AvatarConfig } from './domain/types';
+import { toMissionResult, type LevelState } from './game/levelSession';
+import { I18nProvider } from './i18n/I18nProvider';
+import { GameProvider, useGame, type MissionCompletion } from './state/GameProvider';
+import type { ProgressRepository } from './persistence/ProgressRepository';
+import { AchievementsScreen } from './screens/AchievementsScreen';
+import { HomeScreen } from './screens/HomeScreen';
+import { IslandCompleteScreen } from './screens/IslandCompleteScreen';
+import { LevelResultScreen } from './screens/LevelResultScreen';
+import { LevelScreen } from './screens/LevelScreen';
+import { OnboardingScreen } from './screens/OnboardingScreen';
+import { SettingsScreen } from './screens/SettingsScreen';
+import { SplashScreen } from './screens/SplashScreen';
+import { WorldMapScreen } from './screens/WorldMapScreen';
+import './styles/global.css';
+
+type Screen =
+  | 'splash'
+  | 'onboarding'
+  | 'editCharacter'
+  | 'home'
+  | 'map'
+  | 'level'
+  | 'result'
+  | 'islandComplete'
+  | 'achievements'
+  | 'settings';
+
+interface FinishedMission {
+  mission: MissionDefinition;
+  level: LevelState;
+  completion: MissionCompletion;
+}
+
+/**
+ * Roteador do jogo.
+ *
+ * Sem biblioteca de rotas: o MVP tem um punhado de telas e um fluxo linear.
+ * Uma variavel de estado descreve onde a crianca esta.
+ */
+function Game() {
+  const game = useGame();
+  const { state, ready } = game;
+
+  const [screen, setScreen] = useState<Screen>('splash');
+  const [activeMissionId, setActiveMissionId] = useState<string | null>(null);
+  const [finished, setFinished] = useState<FinishedMission | null>(null);
+
+  // Mantem o audio alinhado com as configuracoes salvas.
+  useEffect(() => {
+    audioService.setSoundEnabled(state.settings.soundEffectsEnabled);
+  }, [state.settings.soundEffectsEnabled]);
+
+  useEffect(() => {
+    audioService.setMusicEnabled(state.settings.musicEnabled);
+  }, [state.settings.musicEnabled]);
+
+  // Politica de autoplay: o audio so pode comecar apos uma interacao real.
+  useEffect(() => {
+    const unlock = () => audioService.unlock();
+    window.addEventListener('pointerdown', unlock, { once: true });
+    window.addEventListener('keydown', unlock, { once: true });
+    return () => {
+      window.removeEventListener('pointerdown', unlock);
+      window.removeEventListener('keydown', unlock);
+    };
+  }, []);
+
+  // Reduz animacoes conforme a configuracao e a preferencia do sistema.
+  useEffect(() => {
+    document.documentElement.dataset.reducedMotion = state.settings.reducedMotion ? 'on' : 'off';
+  }, [state.settings.reducedMotion]);
+
+  useEffect(() => {
+    document.documentElement.lang = state.settings.locale;
+  }, [state.settings.locale]);
+
+  const leaveSplash = useCallback(() => {
+    setScreen(state.player.onboardingCompleted ? 'home' : 'onboarding');
+  }, [state.player.onboardingCompleted]);
+
+  const startIsland = useCallback(
+    (table: number) => {
+      game.selectTable(table);
+      const mission = nextMissionForTable(state.progress, table) ?? missionsForTable(table)[0];
+      if (!mission) {
+        return;
+      }
+      setActiveMissionId(mission.id);
+      setScreen('level');
+    },
+    [game, state.progress],
+  );
+
+  const handleFinishMission = useCallback(
+    (level: LevelState) => {
+      const mission = getMission(level.missionId);
+      if (!mission) {
+        setScreen('map');
+        return;
+      }
+      const completion = game.finishMission(toMissionResult(level, new Date().toISOString()));
+      setFinished({ mission, level, completion });
+      setScreen(completion.islandCompleted ? 'islandComplete' : 'result');
+    },
+    [game],
+  );
+
+  const handleNextMission = useCallback(() => {
+    if (!finished) {
+      setScreen('map');
+      return;
+    }
+    const mission = nextMissionForTable(state.progress, finished.mission.table);
+    if (!mission) {
+      setScreen('map');
+      return;
+    }
+    setActiveMissionId(mission.id);
+    setScreen('level');
+  }, [finished, state.progress]);
+
+  const handleOnboardingFinish = useCallback(
+    (avatar: AvatarConfig) => {
+      game.completeOnboarding(avatar);
+      setScreen('map');
+    },
+    [game],
+  );
+
+  if (screen === 'splash') {
+    return <SplashScreen ready={ready} onDone={leaveSplash} />;
+  }
+
+  if (screen === 'onboarding') {
+    return (
+      <OnboardingScreen
+        locale={state.settings.locale}
+        onLocaleChange={game.setLocale}
+        onFinish={handleOnboardingFinish}
+      />
+    );
+  }
+
+  if (screen === 'editCharacter') {
+    return (
+      <OnboardingScreen
+        editing
+        locale={state.settings.locale}
+        initialAvatar={state.player.avatar}
+        onLocaleChange={game.setLocale}
+        onCancel={() => setScreen('home')}
+        onFinish={(avatar) => {
+          game.updateAvatar(avatar);
+          setScreen('home');
+        }}
+      />
+    );
+  }
+
+  const home = (
+    <HomeScreen
+      state={state}
+      onPlay={() => setScreen('map')}
+      onAchievements={() => setScreen('achievements')}
+      onSettings={() => setScreen('settings')}
+      onEditCharacter={() => setScreen('editCharacter')}
+    />
+  );
+
+  const map = (
+    <WorldMapScreen state={state} onBack={() => setScreen('home')} onEnterIsland={startIsland} />
+  );
+
+  if (screen === 'home') {
+    return home;
+  }
+
+  if (screen === 'map') {
+    return map;
+  }
+
+  if (screen === 'level') {
+    const mission = activeMissionId ? getMission(activeMissionId) : undefined;
+    if (!mission) {
+      return map;
+    }
+    return (
+      <LevelScreen
+        // Remontar a fase ao trocar de missao zera a sessao anterior.
+        key={mission.id}
+        state={state}
+        mission={mission}
+        onAnswer={game.recordAnswer}
+        onFinish={handleFinishMission}
+        onExit={() => setScreen('map')}
+        onTutorialSeen={game.markTutorialSeen}
+      />
+    );
+  }
+
+  if (screen === 'result' && finished) {
+    return (
+      <LevelResultScreen
+        state={state}
+        mission={finished.mission}
+        level={finished.level}
+        completion={finished.completion}
+        onNextMission={handleNextMission}
+        onBackToMap={() => setScreen('map')}
+      />
+    );
+  }
+
+  if (screen === 'islandComplete' && finished) {
+    return (
+      <IslandCompleteScreen
+        state={state}
+        table={finished.mission.table}
+        unlockedTable={finished.completion.unlockedTable}
+        onBackToMap={() => setScreen('map')}
+      />
+    );
+  }
+
+  if (screen === 'achievements') {
+    return <AchievementsScreen state={state} onBack={() => setScreen('home')} />;
+  }
+
+  if (screen === 'settings') {
+    return (
+      <SettingsScreen
+        state={state}
+        storageAvailable={game.storageAvailable}
+        onBack={() => setScreen('home')}
+        onLocaleChange={game.setLocale}
+        onMusicChange={game.setMusicEnabled}
+        onSoundChange={game.setSoundEffectsEnabled}
+        onMotionChange={game.setReducedMotion}
+        onReset={() => {
+          game.resetProgress();
+          setFinished(null);
+          setActiveMissionId(null);
+          setScreen('onboarding');
+        }}
+      />
+    );
+  }
+
+  // Estado inesperado: volta para um lugar seguro em vez de tela branca.
+  return home;
+}
+
+/** Ponte entre o estado do jogo e o idioma das telas. */
+function LocalizedGame() {
+  const { state } = useGame();
+  return (
+    <I18nProvider locale={state.settings.locale}>
+      <Game />
+    </I18nProvider>
+  );
+}
+
+export interface AppProps {
+  /** Injetavel para testes; producao sempre usa o repositorio padrao. */
+  repository?: ProgressRepository;
+}
+
+export default function App({ repository }: AppProps = {}) {
+  return (
+    <GameProvider repository={repository}>
+      <LocalizedGame />
+    </GameProvider>
+  );
+}
