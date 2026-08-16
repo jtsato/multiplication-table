@@ -418,3 +418,106 @@ exato do CI (`npm ci --prefix 99`) foi verificado localmente.
 - **7 slices verticais**, nenhuma pasta por camada.
 - Lint e typecheck limpos, sem `any` e sem `eslint-disable` em código de produção.
 - Toda a arte gerada em código; **zero assets externos**.
+
+---
+
+## Fatia 7 — Celular e testes em navegador
+
+**O que foi criado:** controles de toque (joystick analógico + botões por contexto),
+layout responsivo, ajuste de qualidade por aparelho, e uma suíte Playwright que
+abre o jogo num navegador real — desktop e celular emulado.
+
+### A refatoração que veio antes dos botões
+
+Cada slice escutava uma tecla física (`useKeyPress('KeyE')`). Adicionar toque desse
+jeito criaria dois caminhos paralelos que divergiriam com o tempo. Antes de
+desenhar qualquer botão, a entrada foi separada em duas camadas:
+
+- **`shared/input.ts`** define **ações semânticas** (`interagir`, `confirmar`,
+  `responder-1`…). As slices escutam a ação, nunca a tecla.
+- Um único mapa `KEY_BINDINGS` traduz `event.code` → ação, montado uma vez na raiz.
+- O toque chama `emitAction` diretamente.
+
+Resultado: teclado e dedo entram exatamente pelo mesmo caminho. Um botão da tela
+não pode se comportar diferente da tecla equivalente, porque é literalmente o
+mesmo handler.
+
+O movimento seguiu o mesmo princípio: `axesToDirection` passou a ser o caminho
+comum, com o teclado entregando eixos de -1/0/1 e o joystick entregando qualquer
+valor entre -1 e 1. O joystick é analógico — encostar de leve anda devagar, o que
+ajuda a manobrar perto de um recurso.
+
+### Decisões de toque
+
+**Botões por contexto, não um teclado virtual fixo.** Não cabem oito comandos numa
+tela de celular. "Colher" só aparece com algo ao alcance; "Construir"/"Cancelar"
+só no modo construção; as respostas ficam no painel ancorado no recurso.
+
+**`pointerdown`, não `click`.** O clique espera ~300 ms para decidir se foi toque
+duplo; num jogo isso é atraso perceptível.
+
+**Captura de ponteiro no joystick e rastreio de `pointerId` na câmera.** Sem o
+`pointerId`, o polegar do joystick e o dedo da câmera se atropelavam: os dois
+emitem `pointermove` na janela e o segundo sobrescrevia a referência do primeiro,
+fazendo a câmera saltar.
+
+**Qualidade por aparelho:** `dpr` limitado a 1.5, antialias desligado e mapa de
+sombra de 512 no toque — o custo de pixel cresce com o quadrado do `dpr`, e é a
+pior combinação possível num celular de tela densa e GPU fraca. E `fov` 70 em vez
+de 55, porque `fov` no Three é vertical e uma tela em retrato deixaria o campo
+horizontal estreito demais.
+
+### O que os testes de navegador encontraram
+
+Esta é a parte que justifica o Playwright. Nenhum destes seria pego pela suíte do
+Vitest — todos apareceram ao **olhar** as telas capturadas:
+
+| Bug | Causa |
+| --- | --- |
+| A ilha inteira cor de areia, sem sombra | O anel de areia terminava em `y = +0.05`, acima do gramado em `y = 0`, cobrindo tudo — e as sombras caíam nele, que não tinha `receiveShadow` |
+| Personagem sem cabeça | A esfera da cabeça estava em `y = 0.72`, dentro da cápsula que vai até `0.8` |
+| HUD anunciando "Noite" com o céu laranja | A curva `raw²` deixava quase toda a noite clara e escurecia só no fim |
+| Noite escura a ponto de ser injogável | `sunIntensity 0.22` **passava** no teste (a asserção só exige "maior que zero") e mesmo assim a tela ficava preta |
+| Receitas colidindo com os botões no celular | A media query estava no topo do CSS, antes das regras base, e perdia por ordem de cascata |
+
+O quarto caso é o mais instrutivo: **número que passa em teste não é o mesmo que
+número que funciona.** A asserção estava certa e insuficiente.
+
+Além disso, o E2E expôs um problema de arquitetura real: `PlayerView` era montado
+**por último** no canvas, e como o R3F executa os `useFrame` na ordem de montagem,
+todos os consumidores de `playerTransform` (recursos, fantasma de construção,
+inimigos) trabalhavam com a posição do quadro anterior — a 7 m/s, quase 12 cm de
+erro em cada decisão de alcance. A ordem no `GameCanvas` agora é explícita e
+comentada.
+
+### Decisões do próprio E2E
+
+**Roda contra o build de produção** (`vite preview`), não contra o dev server: é o
+artefato que vai para o Pages, com o mesmo empacotamento.
+
+**`--use-gl=swiftshader`** para WebGL por software; sem isso o canvas não
+inicializa em ambiente sem GPU e o teste falharia por um motivo alheio ao jogo.
+
+**Uma ponte de depuração (`window.__tabuada`)** expõe store, relógio e um
+teleporte. Sem ela o teste só conseguiria apertar teclas no escuro. O teleporte
+monta a cena ("de pé ao lado de uma árvore") em vez de atravessar a ilha correndo
+— o piloto automático que fazia isso levava 4 minutos e falhava de forma
+intermitente. Andar de verdade continua com teste próprio.
+
+**A resposta certa é calculada a partir do enunciado exibido na tela**, e não do
+estado interno. É assim que se prova que o texto que a criança lê corresponde à
+conta que o jogo espera.
+
+**Toque nativo via CDP**, porque `page.touchscreen` só faz toque simples e o
+joystick precisa de arrasto. Uma única sessão CDP por gesto — criar uma sessão
+nova só para soltar o dedo faz o Chromium responder *"Must send a TouchStart
+first"*.
+
+### Portões
+
+| Portão | Resultado |
+| --- | --- |
+| `npm run lint` | limpo (corrigidos: `set-state-in-effect` e `only-export-components`, movendo `useIsTouchDevice` para `shared/input.ts` com `useSyncExternalStore`) |
+| `npm run test` | 282 testes, 18 arquivos, verde |
+| `npm run e2e` | 16 testes, desktop + celular, verde |
+| `npm run build` | ok |

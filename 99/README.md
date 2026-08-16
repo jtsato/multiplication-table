@@ -28,6 +28,11 @@ não cobrir currículo.
 
 ## Como jogar
 
+Funciona no computador e no **celular**. Os controles de toque aparecem sozinhos
+em aparelhos com apontador grosso (`pointer: coarse`).
+
+### No computador
+
 | Tecla | Ação |
 | --- | --- |
 | `W` `A` `S` `D` | Andar |
@@ -38,6 +43,20 @@ não cobrir currículo.
 | `C` | Modo construção — cerca (6 madeira) |
 | `Espaço` | Confirmar construção |
 | `Esc` | Cancelar construção |
+
+### No celular
+
+| Gesto | Ação |
+| --- | --- |
+| Joystick (canto inferior esquerdo) | Andar — analógico, encostar de leve anda devagar |
+| Arrastar em qualquer outro ponto da tela | Girar a câmera |
+| Botão **Colher** / **Lenha** | Abre o desafio (só aparece com algo ao alcance) |
+| Botões do painel | Responder |
+| Botões **Fogueira** / **Cerca** | Entrar no modo construção (apagados sem recurso) |
+| Botões **Construir** / **Cancelar** | Confirmar ou desistir |
+
+Os botões mostrados dependem do contexto: numa tela de celular não cabem oito
+comandos ao mesmo tempo, então só aparece o que faz sentido naquele momento.
 
 O ciclo dura 3 minutos. Colha e construa de dia; à noite surgem cinco vultos que
 perseguem o jogador. A fogueira os afugenta dentro do seu raio e a cerca bloqueia
@@ -100,8 +119,31 @@ assinantes 60 vezes por segundo.
 
 ## Testes
 
-255 testes. A cena R3F não renderiza em jsdom, então a arquitetura empurra a
-lógica para fora dos componentes:
+Duas camadas: **282 testes** de unidade/integração no Vitest e **16 testes ponta a
+ponta** em navegador de verdade com Playwright.
+
+### Ponta a ponta (Playwright)
+
+```bash
+npm run e2e          # desktop + celular emulado
+npm run e2e:ui       # modo interativo
+```
+
+Rodam contra o **build de produção** servido pelo `vite preview` — o mesmo
+artefato que vai para o Pages. Cobrem o que só o navegador prova: WebGL
+inicializa, o WASM do Rapier carrega, a física move o jogador de verdade, e o
+loop matemática → recurso → construção → noite → vitória funciona inteiro. O
+projeto `celular` emula um Pixel 5 e emite eventos de toque nativos via CDP, de
+modo que o joystick é arrastado por um dedo real, não por eventos sintéticos.
+
+Os testes gravam telas em `e2e/telas/`, o que torna possível **olhar** o jogo —
+foi assim que apareceram bugs que nenhum teste unitário pegaria: a ilha inteira
+cor de areia, o personagem sem cabeça e a noite escura demais para jogar.
+
+### Unidade e integração (Vitest)
+
+A cena R3F não renderiza em jsdom, então a arquitetura empurra a lógica para fora
+dos componentes:
 
 - **Funções puras e slices do store** → Vitest em ambiente `node`. É onde fica a
   maior parte da cobertura.
@@ -129,6 +171,7 @@ npm run test:watch  # modo watch
 npm run typecheck   # TypeScript sem emitir
 npm run lint        # ESLint
 npm run format      # Prettier
+npm run e2e         # testes de navegador (exige `npx playwright install chromium`)
 ```
 
 ## Decisões técnicas
