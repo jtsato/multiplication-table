@@ -11,6 +11,7 @@ import { playerTransform } from '../player';
 import {
   ENEMIES,
   applyContactDamage,
+  enemyTimeScale,
   evaluateOutcome,
   fireThreatening,
   isTouching,
@@ -91,6 +92,18 @@ export function EnemiesView() {
     // Só fogueiras acesas afugentam — uma que ficou sem lenha não protege mais.
     const litFires = state.structures.filter((structure) => isLit(structure, now));
 
+    /**
+     * Camera lenta enquanto a crianca responde.
+     *
+     * O mundo continua andando — o desafio nao pausa o jogo —, mas a um quarto
+     * da velocidade. O intervalo entre danos e esticado na mesma proporcao, para
+     * um inimigo ja encostado nao continuar mordendo no ritmo normal enquanto a
+     * crianca le o enunciado.
+     */
+    const escala = enemyTimeScale(state.activeChallenge !== null);
+    const passoDelta = delta * escala;
+    const cooldown = ENEMIES.damageCooldown / escala;
+
     let health = state.health;
 
     for (let index = 0; index < liveRef.current.length; index += 1) {
@@ -98,8 +111,8 @@ export function EnemiesView() {
       const threat = fireThreatening(current, litFires);
 
       const next = threat
-        ? stepAway(current, threat.position, ENEMIES.retreatSpeed, delta)
-        : stepAvoidingFences(current, playerTransform, ENEMIES.speed, delta, state.structures);
+        ? stepAway(current, threat.position, ENEMIES.retreatSpeed, passoDelta)
+        : stepAvoidingFences(current, playerTransform, ENEMIES.speed, passoDelta, state.structures);
 
       current.x = next.x;
       current.z = next.z;
@@ -112,7 +125,13 @@ export function EnemiesView() {
       }
 
       if (!threat && isTouching(current, playerTransform)) {
-        const hit = applyContactDamage(health, now, lastHitRef.current);
+        const hit = applyContactDamage(
+          health,
+          now,
+          lastHitRef.current,
+          ENEMIES.contactDamage,
+          cooldown,
+        );
         if (hit.applied) {
           health = hit.health;
           lastHitRef.current = hit.lastHitAt;

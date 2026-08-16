@@ -1,4 +1,5 @@
 // @vitest-environment jsdom
+import { act } from 'react';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { useGameStore } from '../../app/store';
 import { renderScene } from '../../test/sceneHarness';
@@ -57,6 +58,8 @@ describe('EnemiesView', () => {
     state().resetSurvival();
     state().resetBuilding();
     state().resetClock();
+    state().resetResources();
+    state().cancelChallenge();
   });
 
   it('nao traz inimigo nenhum durante o dia', async () => {
@@ -201,6 +204,50 @@ describe('EnemiesView', () => {
 
     // Contraprova do teste acima: sem a cerca, eles encostam.
     expect(distanciaAoJogador(renderer)).toBeLessThan(2);
+
+    await renderer.unmount();
+  });
+
+  it('com o desafio aberto, os inimigos andam em camera lenta', async () => {
+    relogioEm(0.25);
+    const renderer = await renderScene(<EnemiesView />);
+    await renderer.advanceFrames(2, 1 / 60);
+    relogioEm(meioDaNoite);
+    await renderer.advanceFrames(2, 1 / 60);
+
+    // Mesma quantidade de quadros nas duas medicoes, mudando so o desafio.
+    const antesNormal = distanciaAoJogador(renderer);
+    await renderer.advanceFrames(40, 0.05);
+    const avancoNormal = antesNormal - distanciaAoJogador(renderer);
+
+    act(() => {
+      state().startChallenge(state().nodes[0]);
+    });
+    const antesLento = distanciaAoJogador(renderer);
+    await renderer.advanceFrames(40, 0.05);
+    const avancoLento = antesLento - distanciaAoJogador(renderer);
+
+    // Continuam se aproximando — o jogo nao pausa —, mas bem mais devagar.
+    expect(avancoLento).toBeGreaterThan(0);
+    expect(avancoLento).toBeLessThan(avancoNormal * 0.5);
+
+    await renderer.unmount();
+  });
+
+  it('a camera lenta nao para o relogio do dia', async () => {
+    relogioEm(meioDaNoite);
+    const renderer = await renderScene(<EnemiesView />);
+    await renderer.advanceFrames(2, 1 / 60);
+
+    act(() => {
+      state().startChallenge(state().nodes[0]);
+    });
+
+    // Abrir um desafio nao pode virar um jeito de esticar a noite.
+    const antes = dayNightClock.seconds;
+    dayNightClock.seconds += 5;
+    await renderer.advanceFrames(2, 1 / 60);
+    expect(dayNightClock.seconds).toBeCloseTo(antes + 5);
 
     await renderer.unmount();
   });

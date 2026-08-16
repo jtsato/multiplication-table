@@ -26,6 +26,13 @@
   font-weight: 700;
 }
 
+/* Aviso de calma: discreto, para tranquilizar sem competir com o enunciado. */
+.challenge__calma {
+  margin: -6px 0 10px;
+  font-size: 12px;
+  color: #9db4e8;
+}
+
 .challenge__options {
   display: flex;
   gap: 8px;

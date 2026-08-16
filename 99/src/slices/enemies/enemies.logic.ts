@@ -25,7 +25,32 @@ export const ENEMIES = {
   /** Velocidade de recuo ao entrar no raio da fogueira. */
   retreatSpeed: 4.4,
   maxHealth: 100,
+  /**
+   * Fracao da velocidade dos inimigos enquanto um desafio esta aberto.
+   *
+   * O jogo nao pausa — essa e a decisao central da Fatia 3, e e o que faz a
+   * conta ser ferramenta e nao prova. Mas correr o tempo cheio enquanto a
+   * crianca conta os grupos transforma a tensao em pressa, e pressa e o inimigo
+   * de aprender: quem tem medo de demorar chuta em vez de contar.
+   *
+   * Um quarto da velocidade preserva a sensacao de que o mundo continua vivo —
+   * os vultos seguem se aproximando, visivelmente — sem cobrar rapidez de
+   * calculo.
+   */
+  challengeTimeScale: 0.25,
 } as const;
+
+/**
+ * Escala de tempo dos inimigos neste quadro.
+ *
+ * Fica aqui, e nao espalhada no componente, para poder ser testada e para deixar
+ * explicito que a camera lenta vale so para os inimigos: o relogio do dia e o
+ * combustivel da fogueira continuam correndo normalmente. Se a noite tambem
+ * desacelerasse, abrir um desafio viraria uma forma de esticar a noite.
+ */
+export function enemyTimeScale(challengeOpen: boolean): number {
+  return challengeOpen ? ENEMIES.challengeTimeScale : 1;
+}
 
 export type Outcome = 'jogando' | 'venceu' | 'perdeu';
 
@@ -228,8 +253,10 @@ export function applyContactDamage(
   health: number,
   now: number,
   lastHitAt: number,
-  damage = ENEMIES.contactDamage,
-  cooldown = ENEMIES.damageCooldown,
+  // Tipos explicitos: `ENEMIES` e `as const`, entao inferir dos defaults
+  // fixaria os parametros nos literais 12 e 1.2.
+  damage: number = ENEMIES.contactDamage,
+  cooldown: number = ENEMIES.damageCooldown,
 ): DamageResult {
   if (now - lastHitAt < cooldown) {
     return { health, lastHitAt, applied: false };

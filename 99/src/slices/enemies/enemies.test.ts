@@ -3,6 +3,7 @@ import {
   ENEMIES,
   applyContactDamage,
   crossesFence,
+  enemyTimeScale,
   evaluateOutcome,
   fenceSegment,
   fireThreatening,
@@ -355,6 +356,28 @@ describe('isTouching', () => {
 
   it('ignora a altura', () => {
     expect(isTouching(vec3(0, 50, 0), vec3(0.5, 0, 0))).toBe(true);
+  });
+});
+
+describe('enemyTimeScale', () => {
+  it('corre normal sem desafio aberto', () => {
+    expect(enemyTimeScale(false)).toBe(1);
+  });
+
+  it('desacelera com o desafio aberto', () => {
+    expect(enemyTimeScale(true)).toBe(ENEMIES.challengeTimeScale);
+  });
+
+  it('desacelera de verdade, mas nao congela — o mundo continua vivo', () => {
+    // Congelar seria pausar o jogo, que e justamente o que a POC evita.
+    expect(enemyTimeScale(true)).toBeGreaterThan(0);
+    expect(enemyTimeScale(true)).toBeLessThan(0.5);
+  });
+
+  it('o inimigo anda a fracao esperada da distancia', () => {
+    const normal = stepToward(vec3(0, 0, 0), vec3(100, 0, 0), 4, 1 * enemyTimeScale(false));
+    const lento = stepToward(vec3(0, 0, 0), vec3(100, 0, 0), 4, 1 * enemyTimeScale(true));
+    expect(lento.x).toBeCloseTo(normal.x * ENEMIES.challengeTimeScale);
   });
 });
 

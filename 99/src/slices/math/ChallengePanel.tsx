@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { Html } from '@react-three/drei';
 import { useGameStore } from '../../app/store';
-import { useGameAction } from '../../shared/input';
+import { useGameAction, useIsTouchDevice } from '../../shared/input';
 import type { Vec3 } from '../../shared/vec';
 import './challenge.css';
 
@@ -31,6 +31,8 @@ export function ChallengePanel() {
   const structures = useGameStore((state) => state.structures);
   const answerChallenge = useGameStore((state) => state.answerChallenge);
   const clearFeedback = useGameStore((state) => state.clearFeedback);
+  const isTouch = useIsTouchDevice();
+  const temMonstros = useGameStore((state) => state.enemies.length > 0);
 
   /**
    * Ponto do mundo onde o painel fica preso.
@@ -68,11 +70,38 @@ export function ChallengePanel() {
   if ((!challenge && !feedback) || !anchor) return null;
 
   return (
-    <Html position={[anchor.x, anchor.y + 3.1, anchor.z]} center distanceFactor={11}>
+    <Html
+      /**
+       * No celular o painel sobe mais.
+       *
+       * Ele fica bem maior nessa tela e, na altura do desktop, tapava justamente
+       * a arvore cujos galhos a crianca precisa contar — o enunciado anulava a
+       * propria cena que ele descreve.
+       */
+      position={[anchor.x, anchor.y + (isTouch ? 4.6 : 3.1), anchor.z]}
+      center
+      /**
+       * Maior no celular.
+       *
+       * `distanceFactor` escala o painel com a distancia da camera, e o valor e
+       * diretamente proporcional ao tamanho na tela — quanto maior, maior o
+       * painel. Com o mesmo valor do desktop, numa tela de ~390 px o painel saia
+       * com cerca de 176 px de largura e o enunciado ficava pequeno demais para
+       * ler — justamente o texto que a crianca precisa ler com calma para contar
+       * os grupos.
+       */
+      distanceFactor={isTouch ? 15 : 11}
+    >
       {challenge ? (
         <div className="challenge">
           <p className="challenge__prompt">{challenge.prompt}</p>
           <p className="challenge__question">{challenge.question}</p>
+          {/* Só aparece quando há monstros na ilha: dizer que eles estão lentos
+              sem que exista nenhum criaria um medo que não estava lá. */}
+          {temMonstros && (
+            <p className="challenge__calma">Os monstros ficam lentos. Conte com calma.</p>
+          )}
+
           <div className="challenge__options">
             {challenge.options.map((option, index) => (
               <button

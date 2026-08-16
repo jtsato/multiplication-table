@@ -101,16 +101,28 @@ export function useKeyboardBindings(): void {
 
 const CONSULTA_TOQUE = '(pointer: coarse)';
 
+/**
+ * `matchMedia` pode nao existir.
+ *
+ * O jsdom nao implementa a API, entao qualquer teste de UI quebraria so por
+ * montar um componente que consulta o tipo de ponteiro. Na ausencia dela, o
+ * padrao e "nao e toque", que e o comportamento certo tanto no jsdom quanto num
+ * navegador antigo.
+ */
+function consultaDePonteiro(): MediaQueryList | null {
+  if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return null;
+  return window.matchMedia(CONSULTA_TOQUE);
+}
+
 function assinarTipoDePonteiro(aoMudar: () => void): () => void {
-  if (typeof window === 'undefined') return () => {};
-  const consulta = window.matchMedia(CONSULTA_TOQUE);
+  const consulta = consultaDePonteiro();
+  if (!consulta) return () => {};
   consulta.addEventListener('change', aoMudar);
   return () => consulta.removeEventListener('change', aoMudar);
 }
 
 function lerTipoDePonteiro(): boolean {
-  if (typeof window === 'undefined') return false;
-  return window.matchMedia(CONSULTA_TOQUE).matches;
+  return consultaDePonteiro()?.matches ?? false;
 }
 
 /**

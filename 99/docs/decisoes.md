@@ -593,3 +593,69 @@ testes que não têm nada a ver com isso.
 | `npm run test` | 303 testes, 18 arquivos, verde |
 | `npm run e2e` | 18 testes, desktop + celular, verde |
 | `npm run build` | ok |
+
+---
+
+## Fatia 9 — Legibilidade e ritmo no celular
+
+### O painel do desafio estava pequeno demais
+
+Relato: *"no celular fica difícil de ler"*. Medido na captura: numa tela de ~390 px
+o painel saía com cerca de 176 px de largura, e o enunciado ficava com fonte
+minúscula — justamente o texto que a criança precisa ler com calma para contar os
+grupos.
+
+A correção levou **três iterações, cada uma verificada por captura de tela** —
+não dava para acertar isso no escuro:
+
+1. Baixei `distanceFactor` de 11 para 6.5 e o painel **encolheu**. Eu tinha a
+   direção invertida: o valor é diretamente proporcional ao tamanho na tela.
+2. Subi para 22 e ficou legível, mas vazava da tela e **tapava a árvore** cujos
+   galhos a criança precisa contar — o enunciado anulava a própria cena que
+   descreve.
+3. Fechou em 15, com a âncora subindo de `+3.1` para `+4.6` no toque. Legível,
+   dentro da tela, com o objeto contável visível abaixo.
+
+O passo 2 é o mais interessante: uma correção de legibilidade quebrou a mecânica
+central. Sem olhar, teria passado como "resolvido".
+
+### Câmera lenta enquanto a criança responde
+
+Pedido: os monstros deveriam andar mais devagar com o painel aberto, *"assim não
+gera uma ansiedade na criança para responder rápido"*.
+
+É o ajuste mais fino do projeto até aqui, porque mexe na tensão entre duas
+decisões que já estavam certas. O jogo **não pausa** — isso é o que faz a conta
+ser ferramenta e não prova. Mas correr o tempo cheio enquanto a criança conta os
+grupos transforma tensão em pressa, e **pressa é inimiga de aprender: quem tem
+medo de demorar chuta em vez de contar**.
+
+A solução preserva as duas coisas: os inimigos correm a **25%** da velocidade com
+o desafio aberto. O mundo segue visivelmente vivo — os vultos continuam se
+aproximando — sem cobrar rapidez de cálculo. O intervalo entre danos é esticado na
+mesma proporção, para um inimigo já encostado não continuar mordendo no ritmo
+normal enquanto a criança lê.
+
+**A câmera lenta vale só para os inimigos.** O relógio do dia e o combustível da
+fogueira continuam correndo: se a noite também desacelerasse, abrir um desafio
+viraria um jeito de esticar a noite. Há teste afirmando exatamente isso.
+
+E o painel avisa — *"Os monstros ficam lentos. Conte com calma."* — só quando há
+monstros na ilha. Dizer isso de dia, sem nenhum monstro por perto, plantaria um
+medo que não estava lá.
+
+### Um bug que eu mesmo introduzi
+
+Adicionar `useIsTouchDevice` ao painel quebrou os 7 testes do `ChallengePanel`:
+o **jsdom não implementa `window.matchMedia`**. Agora a consulta é opcional e o
+padrão é "não é toque" — o comportamento certo tanto no jsdom quanto num
+navegador antigo.
+
+### Portões
+
+| Portão | Resultado |
+| --- | --- |
+| `npm run lint` | limpo |
+| `npm run test` | 309 testes, 18 arquivos, verde |
+| `npm run e2e` | 18 testes, desktop + celular, verde |
+| `npm run build` | ok |
