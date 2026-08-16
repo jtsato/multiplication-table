@@ -5,6 +5,7 @@ import {
   concluirOnboarding,
   entrarNaPrimeiraIlha,
   esperarMapa,
+  esperarProgressoSalvo,
   irParaHome,
   lerPergunta,
   responderCerto,
@@ -89,6 +90,7 @@ test.describe('partida no computador', () => {
     await concluirMissao(page);
     await page.getByRole('button', { name: 'Voltar ao mapa' }).click();
     await esperarMapa(page);
+    await esperarProgressoSalvo(page);
 
     await page.reload();
 

@@ -96,15 +96,42 @@
     "tableLabel": "{{table}} times table"
   },
   "islands": {
-    "2": { "name": "Blooming Fields", "biome": "Green fields and flowers" },
-    "3": { "name": "River Forest", "biome": "Woods and streams" },
-    "4": { "name": "Crystal Mountains", "biome": "Peaks and crystals" },
-    "5": { "name": "Harbor Beach", "biome": "Sand and boats" },
-    "6": { "name": "Magic Grove", "biome": "Enchanted forest" },
-    "7": { "name": "Glowing Caves", "biome": "Bright caverns" },
-    "8": { "name": "Frozen Lands", "biome": "Ice and snow" },
-    "9": { "name": "Volcano Isle", "biome": "Rocks and lava" },
-    "10": { "name": "Grand City", "biome": "The great block city" }
+    "2": {
+      "name": "Blooming Fields",
+      "biome": "Green fields and flowers"
+    },
+    "3": {
+      "name": "River Forest",
+      "biome": "Woods and streams"
+    },
+    "4": {
+      "name": "Crystal Mountains",
+      "biome": "Peaks and crystals"
+    },
+    "5": {
+      "name": "Harbor Beach",
+      "biome": "Sand and boats"
+    },
+    "6": {
+      "name": "Magic Grove",
+      "biome": "Enchanted forest"
+    },
+    "7": {
+      "name": "Glowing Caves",
+      "biome": "Bright caverns"
+    },
+    "8": {
+      "name": "Frozen Lands",
+      "biome": "Ice and snow"
+    },
+    "9": {
+      "name": "Volcano Isle",
+      "biome": "Rocks and lava"
+    },
+    "10": {
+      "name": "Grand City",
+      "biome": "The great block city"
+    }
   },
   "missions": {
     "finalBadge": "Final challenge",
@@ -215,7 +242,6 @@
   "achievements": {
     "title": "Achievements",
     "subtitle": "{{unlocked}} of {{total}} unlocked",
-    "locked": "Not earned yet",
     "statsTitle": "Your stats",
     "totalQuestions": "Answers given",
     "totalCorrect": "Correct answers",
@@ -226,39 +252,48 @@
     "list": {
       "firstCorrect": {
         "name": "First answer",
-        "description": "Got your first multiplication right"
+        "description": "Got your first multiplication right",
+        "goal": "Get your first multiplication right"
       },
       "firstMission": {
         "name": "First build",
-        "description": "Completed your first mission"
+        "description": "Completed your first mission",
+        "goal": "Complete your first mission"
       },
       "tenCorrect": {
         "name": "Ten right",
-        "description": "Answered 10 multiplications correctly"
+        "description": "Answered 10 multiplications correctly",
+        "goal": "Answer 10 multiplications correctly"
       },
       "streakFive": {
         "name": "Streak of 5",
-        "description": "Got 5 questions right in a row"
+        "description": "Got 5 questions right in a row",
+        "goal": "Get 5 questions right in a row"
       },
       "tableTwoDone": {
         "name": "Two times table",
-        "description": "Completed the 2 times table island"
+        "description": "Completed the 2 times table island",
+        "goal": "Complete the 2 times table island"
       },
       "fiftyCorrect": {
         "name": "Fifty right",
-        "description": "Answered 50 multiplications correctly"
+        "description": "Answered 50 multiplications correctly",
+        "goal": "Answer 50 multiplications correctly"
       },
       "streakTen": {
         "name": "Streak of 10",
-        "description": "Got 10 questions right in a row"
+        "description": "Got 10 questions right in a row",
+        "goal": "Get 10 questions right in a row"
       },
       "halfArchipelago": {
         "name": "Halfway there",
-        "description": "Completed 5 islands of the archipelago"
+        "description": "Completed 5 islands of the archipelago",
+        "goal": "Complete 5 islands of the archipelago"
       },
       "allIslands": {
         "name": "Island master",
-        "description": "Completed every island of the archipelago"
+        "description": "Completed every island of the archipelago",
+        "goal": "Complete every island of the archipelago"
       }
     }
   },

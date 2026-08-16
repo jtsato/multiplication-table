@@ -37,22 +37,22 @@
   /* ─── Surface ─────────────────────────────────────────────────────
    * Snow white canvas with Eel as the section-break tone. Pure optical
    * clarity — Duolingo never tints the page itself, only the chrome. */
-  --bg: #ffffff;             /* Snow — primary background, the page canvas */
-  --surface: #f7f7f7;        /* Eel — section break, secondary surface, lesson row */
+  --bg: #ffffff; /* Snow — primary background, the page canvas */
+  --surface: #f7f7f7; /* Eel — section break, secondary surface, lesson row */
   --surface-warm: var(--surface); /* alias — palette has no third (warm) surface tier */
 
   /* ─── Foreground ──────────────────────────────────────────────────
    * Three real text tiers: Eel Black for primary, Wolf for secondary,
    * Hare for tertiary. Each tier carries clear, child-readable contrast. */
-  --fg: #3c3c3c;             /* Eel Black — primary text, headings, button labels */
-  --fg-2: var(--fg);         /* alias — single primary text weight throughout */
-  --muted: #777777;          /* Wolf — secondary text, captions, dividers */
-  --meta: #afafaf;           /* Hare — tertiary metadata, placeholder, disabled */
+  --fg: #3c3c3c; /* Eel Black — primary text, headings, button labels */
+  --fg-2: var(--fg); /* alias — single primary text weight throughout */
+  --muted: #777777; /* Wolf — secondary text, captions, dividers */
+  --meta: #afafaf; /* Hare — tertiary metadata, placeholder, disabled */
 
   /* ─── Border ──────────────────────────────────────────────────────
    * Swan grey at thick 2–3px on most surfaces. Borders are visual,
    * never hairlines — they read as part of the chunky aesthetic. */
-  --border: #e5e5e5;         /* Swan — standard 2px border, card edge */
+  --border: #e5e5e5; /* Swan — standard 2px border, card edge */
   --border-soft: var(--border); /* alias — single border tier (no inner-row separation) */
 
   /* ─── Accent ──────────────────────────────────────────────────────
@@ -60,36 +60,36 @@
    * surface for buttons, progress bars, success states, brand chrome. */
   --accent: #58cc02;
   --accent-on: #ffffff;
-  --accent-hover: #89e219;   /* Owl Green Light — hover state, soft fills */
-  --accent-active: #58a700;  /* Owl Green Deep — pressed state, the chunky shadow color */
+  --accent-hover: #89e219; /* Owl Green Light — hover state, soft fills */
+  --accent-active: #58a700; /* Owl Green Deep — pressed state, the chunky shadow color */
 
   /* ─── Semantic ────────────────────────────────────────────────────
    * Success IS owl green — DESIGN.md: "primary CTA, correct answer" are
    * the same affordance. Bee Yellow warns; Cardinal Red marks wrong. */
-  --success: #58cc02;        /* Owl Green — "correct answer" is the brand */
-  --warn: #ffc800;           /* Bee Yellow — pro badge, achievement glow */
-  --danger: #ff4b4b;         /* Cardinal Red — wrong answer, life lost */
+  --success: #58cc02; /* Owl Green — "correct answer" is the brand */
+  --warn: #ffc800; /* Bee Yellow — pro badge, achievement glow */
+  --danger: #ff4b4b; /* Cardinal Red — wrong answer, life lost */
 
   /* ─── Typography ──────────────────────────────────────────────────
    * Feather Bold (rounded display) drives chrome and headings; Mona Sans
    * carries body. Default weight is 800 — Duolingo never whispers. */
-  --font-display: "Feather Bold", "DIN Round Pro", "Helvetica Neue", sans-serif;
-  --font-body: "Mona Sans", "Helvetica Neue", system-ui, sans-serif;
-  --font-mono: "JetBrains Mono", ui-monospace, Menlo, Monaco, Consolas, monospace;
+  --font-display: 'Feather Bold', 'DIN Round Pro', 'Helvetica Neue', sans-serif;
+  --font-body: 'Mona Sans', 'Helvetica Neue', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, Menlo, Monaco, Consolas, monospace;
 
   /* Type scale — DESIGN.md §3. Display 56px is +25–40% above typical
    * product brands; the ladder favors round whole-pixel sizes. */
-  --text-xs: 12px;           /* Tiny utility, progress numerals */
-  --text-sm: 13px;           /* Caption — XP counter, metadata */
-  --text-base: 15px;         /* Body — standard prose */
-  --text-lg: 18px;           /* H3 / lesson row title / featured body */
-  --text-xl: 24px;           /* H2 — section heading */
-  --text-2xl: 32px;          /* H1 — page title */
-  --text-3xl: 40px;          /* Sub-display — hero secondary, marketing eyebrow */
-  --text-4xl: 56px;          /* Display — onboarding hero, never timid */
+  --text-xs: 12px; /* Tiny utility, progress numerals */
+  --text-sm: 13px; /* Caption — XP counter, metadata */
+  --text-base: 15px; /* Body — standard prose */
+  --text-lg: 18px; /* H3 / lesson row title / featured body */
+  --text-xl: 24px; /* H2 — section heading */
+  --text-2xl: 32px; /* H1 — page title */
+  --text-3xl: 40px; /* Sub-display — hero secondary, marketing eyebrow */
+  --text-4xl: 56px; /* Display — onboarding hero, never timid */
 
   --leading-body: 1.5;
-  --leading-tight: 1.15;     /* Headings — slight breathing under big rounded faces */
+  --leading-tight: 1.15; /* Headings — slight breathing under big rounded faces */
   --tracking-display: -0.01em; /* ≈ -0.56px at 56px — confident, not condensed */
 
   /* ─── Spacing ─────────────────────────────────────────────────────
@@ -112,10 +112,10 @@
   /* ─── Radius ──────────────────────────────────────────────────────
    * Pill-and-rounded everywhere. Cards 16px (DESIGN.md §4), buttons +
    * inputs 12px, chips and progress bars 9999px — friendly forever. */
-  --radius-sm: 12px;         /* Inputs, buttons — friendly compact corners */
-  --radius-md: 16px;         /* Cards, lesson tiles — primary signature */
-  --radius-lg: 20px;         /* Featured containers, modals */
-  --radius-pill: 9999px;     /* Chips, progress bars, avatars */
+  --radius-sm: 12px; /* Inputs, buttons — friendly compact corners */
+  --radius-md: 16px; /* Cards, lesson tiles — primary signature */
+  --radius-lg: 20px; /* Featured containers, modals */
+  --radius-pill: 9999px; /* Chips, progress bars, avatars */
 
   /* ─── Elevation ───────────────────────────────────────────────────
    * Chunky 4px bottom-shadow IS Duolingo. Buttons and cards cast a hard
@@ -158,14 +158,14 @@
 
 :root {
   /* (a) Marca ampliada — DESIGN.md §2 */
-  --accent-pale: #dbf8c5;    /* Owl Green Pale — superficie suave, banner de acerto */
-  --eel-blue: #1cb0f6;       /* Eel Blue — dica, link de informacao */
-  --danger-deep: #cc3b3b;    /* Cardinal Red Deep — DESIGN.md §4, base do botao de perigo */
+  --accent-pale: #dbf8c5; /* Owl Green Pale — superficie suave, banner de acerto */
+  --eel-blue: #1cb0f6; /* Eel Blue — dica, link de informacao */
+  --danger-deep: #cc3b3b; /* Cardinal Red Deep — DESIGN.md §4, base do botao de perigo */
 
   /* (b) Inks acessiveis, derivados da marca */
-  --success-ink: #357700;    /* Owl Green escurecido — 5,5:1 no branco, 4,8:1 no pale */
-  --warn-ink: #7a6000;       /* Bee Yellow escurecido — 6,0:1 no branco */
-  --info-ink: #06699b;       /* Eel Blue escurecido — 6,0:1 no branco; tambem o foco */
+  --success-ink: #357700; /* Owl Green escurecido — 5,5:1 no branco, 4,8:1 no pale */
+  --warn-ink: #7a6000; /* Bee Yellow escurecido — 6,0:1 no branco */
+  --info-ink: #06699b; /* Eel Blue escurecido — 6,0:1 no branco; tambem o foco */
   --danger-ink: var(--danger-deep); /* 4,9:1 no branco */
 
   /* Superficies pale derivadas: fundos de pilula e banner. */
@@ -178,12 +178,16 @@
      branco — satisfaz 1.4.11 sem pesar o visual arejado do sistema. */
   --edge-underside: var(--muted);
 
+  /* Folga reservada no fim do conteudo rolavel para o botao flutuante de som
+     nao cobrir cartao nem alternativa (F3). */
+  --sound-toggle-safe: calc(var(--touch-target) + var(--space-4));
+
   /* Pilha de display com faces arredondadas disponiveis no SO. O token
      --font-display termina em `sans-serif`, entao a extensao precisa ser
      uma pilha propria em vez de um append (que nunca seria alcancado). */
   --font-display-stack:
-    "Feather Bold", "DIN Round Pro", "Segoe UI Variable Display", "Trebuchet MS",
-    "Helvetica Neue", sans-serif;
+    'Feather Bold', 'DIN Round Pro', 'Segoe UI Variable Display', 'Trebuchet MS', 'Helvetica Neue',
+    sans-serif;
 
   /* ─── Ponte para os nomes antigos ────────────────────────────────
    * As telas ja referenciam estes nomes; aqui eles passam a apontar
@@ -193,7 +197,7 @@
   --color-surface-soft: var(--surface);
   --color-text: var(--fg);
   --color-text-soft: var(--muted);
-  --color-text-on-dark: var(--fg);      /* canvas agora e Snow: titulos em Eel Black */
+  --color-text-on-dark: var(--fg); /* canvas agora e Snow: titulos em Eel Black */
   --color-text-soft-on-dark: var(--muted);
   --color-primary: var(--accent);
   --color-primary-dark: var(--accent-active);
@@ -208,7 +212,7 @@
      O sistema pede branco sobre o verde, mas isso da 2,1:1 e quebra o
      compromisso AA do jogo; a cor da marca fica intacta, o rotulo muda. */
   --button-primary-bg: var(--accent);
-  --button-primary-hover: var(--accent-hover);   /* 6,8:1 com Eel Black */
+  --button-primary-hover: var(--accent-hover); /* 6,8:1 com Eel Black */
   --button-primary-active: var(--accent-active); /* cor da face inferior */
   --button-primary-text: var(--fg);
   --button-primary-shadow: var(--accent-active);
@@ -224,13 +228,13 @@
   --button-ghost-bg: var(--bg);
   --button-ghost-hover: var(--surface);
   --button-ghost-active: var(--border);
-  --button-ghost-text: var(--fg);       /* Wolf daria 4,5:1 raspando; Eel Black e seguro */
+  --button-ghost-text: var(--fg); /* Wolf daria 4,5:1 raspando; Eel Black e seguro */
   --button-ghost-border: var(--edge-underside);
 
   /* Botao de perigo — recipe "Error", partindo do Cardinal Red Deep para
      manter texto branco em 4,9:1. */
   --button-danger-bg: var(--danger-deep);
-  --button-danger-hover: #d23e3e;       /* Cardinal Red clareado ate o teto AA (4,7:1) */
+  --button-danger-hover: #d23e3e; /* Cardinal Red clareado ate o teto AA (4,7:1) */
   --button-danger-active: color-mix(in oklab, var(--danger-deep), #000000 22%);
   --button-danger-text: #ffffff;
   --button-danger-border: color-mix(in oklab, var(--danger-deep), #000000 22%);
@@ -471,22 +475,29 @@ html[data-reduced-motion='on'] *::after {
   background: var(--bg);
 }
 
+/* O botao de voltar fica em uma linha propria: enquanto ele dividia a linha
+   com o titulo, a borda esquerda do texto nunca coincidia com a do conteudo
+   que ele nomeia (F2). Empilhado, cabecalho e corpo usam a mesma coluna. */
 .screen__header {
   display: flex;
-  align-items: center;
-  gap: var(--space-4);
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-3);
   padding: var(--space-4) var(--container-gutter-desktop) var(--space-2);
+  /* Faixa reservada para o icone de som, que mora no topo a direita. */
+  padding-right: max(var(--container-gutter-desktop), var(--sound-toggle-safe));
 }
 
 .screen__titles {
-  flex: 1;
   min-width: 0;
+  width: 100%;
 }
 
 .screen__title {
   font-size: var(--text-2xl);
   letter-spacing: -0.005em;
   color: var(--color-text-on-dark);
+  text-wrap: balance;
 }
 
 .screen__subtitle {
@@ -500,9 +511,13 @@ html[data-reduced-motion='on'] *::after {
   overflow-y: auto;
 }
 
-.screen--wide .screen__body {
+/* O corpo e limitado a --container-max; cabecalho e rodape precisam da mesma
+   coluna, senao o titulo flutua sozinho na borda da tela larga (F2). */
+.screen--wide .screen__header,
+.screen--wide .screen__body,
+.screen--wide .screen__footer {
   max-width: var(--container-max);
-  margin: 0 auto;
+  margin-inline: auto;
   width: 100%;
 }
 
@@ -1150,6 +1165,8 @@ html[data-reduced-motion='on'] *::after {
   align-items: center;
   gap: var(--space-4);
   padding: var(--space-3) var(--space-4);
+  /* A barra de progresso vai ate a direita; cede a faixa do icone de som. */
+  padding-right: var(--sound-toggle-safe);
   flex-wrap: wrap;
 }
 
@@ -1190,11 +1207,15 @@ html[data-reduced-motion='on'] *::after {
   flex: 1;
 }
 
+/* O palco absorve a folga da tela, nao o painel: antes o `flex: 1` ficava no
+   painel branco e sobrava um vazio liso maior que a propria cena (M1). Agora
+   a sobra vira ceu do bioma, e a cena fica centrada nela. */
 .level__stage {
-  flex: 0 0 auto;
+  flex: 1 1 auto;
   min-height: 0;
   display: flex;
   justify-content: center;
+  align-items: center;
   padding: 0 var(--space-4);
   position: relative;
   --level-scene-width-limit: 66.6667vh;
@@ -1237,15 +1258,16 @@ html[data-reduced-motion='on'] *::after {
   display: block;
 }
 
+/* Altura de conteudo, nao `flex: 1`: o painel para onde o texto acaba e
+   rola por dentro quando nao couber (M1). */
 .level__panel {
   background: var(--bg);
   border-radius: var(--radius-lg) var(--radius-lg) 0 0;
-  margin-top: auto;
   padding: var(--space-5) var(--space-5) var(--space-8);
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
-  flex: 1;
+  flex: 0 1 auto;
   min-height: 0;
   overflow-y: auto;
 }
@@ -1305,6 +1327,15 @@ html[data-reduced-motion='on'] *::after {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
   gap: var(--space-3);
+}
+
+/* Telefone em pe: 2x2 fixo. Com `minmax(100px, 1fr)` a largura de 393px dava
+   exatamente 3 colunas e quebrava 3+1, destacando a alternativa orfa numa
+   escolha em que todas valem o mesmo (F4). */
+@media (max-width: 480px) {
+  .level__options {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 /* Tile de resposta: mesma anatomia do lesson tile Duolingo. */
@@ -1690,13 +1721,18 @@ html[data-reduced-motion='on'] *::after {
   margin-top: var(--space-1);
 }
 
+/* `repeat(3, 1fr)` fixo pedia 385px numa viewport de 360 e era o unico
+   transbordo horizontal do jogo (F1). Com auto-fit as tres colunas
+   permanecem onde cabem e caem para duas no telefone pequeno. */
 .result__stats {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
   gap: var(--space-3);
   margin: 0;
 }
 
+/* `min-width: 0` e a quebra dentro da palavra impedem que um rotulo longo
+   ("APROVEITAMENTO") force a trilha da grade e volte a estourar a viewport. */
 .result__stat {
   background: var(--bg);
   border: 2px solid var(--border);
@@ -1704,6 +1740,8 @@ html[data-reduced-motion='on'] *::after {
   padding: var(--space-3);
   text-align: center;
   box-shadow: 0 4px 0 var(--border);
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .result__stat dt {
@@ -2013,6 +2051,12 @@ html[data-reduced-motion='on'] *::after {
     padding: 0 var(--container-gutter-desktop);
   }
 
+  /* Com o painel em altura de conteudo sobra folga no palco, entao a cena
+     pode crescer de 40dvh para 50dvh de altura (M1). */
+  .level__stage {
+    --level-scene-width-limit: 83.3333dvh;
+  }
+
   .level__stage .scene {
     width: min(100%, var(--level-scene-width-limit));
     max-width: 100%;
@@ -2035,12 +2079,28 @@ html[data-reduced-motion='on'] *::after {
     padding: var(--space-8) var(--container-gutter-desktop);
   }
 
+  /* No desktop as acoes deixam de ser empurradas para o rodape: o
+     `margin-top: auto` abria meia tela de vazio entre o cartao e o menu.
+     No telefone ele fica, porque poe os botoes no alcance do polegar (M2). */
+  .home {
+    max-width: 560px;
+    justify-content: center;
+    padding-block: var(--space-12);
+  }
+
+  .home__actions {
+    margin-top: 0;
+  }
+
+  /* Cena em faixa no topo, nao em coluna lateral. A arte tem o horizonte na
+     base, entao uma caixa alta e estreita mostrava sobretudo ceu vazio; uma
+     faixa larga e baixa corta o ceu pelo topo (`xMidYMax slice`) e deixa a
+     construcao recem-terminada em evidencia (M3). */
   .result__card {
     flex: none;
-    flex-direction: row;
-    align-items: stretch;
+    flex-direction: column;
     width: 100%;
-    max-width: var(--container-max);
+    max-width: 720px;
     margin: 0 auto;
     background: var(--bg);
     border: 2px solid var(--border);
@@ -2050,24 +2110,23 @@ html[data-reduced-motion='on'] *::after {
   }
 
   .result__scene {
-    flex: 0 0 42%;
+    flex: 0 0 auto;
     padding: 0;
   }
 
   .result__scene .scene {
     width: 100%;
-    height: 100%;
+    height: clamp(180px, 24dvh, 240px);
     max-height: none;
     border-radius: 0;
   }
 
   .result__panel {
-    flex: 1;
+    flex: 0 1 auto;
     max-width: none;
     margin: 0;
     border-radius: 0;
-    justify-content: center;
-    padding: var(--space-8) var(--space-12);
+    padding: var(--space-6) var(--space-8) var(--space-8);
   }
 }
 
@@ -2095,13 +2154,24 @@ html[data-reduced-motion='on'] *::after {
   }
 }
 
+/* Nestes dois blocos o cabecalho leva so a gutter esquerda: a direita
+   continua sendo a faixa reservada ao icone de som. */
 @media (max-width: 720px) {
   .screen__header,
   .screen__body,
   .screen__footer,
   .home {
     padding-left: var(--container-gutter-tablet);
+  }
+
+  .screen__body,
+  .screen__footer,
+  .home {
     padding-right: var(--container-gutter-tablet);
+  }
+
+  .home__hero {
+    padding-right: var(--sound-toggle-safe);
   }
 }
 
@@ -2111,6 +2181,11 @@ html[data-reduced-motion='on'] *::after {
   .screen__footer,
   .home {
     padding-left: var(--container-gutter-phone);
+  }
+
+  .screen__body,
+  .screen__footer,
+  .home {
     padding-right: var(--container-gutter-phone);
   }
 
@@ -2121,18 +2196,29 @@ html[data-reduced-motion='on'] *::after {
 
   .home {
     padding-top: var(--space-5);
-    padding-bottom: var(--space-8);
+  }
+
+  /* 32px nao cabia em uma linha ao lado do botao de voltar e comia um terco
+     da altura util antes do primeiro cartao (M6). */
+  .screen__title {
+    font-size: var(--text-xl);
   }
 }
 
 /* ---------------------------------------------------------------------- */
-/* Icone flutuante de som                                                 */
+/* Icone de som                                                            */
+/*                                                                        */
+/* Ancorado no topo, nao no rodape (F3). Flutuando embaixo ele cobria      */
+/* cartoes de ilha durante a rolagem — e reservar espaco no fim do         */
+/* conteudo nao resolve, porque um elemento `fixed` cobre o que estiver    */
+/* sob ele em qualquer posicao de rolagem. No topo ele divide faixa apenas */
+/* com o chrome, que reserva a folga logo abaixo.                          */
 /* ---------------------------------------------------------------------- */
 
 .sound-toggle {
   position: fixed;
   right: var(--space-3);
-  bottom: var(--space-3);
+  top: var(--space-3);
   z-index: 40;
   width: var(--touch-target);
   height: var(--touch-target);

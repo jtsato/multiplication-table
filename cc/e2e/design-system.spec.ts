@@ -78,8 +78,13 @@ test.describe('design system aplicado', () => {
     await concluirOnboarding(page);
     await irParaHome(page);
 
+    // O amarelo ficou reservado para acento; as acoes de menu passaram para a
+    // recipe branca para nao competir com o CTA verde.
+    const mudarPersonagem = page.getByRole('button', { name: 'Mudar personagem' });
+    expect(await corDe(mudarPersonagem, 'background-color')).toEqual(BEE_YELLOW);
+
     const conquistas = page.getByRole('button', { name: 'Conquistas' });
-    expect(await corDe(conquistas, 'background-color')).toEqual(BEE_YELLOW);
+    expect(await corDe(conquistas, 'background-color')).toEqual(SNOW);
   });
 
   test('todo texto de botao passa de 4,5:1', async ({ page }) => {

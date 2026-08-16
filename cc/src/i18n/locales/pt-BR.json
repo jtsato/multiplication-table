@@ -96,15 +96,42 @@
     "tableLabel": "Tabuada do {{table}}"
   },
   "islands": {
-    "2": { "name": "Campos Floridos", "biome": "Campos verdes e flores" },
-    "3": { "name": "Floresta dos Rios", "biome": "Floresta e riachos" },
-    "4": { "name": "Montanhas de Cristal", "biome": "Montanhas e cristais" },
-    "5": { "name": "Praia do Porto", "biome": "Praia e barcos" },
-    "6": { "name": "Bosque Mágico", "biome": "Floresta encantada" },
-    "7": { "name": "Cavernas Brilhantes", "biome": "Cavernas iluminadas" },
-    "8": { "name": "Terras Geladas", "biome": "Gelo e neve" },
-    "9": { "name": "Ilha do Vulcão", "biome": "Rochas e lava" },
-    "10": { "name": "Cidade Final", "biome": "A grande cidade de blocos" }
+    "2": {
+      "name": "Campos Floridos",
+      "biome": "Campos verdes e flores"
+    },
+    "3": {
+      "name": "Floresta dos Rios",
+      "biome": "Floresta e riachos"
+    },
+    "4": {
+      "name": "Montanhas de Cristal",
+      "biome": "Montanhas e cristais"
+    },
+    "5": {
+      "name": "Praia do Porto",
+      "biome": "Praia e barcos"
+    },
+    "6": {
+      "name": "Bosque Mágico",
+      "biome": "Floresta encantada"
+    },
+    "7": {
+      "name": "Cavernas Brilhantes",
+      "biome": "Cavernas iluminadas"
+    },
+    "8": {
+      "name": "Terras Geladas",
+      "biome": "Gelo e neve"
+    },
+    "9": {
+      "name": "Ilha do Vulcão",
+      "biome": "Rochas e lava"
+    },
+    "10": {
+      "name": "Cidade Final",
+      "biome": "A grande cidade de blocos"
+    }
   },
   "missions": {
     "finalBadge": "Desafio final",
@@ -215,7 +242,6 @@
   "achievements": {
     "title": "Conquistas",
     "subtitle": "{{unlocked}} de {{total}} desbloqueadas",
-    "locked": "Ainda não conquistada",
     "statsTitle": "Suas estatísticas",
     "totalQuestions": "Respostas dadas",
     "totalCorrect": "Acertos",
@@ -226,39 +252,48 @@
     "list": {
       "firstCorrect": {
         "name": "Primeiro acerto",
-        "description": "Acertou sua primeira multiplicação"
+        "description": "Acertou sua primeira multiplicação",
+        "goal": "Acerte sua primeira multiplicação"
       },
       "firstMission": {
         "name": "Primeira construção",
-        "description": "Concluiu sua primeira missão"
+        "description": "Concluiu sua primeira missão",
+        "goal": "Conclua sua primeira missão"
       },
       "tenCorrect": {
         "name": "Dez acertos",
-        "description": "Acertou 10 multiplicações"
+        "description": "Acertou 10 multiplicações",
+        "goal": "Acerte 10 multiplicações"
       },
       "streakFive": {
         "name": "Sequência de 5",
-        "description": "Acertou 5 perguntas seguidas"
+        "description": "Acertou 5 perguntas seguidas",
+        "goal": "Acerte 5 perguntas seguidas"
       },
       "tableTwoDone": {
         "name": "Tabuada do 2",
-        "description": "Concluiu a ilha da tabuada do 2"
+        "description": "Concluiu a ilha da tabuada do 2",
+        "goal": "Conclua a ilha da tabuada do 2"
       },
       "fiftyCorrect": {
         "name": "Cinquenta acertos",
-        "description": "Acertou 50 multiplicações"
+        "description": "Acertou 50 multiplicações",
+        "goal": "Acerte 50 multiplicações"
       },
       "streakTen": {
         "name": "Sequência de 10",
-        "description": "Acertou 10 perguntas seguidas"
+        "description": "Acertou 10 perguntas seguidas",
+        "goal": "Acerte 10 perguntas seguidas"
       },
       "halfArchipelago": {
         "name": "Meio caminho",
-        "description": "Concluiu 5 ilhas do arquipélago"
+        "description": "Concluiu 5 ilhas do arquipélago",
+        "goal": "Conclua 5 ilhas do arquipélago"
       },
       "allIslands": {
         "name": "Mestre das ilhas",
-        "description": "Concluiu todas as ilhas do arquipélago"
+        "description": "Concluiu todas as ilhas do arquipélago",
+        "goal": "Conclua todas as ilhas do arquipélago"
       }
     }
   },

@@ -71,6 +71,34 @@ export async function focarPeloTeclado(page: Page, alvo: Locator, maximo = 15): 
   throw new Error(`O controle nao recebeu foco em ${maximo} tabuladas.`);
 }
 
+/**
+ * Espera o autosave chegar ao localStorage.
+ *
+ * `GameProvider` grava com debounce (`AUTOSAVE_DELAY_MS`), entao recarregar
+ * logo depois de concluir uma missao pode perder o progresso — nao por bug do
+ * jogo, mas porque o teste corre mais que o temporizador. Esperar o dado estar
+ * escrito e mais honesto do que dormir um tempo arbitrario.
+ */
+export async function esperarProgressoSalvo(page: Page, missoesMinimas = 1): Promise<void> {
+  await page.waitForFunction(
+    (minimo) => {
+      const bruto = window.localStorage.getItem('ilhas-da-tabuada:state');
+      if (!bruto) return false;
+      try {
+        const salvo = JSON.parse(bruto) as {
+          progress?: { islands?: Record<string, { completedMissionIds?: string[] }> };
+        };
+        const ilhas = Object.values(salvo.progress?.islands ?? {});
+        return ilhas.some((ilha) => (ilha.completedMissionIds?.length ?? 0) >= minimo);
+      } catch {
+        return false;
+      }
+    },
+    missoesMinimas,
+    { timeout: 15_000 },
+  );
+}
+
 /** Le o enunciado visivel e devolve os fatores e o produto correto. */
 export async function lerPergunta(page: Page): Promise<{ a: number; b: number; resposta: number }> {
   const texto = await page.locator('.level__question').innerText();
@@ -83,10 +111,32 @@ export async function lerPergunta(page: Page): Promise<{ a: number; b: number; r
   return { a, b, resposta: a * b };
 }
 
-/** Clica na alternativa correta da pergunta atual. */
+/**
+ * Espera o turno fechar depois de um acerto.
+ *
+ * As alternativas ficam desabilitadas durante a animacao de feedback e o
+ * enunciado so troca depois dela. Quem espera um tempo fixo acaba lendo a
+ * pergunta velha e clicando em um indice que a re-renderizacao ja moveu — o
+ * sintoma e um clique que expira em vez de uma assercao que falha. O sinal
+ * confiavel e o enunciado mudar, ou sumir quando a missao acaba.
+ */
+async function esperarFimDoTurno(page: Page, enunciadoAnterior: string): Promise<void> {
+  await page.waitForFunction(
+    (anterior) => {
+      const enunciado = document.querySelector('.level__question');
+      return !enunciado || enunciado.textContent?.trim() !== anterior;
+    },
+    enunciadoAnterior,
+    { timeout: 15_000 },
+  );
+}
+
+/** Clica na alternativa correta e espera o turno fechar. */
 export async function responderCerto(page: Page): Promise<number> {
+  const anterior = (await page.locator('.level__question').innerText()).trim();
   const { resposta } = await lerPergunta(page);
   await page.locator('button.option', { hasText: new RegExp(`^${resposta}$`) }).click();
+  await esperarFimDoTurno(page, anterior);
   return resposta;
 }
 
@@ -111,15 +161,11 @@ export async function responderErrado(page: Page): Promise<number> {
 export async function concluirMissao(page: Page, maximo = 12): Promise<number> {
   for (let feitas = 1; feitas <= maximo; feitas++) {
     await responderCerto(page);
-    const acabou = await page
-      .getByRole('heading', { name: 'Missão concluída!' })
-      .waitFor({ timeout: 2_500 })
-      .then(() => true)
-      .catch(() => false);
-    if (acabou) {
+    // `responderCerto` ja esperou o turno fechar: se o enunciado sumiu, a
+    // missao acabou e a tela seguinte (resultado ou ilha concluida) entrou.
+    if (!(await page.locator('.level__question').isVisible())) {
       return feitas;
     }
-    await expect(page.locator('.level__question')).toBeVisible();
   }
   throw new Error(`A missao nao terminou em ${maximo} perguntas.`);
 }

@@ -66,7 +66,9 @@ export function HomeScreen({
         <div className="home__avatar-group">
           <button
             type="button"
-            className={['home__avatar', waving ? 'home__avatar--waving' : ''].filter(Boolean).join(' ')}
+            className={['home__avatar', waving ? 'home__avatar--waving' : '']
+              .filter(Boolean)
+              .join(' ')}
             aria-label={t('a11y.heroWave')}
             onClick={waveAtAvatar}
             onKeyDown={(event) => {
@@ -76,7 +78,11 @@ export function HomeScreen({
               }
             }}
           >
-            <Avatar avatar={state.player.avatar} size={130} className={waving ? 'avatar--waving' : undefined} />
+            <Avatar
+              avatar={state.player.avatar}
+              size={130}
+              className={waving ? 'avatar--waving' : undefined}
+            />
           </button>
           <Button variant="secondary" size="sm" onClick={onEditCharacter}>
             {t('home.changeCharacter')}
@@ -98,10 +104,12 @@ export function HomeScreen({
         <Button size="lg" block icon="▶" onClick={onPlay}>
           {t('home.play')}
         </Button>
-        <Button variant="secondary" size="lg" block icon="🏅" onClick={onAchievements}>
+        {/* Ghost, nao secondary: tres barras cheias empilhadas anulavam a
+            hierarquia que o verde do "Jogar" deve carregar sozinho. */}
+        <Button variant="ghost" size="lg" block icon="🏅" onClick={onAchievements}>
           {t('home.achievements')}
         </Button>
-        <Button variant="secondary" size="lg" block icon="⚙" onClick={onSettings}>
+        <Button variant="ghost" size="lg" block icon="⚙" onClick={onSettings}>
           {t('home.settings')}
         </Button>
       </div>

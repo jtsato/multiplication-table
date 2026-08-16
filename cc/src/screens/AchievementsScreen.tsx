@@ -35,8 +35,11 @@ export function AchievementsScreen({ state, onBack }: AchievementsScreenProps) {
               key={definition.id}
               className={`achievement ${earned ? 'achievement--earned' : 'achievement--locked'}`}
             >
+              {/* O icone real aparece sempre, apagado por CSS enquanto
+                  bloqueado. Um cadeado repetido nove vezes nao dava o que
+                  desejar nem dizia o que fazer. */}
               <span className="achievement__icon" aria-hidden="true">
-                {earned ? definition.icon : '🔒'}
+                {definition.icon}
               </span>
               <span className="achievement__text">
                 <strong className="achievement__name">
@@ -45,7 +48,7 @@ export function AchievementsScreen({ state, onBack }: AchievementsScreenProps) {
                 <span className="achievement__description">
                   {earned
                     ? t(`achievements.list.${definition.id}.description`)
-                    : t('achievements.locked')}
+                    : t(`achievements.list.${definition.id}.goal`)}
                 </span>
               </span>
             </li>
