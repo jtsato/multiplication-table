@@ -42,4 +42,26 @@ describe('SceneView hero interaction', () => {
     expect(container.querySelector('.scene__hero--waving')).toBeInTheDocument();
     expect(container.querySelector('.mascot--waving')).toBeInTheDocument();
   });
+
+  it('exposes the scene as a group and preserves the interactive hero', () => {
+    render(
+      <I18nProvider locale="en-US">
+        <SceneView
+          scene="bridge"
+          palette={palette}
+          decor={['tree']}
+          progress={0}
+          avatar={createDefaultState('en-US').player.avatar}
+          mascotId="bloco"
+          ariaLabel="Construction progress: 0 percent"
+        />
+      </I18nProvider>,
+    );
+
+    expect(
+      screen.getByRole('group', { name: 'Construction progress: 0 percent' }),
+    ).toBeInTheDocument();
+    expect(screen.queryByRole('img')).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Tap to wave' })).toBeInTheDocument();
+  });
 });

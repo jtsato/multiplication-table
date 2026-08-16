@@ -161,7 +161,7 @@ export function SceneView({
       viewBox={`0 0 ${SCENE_WIDTH} ${SCENE_HEIGHT}`}
       preserveAspectRatio="xMidYMax slice"
       shapeRendering="crispEdges"
-      role="img"
+      role="group"
       aria-label={ariaLabel}
     >
       <defs>
