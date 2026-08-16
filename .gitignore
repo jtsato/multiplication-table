@@ -5,6 +5,7 @@
 **/dist/
 **/build/
 /site/
+.worktrees/
 
 # Caches, cobertura e arquivos temporários de ferramentas
 **/.vite/
