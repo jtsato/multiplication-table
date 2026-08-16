@@ -61,7 +61,12 @@ export function WorldMapScreen({ state, onBack, onEnterIsland }: WorldMapScreenP
                 onClick={() => !locked && onEnterIsland(island.table)}
               >
                 <span className="island__badge">
-                  <IslandBadge palette={island.palette} status={status} size={140} />
+                  <IslandBadge
+                    biome={island.biome}
+                    palette={island.palette}
+                    status={status}
+                    size={140}
+                  />
                   <span className="island__number" aria-hidden="true">
                     {island.table}
                   </span>
