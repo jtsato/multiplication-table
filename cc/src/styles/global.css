@@ -7,11 +7,14 @@
 */
 
 :root {
-  --color-bg: #eaf6ff;
+  --color-bg: #172f6b;
+  --color-bg-grid: rgba(255, 255, 255, 0.08);
   --color-surface: #ffffff;
   --color-surface-soft: #f4f9ff;
   --color-text: #21283a;
   --color-text-soft: #5b6478;
+  --color-text-on-dark: #f4f7ff;
+  --color-text-soft-on-dark: #cbd8f5;
   --color-primary: #3aa0ff;
   --color-primary-dark: #1c7fd6;
   --color-focus: #172b4d;
@@ -61,7 +64,12 @@ body,
 body {
   margin: 0;
   font-family: var(--font-family);
-  background: var(--color-bg);
+  background-color: var(--color-bg);
+  background-image:
+    linear-gradient(var(--color-bg-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--color-bg-grid) 1px, transparent 1px);
+  background-size: 52px 52px;
+  background-position: 0 0;
   color: var(--color-text);
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
@@ -291,10 +299,11 @@ html[data-reduced-motion='on'] *::after {
 
 .screen__title {
   font-size: 1.5rem;
+  color: var(--color-text-on-dark);
 }
 
 .screen__subtitle {
-  color: var(--color-text-soft);
+  color: var(--color-text-soft-on-dark);
   margin-top: 0.25rem;
 }
 
@@ -709,10 +718,11 @@ html[data-reduced-motion='on'] *::after {
 
 .home__title {
   font-size: 1.6rem;
+  color: var(--color-text-on-dark);
 }
 
 .home__subtitle {
-  color: var(--color-text-soft);
+  color: var(--color-text-soft-on-dark);
 }
 
 .home__card {
@@ -1663,6 +1673,7 @@ html[data-reduced-motion='on'] *::after {
 .settings__section-title {
   font-size: 1.05rem;
   margin-bottom: 0.75rem;
+  color: var(--color-text-on-dark);
 }
 
 .settings__languages {
