@@ -521,3 +521,75 @@ first"*.
 | `npm run test` | 282 testes, 18 arquivos, verde |
 | `npm run e2e` | 16 testes, desktop + celular, verde |
 | `npm run build` | ok |
+
+---
+
+## Fatia 8 — Ajustes de jogabilidade
+
+Dois problemas relatados por quem jogou: *"fica noite muito rapidamente, não dá
+tempo para montar o acampamento"* e *"os monstros passam por dentro da cerca"*.
+
+### A cerca não barrava nada — e o comentário mentia
+
+O segundo é o mais sério, e a causa é constrangedora. O comentário em
+`EnemiesView` dizia:
+
+> *"Sao cinematicos por posicao: a cerca os bloqueia por teste de segmento, nao
+> por colisao."*
+
+**Esse teste de segmento nunca foi escrito.** Os inimigos andam por posição e não
+são corpos do Rapier, então o colisor da cerca — que barra o jogador — não tinha
+nenhum efeito sobre eles. A construção prometia uma defesa que não existia, e
+nenhum teste cobria isso porque eu havia descrito o comportamento em prosa em vez
+de codificá-lo.
+
+A correção é `stepAvoidingFences`: teste de **segmento contra segmento** entre o
+passo do inimigo e a barra da cerca. Segmento, e não ponto-dentro-de-área, porque
+com passos de até 22 cm por quadro um teste pontual deixaria o inimigo "pular"
+para o outro lado sem nunca ter estado dentro da cerca. Quando o caminho direto
+cruza, o inimigo tenta deslizar só em X, depois só em Z — assim contorna a ponta
+da cerca em vez de tremer contra ela, e fica realmente barrado quando não há
+desvio.
+
+Mais um caso de ponto flutuante: `cos(π/2)` vale 6e-17, não zero, e esse resíduo
+fazia um movimento *rente* à cerca contar como travessia — o inimigo que só
+deslizava ao lado dela ficava congelado. Resolvido com tolerância no sinal da
+orientação.
+
+**Cobertura:** 14 testes de unidade para geometria e desvio, um teste de
+integração que cerca o jogador com um anel de 12 cercas e verifica que ninguém
+entra — **com contraprova**: o mesmo cenário sem cerca afirma que os inimigos
+*chegam*. Sem essa contraprova, o teste passaria mesmo se os inimigos ficassem
+parados por outro motivo qualquer. E um teste ponta a ponta em navegador.
+
+### O dia era curto demais
+
+O ciclo foi de 180 s para **300 s**, e o dia de 50% para **60%** — de 90 s para
+180 s. Montar uma fogueira exige colher madeira e pedra, e cada colheita passa
+por caminhar até o recurso, contar os grupos e responder. Para uma criança isso
+não é questão de segundos: é o tempo de ler e pensar.
+
+Distribuição nova: dia 180 s · entardecer 30 s · noite 66 s · amanhecer 24 s. A
+fogueira queima 50 s, então uma noite de 66 s exige exatamente um reabastecimento
+— que é onde a matemática volta a decidir a sobrevivência.
+
+**Aviso explícito no entardecer:** *"A noite está chegando — acenda uma fogueira!"*
+com contagem regressiva. Saber que o tempo está acabando não deveria depender de
+a criança interpretar a cor do céu.
+
+### Testes que deixaram de usar números mágicos
+
+Os testes usavam posições literais do ciclo (`phaseFor(0.55)`) e quebraram em
+massa com a mudança de ritmo. Passaram a derivar das constantes
+(`meio('entardecer')`), inclusive no E2E via `irParaOMeioDe`. Ritmo de jogo é
+número de ajuste — vai mudar de novo, e mudá-lo não deveria quebrar dezenas de
+testes que não têm nada a ver com isso.
+
+### Portões
+
+| Portão | Resultado |
+| --- | --- |
+| `npm run lint` | limpo |
+| `npm run test` | 303 testes, 18 arquivos, verde |
+| `npm run e2e` | 18 testes, desktop + celular, verde |
+| `npm run build` | ok |

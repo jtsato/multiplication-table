@@ -1,7 +1,8 @@
 import { expect, test } from '@playwright/test';
 import {
-  ficarAoLadoDeUmRecurso,
   esperarJogoPronto,
+  ficarAoLadoDeUmRecurso,
+  irParaOMeioDe,
   lerEstado,
   responderPeloEnunciado,
   soltarTudo,
@@ -151,30 +152,28 @@ test.describe('partida no computador', () => {
     await page.screenshot({ path: 'e2e/telas/09-fogueira.png' });
   });
 
+  test('o entardecer avisa antes de a noite chegar', async ({ page }) => {
+    await irParaOMeioDe(page, 'entardecer');
+
+    const estado = await lerEstado(page);
+    expect(estado.fase).toBe('entardecer');
+    // Ainda nao ha perigo: o entardecer e o aviso, nao a ameaca.
+    expect(estado.inimigos).toBe(0);
+    await expect(page.getByText(/A noite está chegando/)).toBeVisible();
+
+    await page.screenshot({ path: 'e2e/telas/09b-entardecer.png' });
+  });
+
   test('a noite chega, os inimigos surgem e o amanhecer traz a vitoria', async ({ page }) => {
-    // Adianta o relogio em vez de esperar 3 minutos reais.
-    await page.evaluate(() => {
-      window.__tabuada!.clock.seconds = 0.63 * 180;
-    });
-    await page.waitForTimeout(600);
+    // Adianta o relogio em vez de esperar o ciclo inteiro em tempo real.
+    await irParaOMeioDe(page, 'noite');
 
     const noite = await lerEstado(page);
     expect(noite.fase).toBe('noite');
     expect(noite.inimigos).toBeGreaterThan(0);
-    await page.screenshot({ path: 'e2e/telas/10-anoitecendo.png' });
+    await page.screenshot({ path: 'e2e/telas/10-noite.png' });
 
-    // Meio da noite: e aqui que o clima tem que estar escuro de verdade.
-    await page.evaluate(() => {
-      window.__tabuada!.clock.seconds = 0.75 * 180;
-    });
-    await page.waitForTimeout(600);
-    expect((await lerEstado(page)).fase).toBe('noite');
-    await page.screenshot({ path: 'e2e/telas/10b-noite-fechada.png' });
-
-    await page.evaluate(() => {
-      window.__tabuada!.clock.seconds = 0.9 * 180;
-    });
-    await page.waitForTimeout(600);
+    await irParaOMeioDe(page, 'amanhecer');
 
     const amanhecer = await lerEstado(page);
     expect(amanhecer.fase).toBe('amanhecer');
@@ -192,6 +191,39 @@ test.describe('partida no computador', () => {
     expect(reiniciado.vida).toBe(100);
     expect(reiniciado.fase).toBe('dia');
     await page.screenshot({ path: 'e2e/telas/12-reiniciado.png' });
+  });
+
+  test('a cerca barra os monstros — eles nao passam por dentro', async ({ page }) => {
+    // Cerca o jogador com um anel de cercas construidas de verdade.
+    await page.evaluate(() => {
+      const ponte = window.__tabuada!;
+      ponte.store.setState({
+        inventory: { madeira: 999, fruta: 999, pedra: 999 },
+        structures: Array.from({ length: 12 }, (_, i) => {
+          const angulo = (i / 12) * Math.PI * 2;
+          const raio = 2.6;
+          return {
+            id: `cerca-${i}`,
+            kind: 'cerca' as const,
+            position: { x: Math.cos(angulo) * raio, y: 0, z: Math.sin(angulo) * raio },
+            rotation: -angulo + Math.PI / 2,
+            fuelUntil: 0,
+          };
+        }),
+      });
+    });
+
+    await irParaOMeioDe(page, 'noite');
+    expect((await lerEstado(page)).inimigos).toBeGreaterThan(0);
+
+    // Tempo de sobra para atravessarem a ilha inteira, se conseguissem.
+    await page.waitForTimeout(9000);
+    await page.screenshot({ path: 'e2e/telas/13-cerca-segurando.png' });
+
+    const depois = await lerEstado(page);
+    // Nenhum monstro entrou no cercado, entao ninguem encostou.
+    expect(depois.vida).toBe(100);
+    expect(depois.desfecho).toBe('jogando');
   });
 
   test('nenhum erro no console durante a partida', async ({ page }) => {

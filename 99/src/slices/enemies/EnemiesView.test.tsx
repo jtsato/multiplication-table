@@ -149,6 +149,62 @@ describe('EnemiesView', () => {
     await renderer.unmount();
   });
 
+  it('a cerca barra os inimigos de verdade', async () => {
+    relogioEm(0.25);
+    const renderer = await renderScene(<EnemiesView />);
+    await renderer.advanceFrames(2, 1 / 60);
+
+    relogioEm(meioDaNoite);
+    await renderer.advanceFrames(2, 1 / 60);
+
+    /**
+     * Cerca o jogador com um anel de cercas.
+     *
+     * Os inimigos nao sao corpos do Rapier — andam por posicao —, entao o
+     * colisor da cerca nao os detem sozinho. Este teste existe porque, sem o
+     * teste de segmento em `stepAvoidingFences`, eles passavam direto pela
+     * cerca: a construcao prometia uma defesa que nao entregava.
+     */
+    const anel: Structure[] = Array.from({ length: 12 }, (_, i) => {
+      const angulo = (i / 12) * Math.PI * 2;
+      const raio = 2.6;
+      return {
+        id: `cerca-anel-${i}`,
+        kind: 'cerca',
+        position: { x: Math.cos(angulo) * raio, y: 0, z: Math.sin(angulo) * raio },
+        // Tangente ao circulo, para os segmentos fecharem o cerco.
+        rotation: -angulo + Math.PI / 2,
+        fuelUntil: 0,
+      };
+    });
+    useGameStore.setState({ structures: anel });
+    await renderer.advanceFrames(2, 1 / 60);
+
+    // Tempo de sobra para atravessar a ilha inteira, se conseguissem.
+    await renderer.advanceFrames(300, 0.05);
+
+    // Nenhum inimigo entrou no cercado, entao ninguem encostou no jogador.
+    expect(distanciaAoJogador(renderer)).toBeGreaterThan(2);
+    expect(state().health).toBe(ENEMIES.maxHealth);
+
+    await renderer.unmount();
+  });
+
+  it('sem cerca, os inimigos chegam ate o jogador', async () => {
+    relogioEm(0.25);
+    const renderer = await renderScene(<EnemiesView />);
+    await renderer.advanceFrames(2, 1 / 60);
+    relogioEm(meioDaNoite);
+    await renderer.advanceFrames(2, 1 / 60);
+
+    await renderer.advanceFrames(300, 0.05);
+
+    // Contraprova do teste acima: sem a cerca, eles encostam.
+    expect(distanciaAoJogador(renderer)).toBeLessThan(2);
+
+    await renderer.unmount();
+  });
+
   it('tira vida no contato e leva a derrota se nada barrar', async () => {
     relogioEm(0.25);
     const renderer = await renderScene(<EnemiesView />);

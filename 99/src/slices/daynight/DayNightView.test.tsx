@@ -47,14 +47,23 @@ describe('DayNightView', () => {
     const renderer = await renderScene(<DayNightView />);
     expect(state().clock.phase).toBe('dia');
 
-    await avancaSegundos(renderer, PHASE_BOUNDS.entardecer.start * DAYNIGHT.cycleSeconds + 1);
-    expect(state().clock.phase).toBe('entardecer');
+    /**
+     * Avanca ate o meio de cada fase, calculado a partir das fronteiras.
+     *
+     * Antes o teste somava fracoes fixas (0.15, 0.27) e quebrou quando o ritmo
+     * do ciclo mudou — o dia era curto demais para montar o acampamento. Mirar
+     * no meio da fase alvo funciona para qualquer ritmo.
+     */
+    const avancarAteOMeioDe = async (fase: 'entardecer' | 'noite' | 'amanhecer') => {
+      const alvo =
+        ((PHASE_BOUNDS[fase].start + PHASE_BOUNDS[fase].end) / 2) * DAYNIGHT.cycleSeconds;
+      await avancaSegundos(renderer, alvo - dayNightClock.seconds);
+    };
 
-    await avancaSegundos(renderer, 0.15 * DAYNIGHT.cycleSeconds);
-    expect(state().clock.phase).toBe('noite');
-
-    await avancaSegundos(renderer, 0.27 * DAYNIGHT.cycleSeconds);
-    expect(state().clock.phase).toBe('amanhecer');
+    for (const fase of ['entardecer', 'noite', 'amanhecer'] as const) {
+      await avancarAteOMeioDe(fase);
+      expect(state().clock.phase).toBe(fase);
+    }
 
     await renderer.unmount();
   });

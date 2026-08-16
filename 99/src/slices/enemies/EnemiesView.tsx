@@ -14,8 +14,8 @@ import {
   evaluateOutcome,
   fireThreatening,
   isTouching,
+  stepAvoidingFences,
   stepAway,
-  stepToward,
 } from './enemies.logic';
 
 /** Vulto low poly: corpo escuro e dois olhos que denunciam a aproximacao. */
@@ -43,9 +43,10 @@ function EnemyBody() {
  * quadro. O store guarda so o que muda raramente — vida, desfecho e a lista de
  * inimigos da noite.
  *
- * Os inimigos nao sao corpos do Rapier. Sao cinematicos por posicao: a cerca os
- * bloqueia por teste de segmento, nao por colisao. Para cinco vultos que andam
- * em linha reta, o solver nao acrescentaria nada e cobraria caro.
+ * Os inimigos nao sao corpos do Rapier. Sao cinematicos por posicao: para cinco
+ * vultos que andam em linha reta, o solver nao acrescentaria nada e cobraria
+ * caro. O preco dessa escolha e que o colisor da cerca nao os detem sozinho —
+ * quem faz isso e `stepAvoidingFences`, com teste de segmento.
  */
 export function EnemiesView() {
   const enemies = useGameStore((state) => state.enemies);
@@ -98,7 +99,7 @@ export function EnemiesView() {
 
       const next = threat
         ? stepAway(current, threat.position, ENEMIES.retreatSpeed, delta)
-        : stepToward(current, playerTransform, ENEMIES.speed, delta);
+        : stepAvoidingFences(current, playerTransform, ENEMIES.speed, delta, state.structures);
 
       current.x = next.x;
       current.z = next.z;

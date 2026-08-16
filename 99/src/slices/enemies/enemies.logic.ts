@@ -2,6 +2,7 @@ import { type Rng, randomRange } from '../../shared/rng';
 import { distanceSqXZ, type Vec3, vec3 } from '../../shared/vec';
 import { ISLAND } from '../world/world.logic';
 import { BUILDING, type Structure } from '../building/building.logic';
+
 import type { DayPhase } from '../daynight/daynight.logic';
 
 export interface Enemy {
@@ -117,6 +118,98 @@ export function isInFireSafeZone(
   radius = BUILDING.fireSafeRadius,
 ): boolean {
   return fireThreatening(position, structures, radius) !== null;
+}
+
+/** Meia-largura da cerca; casa com o colisor em `BuildingView`. */
+const FENCE_HALF_WIDTH = 1;
+
+/**
+ * Os dois extremos da cerca no mundo.
+ *
+ * A cerca e uma barra deitada no eixo X local, girada por `rotation` em torno de
+ * Y. Em Three, um ponto local (lx, 0, 0) vai para
+ * `(lx*cos, 0, -lx*sin)` somado a posicao.
+ */
+export function fenceSegment(fence: Structure): [Vec3, Vec3] {
+  const dx = Math.cos(fence.rotation) * FENCE_HALF_WIDTH;
+  const dz = -Math.sin(fence.rotation) * FENCE_HALF_WIDTH;
+  return [
+    vec3(fence.position.x - dx, 0, fence.position.z - dz),
+    vec3(fence.position.x + dx, 0, fence.position.z + dz),
+  ];
+}
+
+/** Sinal da area do triangulo — de que lado de `ab` esta `c`. */
+function orientacao(a: Vec3, b: Vec3, c: Vec3): number {
+  return (b.x - a.x) * (c.z - a.z) - (b.z - a.z) * (c.x - a.x);
+}
+
+/**
+ * Sinal com tolerancia.
+ *
+ * `cos(PI/2)` nao da zero exato, e sim 6e-17. Sem a tolerancia, esse residuo
+ * fazia um movimento *rente* a cerca contar como travessia — e o inimigo que so
+ * deslizava ao lado dela ficava travado no lugar.
+ */
+function sinal(valor: number): number {
+  return Math.abs(valor) < 1e-9 ? 0 : Math.sign(valor);
+}
+
+/** Os segmentos `a-b` e `c-d` se cruzam de fato (colinear nao conta)? */
+export function segmentsIntersect(a: Vec3, b: Vec3, c: Vec3, d: Vec3): boolean {
+  const o1 = sinal(orientacao(a, b, c));
+  const o2 = sinal(orientacao(a, b, d));
+  const o3 = sinal(orientacao(c, d, a));
+  const o4 = sinal(orientacao(c, d, b));
+  // Cruzamento proprio: cada segmento separa os extremos do outro.
+  return o1 * o2 < 0 && o3 * o4 < 0;
+}
+
+/**
+ * O passo de `from` para `to` atravessa alguma cerca?
+ *
+ * Os inimigos nao sao corpos do Rapier — andam por posicao —, entao o colisor da
+ * cerca nao os detem sozinho. Sem esta checagem eles passavam direto pela cerca,
+ * que era exatamente a defesa que a construcao prometia. O teste e de segmento
+ * contra segmento, e nao de ponto dentro de area: com passos de ate 22 cm por
+ * quadro, um teste pontual deixaria o inimigo "pular" para o outro lado sem
+ * nunca ter estado dentro da cerca.
+ */
+export function crossesFence(from: Vec3, to: Vec3, structures: readonly Structure[]): boolean {
+  for (const structure of structures) {
+    if (structure.kind !== 'cerca') continue;
+    const [a, b] = fenceSegment(structure);
+    if (segmentsIntersect(from, to, a, b)) return true;
+  }
+  return false;
+}
+
+/**
+ * Passo do inimigo levando as cercas em conta.
+ *
+ * Se o caminho direto cruza uma cerca, tenta deslizar: primeiro so no eixo X,
+ * depois so no eixo Z. Assim o inimigo contorna a ponta da cerca em vez de
+ * ficar tremendo contra ela — e continua barrado quando a cerca e larga o
+ * bastante para cobrir os dois desvios.
+ */
+export function stepAvoidingFences(
+  from: Vec3,
+  to: Vec3,
+  speed: number,
+  delta: number,
+  structures: readonly Structure[],
+): Vec3 {
+  const direto = stepToward(from, to, speed, delta);
+  if (!crossesFence(from, direto, structures)) return direto;
+
+  const soX = vec3(direto.x, from.y, from.z);
+  if (!crossesFence(from, soX, structures)) return soX;
+
+  const soZ = vec3(from.x, from.y, direto.z);
+  if (!crossesFence(from, soZ, structures)) return soZ;
+
+  // Bloqueado nos dois eixos: a cerca cumpriu o seu papel.
+  return vec3(from.x, from.y, from.z);
 }
 
 export interface DamageResult {

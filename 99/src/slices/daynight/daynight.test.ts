@@ -16,6 +16,16 @@ import {
 
 const CICLO = DAYNIGHT.cycleSeconds;
 
+/**
+ * Meio de uma fase, derivado das fronteiras.
+ *
+ * Os testes nao usam posicoes literais (0.25, 0.55...) de proposito: o ritmo do
+ * ciclo e um numero de ajuste de jogabilidade e ja mudou uma vez — o dia era
+ * curto demais para montar o acampamento. Derivando das constantes, ajustar o
+ * ritmo nao quebra dezenas de testes que nao tem nada a ver com isso.
+ */
+const meio = (fase: DayPhase) => (PHASE_BOUNDS[fase].start + PHASE_BOUNDS[fase].end) / 2;
+
 describe('advanceClock', () => {
   it('soma o delta ao relogio', () => {
     expect(advanceClock(10, 0.5)).toBeCloseTo(10.5);
@@ -67,10 +77,23 @@ describe('dayNumber', () => {
 
 describe('phaseFor', () => {
   it('reconhece cada fase no meio dela', () => {
-    expect(phaseFor(0.25)).toBe('dia');
-    expect(phaseFor(0.55)).toBe('entardecer');
-    expect(phaseFor(0.75)).toBe('noite');
-    expect(phaseFor(0.95)).toBe('amanhecer');
+    for (const fase of ['dia', 'entardecer', 'noite', 'amanhecer'] as const) {
+      expect(phaseFor(meio(fase))).toBe(fase);
+    }
+  });
+
+  it('o dia e a fase mais longa — e nele que se colhe e constroi', () => {
+    const duracao = (fase: DayPhase) => PHASE_BOUNDS[fase].end - PHASE_BOUNDS[fase].start;
+    for (const outra of ['entardecer', 'noite', 'amanhecer'] as const) {
+      expect(duracao('dia')).toBeGreaterThan(duracao(outra));
+    }
+    // Em segundos: o dia precisa dar tempo de varias colheitas e uma construcao.
+    expect(duracao('dia') * CICLO).toBeGreaterThanOrEqual(150);
+  });
+
+  it('o entardecer avisa com folga antes do perigo', () => {
+    const aviso = (PHASE_BOUNDS.entardecer.end - PHASE_BOUNDS.entardecer.start) * CICLO;
+    expect(aviso).toBeGreaterThanOrEqual(20);
   });
 
   it('trata a fronteira exata como inicio da fase seguinte', () => {
@@ -150,8 +173,8 @@ describe('mixHex', () => {
 
 describe('skyConfigFor', () => {
   it('e mais claro de dia do que de noite', () => {
-    const dia = skyConfigFor(0.25);
-    const noite = skyConfigFor(0.8);
+    const dia = skyConfigFor(meio('dia'));
+    const noite = skyConfigFor(meio('noite'));
     expect(dia.sunIntensity).toBeGreaterThan(noite.sunIntensity);
     expect(dia.ambientIntensity).toBeGreaterThan(noite.ambientIntensity);
     expect(dia.elevation).toBeGreaterThan(noite.elevation);

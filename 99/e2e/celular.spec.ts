@@ -1,5 +1,12 @@
 import { expect, test } from '@playwright/test';
-import { centroDe, esperarJogoPronto, ficarAoLadoDeUmRecurso, lerEstado, usarDedo } from './jogo';
+import {
+  centroDe,
+  esperarJogoPronto,
+  ficarAoLadoDeUmRecurso,
+  irParaOMeioDe,
+  lerEstado,
+  usarDedo,
+} from './jogo';
 
 /**
  * Partida no celular, com toque de verdade.
@@ -129,14 +136,8 @@ test.describe('partida no celular', () => {
   });
 
   test('a tela de vitoria funciona no toque', async ({ page }) => {
-    await page.evaluate(() => {
-      window.__tabuada!.clock.seconds = 0.7 * 180;
-    });
-    await page.waitForTimeout(600);
-    await page.evaluate(() => {
-      window.__tabuada!.clock.seconds = 0.92 * 180;
-    });
-    await page.waitForTimeout(600);
+    await irParaOMeioDe(page, 'noite');
+    await irParaOMeioDe(page, 'amanhecer');
 
     await expect(page.getByText('Amanheceu!')).toBeVisible();
     await page.screenshot({ path: 'e2e/telas/celular-08-vitoria.png' });

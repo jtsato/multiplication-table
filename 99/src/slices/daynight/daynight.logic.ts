@@ -6,23 +6,31 @@ export const DAYNIGHT = {
   /**
    * Duracao de um ciclo completo, em segundos.
    *
-   * Curto de proposito: uma POC precisa caber em uma sessao de teste. Tres
-   * minutos dao tempo de colher, construir e enfrentar a noite sem virar espera.
+   * Cinco minutos. A primeira versao tinha tres, e na pratica a noite chegava
+   * antes de dar tempo de montar o acampamento: montar uma fogueira exige
+   * colher madeira e pedra, e cada colheita passa por caminhar ate o recurso,
+   * contar os grupos e responder. Para uma crianca isso nao e questao de
+   * segundos — e o tempo de ler e pensar.
    */
-  cycleSeconds: 180,
+  cycleSeconds: 300,
 } as const;
 
 /**
  * Fronteiras das fases, como fracao do ciclo (0 a 1).
  *
- * O dia ocupa mais da metade: e nele que a crianca resolve contas e constroi.
- * A noite e curta e tensa.
+ * O dia ocupa 60% do ciclo — 3 minutos dos 5. E nele que a crianca resolve
+ * contas e constroi, e essa parte nao pode ser corrida. O entardecer e um aviso
+ * generoso de 30 s antes do perigo, e a noite dura 66 s: tempo de sentir tensao
+ * sem virar castigo.
+ *
+ * Em segundos, com o ciclo de 300 s:
+ * dia 180 · entardecer 30 · noite 66 · amanhecer 24
  */
 export const PHASE_BOUNDS = {
-  dia: { start: 0, end: 0.5 },
-  entardecer: { start: 0.5, end: 0.62 },
-  noite: { start: 0.62, end: 0.88 },
-  amanhecer: { start: 0.88, end: 1 },
+  dia: { start: 0, end: 0.6 },
+  entardecer: { start: 0.6, end: 0.7 },
+  noite: { start: 0.7, end: 0.92 },
+  amanhecer: { start: 0.92, end: 1 },
 } as const;
 
 /**

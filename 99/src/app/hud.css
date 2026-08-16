@@ -185,6 +185,26 @@
   color: #ff9d9d;
 }
 
+/* Aviso do entardecer: pulsa para chamar atenção sem virar susto. */
+.hud__prompt--aviso {
+  border-color: #f2925c;
+  color: #ffd0a8;
+  font-weight: 600;
+  animation: aviso-pulso 1.4s ease-in-out infinite;
+}
+
+@keyframes aviso-pulso {
+  50% {
+    box-shadow: 0 0 0 4px rgba(242, 146, 92, 0.18);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hud__prompt--aviso {
+    animation: none;
+  }
+}
+
 .hud__prompt kbd {
   background: #ffe66d;
   color: #0e1420;

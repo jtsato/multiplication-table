@@ -84,7 +84,15 @@ export function Hud({ isTouch = false }: { isTouch?: boolean } = {}) {
           </div>
         )}
 
-        {!buildError && buildMode && !isTouch && (
+        {/* Aviso do entardecer: a criança precisa saber que o tempo de montar o
+            acampamento está acabando, e o que fazer com ele. */}
+        {!buildError && clock.phase === 'entardecer' && (
+          <div className="hud__prompt hud__prompt--aviso" role="alert">
+            A noite está chegando — acenda uma fogueira! ({Math.ceil(clock.secondsToNextPhase)}s)
+          </div>
+        )}
+
+        {!buildError && clock.phase !== 'entardecer' && buildMode && !isTouch && (
           <div className="hud__prompt" role="status">
             <kbd>Espaço</kbd> para construir · <kbd>Esc</kbd> para cancelar
           </div>
@@ -93,11 +101,16 @@ export function Hud({ isTouch = false }: { isTouch?: boolean } = {}) {
         {/* O aviso some enquanto o desafio está aberto: nesse momento o próprio
             painel ancorado no recurso já diz o que fazer. No celular, o botão
             "Colher" aparecendo na tela já cumpre esse papel. */}
-        {!buildError && !buildMode && !isTouch && highlightedNodeId && !activeChallenge && (
-          <div className="hud__prompt" role="status">
-            Aperte <kbd>E</kbd> para colher
-          </div>
-        )}
+        {!buildError &&
+          clock.phase !== 'entardecer' &&
+          !buildMode &&
+          !isTouch &&
+          highlightedNodeId &&
+          !activeChallenge && (
+            <div className="hud__prompt" role="status">
+              Aperte <kbd>E</kbd> para colher
+            </div>
+          )}
       </div>
     </div>
   );

@@ -1,4 +1,5 @@
 import { expect, type Page } from '@playwright/test';
+import { DAYNIGHT, PHASE_BOUNDS, type DayPhase } from '../src/slices/daynight/daynight.logic';
 
 /**
  * Utilitarios para conduzir o jogo de verdade no navegador.
@@ -268,6 +269,22 @@ export async function usarDedo(page: Page): Promise<Dedo> {
       await enviar('touchEnd', atual);
     },
   };
+}
+
+/**
+ * Adianta o relogio do jogo ate o meio de uma fase.
+ *
+ * Derivado das constantes do proprio jogo, e nao de fracoes fixas: o ritmo do
+ * ciclo e um numero de ajuste de jogabilidade e ja mudou uma vez — o dia era
+ * curto demais para montar o acampamento antes de anoitecer.
+ */
+export async function irParaOMeioDe(page: Page, fase: DayPhase): Promise<void> {
+  const alvo = ((PHASE_BOUNDS[fase].start + PHASE_BOUNDS[fase].end) / 2) * DAYNIGHT.cycleSeconds;
+  await page.evaluate((segundos) => {
+    window.__tabuada!.clock.seconds = segundos;
+  }, alvo);
+  // Alguns quadros para a fase ser publicada e a cena reagir.
+  await page.waitForTimeout(600);
 }
 
 /** Centro de um elemento na tela, para mirar o dedo. */

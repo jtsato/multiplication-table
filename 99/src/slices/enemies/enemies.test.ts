@@ -2,8 +2,11 @@ import { describe, expect, it } from 'vitest';
 import {
   ENEMIES,
   applyContactDamage,
+  crossesFence,
   evaluateOutcome,
+  fenceSegment,
   fireThreatening,
+  stepAvoidingFences,
   isInFireSafeZone,
   isTouching,
   spawnPointsFor,
@@ -158,6 +161,122 @@ describe('fireThreatening / isInFireSafeZone', () => {
 
   it('sem construcao nenhuma, nao ha protecao', () => {
     expect(isInFireSafeZone(vec3(0, 0, 0), [])).toBe(false);
+  });
+});
+
+describe('fenceSegment', () => {
+  it('sem rotacao, a cerca deita no eixo X', () => {
+    const [a, b] = fenceSegment(cerca(0, 0));
+    expect(a.x).toBeCloseTo(-1);
+    expect(a.z).toBeCloseTo(0);
+    expect(b.x).toBeCloseTo(1);
+    expect(b.z).toBeCloseTo(0);
+  });
+
+  it('girada 90 graus, deita no eixo Z', () => {
+    const girada = { ...cerca(0, 0), rotation: Math.PI / 2 };
+    const [a, b] = fenceSegment(girada);
+    expect(a.x).toBeCloseTo(0);
+    expect(Math.abs(a.z)).toBeCloseTo(1);
+    expect(b.x).toBeCloseTo(0);
+    expect(Math.abs(b.z)).toBeCloseTo(1);
+  });
+
+  it('acompanha a posicao da construcao', () => {
+    const [a, b] = fenceSegment(cerca(5, -3));
+    expect((a.x + b.x) / 2).toBeCloseTo(5);
+    expect((a.z + b.z) / 2).toBeCloseTo(-3);
+  });
+
+  it('tem sempre 2 metros de vao', () => {
+    for (const rotacao of [0, 0.7, Math.PI / 2, 2.4]) {
+      const [a, b] = fenceSegment({ ...cerca(1, 1), rotation: rotacao });
+      expect(Math.hypot(b.x - a.x, b.z - a.z)).toBeCloseTo(2);
+    }
+  });
+});
+
+describe('crossesFence', () => {
+  it('detecta a travessia frontal', () => {
+    // Cerca deitada em X na origem; o inimigo vem de -Z para +Z.
+    expect(crossesFence(vec3(0, 0, -1), vec3(0, 0, 1), [cerca(0, 0)])).toBe(true);
+  });
+
+  it('nao acusa quando o caminho passa ao largo da ponta', () => {
+    // A cerca vai de x=-1 a x=1; passar em x=3 e por fora.
+    expect(crossesFence(vec3(3, 0, -1), vec3(3, 0, 1), [cerca(0, 0)])).toBe(false);
+  });
+
+  it('nao acusa movimento paralelo a cerca', () => {
+    expect(crossesFence(vec3(-3, 0, 1), vec3(3, 0, 1), [cerca(0, 0)])).toBe(false);
+  });
+
+  it('ignora fogueiras — so a cerca barra', () => {
+    expect(crossesFence(vec3(0, 0, -1), vec3(0, 0, 1), [fogueira(0, 0)])).toBe(false);
+  });
+
+  it('sem construcao nenhuma, nada barra', () => {
+    expect(crossesFence(vec3(0, 0, -5), vec3(0, 0, 5), [])).toBe(false);
+  });
+
+  it('detecta a travessia mesmo com passo grande — nada de atravessar de um pulo', () => {
+    // Passo de 10 m de uma vez: um teste de ponto dentro de area deixaria passar.
+    expect(crossesFence(vec3(0, 0, -5), vec3(0, 0, 5), [cerca(0, 0)])).toBe(true);
+  });
+
+  it('respeita a rotacao da cerca', () => {
+    const girada = { ...cerca(0, 0), rotation: Math.PI / 2 };
+    // Agora ela deita em Z, entao quem barra e o movimento em X.
+    expect(crossesFence(vec3(-1, 0, 0), vec3(1, 0, 0), [girada])).toBe(true);
+    expect(crossesFence(vec3(0, 0, -1), vec3(0, 0, 1), [girada])).toBe(false);
+  });
+});
+
+describe('stepAvoidingFences', () => {
+  const cercaNaOrigem = [cerca(0, 0)];
+
+  it('anda normalmente quando nao ha cerca no caminho', () => {
+    const passo = stepAvoidingFences(vec3(0, 0, -5), vec3(0, 0, 5), 3, 1, []);
+    expect(passo.z).toBeCloseTo(-2);
+  });
+
+  it('nao atravessa a cerca de frente', () => {
+    const antes = vec3(0, 0, -0.5);
+    const passo = stepAvoidingFences(antes, vec3(0, 0, 5), 4, 1, cercaNaOrigem);
+    // Continua do mesmo lado: z permanece negativo.
+    expect(passo.z).toBeLessThan(0);
+  });
+
+  it('nunca acaba do outro lado, por mais rapido que venha', () => {
+    for (const velocidade of [3, 10, 40, 200]) {
+      const passo = stepAvoidingFences(
+        vec3(0, 0, -0.5),
+        vec3(0, 0, 5),
+        velocidade,
+        1,
+        cercaNaOrigem,
+      );
+      expect(passo.z).toBeLessThan(0);
+    }
+  });
+
+  it('desliza para contornar em vez de travar de vez', () => {
+    // Alvo na diagonal: bloqueado em Z, mas livre para andar em X.
+    const passo = stepAvoidingFences(vec3(0, 0, -0.5), vec3(6, 0, 5), 3, 1, cercaNaOrigem);
+    expect(passo.x).toBeGreaterThan(0);
+    expect(passo.z).toBeLessThan(0);
+  });
+
+  it('barrado dos dois lados, fica parado — a cerca cumpriu o papel', () => {
+    // Duas cercas em cruz fechando o caminho.
+    const cruz = [cerca(0, 0), { ...cerca(0, 0), rotation: Math.PI / 2 }];
+    const passo = stepAvoidingFences(vec3(-0.3, 0, -0.3), vec3(5, 0, 5), 3, 1, cruz);
+    expect(passo.x).toBeCloseTo(-0.3);
+    expect(passo.z).toBeCloseTo(-0.3);
+  });
+
+  it('mantem a altura', () => {
+    expect(stepAvoidingFences(vec3(0, 2, -5), vec3(0, 0, 5), 3, 1, cercaNaOrigem).y).toBe(2);
   });
 });
 
