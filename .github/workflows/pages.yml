@@ -30,40 +30,19 @@ jobs:
           cache: npm
           cache-dependency-path: |
             cc/package-lock.json
-            co/package-lock.json
-            cw/package-lock.json
             99/package-lock.json
+            st/package-lock.json
 
       - name: Install dependencies
         run: |
           npm ci --prefix cc
-          npm ci --prefix co
-          npm ci --prefix cw
           npm ci --prefix 99
+          npm ci --prefix st
 
       - name: Test and build cc
         working-directory: cc
         run: |
           npm run test
-          npm run build
-
-      - name: Test and build co
-        working-directory: co
-        run: |
-          npm run test:run
-          npm run build
-
-      - name: Test and build cw
-        working-directory: cw
-        run: |
-          npm run test
-          npm run build
-
-      - name: Test and build gt
-        working-directory: gt
-        run: |
-          npm test
-          npm run check
           npm run build
 
       - name: Test and build 99
@@ -73,6 +52,10 @@ jobs:
           npm run test
           npm run build
 
+      - name: Test and build st
+        working-directory: st
+        run: npm run verify
+
       - name: Configure GitHub Pages
         uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5
 
@@ -81,12 +64,10 @@ jobs:
         run: |
           set -euo pipefail
 
-          mkdir -p site/cc site/co site/cw site/gt site/99
+          mkdir -p site/cc site/99 site/st
           cp -R cc/dist/. site/cc/
-          cp -R co/dist/. site/co/
-          cp -R cw/dist/. site/cw/
-          cp -R gt/dist/. site/gt/
           cp -R 99/dist/. site/99/
+          cp -R st/dist/. site/st/
           cp pages/index.html site/index.html
           touch site/.nojekyll
 
