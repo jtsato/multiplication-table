@@ -891,12 +891,15 @@ html[data-reduced-motion='on'] *::after {
 /* ---------------------------------------------------------------------- */
 
 .level {
+  min-height: 100vh;
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
+  overflow-y: auto;
 }
 
 .level__bar {
+  flex: 0 0 auto;
   display: flex;
   align-items: center;
   gap: 1rem;
@@ -938,8 +941,19 @@ html[data-reduced-motion='on'] *::after {
 }
 
 .level__stage {
+  flex: 0 0 auto;
+  min-height: 0;
+  display: flex;
+  justify-content: center;
   padding: 0 1rem;
   position: relative;
+  --level-scene-width-limit: 66.6667vh;
+}
+
+@supports (height: 100dvh) {
+  .level__stage {
+    --level-scene-width-limit: 66.6667dvh;
+  }
 }
 
 .level__confetti {
@@ -982,6 +996,8 @@ html[data-reduced-motion='on'] *::after {
   flex-direction: column;
   gap: 1rem;
   flex: 1;
+  min-height: 0;
+  overflow-y: auto;
 }
 
 .level__panel--briefing {
@@ -1700,8 +1716,12 @@ html[data-reduced-motion='on'] *::after {
     padding: 0 1.5rem;
   }
 
-  .scene {
-    max-height: 46vh;
+  .level__stage .scene {
+    width: min(100%, var(--level-scene-width-limit));
+    max-width: 100%;
+    max-height: none;
+    aspect-ratio: 5 / 3;
+    height: auto;
   }
 
   .level__panel {
