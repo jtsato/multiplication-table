@@ -27,7 +27,7 @@ describe('IslandBadge landmarks', () => {
     const { container } = render(
       <IslandBadge
         biome="forest"
-        palette={ISLANDS[1].palette}
+        palette={ISLANDS[1]!.palette}
         status="locked"
       />,
     );
@@ -41,12 +41,21 @@ describe('IslandBadge landmarks', () => {
     const { container } = render(
       <IslandBadge
         biome="city"
-        palette={ISLANDS[8].palette}
+        palette={ISLANDS[8]!.palette}
         status="completed"
       />,
     );
 
     expect(container.querySelector('[data-landmark="city"]')).not.toBeNull();
     expect(container.querySelector('[data-completion-accent]')).not.toBeNull();
+  });
+
+  it('preserves the legacy badge when no biome is provided', () => {
+    const { container } = render(
+      <IslandBadge palette={ISLANDS[8]!.palette} status="completed" />,
+    );
+
+    expect(container.querySelector('[data-landmark]')).toBeNull();
+    expect(container.querySelector('[data-completion-accent]')).toBeNull();
   });
 });
