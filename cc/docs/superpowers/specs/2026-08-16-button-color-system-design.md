@@ -39,6 +39,22 @@ Estados:
 - disabled reduz a intensidade sem remover a legibilidade nem o foco da ordem;
 - `:focus-visible` continua usando o indicador global escuro de alto contraste.
 
+## Fundo das telas de interface
+
+As telas de interface usam um fundo azul-marinho inspirado na referência,
+com uma grade quadrada discreta criada com dois `linear-gradient`s CSS. A
+grade deve ser sutil o bastante para não competir com títulos, cartões e
+botões; ela funciona como textura de mundo, não como conteúdo.
+
+O fundo será aplicado ao `body`/shell global das telas de início, mapa,
+configurações, conquistas e resultados. A tela da missão continuará usando o
+fundo de céu/bioma fornecido pela ilha, preservando a leitura do cenário e das
+animações da aventura.
+
+O contraste dos cartões claros contra o azul-marinho e do texto dos cabeçalhos
+será confirmado durante a implementação. A textura não terá animação e não
+será usada como único indicador de estado.
+
 ## Implementação
 
 Centralizar os valores em tokens CSS no `:root` e fazer as quatro variantes
