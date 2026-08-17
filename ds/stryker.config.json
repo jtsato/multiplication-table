@@ -4,7 +4,15 @@
   "checkers": ["typescript"],
   "tsconfigFile": "tsconfig.app.json",
   "coverageAnalysis": "perTest",
-  "mutate": ["src/shared/i18n/i18n.ts", "src/slices/battle/battle.ts"],
+  "mutate": [
+    "src/shared/i18n/i18n.ts",
+    "src/slices/battle/battle.ts",
+    "src/slices/math-question/generate-question.ts",
+    "src/slices/math-question/generate-alternatives.ts",
+    "src/slices/player-attack/player-attack.ts",
+    "src/slices/monster-turn/monster-turn.ts",
+    "src/slices/combo/combo.ts"
+  ],
   "thresholds": {
     "high": 80,
     "low": 60,

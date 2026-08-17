@@ -57,10 +57,13 @@ describe("i18n", () => {
       expect(keys).toContain("app.title");
       expect(keys).toContain("app.skipToContent");
       expect(keys).toContain("battle.title");
-      expect(keys).toContain("battle.hp");
+      expect(keys).toContain("battle.correct");
+      expect(keys).toContain("battle.almost");
+      expect(keys).toContain("battle.combo");
       expect(keys).toContain("math.question");
+      expect(keys).toContain("math.alternatives");
       expect(keys).toContain("monster.slime");
-      expect(keys).toHaveLength(11);
+      expect(keys).toHaveLength(15);
     });
   });
 

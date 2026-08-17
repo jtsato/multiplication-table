@@ -1,4 +1,7 @@
 import type { BattleAction, BattleState, MonsterSpec } from "./battle.types";
+import { HERO_BASE_DAMAGE, playerAttackDamage } from "../player-attack/player-attack";
+import { monsterAttackDamage, takeMonsterTurn } from "../monster-turn/monster-turn";
+import { SUPER_ATTACK_COMBO, nextCombo } from "../combo/combo";
 
 export const HERO_MAX_HP = 30;
 
@@ -8,6 +11,8 @@ export function createBattle(monster: MonsterSpec): BattleState {
     phase: "intro",
     hero: { nameKey: "battle.hero", maxHp: HERO_MAX_HP, hp: HERO_MAX_HP },
     monster: { ...monster, hp: monster.maxHp },
+    question: null,
+    alternatives: [],
     combo: 0,
     superReady: false,
     log: [],
@@ -18,6 +23,46 @@ export function battleReducer(state: BattleState, action: BattleAction): BattleS
   switch (action.type) {
     case "START_BATTLE":
       return createBattle(action.monster);
+    case "BEGIN_QUESTION":
+      return {
+        ...state,
+        phase: "question",
+        question: action.question,
+        alternatives: action.alternatives,
+      };
+    case "ANSWER": {
+      if (state.phase !== "question" || !state.question) return state;
+      const { question } = state;
+      if (action.value === question.answer) {
+        const damage = playerAttackDamage(HERO_BASE_DAMAGE);
+        const hp = Math.max(0, Math.min(state.monster.maxHp, state.monster.hp - damage));
+        const combo = nextCombo(state.combo, true);
+        return {
+          ...state,
+          monster: { ...state.monster, hp },
+          combo,
+          superReady: combo >= SUPER_ATTACK_COMBO,
+          phase: hp === 0 ? "victory" : "hero-turn",
+          log: [...state.log, { key: "battle.correct", params: { damage } }],
+        };
+      }
+      const damage = monsterAttackDamage(state.monster.damage);
+      const heroHp = takeMonsterTurn(state.hero.hp, state.monster);
+      return {
+        ...state,
+        hero: { ...state.hero, hp: heroHp },
+        combo: 0, // erro sempre zera a sequência
+        superReady: false, // erro sempre remove o super ataque
+        phase: heroHp === 0 ? "defeat" : "monster-turn",
+        log: [
+          ...state.log,
+          {
+            key: "battle.almost",
+            params: { a: question.a, b: question.b, answer: question.answer, damage },
+          },
+        ],
+      };
+    }
     default:
       return state;
   }

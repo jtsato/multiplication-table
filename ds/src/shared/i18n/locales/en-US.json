@@ -10,10 +10,14 @@
     "start": "Start battle",
     "intro": "A wild {{monster}} appeared!",
     "hero": "Hero",
-    "hp": "{{hp}} / {{maxHp}}"
+    "hp": "{{hp}} / {{maxHp}}",
+    "correct": "Correct! The {{monster}} took {{damage}} damage.",
+    "almost": "Almost! {{a}} × {{b}} = {{answer}} — the {{monster}} hit you for {{damage}} damage.",
+    "combo": "Combo ×{{combo}}"
   },
   "math": {
-    "question": "{{a}} × {{b}} = ?"
+    "question": "{{a}} × {{b}} = ?",
+    "alternatives": "Alternatives"
   },
   "monster": {
     "slime": "Slime"

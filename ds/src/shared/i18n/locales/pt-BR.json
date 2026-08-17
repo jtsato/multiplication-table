@@ -10,10 +10,14 @@
     "start": "Iniciar batalha",
     "intro": "Um {{monster}} selvagem apareceu!",
     "hero": "Herói",
-    "hp": "{{hp}} / {{maxHp}}"
+    "hp": "{{hp}} / {{maxHp}}",
+    "correct": "Correto! O {{monster}} sofreu {{damage}} de dano.",
+    "almost": "Quase! {{a}} × {{b}} = {{answer}} — o {{monster}} te acertou com {{damage}} de dano.",
+    "combo": "Combo ×{{combo}}"
   },
   "math": {
-    "question": "{{a}} × {{b}} = ?"
+    "question": "{{a}} × {{b}} = ?",
+    "alternatives": "Alternativas"
   },
   "monster": {
     "slime": "Slime"

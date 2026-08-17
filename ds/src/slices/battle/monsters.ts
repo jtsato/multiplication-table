@@ -6,6 +6,7 @@ export const MONSTERS: Record<string, MonsterSpec> = {
     id: "slime",
     nameKey: "monster.slime",
     maxHp: 20,
+    damage: 5,
   },
 };
 
