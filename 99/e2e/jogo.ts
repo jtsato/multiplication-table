@@ -90,6 +90,7 @@ export async function esperarPainelCentralizado(page: Page): Promise<void> {
   expect(caixa!.y).toBeGreaterThanOrEqual(-1);
   expect(caixa!.y + caixa!.height).toBeLessThanOrEqual(viewport!.height + 1);
   expect(Math.abs(caixa!.x + caixa!.width / 2 - viewport!.width / 2)).toBeLessThanOrEqual(2);
+  expect(Math.abs(caixa!.y + caixa!.height / 2 - viewport!.height / 2)).toBeLessThanOrEqual(2);
 }
 
 /**

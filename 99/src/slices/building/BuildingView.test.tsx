@@ -140,6 +140,39 @@ describe('BuildingView', () => {
     await renderer.unmount();
   });
 
+  it('confirma a cerca com a transformacao resolvida pelo fantasma', async () => {
+    encheInventario();
+    act(() => useGameStore.setState({ nodes: [] }));
+    const renderer = await renderScene(<BuildingView />);
+    await renderer.advanceFrames(1, 1 / 60);
+
+    pressKey('KeyC');
+    pressKey('Space');
+    const primeira = state().structures[0];
+
+    playerTransform.x = primeira.position.x + 5.4;
+    playerTransform.z = primeira.position.z;
+    playerTransform.yaw = Math.PI / 2;
+    pressKey('KeyC');
+    await renderer.advanceFrames(1, 1 / 60);
+
+    const fantasma = renderer.scene
+      .findAllByType('Group')
+      .find((group) => group.instance.name === 'fantasma-construcao');
+    expect(fantasma).toBeDefined();
+    const previa = fantasma!.instance;
+
+    pressKey('Space');
+    const confirmada = state().structures[1];
+
+    expect(confirmada.position.x).toBeCloseTo(previa.position.x);
+    expect(confirmada.position.y).toBeCloseTo(previa.position.y);
+    expect(confirmada.position.z).toBeCloseTo(previa.position.z);
+    expect(confirmada.rotation).toBeCloseTo(previa.rotation.y);
+
+    await renderer.unmount();
+  });
+
   it('confirma uma cerca encaixada em um canto de 90 graus', async () => {
     encheInventario();
     act(() => useGameStore.setState({ nodes: [] }));

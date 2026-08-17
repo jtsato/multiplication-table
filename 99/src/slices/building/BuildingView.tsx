@@ -182,7 +182,7 @@ function PlacementGhost() {
   const spec = STRUCTURES[buildMode];
 
   return (
-    <group ref={groupRef}>
+    <group ref={groupRef} name="fantasma-construcao">
       <mesh position={[0, 0.7, 0]}>
         {buildMode === 'cerca' ? (
           <boxGeometry args={[2, 1.4, 0.2]} />

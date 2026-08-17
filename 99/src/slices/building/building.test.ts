@@ -234,6 +234,28 @@ describe('snapFencePlacement', () => {
     expect(resultado.position).toEqual(manual);
     expect(resultado.rotation).toBeCloseTo(0.3);
   });
+
+  it('mantem o posicionamento manual quando ainda nao ha cercas', () => {
+    const manual = vec3(4.5, 0, -3);
+    const resultado = snapFencePlacement(manual, 0.3, rico, [], []);
+
+    expect(resultado.position).toEqual(manual);
+    expect(resultado.rotation).toBeCloseTo(0.3);
+  });
+
+  it('descarta o encaixe proximo de recurso e preserva o ponto manual valido', () => {
+    const manual = vec3(2, 0, -1.5);
+    const resultado = snapFencePlacement(
+      manual,
+      0,
+      rico,
+      [structure('cerca', 0, 0)],
+      [node(2, 3)],
+    );
+
+    expect(resultado.position).toEqual(manual);
+    expect(resultado.rotation).toBeCloseTo(0);
+  });
 });
 
 describe('formatRecipe', () => {
