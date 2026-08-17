@@ -96,6 +96,50 @@ describe('BuildingView', () => {
     await renderer.unmount();
   });
 
+  it('confirma a segunda cerca encaixada na ponta da primeira', async () => {
+    encheInventario();
+    act(() => useGameStore.setState({ nodes: [] }));
+    const renderer = await renderScene(<BuildingView />);
+    await renderer.advanceFrames(1, 1 / 60);
+
+    pressKey('KeyC');
+    pressKey('Space');
+    const primeira = state().structures[0];
+
+    playerTransform.x = primeira.position.x + 5.4;
+    playerTransform.z = primeira.position.z;
+    playerTransform.yaw = Math.PI / 2;
+    pressKey('KeyC');
+    pressKey('Space');
+
+    expect(state().structures).toHaveLength(2);
+    expect(state().structures[1].position.x).toBeCloseTo(primeira.position.x + 2);
+    expect(state().structures[1].position.z).toBeCloseTo(primeira.position.z);
+
+    await renderer.unmount();
+  });
+
+  it('confirma a segunda cerca com a rotacao encaixada', async () => {
+    encheInventario();
+    act(() => useGameStore.setState({ nodes: [] }));
+    const renderer = await renderScene(<BuildingView />);
+    await renderer.advanceFrames(1, 1 / 60);
+
+    pressKey('KeyC');
+    pressKey('Space');
+    const primeira = state().structures[0];
+
+    playerTransform.x = primeira.position.x + 5.4;
+    playerTransform.z = primeira.position.z;
+    playerTransform.yaw = Math.PI / 2;
+    pressKey('KeyC');
+    pressKey('Space');
+
+    expect(state().structures[1].rotation).toBeCloseTo(0);
+
+    await renderer.unmount();
+  });
+
   it('sem recursos nao constroi nem debita nada', async () => {
     posicionaEmLocalLivre();
     const renderer = await renderScene(<BuildingView />);
