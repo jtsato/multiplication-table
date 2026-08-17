@@ -1,8 +1,17 @@
+.challenge-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  pointer-events: none;
+}
+
 .challenge {
-  /* O container do drei/Html ignora o mouse por padrao no resto do HUD;
-     este painel precisa receber clique. */
   pointer-events: auto;
-  width: 260px;
+  box-sizing: border-box;
+  width: min(260px, calc(100vw - 32px));
   padding: 14px 16px;
   border-radius: 14px;
   background: rgba(14, 20, 32, 0.93);
@@ -76,7 +85,17 @@
 }
 
 .challenge--feedback {
-  width: 200px;
+  width: min(200px, calc(100vw - 32px));
+}
+
+@media (max-width: 480px) {
+  .challenge-overlay {
+    padding:
+      max(16px, env(safe-area-inset-top))
+      max(16px, env(safe-area-inset-right))
+      max(16px, env(safe-area-inset-bottom))
+      max(16px, env(safe-area-inset-left));
+  }
 }
 
 .challenge--correct {

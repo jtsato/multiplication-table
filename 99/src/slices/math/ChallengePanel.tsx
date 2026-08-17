@@ -1,62 +1,33 @@
 import { useEffect } from 'react';
-import { Html } from '@react-three/drei';
 import { useGameStore } from '../../app/store';
-import { useGameAction, useIsTouchDevice } from '../../shared/input';
-import type { Vec3 } from '../../shared/vec';
+import { useGameAction } from '../../shared/input';
 import './challenge.css';
 
 /** Quanto tempo o resultado fica na tela antes do painel sumir. */
 const FEEDBACK_MS = 1600;
 
 /**
- * Painel do desafio, ancorado no proprio recurso.
+ * Painel do desafio, centralizado sobre o jogo.
  *
- * Decisoes de renderizacao:
- *
- * - `Html` do drei em vez de texto em textura: o texto fica nitido em qualquer
- *   distancia, e selecionavel por leitor de tela e responde a teclado nativo.
- * - `distanceFactor` faz o painel encolher com a distancia, entao ele pertence a
- *   cena em vez de flutuar como HUD.
- * - **Sem `occlude`**: a oclusao por raycast do drei se comporta de forma
- *   instavel com paineis interativos, e nao havia navegador neste ambiente para
- *   validar visualmente. Um painel que some atras de uma arvore seria pior que
- *   um painel sempre visivel.
- * - O jogo **nao pausa**. E a decisao central da fatia: com o mundo rodando, a
- *   conta e uma ferramenta usada sob pressao, nao uma prova com o tempo parado.
+ * O DOM sobre o canvas deixa o texto nítido, acessível e independente da
+ * câmera ou da oclusão pelos objetos da cena. O jogo não pausa: a conta é uma
+ * ferramenta usada sob pressão, não uma prova com o tempo parado.
  */
 export function ChallengePanel() {
   const challenge = useGameStore((state) => state.activeChallenge);
   const feedback = useGameStore((state) => state.feedback);
-  const nodes = useGameStore((state) => state.nodes);
-  const structures = useGameStore((state) => state.structures);
   const answerChallenge = useGameStore((state) => state.answerChallenge);
   const clearFeedback = useGameStore((state) => state.clearFeedback);
-  const isTouch = useIsTouchDevice();
   const temMonstros = useGameStore((state) => state.enemies.length > 0);
 
-  /**
-   * Ponto do mundo onde o painel fica preso.
-   *
-   * Procurado entre nos e construcoes porque o desafio serve as duas coisas —
-   * colher um recurso e abastecer a fogueira. Os nos sao consultados inteiros, e
-   * nao so os disponiveis: o feedback aparece logo depois da colheita, quando o
-   * no ja esta esgotado mas o painel ainda precisa de uma ancora.
-   */
-  const targetId = challenge?.targetId ?? feedback?.targetId ?? null;
-  const anchor: Vec3 | null = targetId
-    ? (nodes.find((node) => node.id === targetId)?.position ??
-      structures.find((structure) => structure.id === targetId)?.position ??
-      null)
-    : null;
-
-  // Le o desafio do store na hora da tecla, e nao da closure do render, para o
-  // atalho nunca responder um desafio que ja foi trocado ou cancelado.
+  // Lê o desafio do store na hora da tecla, e não da closure do render, para o
+  // atalho nunca responder um desafio que já foi trocado ou cancelado.
   const answerByIndex = (index: number) => {
     const option = useGameStore.getState().activeChallenge?.options[index];
     if (option !== undefined) answerChallenge(option);
   };
 
-  // Atalhos 1-2-3 no teclado. No celular, os proprios botoes do painel servem.
+  // Atalhos 1-2-3 no teclado. No celular, os próprios botões do painel servem.
   useGameAction('responder-1', () => answerByIndex(0));
   useGameAction('responder-2', () => answerByIndex(1));
   useGameAction('responder-3', () => answerByIndex(2));
@@ -67,37 +38,14 @@ export function ChallengePanel() {
     return () => clearTimeout(timer);
   }, [feedback, clearFeedback]);
 
-  if ((!challenge && !feedback) || !anchor) return null;
+  if (!challenge && !feedback) return null;
 
   return (
-    <Html
-      /**
-       * No celular o painel sobe mais.
-       *
-       * Ele fica bem maior nessa tela e, na altura do desktop, tapava justamente
-       * a arvore cujos galhos a crianca precisa contar — o enunciado anulava a
-       * propria cena que ele descreve.
-       */
-      position={[anchor.x, anchor.y + (isTouch ? 4.6 : 3.1), anchor.z]}
-      center
-      /**
-       * Maior no celular.
-       *
-       * `distanceFactor` escala o painel com a distancia da camera, e o valor e
-       * diretamente proporcional ao tamanho na tela — quanto maior, maior o
-       * painel. Com o mesmo valor do desktop, numa tela de ~390 px o painel saia
-       * com cerca de 176 px de largura e o enunciado ficava pequeno demais para
-       * ler — justamente o texto que a crianca precisa ler com calma para contar
-       * os grupos.
-       */
-      distanceFactor={isTouch ? 15 : 11}
-    >
+    <div className="challenge-overlay">
       {challenge ? (
         <div className="challenge">
           <p className="challenge__prompt">{challenge.prompt}</p>
           <p className="challenge__question">{challenge.question}</p>
-          {/* Só aparece quando há monstros na ilha: dizer que eles estão lentos
-              sem que exista nenhum criaria um medo que não estava lá. */}
           {temMonstros && (
             <p className="challenge__calma">Os monstros ficam lentos. Conte com calma.</p>
           )}
@@ -108,9 +56,6 @@ export function ChallengePanel() {
                 key={option}
                 type="button"
                 className="challenge__option"
-                // Sem isto o nome acessivel do botao concatena o numero do
-                // atalho com a alternativa ("3" + "20" = "320"), e o leitor de
-                // tela anuncia um numero que nao existe na tela.
                 aria-label={String(option)}
                 onClick={() => answerChallenge(option)}
               >
@@ -143,6 +88,6 @@ export function ChallengePanel() {
           </div>
         )
       )}
-    </Html>
+    </div>
   );
 }

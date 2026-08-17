@@ -3,6 +3,7 @@ import { Hud } from './Hud';
 import { OutcomeOverlay } from './OutcomeOverlay';
 import { TouchControls } from './TouchControls';
 import { useIsTouchDevice, useKeyboardBindings } from '../shared/input';
+import { ChallengePanel } from '../slices/math';
 import './loading.css';
 
 /**
@@ -47,6 +48,7 @@ export function App() {
         <GameCanvas isTouch={isTouch} />
       </Suspense>
       <Hud isTouch={isTouch} />
+      <ChallengePanel />
       {isTouch && <TouchControls />}
       <OutcomeOverlay />
     </>
