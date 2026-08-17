@@ -7,6 +7,7 @@ import {
   formatRecipe,
   payCost,
   placementPosition,
+  snapFencePlacement,
   type Structure,
 } from './building.logic';
 import { ISLAND } from '../world/world.logic';
@@ -193,10 +194,45 @@ describe('checkPlacement', () => {
   });
 
   it('aceita quando o recurso esta alem da folga', () => {
-    const longe = STRUCTURES.cerca.footprint + BUILDING.clearanceFromNodes + 0.3;
+    const longe =
+      STRUCTURES.cerca.footprint + BUILDING.clearanceFromNodes + BUILDING.fenceLength / 2 + 0.3;
     expect(checkPlacement(STRUCTURES.cerca, vec3(0, 0, 0), rico, [], [node(longe, 0)])).toEqual({
       ok: true,
     });
+  });
+
+  it('recusa recurso proximo de uma extremidade da cerca', () => {
+    const resultado = checkPlacement(STRUCTURES.cerca, vec3(0, 0, 0), rico, [], [node(4.1, 0)], 0);
+
+    expect(resultado).toEqual({ ok: false, reason: 'perto-de-recurso' });
+  });
+});
+
+describe('snapFencePlacement', () => {
+  it('encaixa uma cerca na extensao reta da cerca mais proxima', () => {
+    const existente = structure('cerca', 0, 0);
+    const resultado = snapFencePlacement(vec3(1.75, 0, 0), 0, rico, [existente], []);
+
+    expect(resultado.position.x).toBeCloseTo(2);
+    expect(resultado.position.z).toBeCloseTo(0);
+    expect(resultado.rotation).toBeCloseTo(0);
+  });
+
+  it('encaixa uma cerca em um canto de 90 graus', () => {
+    const existente = structure('cerca', 0, 0);
+    const resultado = snapFencePlacement(vec3(1, 0, -1.2), 0, rico, [existente], []);
+
+    expect(resultado.position.x).toBeCloseTo(1);
+    expect(resultado.position.z).toBeCloseTo(-1);
+    expect(Math.abs(Math.sin(resultado.rotation))).toBeCloseTo(1);
+  });
+
+  it('mantem o posicionamento manual quando nenhuma ponta esta proxima', () => {
+    const manual = vec3(6, 0, 6);
+    const resultado = snapFencePlacement(manual, 0.3, rico, [structure('cerca', 0, 0)], []);
+
+    expect(resultado.position).toEqual(manual);
+    expect(resultado.rotation).toBeCloseTo(0.3);
   });
 });
 
