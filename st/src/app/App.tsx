@@ -1,9 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { getStore, STORES, type StoreId } from "../content/stores";
 import { applyAttempt, type FactProgress } from "../domain/math/mastery";
 import { generateAlternatives } from "../domain/math/distractors";
 import { factKey } from "../domain/math/facts";
-import { getHint } from "../domain/math/hints";
 import {
   continueAfterFeedback,
   createDaySession,
@@ -30,6 +29,7 @@ import {
 import { ProfileRepository } from "../infrastructure/storage/repository";
 import { narrate, playFeedbackTone } from "../infrastructure/audio/audio";
 import { getAvatarMotionClass, type AvatarMotion } from "./avatarMotion";
+import { getLocalizedStrings, type LocaleBundle } from "../i18n";
 
 type Screen = "profiles" | "create" | "store" | "game" | "shop" | "settings" | "achievements";
 
@@ -38,6 +38,8 @@ export type AppProps = {
 };
 
 export function App({ repository }: AppProps) {
+  // The locale is read once per mount: switching browser language reloads the app anyway.
+  const strings = useMemo(() => getLocalizedStrings(), []);
   const [storage] = useState(() => repository ?? new ProfileRepository());
   const [profiles, setProfiles] = useState<PlayerProfile[]>([]);
   const [activeProfile, setActiveProfile] = useState<PlayerProfile | null>(null);
@@ -55,7 +57,7 @@ export function App({ repository }: AppProps) {
         if (mounted) setProfiles(loadedProfiles);
       })
       .catch(() => {
-        if (mounted) setStorageError("Não conseguimos abrir os jogadores salvos neste dispositivo.");
+        if (mounted) setStorageError(strings.storageError);
       })
       .finally(() => {
         if (mounted) setLoading(false);
@@ -63,7 +65,11 @@ export function App({ repository }: AppProps) {
     return () => {
       mounted = false;
     };
-  }, [storage]);
+  }, [storage, strings]);
+
+  useEffect(() => {
+    document.documentElement.lang = strings.locale;
+  }, [strings]);
 
   useEffect(() => {
     const handleUpdate = () => setUpdateAvailable(true);
@@ -74,7 +80,7 @@ export function App({ repository }: AppProps) {
   function persistProfile(profile: PlayerProfile): void {
     setActiveProfile(profile);
     setProfiles((current) => current.map((candidate) => candidate.id === profile.id ? profile : candidate));
-    void storage.save(profile).catch(() => setStorageError("Não foi possível salvar esta mudança. Tente novamente."));
+    void storage.save(profile).catch(() => setStorageError(strings.saveError));
   }
 
   async function handleCreate(input: CreateProfileInput): Promise<void> {
@@ -85,7 +91,7 @@ export function App({ repository }: AppProps) {
       setActiveProfile(profile);
       setScreen("store");
     } catch {
-      setStorageError("Não foi possível criar o jogador. Verifique o armazenamento do navegador.");
+      setStorageError(strings.createError);
     }
   }
 
@@ -106,8 +112,8 @@ export function App({ repository }: AppProps) {
     playFeedbackTone(correct ? "success" : "error", activeProfile.audio.effects);
     narrate(
       correct
-        ? `Muito bem! ${visit.quantity} vezes ${visit.product.price} e igual a ${visit.fact.answer}.`
-        : `Vamos tentar de novo. ${getHint(visit.fact, session.errorsForCurrent).text}`,
+        ? strings.narrateCorrect(visit.quantity, visit.product.price, visit.fact.answer)
+        : strings.narrateRetry(strings.hintText(visit.fact, session.errorsForCurrent)),
       activeProfile.audio.narration,
     );
     const progress = activeProfile.mathProgress[factKey(visit.fact)] as FactProgress;
@@ -148,7 +154,7 @@ export function App({ repository }: AppProps) {
     };
     persistProfile(finished);
     setSession(null);
-    setNotice(`Dia fechado! R$ ${session.revenue} entraram no caixa.`);
+    setNotice(strings.dayClosedNotice(session.revenue));
     setScreen("store");
   }
 
@@ -156,7 +162,7 @@ export function App({ repository }: AppProps) {
     if (!activeProfile) return;
     const result = purchaseProduct(activeProfile.cash, cost);
     if (!result.ok) {
-      setNotice("Ainda não dá para comprar isso. Vamos juntar mais dinheiro primeiro.");
+      setNotice(strings.cannotAffordProduct);
       return;
     }
     const nextProfile = {
@@ -170,7 +176,7 @@ export function App({ repository }: AppProps) {
       updatedAt: new Date().toISOString(),
     };
     persistProfile(nextProfile);
-    setNotice("Produto novo disponível na sua loja!");
+    setNotice(strings.productPurchased);
   }
 
   function purchaseCosmetic(cosmeticId: string, cost: number): void {
@@ -178,7 +184,7 @@ export function App({ repository }: AppProps) {
     if (activeProfile.store.cosmetics.includes(cosmeticId)) return;
     const result = purchaseProduct(activeProfile.cash, cost);
     if (!result.ok) {
-      setNotice("Ainda não dá para comprar essa decoração.");
+      setNotice(strings.cannotAffordCosmetic);
       return;
     }
     const nextProfile = {
@@ -188,7 +194,7 @@ export function App({ repository }: AppProps) {
       updatedAt: new Date().toISOString(),
     };
     persistProfile(nextProfile);
-    setNotice("A decoração nova já pode aparecer na loja!");
+    setNotice(strings.cosmeticPurchased);
   }
 
   function saveSettings(settings: AccessibilitySettings, audio: AudioSettings): void {
@@ -197,43 +203,44 @@ export function App({ repository }: AppProps) {
     setScreen("store");
   }
 
-  if (loading) return <main className="loading-screen" aria-busy="true">Abrindo a loja...</main>;
+  if (loading) return <main className="loading-screen" aria-busy="true">{strings.loading}</main>;
   if (storageError && !activeProfile && profiles.length === 0) {
-    return <main className="loading-screen"><h1>Ops!</h1><p>{storageError}</p><button className="primary-button" onClick={() => window.location.reload()}>Tentar novamente</button></main>;
+    return <main className="loading-screen"><h1>{strings.errorTitle}</h1><p>{storageError}</p><button type="button" className="primary-button" onClick={() => window.location.reload()}>{strings.retry}</button></main>;
   }
 
   return (
     <div className={`app-shell ${activeProfile?.accessibility.largeText ? "large-text" : ""} ${activeProfile?.accessibility.highContrast ? "high-contrast" : ""}`}>
-      {updateAvailable && <div className="update-notice" role="status">Uma versão nova está pronta. Atualize quando terminar esta atividade. <button className="secondary-button" onClick={() => window.location.reload()}>Atualizar</button></div>}
-      {storageError && <div className="storage-warning" role="alert">{storageError}</div>}
-      {screen === "profiles" && <ProfileSelect profiles={profiles} onCreate={() => setScreen("create")} onSelect={(profile) => { setActiveProfile(profile); setScreen("store"); }} />}
-      {screen === "create" && <ProfileCreate onCancel={() => setScreen("profiles")} onCreate={handleCreate} />}
-      {screen === "store" && activeProfile && <StoreOverview profile={activeProfile} notice={notice} onStart={startDay} onShop={() => setScreen("shop")} onSettings={() => setScreen("settings")} onAchievements={() => setScreen("achievements")} onSwitch={() => { setActiveProfile(null); setScreen("profiles"); }} />}
-      {screen === "game" && activeProfile && session && <GameScreen profile={activeProfile} session={session} onStartQuestion={() => setSession((current) => current ? { ...current, phase: "question" } : current)} onSelectQuantity={(quantity) => setSession((current) => current ? selectQuantity(current, quantity) : current)} onAnswer={answerQuestion} onRetry={() => setSession((current) => current ? retryQuestion(current) : current)} onContinue={() => setSession((current) => current ? continueAfterFeedback(current) : current)} onLeave={() => setScreen("store")} onFinish={finishDay} />}
-      {screen === "shop" && activeProfile && <ShopScreen profile={activeProfile} onBack={() => setScreen("store")} onPurchase={purchaseProductById} onCosmeticPurchase={purchaseCosmetic} />}
-      {screen === "achievements" && activeProfile && <AchievementsScreen profile={activeProfile} onBack={() => setScreen("store")} />}
-      {screen === "settings" && activeProfile && <SettingsScreen profile={activeProfile} onBack={() => setScreen("store")} onSave={saveSettings} />}
+      <a className="skip-link" href="#main-content">{strings.skipToContent}</a>
+      {updateAvailable && <div className="update-notice" role="status">{strings.updateNotice} <button type="button" className="secondary-button" onClick={() => window.location.reload()}>{strings.updateButton}</button></div>}
+      {storageError && <div className="storage-warning" role="alert" aria-live="assertive">{storageError}</div>}
+      {screen === "profiles" && <ProfileSelect strings={strings} profiles={profiles} onCreate={() => setScreen("create")} onSelect={(profile) => { setActiveProfile(profile); setScreen("store"); }} />}
+      {screen === "create" && <ProfileCreate strings={strings} onCancel={() => setScreen("profiles")} onCreate={handleCreate} />}
+      {screen === "store" && activeProfile && <StoreOverview strings={strings} profile={activeProfile} notice={notice} onStart={startDay} onShop={() => setScreen("shop")} onSettings={() => setScreen("settings")} onAchievements={() => setScreen("achievements")} onSwitch={() => { setActiveProfile(null); setScreen("profiles"); }} />}
+      {screen === "game" && activeProfile && session && <GameScreen strings={strings} profile={activeProfile} session={session} onStartQuestion={() => setSession((current) => current ? { ...current, phase: "question" } : current)} onSelectQuantity={(quantity) => setSession((current) => current ? selectQuantity(current, quantity) : current)} onAnswer={answerQuestion} onRetry={() => setSession((current) => current ? retryQuestion(current) : current)} onContinue={() => setSession((current) => current ? continueAfterFeedback(current) : current)} onLeave={() => setScreen("store")} onFinish={finishDay} />}
+      {screen === "shop" && activeProfile && <ShopScreen strings={strings} profile={activeProfile} onBack={() => setScreen("store")} onPurchase={purchaseProductById} onCosmeticPurchase={purchaseCosmetic} />}
+      {screen === "achievements" && activeProfile && <AchievementsScreen strings={strings} profile={activeProfile} onBack={() => setScreen("store")} />}
+      {screen === "settings" && activeProfile && <SettingsScreen strings={strings} profile={activeProfile} onBack={() => setScreen("store")} onSave={saveSettings} />}
     </div>
   );
 }
 
-function ProfileSelect({ profiles, onCreate, onSelect }: { profiles: PlayerProfile[]; onCreate: () => void; onSelect: (profile: PlayerProfile) => void }) {
+function ProfileSelect({ strings, profiles, onCreate, onSelect }: { strings: LocaleBundle; profiles: PlayerProfile[]; onCreate: () => void; onSelect: (profile: PlayerProfile) => void }) {
   return (
-    <main className="welcome-screen">
+    <main id="main-content" className="welcome-screen">
       <div className="brand-mark" aria-hidden="true"><span>✦</span></div>
-      <p className="eyebrow">Uma loja para descobrir</p>
-      <h1>Lojinha Maluca</h1>
-      <p className="lead">Cada compra esconde uma conta. Vamos descobrir quanto custa?</p>
+      <p className="eyebrow">{strings.brandTag}</p>
+      <h1>{strings.appName}</h1>
+      <p className="lead">{strings.lead}</p>
       <section className="profile-panel" aria-labelledby="players-title">
-        <h2 id="players-title">Quem vai jogar?</h2>
-        {profiles.length === 0 ? <p className="muted">Ainda não há jogadores neste dispositivo.</p> : <div className="profile-grid">{profiles.map((profile) => <button className="profile-card" key={profile.id} onClick={() => onSelect(profile)}><Avatar avatar={profile.avatar} size="small" reducedMotion={profile.accessibility.reducedMotion} /><span><strong>{profile.nickname}</strong><small>{getStore(profile.store.storeId).name} · Dia {profile.day}</small></span></button>)}</div>}
-        <button className="primary-button" onClick={onCreate}>Criar novo jogador</button>
+        <h2 id="players-title">{strings.playerTitle}</h2>
+        {profiles.length === 0 ? <p className="muted">{strings.emptyState}</p> : <div className="profile-grid">{profiles.map((profile) => <button type="button" className="profile-card" key={profile.id} aria-label={strings.selectPlayerLabel(profile.nickname)} onClick={() => onSelect(profile)}><Avatar avatar={profile.avatar} size="small" reducedMotion={profile.accessibility.reducedMotion} strings={strings} /><span><strong>{profile.nickname}</strong><small>{strings.playerSummary(strings.storeText(getStore(profile.store.storeId)).name, profile.day)}</small></span></button>)}</div>}
+        <button type="button" className="primary-button" onClick={onCreate}>{strings.createPlayer}</button>
       </section>
     </main>
   );
 }
 
-function ProfileCreate({ onCancel, onCreate }: { onCancel: () => void; onCreate: (input: CreateProfileInput) => Promise<void> }) {
+function ProfileCreate({ strings, onCancel, onCreate }: { strings: LocaleBundle; onCancel: () => void; onCreate: (input: CreateProfileInput) => Promise<void> }) {
   const [nickname, setNickname] = useState("");
   const [storeId, setStoreId] = useState<StoreId>("bookstore");
   const [style, setStyle] = useState<StoreStyle>("sunrise");
@@ -242,82 +249,92 @@ function ProfileCreate({ onCancel, onCreate }: { onCancel: () => void; onCreate:
   const [largeText, setLargeText] = useState(false);
 
   return (
-    <main className="form-screen">
-      <button className="text-button" onClick={onCancel}>← Voltar</button>
-      <p className="eyebrow">Primeiro passo</p>
-      <h1>Criar perfil</h1>
+    <main id="main-content" className="form-screen">
+      <button type="button" className="text-button" onClick={onCancel}>{strings.back}</button>
+      <p className="eyebrow">{strings.firstStep}</p>
+      <h1>{strings.createProfile}</h1>
       <form onSubmit={(event) => { event.preventDefault(); void onCreate({ nickname, storeId, style, avatar, accessibility: { reducedMotion, largeText } }); }}>
-        <label htmlFor="nickname">Como você quer ser chamado na sua loja?</label>
-        <input id="nickname" value={nickname} onChange={(event) => setNickname(event.target.value)} placeholder="Seu apelido" maxLength={28} autoFocus />
-        <div className="suggestion-row" aria-label="Sugestões de apelido">{["Lojista Pixel", "Mestre dos Blocos", "Capitão da Loja"].map((suggestion) => <button type="button" className="chip-button" key={suggestion} onClick={() => setNickname(suggestion)}>{suggestion}</button>)}</div>
+        <label htmlFor="nickname">{strings.nicknameLabel}</label>
+        <input id="nickname" value={nickname} onChange={(event) => setNickname(event.target.value)} placeholder={strings.nicknamePlaceholder} maxLength={28} autoFocus />
+        <div className="suggestion-row" aria-label={strings.nicknameSuggestionsLabel}>{strings.nicknameSuggestions.map((suggestion) => <button type="button" className="chip-button" key={suggestion} onClick={() => setNickname(suggestion)}>{suggestion}</button>)}</div>
 
         <fieldset>
-          <legend>Escolha sua loja</legend>
-          <div className="store-choice-grid">{STORES.map((store) => <button type="button" className={`store-choice ${store.id === storeId ? "selected" : ""}`} key={store.id} onClick={() => setStoreId(store.id)}><span className="store-swatch" style={{ background: store.color }} aria-hidden="true" /><strong>{store.name}</strong><small>{store.tagline}</small></button>)}</div>
+          <legend>{strings.chooseStore}</legend>
+          <div className="store-choice-grid">{STORES.map((store) => { const text = strings.storeText(store); return <button type="button" className={`store-choice ${store.id === storeId ? "selected" : ""}`} key={store.id} onClick={() => setStoreId(store.id)}><span className="store-swatch" style={{ background: store.color }} aria-hidden="true" /><strong>{text.name}</strong><small>{text.tagline}</small></button>; })}</div>
         </fieldset>
 
-        <fieldset><legend>Escolha o estilo da loja</legend><div className="style-choice-grid">{([{ id: "sunrise", label: "Sol da manhã", color: "#e57a44" }, { id: "ocean", label: "Céu azul", color: "#5e78bd" }, { id: "garden", label: "Jardim vivo", color: "#3f9c8c" }] as const).map((option) => <button type="button" className={`style-choice style-${option.id} ${style === option.id ? "selected" : ""}`} key={option.id} onClick={() => setStyle(option.id)}><span style={{ background: option.color }} aria-hidden="true" />{option.label}</button>)}</div></fieldset>
+        <fieldset><legend>{strings.chooseStyle}</legend><div className="style-choice-grid">{([{ id: "sunrise", color: "#e57a44" }, { id: "ocean", color: "#5e78bd" }, { id: "garden", color: "#3f9c8c" }] as const).map((option) => <button type="button" className={`style-choice style-${option.id} ${style === option.id ? "selected" : ""}`} key={option.id} onClick={() => setStyle(option.id)}><span style={{ background: option.color }} aria-hidden="true" />{strings.styleLabels[option.id]}</button>)}</div></fieldset>
 
         <fieldset>
-          <legend>Personalize seu avatar</legend>
-          <div className="avatar-editor"><Avatar avatar={avatar} size="large" reducedMotion={reducedMotion} /><div className="select-grid"><label>Visual<select value={avatar.skin} onChange={(event) => setAvatar({ ...avatar, skin: event.target.value as AvatarConfig["skin"] })}><option value="sunny">Dourado</option><option value="warm">Quente</option><option value="deep">Profundo</option></select></label><label>Cabelo<select value={avatar.hair} onChange={(event) => setAvatar({ ...avatar, hair: event.target.value as AvatarConfig["hair"] })}><option value="curly">Cacheado</option><option value="short">Curto</option><option value="long">Longo</option></select></label><label>Roupa<select value={avatar.outfit} onChange={(event) => setAvatar({ ...avatar, outfit: event.target.value as AvatarConfig["outfit"] })}><option value="apron">Avental</option><option value="jacket">Jaqueta</option><option value="overalls">Jardineira</option></select></label><label>Acessório<select value={avatar.accessory} onChange={(event) => setAvatar({ ...avatar, accessory: event.target.value as AvatarConfig["accessory"] })}><option value="none">Nenhum</option><option value="cap">Boné</option><option value="glasses">Óculos</option><option value="headphones">Fones</option></select></label></div></div>
+          <legend>{strings.personalAvatar}</legend>
+          <div className="avatar-editor"><Avatar avatar={avatar} size="large" reducedMotion={reducedMotion} strings={strings} /><div className="select-grid"><label>{strings.visual}<select value={avatar.skin} onChange={(event) => setAvatar({ ...avatar, skin: event.target.value as AvatarConfig["skin"] })}>{(["sunny", "warm", "deep"] as const).map((option) => <option value={option} key={option}>{strings.avatarOptions.skin[option]}</option>)}</select></label><label>{strings.hair}<select value={avatar.hair} onChange={(event) => setAvatar({ ...avatar, hair: event.target.value as AvatarConfig["hair"] })}>{(["curly", "short", "long"] as const).map((option) => <option value={option} key={option}>{strings.avatarOptions.hair[option]}</option>)}</select></label><label>{strings.outfit}<select value={avatar.outfit} onChange={(event) => setAvatar({ ...avatar, outfit: event.target.value as AvatarConfig["outfit"] })}>{(["apron", "jacket", "overalls"] as const).map((option) => <option value={option} key={option}>{strings.avatarOptions.outfit[option]}</option>)}</select></label><label>{strings.accessory}<select value={avatar.accessory} onChange={(event) => setAvatar({ ...avatar, accessory: event.target.value as AvatarConfig["accessory"] })}>{(["none", "cap", "glasses", "headphones"] as const).map((option) => <option value={option} key={option}>{strings.avatarOptions.accessory[option]}</option>)}</select></label></div></div>
         </fieldset>
 
-        <fieldset><legend>Configurações rápidas</legend><label className="check-row"><input type="checkbox" checked={reducedMotion} onChange={(event) => setReducedMotion(event.target.checked)} /> Reduzir movimento</label><label className="check-row"><input type="checkbox" checked={largeText} onChange={(event) => setLargeText(event.target.checked)} /> Usar texto grande</label></fieldset>
-        <button className="primary-button" type="submit">Começar</button>
+        <fieldset><legend>{strings.quickSettings}</legend><label className="check-row"><input type="checkbox" checked={reducedMotion} onChange={(event) => setReducedMotion(event.target.checked)} /> {strings.reduceMotion}</label><label className="check-row"><input type="checkbox" checked={largeText} onChange={(event) => setLargeText(event.target.checked)} /> {strings.largeText}</label></fieldset>
+        <button className="primary-button" type="submit">{strings.start}</button>
       </form>
     </main>
   );
 }
 
-function StoreOverview({ profile, notice, onStart, onShop, onSettings, onAchievements, onSwitch }: { profile: PlayerProfile; notice: string; onStart: () => void; onShop: () => void; onSettings: () => void; onAchievements: () => void; onSwitch: () => void }) {
+function StoreOverview({ strings, profile, notice, onStart, onShop, onSettings, onAchievements, onSwitch }: { strings: LocaleBundle; profile: PlayerProfile; notice: string; onStart: () => void; onShop: () => void; onSettings: () => void; onAchievements: () => void; onSwitch: () => void }) {
   const store = getStore(profile.store.storeId);
+  const storeText = strings.storeText(store);
   const objective = createDailyObjective(profile.day + profile.id.length);
+  const objectiveText = strings.objectiveText(objective);
   const objectiveDone = profile.objectives.completed.includes(objective.id);
   return (
-    <main className="game-screen">
-      <header className="topbar"><div><p className="eyebrow">Sua loja</p><h1>{store.name}</h1></div><div className="cash-badge" aria-label={`Saldo R$ ${profile.cash}`}>R$ {profile.cash}</div></header>
-      {notice && <div className="notice" role="status">{notice}</div>}
-      <section className={`diorama style-${profile.store.style}`} style={{ "--store-color": store.color } as React.CSSProperties} aria-label={`Diorama da ${store.name}`}><div className="diorama-sky" /><div className="block-shelf shelf-one" /><div className="block-shelf shelf-two" /><div className="counter" /><div className="expansion-blocks" aria-hidden="true">{profile.store.purchasedProducts.map((productId) => <span key={productId} />)}</div><Avatar avatar={profile.avatar} size="large" reducedMotion={profile.accessibility.reducedMotion} /></section>
-      <section className="store-actions"><div><p className="eyebrow">Dia {profile.day} · Capítulo {profile.chapter}</p><h2>Pronta para atender?</h2><p className="muted">Atenda 5 ou 6 clientes e faça sua loja crescer.</p><div className="objective-line"><strong>Objetivo opcional: {objective.title}</strong><span>{objectiveDone ? "Concluído" : objective.description}</span></div><p className="achievement-line">Conquistas da loja: <strong>{profile.achievements.length}</strong></p></div><button className="primary-button" onClick={onStart}>Começar dia</button></section>
-      <nav className="bottom-actions" aria-label="Ações da loja"><button onClick={onShop}>Produtos novos</button><button onClick={onAchievements}>Conquistas</button><button onClick={onSettings}>Configurações</button><button onClick={onSwitch}>Trocar jogador</button></nav>
+    <main id="main-content" className="game-screen">
+      <header className="topbar"><div><p className="eyebrow">{strings.yourShop}</p><h1>{storeText.name}</h1></div><div className="cash-badge" aria-label={strings.cashBadgeLabel(profile.cash)}>{strings.money(profile.cash)}</div></header>
+      {notice && <div className="notice" role="status" aria-live="polite">{notice}</div>}
+      <section className={`diorama style-${profile.store.style}`} style={{ "--store-color": store.color } as React.CSSProperties} aria-label={strings.dioramaLabel(storeText.name)}><div className="diorama-sky" /><div className="block-shelf shelf-one" /><div className="block-shelf shelf-two" /><div className="counter" /><div className="expansion-blocks" aria-hidden="true">{profile.store.purchasedProducts.map((productId) => <span key={productId} />)}</div><Avatar avatar={profile.avatar} size="large" reducedMotion={profile.accessibility.reducedMotion} strings={strings} /></section>
+      <section className="store-actions"><div><p className="eyebrow">{strings.dayAndChapter(profile.day, profile.chapter)}</p><h2>{strings.ready}</h2><p className="muted">{strings.readyDescription}</p><div className="objective-line"><strong>{strings.objectiveOptional}: {objectiveText.title}</strong><span>{objectiveDone ? strings.completed : objectiveText.description}</span></div><p className="achievement-line">{strings.storeAchievements}: <strong>{profile.achievements.length}</strong></p></div><button type="button" className="primary-button" onClick={onStart}>{strings.startDay}</button></section>
+      <nav className="bottom-actions" aria-label={strings.storeActionsLabel}><button type="button" onClick={onShop}>{strings.menuShop}</button><button type="button" onClick={onAchievements}>{strings.menuAchievements}</button><button type="button" onClick={onSettings}>{strings.menuSettings}</button><button type="button" onClick={onSwitch}>{strings.menuSwitchPlayer}</button></nav>
     </main>
   );
 }
 
-function GameScreen({ profile, session, onStartQuestion, onSelectQuantity, onAnswer, onRetry, onContinue, onLeave, onFinish }: { profile: PlayerProfile; session: DaySession; onStartQuestion: () => void; onSelectQuantity: (quantity: number) => void; onAnswer: (value: number) => void; onRetry: () => void; onContinue: () => void; onLeave: () => void; onFinish: () => void }) {
+function GameScreen({ strings, profile, session, onStartQuestion, onSelectQuantity, onAnswer, onRetry, onContinue, onLeave, onFinish }: { strings: LocaleBundle; profile: PlayerProfile; session: DaySession; onStartQuestion: () => void; onSelectQuantity: (quantity: number) => void; onAnswer: (value: number) => void; onRetry: () => void; onContinue: () => void; onLeave: () => void; onFinish: () => void }) {
   const visit = session.phase === "summary" ? undefined : getCurrentVisit(session);
-  if (!visit) return <main className="game-screen"><section className="summary-card"><p className="eyebrow">Dia encerrado</p><h1>Fechamento da loja</h1><p className="summary-total">R$ {session.revenue}</p><p>Foi o faturamento de hoje. Esse dinheiro entra no seu caixa.</p><button className="primary-button" onClick={onFinish}>Guardar no caixa</button></section></main>;
+  if (!visit) return <main id="main-content" className="game-screen"><section className="summary-card"><p className="eyebrow">{strings.finishedDay}</p><h1>{strings.storeSummary}</h1><p className="summary-total">{strings.money(session.revenue)}</p><p>{strings.summaryText}</p><button type="button" className="primary-button" onClick={onFinish}>{strings.saveCash}</button></section></main>;
 
   const alternatives = generateAlternatives(visit.fact, session.seed + session.currentIndex);
-  const hint = getHint(visit.fact, session.errorsForCurrent);
+  const hintText = strings.hintText(visit.fact, session.errorsForCurrent);
+  const productName = strings.productName(visit.product).toLowerCase();
+  const request = strings.customerWants(visit.quantity, productName);
   return (
-    <main className="game-screen service-screen">
-      <header className="service-header"><button className="text-button" aria-label="Voltar para a loja" onClick={onLeave}>× Voltar para a loja</button><span>Cliente {session.completedVisits + 1} de {session.visits.length}</span><strong>R$ {session.revenue}</strong></header>
-      <section className="customer-card"><Avatar avatar={profile.avatar} size="small" motion={session.feedback?.kind === "correct" ? "celebrate" : "idle"} reducedMotion={profile.accessibility.reducedMotion} /><div><p className="eyebrow">{visit.customer.name} chegou</p><h1>{visit.customer.phrase}</h1><p className="customer-request">Quero <strong>{visit.quantity} {visit.product.name.toLowerCase()}</strong>.</p></div></section>
-      {session.phase === "customer" && <section className="question-card intro-card"><p>Vamos descobrir quanto custa a compra.</p><button className="primary-button" onClick={onStartQuestion}>Ver a conta</button></section>}
-      {session.phase === "product-select" && <section className="question-card"><p className="eyebrow">Separe os produtos</p><h2>Quantos {visit.product.name.toLowerCase()}?</h2><div className="product-counter"><button aria-label="Remover produto" onClick={() => onSelectQuantity(session.selectedQuantity - 1)} disabled={session.selectedQuantity === 0}>−</button><div className="product-pile" aria-label={`${session.selectedQuantity} de ${visit.quantity} produtos separados`}>{Array.from({ length: session.selectedQuantity }, (_, index) => <span key={index} aria-hidden="true" className="mini-block" />)}</div><button aria-label="Adicionar produto" onClick={() => onSelectQuantity(session.selectedQuantity + 1)} disabled={session.selectedQuantity === visit.quantity}>+</button></div><p className="muted">{session.selectedQuantity} de {visit.quantity} separados</p></section>}
-      {(session.phase === "question" || session.phase === "feedback") && <section className="question-card"><p className="equation-context">{visit.quantity} × R$ {visit.product.price}</p><h2>Quanto devo cobrar?</h2><div className="alternatives" role="group" aria-label="Alternativas de resposta">{alternatives.map((alternative) => <button key={alternative.value} className="answer-button" onClick={() => session.phase === "question" && onAnswer(alternative.value)} disabled={session.phase === "feedback"}>{`R$ ${alternative.value}`}</button>)}</div>{session.phase === "feedback" && session.feedback?.kind === "incorrect" && <div className="hint-box" role="status"><strong>Ainda não fechou a conta.</strong><p>{hint.text}</p>{session.errorsForCurrent >= 4 ? <button className="secondary-button" onClick={() => onAnswer(visit.fact.answer)}>Usar a conta completa para continuar</button> : <button className="secondary-button" onClick={onRetry}>Tentar de novo</button>}</div>}{session.phase === "feedback" && session.feedback?.kind === "correct" && <div className="success-box" role="status"><strong>✓ R$ {visit.fact.answer} — certo!</strong><p>Esse valor entrou nas vendas da loja.</p><button className="primary-button" onClick={onContinue}>{session.completedVisits === session.visits.length ? "Ver fechamento" : "Próximo cliente"}</button></div>}</section>}
+    <main id="main-content" className="game-screen service-screen">
+      <header className="service-header"><button type="button" className="text-button" aria-label={strings.backToShopLabel} onClick={onLeave}>{strings.backToShop}</button><span>{strings.customerCounter(session.completedVisits + 1, session.visits.length)}</span><strong>{strings.money(session.revenue)}</strong></header>
+      <section className="customer-card"><Avatar avatar={profile.avatar} size="small" motion={session.feedback?.kind === "correct" ? "celebrate" : "idle"} reducedMotion={profile.accessibility.reducedMotion} strings={strings} /><div><p className="eyebrow">{strings.customerArrived(visit.customer.name)}</p><h1>{strings.customerPhrase(visit.customer)}</h1><p className="customer-request">{request.before}<strong>{request.emphasis}</strong>{request.after}</p></div></section>
+      {session.phase === "customer" && <section className="question-card intro-card"><p>{strings.howMany}</p><button type="button" className="primary-button" onClick={onStartQuestion}>{strings.seeAccount}</button></section>}
+      {session.phase === "product-select" && <section className="question-card"><p className="eyebrow">{strings.separateProducts}</p><h2>{strings.quantityQuestion(productName)}</h2><div className="product-counter"><button type="button" aria-label={strings.removeProduct} onClick={() => onSelectQuantity(session.selectedQuantity - 1)} disabled={session.selectedQuantity === 0}>−</button><div className="product-pile" aria-label={strings.quantityPileLabel(session.selectedQuantity, visit.quantity)}>{Array.from({ length: session.selectedQuantity }, (_, index) => <span key={index} aria-hidden="true" className="mini-block" />)}</div><button type="button" aria-label={strings.addProduct} onClick={() => onSelectQuantity(session.selectedQuantity + 1)} disabled={session.selectedQuantity === visit.quantity}>+</button></div><p className="muted">{strings.quantityProgress(session.selectedQuantity, visit.quantity)}</p></section>}
+      {(session.phase === "question" || session.phase === "feedback") && <section className="question-card"><p className="equation-context">{strings.equation(visit.quantity, visit.product.price)}</p><h2>{strings.qaTitle}</h2><div className="alternatives" role="group" aria-label={strings.answersLabel}>{alternatives.map((alternative) => <button type="button" key={alternative.value} className="answer-button" onClick={() => session.phase === "question" && onAnswer(alternative.value)} disabled={session.phase === "feedback"}>{strings.money(alternative.value)}</button>)}</div>{session.phase === "feedback" && session.feedback?.kind === "incorrect" && <div className="hint-box" role="status" aria-live="polite"><strong>{strings.wrongAnswer}</strong><p>{hintText}</p>{session.errorsForCurrent >= 4 ? <button type="button" className="secondary-button" onClick={() => onAnswer(visit.fact.answer)}>{strings.useFullAnswer}</button> : <button type="button" className="secondary-button" onClick={onRetry}>{strings.tryAgain}</button>}</div>}{session.phase === "feedback" && session.feedback?.kind === "correct" && <div className="success-box" role="status" aria-live="polite"><strong>{strings.correctAnswer(visit.fact.answer)}</strong><p>{strings.answerAccepted}</p><button type="button" className="primary-button" onClick={onContinue}>{session.completedVisits === session.visits.length ? strings.seeCloseout : strings.nextCustomer}</button></div>}</section>}
     </main>
   );
 }
 
-function AchievementsScreen({ profile, onBack }: { profile: PlayerProfile; onBack: () => void }) {
+function AchievementsScreen({ strings, profile, onBack }: { strings: LocaleBundle; profile: PlayerProfile; onBack: () => void }) {
   const achievements = getAchievementProgress(profile.achievements);
-  return <main className="form-screen"><button className="text-button" onClick={onBack}>← Voltar para a loja</button><p className="eyebrow">Marcos da loja</p><h1>Conquistas</h1><p className="muted">Cada marco acompanha o crescimento da loja, sem nota ou competição.</p><div className="product-grid">{achievements.map((achievement) => <article className={`product-card achievement-card ${achievement.unlocked ? "unlocked" : "locked"}`} key={achievement.id}><span className="product-icon" aria-hidden="true">{achievement.unlocked ? "✓" : "○"}</span><h2>{achievement.title}</h2><p>{achievement.description}</p><strong>{achievement.unlocked ? "Conquistada" : "Em descoberta"}</strong></article>)}</div></main>;
+  return <main id="main-content" className="form-screen"><button type="button" className="text-button" onClick={onBack}>← {strings.backToShopLabel}</button><p className="eyebrow">{strings.achievementsEyebrow}</p><h1>{strings.achievements}</h1><p className="muted">{strings.achievementsDescription}</p><div className="product-grid">{achievements.map((achievement) => { const text = strings.achievementText(achievement); return <article className={`product-card achievement-card ${achievement.unlocked ? "unlocked" : "locked"}`} key={achievement.id}><span className="product-icon" aria-hidden="true">{achievement.unlocked ? "✓" : "○"}</span><h2>{text.title}</h2><p>{text.description}</p><strong>{achievement.unlocked ? strings.achievementUnlocked : strings.achievementLocked}</strong></article>; })}</div></main>;
 }
 
-function ShopScreen({ profile, onBack, onPurchase, onCosmeticPurchase }: { profile: PlayerProfile; onBack: () => void; onPurchase: (productId: string, cost: number) => void; onCosmeticPurchase: (cosmeticId: string, cost: number) => void }) {
+const COSMETICS = [
+  { id: "banner", name: "Faixa colorida", cost: 40 },
+  { id: "plant", name: "Vaso geométrico", cost: 60 },
+  { id: "lamp", name: "Luz de balcão", cost: 80 },
+];
+
+function ShopScreen({ strings, profile, onBack, onPurchase, onCosmeticPurchase }: { strings: LocaleBundle; profile: PlayerProfile; onBack: () => void; onPurchase: (productId: string, cost: number) => void; onCosmeticPurchase: (cosmeticId: string, cost: number) => void }) {
   const store = getStore(profile.store.storeId);
-  return <main className="form-screen"><button className="text-button" onClick={onBack}>← Voltar para a loja</button><header className="topbar"><div><p className="eyebrow">Catálogo</p><h1>Produtos novos</h1></div><div className="cash-badge" aria-label={`Saldo R$ ${profile.cash}`}>R$ {profile.cash}</div></header><p className="muted">Escolha o que vai aparecer na próxima expansão.</p><div className="product-grid">{store.products.map((product) => { const unlocked = profile.store.unlockedProducts.includes(product.id); return <article className={`product-card ${unlocked ? "unlocked" : ""}`} key={product.id}><span className="product-icon" aria-hidden="true">▦</span><h2>{product.name}</h2><p>Preço de venda: R$ {product.price}</p>{unlocked ? <strong>Disponível</strong> : <button className="secondary-button" onClick={() => onPurchase(product.id, product.unlockCost ?? 80)}>Comprar por R$ {product.unlockCost}</button>}</article>; })}</div><h2 className="section-title">Decorações</h2><div className="product-grid">{[{ id: "banner", name: "Faixa colorida", cost: 40 }, { id: "plant", name: "Vaso geométrico", cost: 60 }, { id: "lamp", name: "Luz de balcão", cost: 80 }].map((cosmetic) => { const owned = profile.store.cosmetics.includes(cosmetic.id); return <article className="product-card" key={cosmetic.id}><span className="product-icon" aria-hidden="true">✦</span><h2>{cosmetic.name}</h2><p>Uma mudança visual para a loja.</p>{owned ? <strong>Na coleção</strong> : <button className="secondary-button" onClick={() => onCosmeticPurchase(cosmetic.id, cosmetic.cost)}>Comprar por R$ {cosmetic.cost}</button>}</article>; })}</div></main>;
+  return <main id="main-content" className="form-screen"><button type="button" className="text-button" onClick={onBack}>← {strings.backToShopLabel}</button><header className="topbar"><div><p className="eyebrow">{strings.catalog}</p><h1>{strings.productsNew}</h1></div><div className="cash-badge" aria-label={strings.cashBadgeLabel(profile.cash)}>{strings.money(profile.cash)}</div></header><p className="muted">{strings.catalogDescription}</p><div className="product-grid">{store.products.map((product) => { const unlocked = profile.store.unlockedProducts.includes(product.id); return <article className={`product-card ${unlocked ? "unlocked" : ""}`} key={product.id}><span className="product-icon" aria-hidden="true">▦</span><h2>{strings.productName(product)}</h2><p>{strings.priceLine(product.price)}</p>{unlocked ? <strong>{strings.available}</strong> : <button type="button" className="secondary-button" onClick={() => onPurchase(product.id, product.unlockCost ?? 80)}>{strings.buyForLabel(product.unlockCost ?? 80)}</button>}</article>; })}</div><h2 className="section-title">{strings.decor}</h2><div className="product-grid">{COSMETICS.map((cosmetic) => { const owned = profile.store.cosmetics.includes(cosmetic.id); return <article className="product-card" key={cosmetic.id}><span className="product-icon" aria-hidden="true">✦</span><h2>{strings.cosmeticName(cosmetic.id, cosmetic.name)}</h2><p>{strings.decorDescription}</p>{owned ? <strong>{strings.inCollection}</strong> : <button type="button" className="secondary-button" onClick={() => onCosmeticPurchase(cosmetic.id, cosmetic.cost)}>{strings.buyForLabel(cosmetic.cost)}</button>}</article>; })}</div></main>;
 }
 
-function SettingsScreen({ profile, onBack, onSave }: { profile: PlayerProfile; onBack: () => void; onSave: (settings: AccessibilitySettings, audio: AudioSettings) => void }) {
+function SettingsScreen({ strings, profile, onBack, onSave }: { strings: LocaleBundle; profile: PlayerProfile; onBack: () => void; onSave: (settings: AccessibilitySettings, audio: AudioSettings) => void }) {
   const [settings, setSettings] = useState(profile.accessibility);
   const [audio, setAudio] = useState(profile.audio);
-  return <main className="form-screen"><button className="text-button" onClick={onBack}>← Voltar para a loja</button><p className="eyebrow">Ajustes</p><h1>Configurações</h1><fieldset><legend>Acessibilidade</legend><label className="check-row"><input type="checkbox" checked={settings.reducedMotion} onChange={(event) => setSettings({ ...settings, reducedMotion: event.target.checked })} /> Reduzir movimento</label><label className="check-row"><input type="checkbox" checked={settings.largeText} onChange={(event) => setSettings({ ...settings, largeText: event.target.checked })} /> Texto grande</label><label className="check-row"><input type="checkbox" checked={settings.highContrast} onChange={(event) => setSettings({ ...settings, highContrast: event.target.checked })} /> Contraste reforçado</label></fieldset><fieldset><legend>Áudio e narração</legend><label className="check-row"><input type="checkbox" checked={audio.effects} onChange={(event) => setAudio({ ...audio, effects: event.target.checked })} /> Sons de feedback</label><label className="check-row"><input type="checkbox" checked={audio.narration} onChange={(event) => setAudio({ ...audio, narration: event.target.checked })} /> Narração</label></fieldset><button className="primary-button" onClick={() => onSave(settings, audio)}>Salvar configurações</button></main>;
+  return <main id="main-content" className="form-screen"><button type="button" className="text-button" onClick={onBack}>← {strings.backToShopLabel}</button><p className="eyebrow">{strings.settingsEyebrow}</p><h1>{strings.settings}</h1><fieldset><legend>{strings.accessibility}</legend><label className="check-row"><input type="checkbox" checked={settings.reducedMotion} onChange={(event) => setSettings({ ...settings, reducedMotion: event.target.checked })} /> {strings.reduceMotion}</label><label className="check-row"><input type="checkbox" checked={settings.largeText} onChange={(event) => setSettings({ ...settings, largeText: event.target.checked })} /> {strings.largeText}</label><label className="check-row"><input type="checkbox" checked={settings.highContrast} onChange={(event) => setSettings({ ...settings, highContrast: event.target.checked })} /> {strings.highContrast}</label></fieldset><fieldset><legend>{strings.audioAndNarration}</legend><label className="check-row"><input type="checkbox" checked={audio.effects} onChange={(event) => setAudio({ ...audio, effects: event.target.checked })} /> {strings.audioEffects}</label><label className="check-row"><input type="checkbox" checked={audio.narration} onChange={(event) => setAudio({ ...audio, narration: event.target.checked })} /> {strings.narration}</label></fieldset><button type="button" className="primary-button" onClick={() => onSave(settings, audio)}>{strings.saveSettings}</button></main>;
 }
 
-function Avatar({ avatar, size, motion = "idle", reducedMotion = false }: { avatar: AvatarConfig; size: "small" | "large"; motion?: AvatarMotion; reducedMotion?: boolean }) {
-  return <div className={`avatar avatar-${size} skin-${avatar.skin} hair-${avatar.hair} outfit-${avatar.outfit} ${getAvatarMotionClass(reducedMotion, motion)}`} aria-label="Avatar do lojista"><span className="avatar-hair" aria-hidden="true" /><span className="avatar-face" aria-hidden="true" /><span className="avatar-body" aria-hidden="true" /><span className="avatar-accessory" aria-hidden="true">{avatar.accessory === "cap" ? "⌒" : avatar.accessory === "glasses" ? "◌" : avatar.accessory === "headphones" ? "◡" : ""}</span></div>;
+function Avatar({ avatar, size, motion = "idle", reducedMotion = false, strings }: { avatar: AvatarConfig; size: "small" | "large"; motion?: AvatarMotion; reducedMotion?: boolean; strings: LocaleBundle }) {
+  return <div role="img" className={`avatar avatar-${size} skin-${avatar.skin} hair-${avatar.hair} outfit-${avatar.outfit} ${getAvatarMotionClass(reducedMotion, motion)}`} aria-label={strings.avatarLabel}><span className="avatar-hair" aria-hidden="true" /><span className="avatar-face" aria-hidden="true" /><span className="avatar-body" aria-hidden="true" /><span className="avatar-accessory" aria-hidden="true">{avatar.accessory === "cap" ? "⌒" : avatar.accessory === "glasses" ? "◌" : avatar.accessory === "headphones" ? "◡" : ""}</span></div>;
 }
