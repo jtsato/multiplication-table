@@ -86,4 +86,24 @@ describe("LocalStorageRepository", () => {
     const parsed = JSON.parse(items[SAVE_STORAGE_KEY]) as GameSave;
     expect(parsed.version).toBe(SAVE_VERSION);
   });
+
+  it("clear remove o save armazenado", () => {
+    const { items, storage } = fakeStorage({ [SAVE_STORAGE_KEY]: "{}" });
+    const repo = new LocalStorageRepository(storage);
+    repo.clear();
+    expect(items[SAVE_STORAGE_KEY]).toBeUndefined();
+    expect(repo.load()).toBeNull();
+  });
+
+  it("clear não quebra quando o armazenamento falha", () => {
+    const storage = {
+      getItem: () => null,
+      setItem: () => undefined,
+      removeItem: () => {
+        throw new Error("quota");
+      },
+    };
+    const repo = new LocalStorageRepository(storage);
+    expect(() => repo.clear()).not.toThrow();
+  });
 });
