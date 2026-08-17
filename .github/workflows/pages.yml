@@ -32,12 +32,14 @@ jobs:
             cc/package-lock.json
             99/package-lock.json
             st/package-lock.json
+            ds/package-lock.json
 
       - name: Install dependencies
         run: |
           npm ci --prefix cc
           npm ci --prefix 99
           npm ci --prefix st
+          npm ci --prefix ds
 
       - name: Test and build cc
         working-directory: cc
@@ -56,6 +58,10 @@ jobs:
         working-directory: st
         run: npm run verify
 
+      - name: Test and build ds
+        working-directory: ds
+        run: npm run validate
+
       - name: Configure GitHub Pages
         uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5
 
@@ -64,10 +70,11 @@ jobs:
         run: |
           set -euo pipefail
 
-          mkdir -p site/cc site/99 site/st
+          mkdir -p site/cc site/99 site/st site/ds
           cp -R cc/dist/. site/cc/
           cp -R 99/dist/. site/99/
           cp -R st/dist/. site/st/
+          cp -R ds/dist/. site/ds/
           cp pages/index.html site/index.html
           touch site/.nojekyll
 

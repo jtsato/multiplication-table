@@ -13,17 +13,23 @@ antes de este plano estar coerente (regra 1 da estratégia).
 
 | Camada       | Tecnologia                                        | Justificativa                                |
 | ------------ | ------------------------------------------------- | -------------------------------------------- |
-| Build        | Vite 7 + TypeScript 5.9 (strict)                  | Início rápido, TS strict obrigatório         |
-| UI           | React 19 + DOM                                    | acessibilidade nativa (axe-core, TAB/ENTER)  |
-| Testes unit. | Vitest 3 + Testing Library + jsdom                | rápidos, determinísticos                     |
-| Testes E2E   | Playwright 1.55 + @axe-core/playwright            | Golden path + varredura WCAG                 |
+| Build        | Vite 7.3 + TypeScript 5.9 (strict)                | Início rápido, TS strict obrigatório         |
+| UI           | React 19.2 + DOM                                  | acessibilidade nativa (axe-core, TAB/ENTER)  |
+| Testes unit. | Vitest 4 + Testing Library + jsdom 30             | rápidos, determinísticos                     |
+| Testes E2E   | Playwright 1.62 + @axe-core/playwright            | Golden path + varredura WCAG                 |
 | Mutation     | StrykerJS 10 (vitest-runner + typescript-checker) | quality gate de lógica crítica               |
-| Lint/Format  | ESLint 9 flat config + Prettier 3                 | consistência + erros comuns                  |
+| Lint/Format  | ESLint 10 flat config + Prettier 3                | consistência + erros comuns                  |
 | i18n         | Solução própria mínima (sem lib)                  | política de dependências: não precisa de lib |
 | Persistência | `localStorage` via interface de repositório       | POC sem backend; interface permite troca     |
 
-**Política de versões:** pinamos o conjunto comprovado do projeto irmão `st/`
-(React 19.1, Vite 7.1, Vitest 3.2, Playwright 1.55, ESLint 9, TS 5.9) e Stryker 10. Nada de "latest" de major novo sem validação (regra 29).
+**Política de versões:** dependências atualizadas para o **latest estável**
+(React 19.2, ESLint 10, Vitest 4, Playwright 1.62, typescript-eslint 8.67),
+todas validadas pelos gates (lint + typecheck + test + build + e2e + mutation).
+Exceções deliberadas, por compatibilidade de toolchain:
+TypeScript **5.9.3** (typescript-eslint exige `<6.1.0`; TS 7 ainda não suportado)
+e Vite **7.3.6** (Vite 8 = migração para rolldown + plugin-react 6 com novos peers;
+upgrade adiado para tarefa dedicada). `npm audit` = **0 vulnerabilidades**
+(override `qs@6.15.3` corrige a cadeia `@stryker-mutator/core → typed-rest-client`).
 
 ---
 
