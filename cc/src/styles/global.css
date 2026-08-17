@@ -1,4 +1,4 @@
-/*
+﻿/*
   Estilos globais do jogo.
 
   Design system: "Design System Inspired by Duolingo"
@@ -15,7 +15,7 @@
   sistema: continuam vindo de `domain/islands.ts` e `domain/avatar.ts`.
 */
 
-/* ─────────────────────────────────────────────────────────────────────────
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
  * design-systems/duolingo/tokens.css
  *
  * Structured token bindings for "Design System Inspired by Duolingo".
@@ -23,77 +23,77 @@
  * confident type, friendly pill geometry, mascot-driven warmth.
  *
  * Key brand decisions encoded here:
- *   - Owl Green (#58cc02) — dominant brand color, primary CTA + correct answer
- *   - Snow white canvas (#ffffff) — never tinted; optical clarity is the foundation
- *   - 4px chunky offset shadow (--elev-raised) — the "tactile press" signature
- *   - Feather Bold + Mona Sans — rounded display + Swiss workhorse body
- *   - Display starts at 56px — Duolingo never whispers; size is identity
- *   - Pill-and-rounded radii — 16px cards, 12px buttons/inputs, 9999px chips
- *   - Spring easing (back-out, slight overshoot) — gamified joy in motion
- *   - Eel-blue focus ring (#1cb0f6 tinted) — playful contrast to the green brand
- * ─────────────────────────────────────────────────────────────────── */
+ *   - Owl Green (#58cc02) â€” dominant brand color, primary CTA + correct answer
+ *   - Snow white canvas (#ffffff) â€” never tinted; optical clarity is the foundation
+ *   - 4px chunky offset shadow (--elev-raised) â€” the "tactile press" signature
+ *   - Feather Bold + Mona Sans â€” rounded display + Swiss workhorse body
+ *   - Display starts at 56px â€” Duolingo never whispers; size is identity
+ *   - Pill-and-rounded radii â€” 16px cards, 12px buttons/inputs, 9999px chips
+ *   - Spring easing (back-out, slight overshoot) â€” gamified joy in motion
+ *   - Eel-blue focus ring (#1cb0f6 tinted) â€” playful contrast to the green brand
+ * â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
 :root {
-  /* ─── Surface ─────────────────────────────────────────────────────
+  /* â”€â”€â”€ Surface â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
    * Snow white canvas with Eel as the section-break tone. Pure optical
-   * clarity — Duolingo never tints the page itself, only the chrome. */
-  --bg: #ffffff; /* Snow — primary background, the page canvas */
-  --surface: #f7f7f7; /* Eel — section break, secondary surface, lesson row */
-  --surface-warm: var(--surface); /* alias — palette has no third (warm) surface tier */
+   * clarity â€” Duolingo never tints the page itself, only the chrome. */
+  --bg: #ffffff; /* Snow â€” primary background, the page canvas */
+  --surface: #f7f7f7; /* Eel â€” section break, secondary surface, lesson row */
+  --surface-warm: var(--surface); /* alias â€” palette has no third (warm) surface tier */
 
-  /* ─── Foreground ──────────────────────────────────────────────────
+  /* â”€â”€â”€ Foreground â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
    * Three real text tiers: Eel Black for primary, Wolf for secondary,
    * Hare for tertiary. Each tier carries clear, child-readable contrast. */
-  --fg: #3c3c3c; /* Eel Black — primary text, headings, button labels */
-  --fg-2: var(--fg); /* alias — single primary text weight throughout */
-  --muted: #777777; /* Wolf — secondary text, captions, dividers */
-  --meta: #afafaf; /* Hare — tertiary metadata, placeholder, disabled */
+  --fg: #3c3c3c; /* Eel Black â€” primary text, headings, button labels */
+  --fg-2: var(--fg); /* alias â€” single primary text weight throughout */
+  --muted: #777777; /* Wolf â€” secondary text, captions, dividers */
+  --meta: #afafaf; /* Hare â€” tertiary metadata, placeholder, disabled */
 
-  /* ─── Border ──────────────────────────────────────────────────────
-   * Swan grey at thick 2–3px on most surfaces. Borders are visual,
-   * never hairlines — they read as part of the chunky aesthetic. */
-  --border: #e5e5e5; /* Swan — standard 2px border, card edge */
-  --border-soft: var(--border); /* alias — single border tier (no inner-row separation) */
+  /* â”€â”€â”€ Border â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+   * Swan grey at thick 2â€“3px on most surfaces. Borders are visual,
+   * never hairlines â€” they read as part of the chunky aesthetic. */
+  --border: #e5e5e5; /* Swan â€” standard 2px border, card edge */
+  --border-soft: var(--border); /* alias â€” single border tier (no inner-row separation) */
 
-  /* ─── Accent ──────────────────────────────────────────────────────
-   * Owl Green — the brand IS this green. Used liberally in 30%+ of the
+  /* â”€â”€â”€ Accent â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+   * Owl Green â€” the brand IS this green. Used liberally in 30%+ of the
    * surface for buttons, progress bars, success states, brand chrome. */
   --accent: #58cc02;
   --accent-on: #ffffff;
-  --accent-hover: #89e219; /* Owl Green Light — hover state, soft fills */
-  --accent-active: #58a700; /* Owl Green Deep — pressed state, the chunky shadow color */
+  --accent-hover: #89e219; /* Owl Green Light â€” hover state, soft fills */
+  --accent-active: #58a700; /* Owl Green Deep â€” pressed state, the chunky shadow color */
 
-  /* ─── Semantic ────────────────────────────────────────────────────
-   * Success IS owl green — DESIGN.md: "primary CTA, correct answer" are
+  /* â”€â”€â”€ Semantic â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+   * Success IS owl green â€” DESIGN.md: "primary CTA, correct answer" are
    * the same affordance. Bee Yellow warns; Cardinal Red marks wrong. */
-  --success: #58cc02; /* Owl Green — "correct answer" is the brand */
-  --warn: #ffc800; /* Bee Yellow — pro badge, achievement glow */
-  --danger: #ff4b4b; /* Cardinal Red — wrong answer, life lost */
+  --success: #58cc02; /* Owl Green â€” "correct answer" is the brand */
+  --warn: #ffc800; /* Bee Yellow â€” pro badge, achievement glow */
+  --danger: #ff4b4b; /* Cardinal Red â€” wrong answer, life lost */
 
-  /* ─── Typography ──────────────────────────────────────────────────
+  /* â”€â”€â”€ Typography â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
    * Feather Bold (rounded display) drives chrome and headings; Mona Sans
-   * carries body. Default weight is 800 — Duolingo never whispers. */
+   * carries body. Default weight is 800 â€” Duolingo never whispers. */
   --font-display: 'Feather Bold', 'DIN Round Pro', 'Helvetica Neue', sans-serif;
   --font-body: 'Mona Sans', 'Helvetica Neue', system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, Menlo, Monaco, Consolas, monospace;
 
-  /* Type scale — DESIGN.md §3. Display 56px is +25–40% above typical
+  /* Type scale â€” DESIGN.md Â§3. Display 56px is +25â€“40% above typical
    * product brands; the ladder favors round whole-pixel sizes. */
   --text-xs: 12px; /* Tiny utility, progress numerals */
-  --text-sm: 13px; /* Caption — XP counter, metadata */
-  --text-base: 15px; /* Body — standard prose */
+  --text-sm: 13px; /* Caption â€” XP counter, metadata */
+  --text-base: 15px; /* Body â€” standard prose */
   --text-lg: 18px; /* H3 / lesson row title / featured body */
-  --text-xl: 24px; /* H2 — section heading */
-  --text-2xl: 32px; /* H1 — page title */
-  --text-3xl: 40px; /* Sub-display — hero secondary, marketing eyebrow */
-  --text-4xl: 56px; /* Display — onboarding hero, never timid */
+  --text-xl: 24px; /* H2 â€” section heading */
+  --text-2xl: 32px; /* H1 â€” page title */
+  --text-3xl: 40px; /* Sub-display â€” hero secondary, marketing eyebrow */
+  --text-4xl: 56px; /* Display â€” onboarding hero, never timid */
 
   --leading-body: 1.5;
-  --leading-tight: 1.15; /* Headings — slight breathing under big rounded faces */
-  --tracking-display: -0.01em; /* ≈ -0.56px at 56px — confident, not condensed */
+  --leading-tight: 1.15; /* Headings â€” slight breathing under big rounded faces */
+  --tracking-display: -0.01em; /* â‰ˆ -0.56px at 56px â€” confident, not condensed */
 
-  /* ─── Spacing ─────────────────────────────────────────────────────
-   * 4px base unit (DESIGN.md §5): 4, 8, 12, 16, 20, 24, 32, 48. */
+  /* â”€â”€â”€ Spacing â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+   * 4px base unit (DESIGN.md Â§5): 4, 8, 12, 16, 20, 24, 32, 48. */
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;
@@ -103,42 +103,42 @@
   --space-8: 32px;
   --space-12: 48px;
 
-  /* Section rhythm — generous on desktop, tight on phone so the lesson
+  /* Section rhythm â€” generous on desktop, tight on phone so the lesson
    * tree column reads as a continuous flow rather than chunked pages. */
   --section-y-desktop: 80px;
   --section-y-tablet: 56px;
   --section-y-phone: 40px;
 
-  /* ─── Radius ──────────────────────────────────────────────────────
-   * Pill-and-rounded everywhere. Cards 16px (DESIGN.md §4), buttons +
-   * inputs 12px, chips and progress bars 9999px — friendly forever. */
-  --radius-sm: 12px; /* Inputs, buttons — friendly compact corners */
-  --radius-md: 16px; /* Cards, lesson tiles — primary signature */
+  /* â”€â”€â”€ Radius â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+   * Pill-and-rounded everywhere. Cards 16px (DESIGN.md Â§4), buttons +
+   * inputs 12px, chips and progress bars 9999px â€” friendly forever. */
+  --radius-sm: 12px; /* Inputs, buttons â€” friendly compact corners */
+  --radius-md: 16px; /* Cards, lesson tiles â€” primary signature */
   --radius-lg: 20px; /* Featured containers, modals */
   --radius-pill: 9999px; /* Chips, progress bars, avatars */
 
-  /* ─── Elevation ───────────────────────────────────────────────────
+  /* â”€â”€â”€ Elevation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
    * Chunky 4px bottom-shadow IS Duolingo. Buttons and cards cast a hard
    * offset shadow that reads as a 3D button waiting to be pressed. The
    * raised value pairs with translateY(4px) on :active to "press" it. */
   --elev-flat: none;
   --elev-ring: 0 0 0 2px var(--border); /* 2px ring matches the chunky border weight */
-  --elev-raised: 0 4px 0 #d7d7d7; /* Hard tactile shadow — the press affordance */
+  --elev-raised: 0 4px 0 #d7d7d7; /* Hard tactile shadow â€” the press affordance */
 
-  /* ─── Focus ring ──────────────────────────────────────────────────
-   * Eel Blue 20% tint (DESIGN.md §4 inputs) — playful contrast against
+  /* â”€â”€â”€ Focus ring â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+   * Eel Blue 20% tint (DESIGN.md Â§4 inputs) â€” playful contrast against
    * the ambient owl-green brand; signals "you can interact with this". */
   --focus-ring: 0 0 0 3px rgba(28, 176, 246, 0.2);
 
-  /* ─── Motion ──────────────────────────────────────────────────────
+  /* â”€â”€â”€ Motion â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
    * 180ms button press, 320ms skill-node unlock; back-out spring with
-   * slight overshoot (DESIGN.md §6). Every state change feels gamified. */
+   * slight overshoot (DESIGN.md Â§6). Every state change feels gamified. */
   --motion-fast: 180ms;
   --motion-base: 320ms;
   --ease-standard: cubic-bezier(0.34, 1.56, 0.64, 1);
 
-  /* ─── Layout ──────────────────────────────────────────────────────
-   * 1080px container (DESIGN.md §5) — narrower than a SaaS deck because
+  /* â”€â”€â”€ Layout â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+   * 1080px container (DESIGN.md Â§5) â€” narrower than a SaaS deck because
    * Duolingo content reads vertically as a focused lesson tree column. */
   --container-max: 1080px;
   --container-gutter-desktop: 24px;
@@ -150,22 +150,22 @@
 /* Camada do app                                                          */
 /*                                                                        */
 /* Estende o pacote com dois grupos:                                      */
-/*   a) cores nomeadas em DESIGN.md §2 que tokens.css nao expoe;          */
+/*   a) cores nomeadas em DESIGN.md Â§2 que tokens.css nao expoe;          */
 /*   b) "inks" escurecidos, necessarios porque o jogo assume WCAG 2.2 AA  */
 /*      (4,5:1 em texto, 3:1 em limites de controle). Cada valor traz a   */
 /*      razao medida contra o fundo em que e usado.                       */
 /* ---------------------------------------------------------------------- */
 
 :root {
-  /* (a) Marca ampliada — DESIGN.md §2 */
-  --accent-pale: #dbf8c5; /* Owl Green Pale — superficie suave, banner de acerto */
-  --eel-blue: #1cb0f6; /* Eel Blue — dica, link de informacao */
-  --danger-deep: #cc3b3b; /* Cardinal Red Deep — DESIGN.md §4, base do botao de perigo */
+  /* (a) Marca ampliada â€” DESIGN.md Â§2 */
+  --accent-pale: #dbf8c5; /* Owl Green Pale â€” superficie suave, banner de acerto */
+  --eel-blue: #1cb0f6; /* Eel Blue â€” dica, link de informacao */
+  --danger-deep: #cc3b3b; /* Cardinal Red Deep â€” DESIGN.md Â§4, base do botao de perigo */
 
   /* (b) Inks acessiveis, derivados da marca */
-  --success-ink: #357700; /* Owl Green escurecido — 5,5:1 no branco, 4,8:1 no pale */
-  --warn-ink: #7a6000; /* Bee Yellow escurecido — 6,0:1 no branco */
-  --info-ink: #06699b; /* Eel Blue escurecido — 6,0:1 no branco; tambem o foco */
+  --success-ink: #357700; /* Owl Green escurecido â€” 5,5:1 no branco, 4,8:1 no pale */
+  --warn-ink: #7a6000; /* Bee Yellow escurecido â€” 6,0:1 no branco */
+  --info-ink: #06699b; /* Eel Blue escurecido â€” 6,0:1 no branco; tambem o foco */
   --danger-ink: var(--danger-deep); /* 4,9:1 no branco */
 
   /* Superficies pale derivadas: fundos de pilula e banner. */
@@ -175,7 +175,7 @@
 
   /* Regra de limite: laterais em Swan (decorativas), face inferior em Wolf.
      A sombra chapada e o que identifica o controle, e Wolf da 4,5:1 no
-     branco — satisfaz 1.4.11 sem pesar o visual arejado do sistema. */
+     branco â€” satisfaz 1.4.11 sem pesar o visual arejado do sistema. */
   --edge-underside: var(--muted);
 
   /* Folga reservada no fim do conteudo rolavel para o botao flutuante de som
@@ -189,7 +189,7 @@
     'Feather Bold', 'DIN Round Pro', 'Segoe UI Variable Display', 'Trebuchet MS', 'Helvetica Neue',
     sans-serif;
 
-  /* ─── Ponte para os nomes antigos ────────────────────────────────
+  /* â”€â”€â”€ Ponte para os nomes antigos â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
    * As telas ja referenciam estes nomes; aqui eles passam a apontar
    * para o design system em vez de para a paleta azul-marinho antiga. */
   --color-bg: var(--bg);
@@ -208,7 +208,7 @@
   --color-danger-dark: var(--danger-deep);
   --color-border: var(--border);
 
-  /* Botao primario — Owl Green vivo com tinta Eel Black (5,3:1).
+  /* Botao primario â€” Owl Green vivo com tinta Eel Black (5,3:1).
      O sistema pede branco sobre o verde, mas isso da 2,1:1 e quebra o
      compromisso AA do jogo; a cor da marca fica intacta, o rotulo muda. */
   --button-primary-bg: var(--accent);
@@ -217,21 +217,21 @@
   --button-primary-text: var(--fg);
   --button-primary-shadow: var(--accent-active);
 
-  /* Botao secundario — recipe "Streak" do sistema, em Bee Yellow (7,1:1). */
+  /* Botao secundario â€” recipe "Streak" do sistema, em Bee Yellow (7,1:1). */
   --button-secondary-bg: var(--warn);
   --button-secondary-hover: color-mix(in oklab, var(--warn), #ffffff 8%);
   --button-secondary-active: color-mix(in oklab, var(--warn), #000000 18%);
   --button-secondary-text: var(--fg);
   --button-secondary-border: color-mix(in oklab, var(--warn), #000000 18%);
 
-  /* Botao ghost — recipe "Secondary" do sistema: branco, borda grossa. */
+  /* Botao ghost â€” recipe "Secondary" do sistema: branco, borda grossa. */
   --button-ghost-bg: var(--bg);
   --button-ghost-hover: var(--surface);
   --button-ghost-active: var(--border);
   --button-ghost-text: var(--fg); /* Wolf daria 4,5:1 raspando; Eel Black e seguro */
   --button-ghost-border: var(--edge-underside);
 
-  /* Botao de perigo — recipe "Error", partindo do Cardinal Red Deep para
+  /* Botao de perigo â€” recipe "Error", partindo do Cardinal Red Deep para
      manter texto branco em 4,9:1. */
   --button-danger-bg: var(--danger-deep);
   --button-danger-hover: #d23e3e; /* Cardinal Red clareado ate o teto AA (4,7:1) */
@@ -337,7 +337,7 @@ html[data-reduced-motion='on'] *::after {
 /* Botao                                                                   */
 /*                                                                        */
 /* Recipe do sistema: sem elevacao no hover (so a cor clareia) e, no       */
-/* active, o botao desce 4px e a sombra chapada colapsa — a "tactile       */
+/* active, o botao desce 4px e a sombra chapada colapsa â€” a "tactile       */
 /* press". Como o fundo nao muda no active, nenhum estado perde contraste. */
 /* ---------------------------------------------------------------------- */
 
@@ -554,7 +554,7 @@ html[data-reduced-motion='on'] *::after {
   transition: width var(--motion-base) ease-out;
 }
 
-/* Missao concluida vira conquista: Bee Yellow (DESIGN.md §2). */
+/* Missao concluida vira conquista: Bee Yellow (DESIGN.md Â§2). */
 .progress__track--success .progress__fill {
   background: var(--warn);
   box-shadow: inset 0 -4px 0 color-mix(in oklab, var(--warn), #000000 18%);
@@ -623,8 +623,12 @@ html[data-reduced-motion='on'] *::after {
   flex-wrap: wrap;
 }
 
+/* Os 32px laterais do tamanho `lg` sao generosos para um botao solto, mas aqui
+   sao dois lado a lado dentro de um cartao de 420px: no celular sobrava tao
+   pouca largura que "Sair mesmo assim" quebrava em tres linhas. */
 .dialog__actions .btn {
   flex: 1;
+  padding: 0 var(--space-3);
 }
 
 /* ---------------------------------------------------------------------- */
@@ -695,6 +699,11 @@ html[data-reduced-motion='on'] *::after {
   outline-offset: 3px;
 }
 
+/* `min-width`, e nao `width`: 3,2em cabe em "Off" e em "Ligado", mas nao em
+   "Desligado", que transbordava 15px da caixa e ia parar fora da tela â€” o
+   rotulo vem da traducao e nao tem largura maxima conhecida. O minimo mantem
+   o alinhamento das linhas quando o texto e curto, e `flex-shrink: 0` impede
+   que a propria linha esprema a palavra de volta para o transbordo. */
 .toggle-row__state {
   width: 3.2em;
   font-size: var(--text-sm);
@@ -754,7 +763,7 @@ html[data-reduced-motion='on'] *::after {
 
 /* Caixa neutra: acompanha o tamanho do que estiver dentro.
    O circulo com contorno pertence a amostra de COR (`.swatch`), nao ao
-   contentor — quando ele carregava o circulo de 22px, a miniatura do mascote
+   contentor â€” quando ele carregava o circulo de 22px, a miniatura do mascote
    (bem maior) transbordava por cima do rotulo e o contorno vazio aparecia
    atras dela, parecendo um radio solto dentro do botao. */
 .picker__swatch {
@@ -846,9 +855,13 @@ html[data-reduced-motion='on'] *::after {
   background: var(--surface);
 }
 
+/* `flex-end` alinha os dois pelos pes, e nao pelo topo: o mascote tem
+   metade da altura do personagem e, centrado, pareceria flutuar. */
 .onboarding__stage {
   display: flex;
   justify-content: center;
+  align-items: flex-end;
+  gap: var(--space-4);
   padding: var(--space-6) var(--space-4) var(--space-2);
 }
 
@@ -1080,7 +1093,7 @@ html[data-reduced-motion='on'] *::after {
   display: flex;
 }
 
-/* Lesson tile: face inferior chapada, sem elevacao no hover — a ilha desce
+/* Lesson tile: face inferior chapada, sem elevacao no hover â€” a ilha desce
    quando pressionada, como todo controle do sistema. */
 .island {
   display: flex;
@@ -1214,6 +1227,13 @@ html[data-reduced-motion='on'] *::after {
   overflow-y: auto;
 }
 
+/* A barra tem fundo Snow proprio, e nao o ceu do bioma.
+   O ceu vem de `domain/islands.ts` e varia de #e9fbff (gelo) a #2f2a52
+   (caverna): nenhuma cor de texto fixa atravessa esse intervalo. Em Eel Black
+   sobre a caverna dava 1,45:1 â€” o titulo da missao e o contador sumiam no
+   celular. Sobre Snow o mesmo Eel Black da 12,6:1 em qualquer ilha, porque o
+   contraste deixa de depender da paleta. O bioma continua visivel no palco,
+   que e onde ele conta. */
 .level__bar {
   flex: 0 0 auto;
   display: flex;
@@ -1223,6 +1243,8 @@ html[data-reduced-motion='on'] *::after {
   /* A barra de progresso vai ate a direita; cede a faixa do icone de som. */
   padding-right: var(--sound-toggle-safe);
   flex-wrap: wrap;
+  background: var(--bg);
+  border-bottom: 2px solid var(--border);
 }
 
 .level__meta {
@@ -1918,20 +1940,35 @@ html[data-reduced-motion='on'] *::after {
   }
 }
 
+/* O cartao devolve ao texto um fundo conhecido. Sem ele os tokens de tinta
+   (Eel Black, Wolf) mediam de 1,2:1 a 14:1 conforme a ilha sorteada. */
+.island-complete__card {
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  background: var(--bg);
+  color: var(--fg);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  box-shadow: 0 6px 0 rgba(0, 0, 0, 0.2);
+}
+
 .island-complete__title {
-  font-size: var(--text-3xl);
+  font-size: var(--text-2xl);
   letter-spacing: var(--tracking-display);
-  color: #ffffff;
-  text-shadow: 0 3px 0 rgba(0, 0, 0, 0.25);
 }
 
 .island-complete__subtitle {
   font-weight: 700;
-  max-width: 360px;
 }
 
 .island-complete__unlock {
-  background: rgba(255, 255, 255, 0.2);
+  background: var(--accent-pale);
+  color: var(--success-ink);
   padding: var(--space-2) var(--space-5);
   border-radius: var(--radius-pill);
   font-family: var(--font-display-stack);
@@ -1939,7 +1976,7 @@ html[data-reduced-motion='on'] *::after {
 }
 
 .island-complete__note {
-  max-width: 340px;
+  color: var(--muted);
   font-size: var(--text-sm);
 }
 
@@ -1948,7 +1985,7 @@ html[data-reduced-motion='on'] *::after {
 /*                                                                        */
 /* Duas leituras na mesma tela: a cerimonia, em fundo festivo com texto    */
 /* branco, e o diploma, um cartao Snow que se le como documento. O fundo   */
-/* profundo e escolha deliberada — a unica tela que rompe o canvas branco  */
+/* profundo e escolha deliberada â€” a unica tela que rompe o canvas branco  */
 /* junto com a conclusao de ilha, porque e a unica que acontece uma vez.   */
 /* ---------------------------------------------------------------------- */
 
@@ -1956,7 +1993,7 @@ html[data-reduced-motion='on'] *::after {
   min-height: 100dvh;
   /* `#root` e um flex column de altura 100%: sem travar o encolhimento, esta
      tela ficaria com 100dvh de caixa e o conteudo transbordaria para fora
-     dela — o gradiente parava no meio da pagina e o resto virava branco. */
+     dela â€” o gradiente parava no meio da pagina e o resto virava branco. */
   flex: 0 0 auto;
   display: flex;
   flex-direction: column;
@@ -2028,7 +2065,7 @@ html[data-reduced-motion='on'] *::after {
   line-height: var(--leading-tight);
 }
 
-/* ── Diploma ─────────────────────────────────────────────────────────── */
+/* â”€â”€ Diploma â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
 .diploma {
   width: 100%;
@@ -2258,7 +2295,7 @@ html[data-reduced-motion='on'] *::after {
   gap: var(--space-3);
 }
 
-/* No telefone as nove ilhas viram tres linhas de tres — um quadro fechado,
+/* No telefone as nove ilhas viram tres linhas de tres â€” um quadro fechado,
    em vez de duas linhas cheias e uma ilha sozinha no fim. */
 @media (max-width: 480px) {
   .finale__island {
@@ -2587,17 +2624,19 @@ html[data-reduced-motion='on'] *::after {
 /* Icone de som                                                            */
 /*                                                                        */
 /* Ancorado no topo, nao no rodape (F3). Flutuando embaixo ele cobria      */
-/* cartoes de ilha durante a rolagem — e reservar espaco no fim do         */
+/* cartoes de ilha durante a rolagem â€” e reservar espaco no fim do         */
 /* conteudo nao resolve, porque um elemento `fixed` cobre o que estiver    */
 /* sob ele em qualquer posicao de rolagem. No topo ele divide faixa apenas */
 /* com o chrome, que reserva a folga logo abaixo.                          */
 /*                                                                        */
-/* Cor: Eel Blue escurecido, nao Bee Yellow. O amarelo e a cor do botao    */
-/* secundario e das estrelas — usado aqui, um controle de sistema disputava */
-/* atencao com recompensa e acao. O azul e a cor "utilitaria" do sistema,  */
-/* nao compete com o verde de acao nem com o amarelo de premio, e da 6,0:1 */
-/* no branco (o amarelo dava 1,6:1, abaixo dos 3:1 de 1.4.11 para o limite */
-/* do controle).                                                          */
+/* Cor: a recipe ghost â€” Snow com borda grossa â€”, e nao uma cor cheia.     */
+/* Este botao e o unico elemento `fixed` do jogo: ele passa por cima do    */
+/* canvas branco, dos ceus das ilhas e do fundo profundo do final. Uma cor */
+/* cheia se compara com a arte em cada uma dessas telas (o amarelo         */
+/* disputava com as estrelas, o azul com o ceu). Snow com o icone em Eel   */
+/* Black e o unico par que fica identico nas tres: 12,6:1 de texto sempre, */
+/* e o limite do controle vem da sombra em Wolf (4,5:1 no branco), nao do  */
+/* fundo â€” por isso ele nao some sobre o canvas.                           */
 /* ---------------------------------------------------------------------- */
 
 .sound-toggle {
@@ -2607,26 +2646,28 @@ html[data-reduced-motion='on'] *::after {
   z-index: 40;
   width: var(--touch-target);
   height: var(--touch-target);
-  border: none;
+  border: 2px solid var(--border);
   border-radius: var(--radius-pill);
-  background: var(--info-ink);
-  color: #ffffff;
-  box-shadow: 0 4px 0 color-mix(in oklab, var(--info-ink), #000000 18%);
+  background: var(--button-ghost-bg);
+  color: var(--button-ghost-text);
+  box-shadow: 0 4px 0 var(--button-ghost-border);
   font-size: 1.3rem;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition:
+    background-color var(--motion-fast) var(--ease-standard),
     transform var(--motion-fast) var(--ease-standard),
     box-shadow var(--motion-fast) var(--ease-standard);
 }
 
 .sound-toggle:hover {
-  background: color-mix(in oklab, var(--info-ink), #ffffff 12%);
+  background: var(--button-ghost-hover);
+  border-color: var(--button-ghost-border);
 }
 
 .sound-toggle:active {
   transform: translateY(4px);
-  box-shadow: 0 0 0 color-mix(in oklab, var(--info-ink), #000000 18%);
+  box-shadow: 0 0 0 var(--button-ghost-border);
 }

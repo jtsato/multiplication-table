@@ -2,11 +2,15 @@ import { listFacts, factKey } from "../math/facts";
 import { createFactProgress, type FactProgress } from "../math/mastery";
 import type { StoreId } from "../../content/stores";
 
-export type AvatarConfig = {
-  skin: "sunny" | "warm" | "deep";
-  hair: "curly" | "short" | "long";
-  outfit: "apron" | "jacket" | "overalls";
-  accessory: "none" | "cap" | "glasses" | "headphones";
+export type MascotKind = "antenna" | "cap" | "crown" | "bow" | "leaf";
+export type MascotColor = "orange" | "mint" | "berry" | "sky" | "grape" | "sun";
+
+export const MASCOT_KINDS: MascotKind[] = ["antenna", "cap", "crown", "bow", "leaf"];
+export const MASCOT_COLORS: MascotColor[] = ["orange", "mint", "berry", "sky", "grape", "sun"];
+
+export type MascotConfig = {
+  kind: MascotKind;
+  color: MascotColor;
 };
 
 export type AccessibilitySettings = {
@@ -38,7 +42,7 @@ export type PlayerProfile = {
   id: string;
   schemaVersion: number;
   nickname: string;
-  avatar: AvatarConfig;
+  mascot: MascotConfig;
   store: StoreState;
   chapter: number;
   day: number;
@@ -57,16 +61,17 @@ export type CreateProfileInput = {
   storeId: StoreId;
   style?: StoreStyle;
   id?: string;
-  avatar?: Partial<AvatarConfig>;
+  mascot?: Partial<MascotConfig>;
   accessibility?: Partial<AccessibilitySettings>;
 };
 
-export const DEFAULT_AVATAR: AvatarConfig = {
-  skin: "warm",
-  hair: "curly",
-  outfit: "apron",
-  accessory: "none",
+export const DEFAULT_MASCOT: MascotConfig = {
+  kind: "antenna",
+  color: "orange",
 };
+
+/** Sobe com qualquer mudança no formato salvo do perfil. */
+export const PROFILE_SCHEMA_VERSION = 2;
 
 export const DEFAULT_ACCESSIBILITY: AccessibilitySettings = {
   reducedMotion: false,
@@ -87,9 +92,9 @@ export function createProfile(input: CreateProfileInput): PlayerProfile {
 
   return {
     id: input.id ?? crypto.randomUUID(),
-    schemaVersion: 1,
-    nickname: input.nickname.trim() || "Lojista Pixel",
-    avatar: { ...DEFAULT_AVATAR, ...input.avatar },
+    schemaVersion: PROFILE_SCHEMA_VERSION,
+    nickname: input.nickname.trim() || "Lojista",
+    mascot: { ...DEFAULT_MASCOT, ...input.mascot },
     store: {
       storeId: input.storeId,
       unlockedProducts: initialProductIds(input.storeId),

@@ -56,10 +56,19 @@ export function OnboardingScreen({
   const patch = (changes: Partial<AvatarConfig>) =>
     setAvatar((current) => ({ ...current, ...changes }));
 
+  const mascot = getMascotDefinition(mascotId);
+
   return (
     <div className="onboarding">
+      {/* No passo da customizacao o mascote entra ao lado do personagem: e o
+          unico passo em que ele pode ser trocado, e as pastilhas de 32px sao
+          pequenas demais para a crianca ver o que esta escolhendo. Nos passos
+          anteriores ele ficaria de enfeite, competindo com o personagem. */}
       <div className="onboarding__stage">
         <Avatar avatar={avatar} size={190} celebrating={step === 'customize'} />
+        {step === 'customize' && (
+          <Mascot palette={mascot.colors} kind={mascot.kind} size={104} mood="cheering" />
+        )}
       </div>
 
       <div className="onboarding__panel">
@@ -182,7 +191,8 @@ export function OnboardingScreen({
                 labelFor={(option) => t(`onboarding.mascot.${option}`)}
                 renderSwatch={(option) => {
                   const definition = getMascotDefinition(option);
-                  // 32px cabe na pilula de 48px sem esticar a linha.
+                  // 32px cabe na pilula de 48px sem esticar a linha; quem
+                  // mostra o mascote em tamanho util e o palco la em cima.
                   return <Mascot palette={definition.colors} kind={definition.kind} size={32} />;
                 }}
               />

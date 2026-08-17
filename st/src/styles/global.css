@@ -111,7 +111,7 @@ h2 { line-height: 1.08; }
 }
 .lead { max-width: 560px; color: var(--muted); font-size: 1.15rem; }
 .muted { color: var(--muted); }
-.profile-panel, .question-card, .summary-card {
+.question-card, .summary-card {
   width: min(720px, 100%);
   margin-top: 28px;
   padding: 28px;
@@ -121,27 +121,10 @@ h2 { line-height: 1.08; }
   box-shadow: 0 12px 0 var(--shadow);
   text-align: left;
 }
-.profile-panel h2 { text-align: left; }
-.profile-grid { display: grid; gap: 12px; margin: 16px 0 20px; }
-.profile-card {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  width: 100%;
-  padding: 14px;
-  border: 3px solid var(--line);
-  border-radius: 16px;
-  color: var(--ink);
-  background: #fff;
-  text-align: left;
-  transition: transform 0.15s ease, border-color 0.15s ease;
-}
-.profile-card:hover, .store-choice:hover {
+.store-choice:hover {
   border-color: var(--brand-deep);
   transform: translateY(-2px);
 }
-.profile-card strong, .profile-card small { display: block; }
-.profile-card small { color: var(--muted); margin-top: 3px; }
 .primary-button, .secondary-button, .bottom-actions button, .text-button, .chip-button {
   border: 3px solid var(--ink);
   border-radius: 14px;
@@ -170,7 +153,20 @@ h2 { line-height: 1.08; }
   border: 0;
   color: var(--secondary);
 }
+/* O rótulo inteiro é o alvo de toque do checkbox: 24px é o mínimo da SC 2.5.8,
+   e uma criança de celular agradece a folga. */
+.check-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 40px;
+}
+.check-row input[type="checkbox"] { width: 22px; height: 22px; }
 .form-screen { max-width: 920px; }
+.danger-zone { margin-top: 36px; padding: 18px; border: 3px dashed var(--line); border-radius: 18px; }
+.danger-zone h2 { font-size: 1.2rem; margin-bottom: 4px; }
+.reset-confirm { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 12px; }
+.reset-confirm p { width: 100%; margin: 0; }
 .form-screen form { display: grid; gap: 24px; max-width: 860px; }
 .form-screen > h1 { margin-top: 4px; }
 label, legend { font-weight: 900; }
@@ -189,7 +185,6 @@ fieldset {
   padding: 18px;
   background: rgba(255, 255, 255, 0.65);
 }
-.suggestion-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: -12px; }
 .chip-button {
   padding: 8px 12px;
   color: var(--ink);
@@ -232,61 +227,27 @@ fieldset {
   box-shadow: inset 0 0 0 2px var(--brand-deep);
 }
 .style-choice span { width: 22px; height: 22px; border: 2px solid var(--ink); border-radius: 7px; }
-.avatar-editor { display: flex; align-items: center; gap: 28px; margin-top: 16px; }
-.select-grid { display: grid; grid-template-columns: repeat(2, minmax(120px, 1fr)); gap: 12px; flex: 1; }
-.check-row { display: flex; gap: 10px; align-items: center; margin: 12px 0; }
-.check-row input { width: 20px; height: 20px; accent-color: var(--brand-deep); }
-.avatar { position: relative; flex: 0 0 auto; border: 5px solid var(--ink); border-radius: 18px 18px 22px 22px; background: #fff; overflow: hidden; }
-.avatar-small { width: 48px; height: 56px; }
-.avatar-large { width: 112px; height: 132px; }
-.avatar-face, .avatar-hair, .avatar-body, .avatar-accessory { position: absolute; display: block; }
-.avatar-face {
-  left: 18%;
-  right: 18%;
-  top: 22%;
-  height: 36%;
-  border: 3px solid var(--ink);
-  border-radius: 12px;
-  background: #f5b971;
+.mascot-editor { display: flex; align-items: center; gap: 28px; margin-top: 16px; }
+.mascot-choices { flex: 1; }
+.choice-label { margin: 0 0 8px; font-weight: 900; }
+.chip-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+.mascot-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border: 3px solid var(--line);
+  border-radius: 14px;
+  background: var(--panel);
+  font-weight: 700;
 }
-.avatar-small .avatar-face { border-width: 2px; }
-.skin-sunny .avatar-face { background: #f2c783; }
-.skin-deep .avatar-face { background: #9b614c; }
-.avatar-body {
-  left: 8%;
-  right: 8%;
-  bottom: -5%;
-  height: 47%;
-  border: 3px solid var(--ink);
-  border-radius: 18px 18px 5px 5px;
-  background: #bd5b53;
-}
-.outfit-jacket .avatar-body { background: #5e78bd; }
-.outfit-overalls .avatar-body { background: #3f9c8c; }
-.avatar-hair {
-  z-index: 1;
-  left: 14%;
-  right: 14%;
-  top: 13%;
-  height: 22%;
-  border-radius: 10px 10px 4px 4px;
-  background: #633f35;
-}
-.hair-short .avatar-hair { left: 20%; right: 20%; }
-.hair-long .avatar-hair { top: 10%; height: 32%; }
-.avatar-accessory {
-  z-index: 2;
-  left: 28%;
-  top: 21%;
-  color: var(--ink);
-  font-size: 1.3rem;
-}
-.avatar-small .avatar-accessory { font-size: 0.75rem; }
-@keyframes avatar-idle { 0%, 100% { transform: translateY(0) rotate(-1deg); } 50% { transform: translateY(-4px) rotate(1deg); } }
-@keyframes avatar-celebrate { 0% { transform: translateY(0) rotate(0); } 35% { transform: translateY(-10px) rotate(-5deg); } 70% { transform: translateY(-4px) rotate(5deg); } 100% { transform: translateY(0) rotate(0); } }
-.avatar-motion-idle { animation: avatar-idle 3s ease-in-out infinite; }
-.avatar-motion-celebrate { animation: avatar-celebrate 0.65s ease-out 1; }
-.avatar-motion-none { animation: none; }
+.mascot-chip.selected { border-color: var(--ink); background: var(--peach); }
+.color-dot { width: 22px; height: 22px; border: 2px solid var(--ink); border-radius: 50%; }
+.mascot--idle { animation: mascot-float 2.4s ease-in-out infinite; }
+.mascot--celebrate { animation: mascot-hop 0.7s ease-in-out infinite; }
+.mascot--still { animation: none; }
+@keyframes mascot-float { 50% { transform: translateY(-4px); } }
+@keyframes mascot-hop { 50% { transform: translateY(-9px); } }
 .topbar, .service-header { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
 .topbar h1 { margin-bottom: 0; font-size: clamp(2rem, 5vw, 3.5rem); }
 .cash-badge {
@@ -330,15 +291,23 @@ fieldset {
 .diorama-sky { position: absolute; inset: 0 0 48%; background: linear-gradient(140deg, rgba(255,250,240,.9), rgba(255,250,240,.25)); }
 .block-shelf {
   position: absolute;
-  width: 24%;
-  height: 22%;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 6px;
+  width: 32%;
+  min-height: 24%;
+  padding: 8px 10px;
   border: 3px solid var(--ink);
   background: linear-gradient(135deg, var(--yellow), var(--peach));
   transform: skewY(-8deg);
   border-radius: 16px;
 }
-.shelf-one { left: 10%; top: 22%; }
-.shelf-two { right: 9%; top: 29%; background: #fffaf0; }
+/* Medido em % da prateleira, não em px: cabem três por fileira em qualquer tela. */
+.block-shelf .product-art { width: clamp(46px, 30%, 112px); height: auto; transform: skewY(8deg); }
+.shelf-one { left: 8%; top: 20%; }
+.shelf-two { right: 7%; top: 27%; background: #fffaf0; }
 .counter {
   position: absolute;
   left: 23%;
@@ -350,19 +319,27 @@ fieldset {
   background: #f6c9ab;
   box-shadow: 0 12px 0 rgba(28, 42, 53, 0.12);
 }
-.diorama > .avatar { position: absolute; left: calc(50% - 56px); bottom: 18%; z-index: 2; }
+.diorama-mascot { position: absolute; left: calc(50% - 66px); bottom: 16%; z-index: 4; }
 .diorama.style-ocean { --store-color: #cfe7ff !important; }
 .diorama.style-garden { --store-color: #dff4d8 !important; }
-.expansion-blocks { position: absolute; right: 12%; bottom: 17%; display: flex; gap: 5px; z-index: 3; }
-.expansion-blocks span {
-  width: 24px;
-  height: 24px;
-  border: 3px solid var(--ink);
-  border-radius: 5px;
-  background: linear-gradient(135deg, var(--pink), var(--mint));
-  transform: rotate(8deg);
+.expansion-blocks { position: absolute; right: 10%; bottom: 15%; display: flex; gap: 6px; z-index: 3; }
+.expansion-blocks .product-art { width: clamp(44px, 6vw, 80px); height: auto; transform: rotate(6deg); filter: drop-shadow(0 3px 0 rgba(28, 42, 53, 0.18)); }
+.expansion-blocks .product-art:nth-child(2n) { transform: rotate(-5deg); }
+.shop-guide {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 18px;
+  padding: 14px 18px;
+  border: 3px solid var(--line);
+  border-radius: 18px;
+  background: var(--panel-strong);
 }
-.expansion-blocks span:nth-child(2n) { background: #fffaf0; transform: rotate(-6deg); }
+.shop-guide > div { flex: 1; }
+.shop-guide p { margin: 0; }
+.header-money { display: flex; gap: 18px; }
+.header-money-item { display: grid; justify-items: end; line-height: 1.1; }
+.header-money-item small { color: var(--muted); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; }
 .store-actions {
   display: flex;
   align-items: center;
@@ -388,6 +365,8 @@ fieldset {
 .achievement-line { margin: 10px 0 0; color: var(--muted); }
 .achievement-line strong { color: var(--secondary); }
 .bottom-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
+.bottom-actions button { display: inline-flex; align-items: center; gap: 8px; }
+.menu-icon { font-size: 1.15em; line-height: 1; }
 .bottom-actions button { color: var(--ink); background: var(--peach); }
 .service-screen { max-width: 920px; }
 .service-header { margin-bottom: 24px; color: var(--muted); }
@@ -426,6 +405,7 @@ fieldset {
 .answer-button:disabled { cursor: default; opacity: 0.7; }
 .product-counter { display: flex; align-items: center; justify-content: center; gap: 22px; margin: 20px 0; }
 .product-counter > button {
+  flex-shrink: 0; /* sem isto a pilha espreme os botões e eles viram ovais */
   width: 48px;
   height: 48px;
   border: 3px solid var(--ink);
@@ -436,14 +416,29 @@ fieldset {
   line-height: 1;
 }
 .product-counter > button:disabled { opacity: 0.35; }
-.product-pile { display: flex; flex-wrap: wrap; justify-content: center; max-width: 360px; min-height: 64px; gap: 6px; }
-.mini-block {
-  width: 28px;
-  height: 28px;
-  border: 2px solid var(--ink);
-  border-radius: 5px;
-  background: linear-gradient(135deg, var(--yellow), var(--peach));
+/* Largura fixa: com max-width a pilha crescia a cada bloco e empurrava os botões. */
+/* min-height cobre as duas linhas possíveis (10 itens), senão a altura muda a cada clique. */
+.product-pile { display: flex; flex-wrap: wrap; align-content: center; justify-content: center; width: min(360px, 100%); min-height: 96px; gap: 6px; }
+/* Mostra as unidades da compra com o preço de cada uma, para a conta fazer sentido. */
+.unit-array {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  max-width: 340px; /* quebra de 5 em 5, que ajuda a contar */
+  margin: 0 auto 14px;
 }
+.unit-item {
+  display: grid;
+  justify-items: center;
+  gap: 2px;
+  padding: 6px 8px;
+  border: 2px solid var(--line);
+  border-radius: 12px;
+  background: var(--panel);
+}
+.unit-price { font-size: 0.85rem; font-weight: 900; color: var(--secondary); }
+.unit-explain { margin-bottom: 6px; font-weight: 700; }
 .hint-box, .success-box { margin-top: 18px; padding: 16px; border-radius: 14px; text-align: left; }
 .hint-box { background: #f8dfcd; }
 .success-box { background: #dff4d8; }
@@ -457,7 +452,9 @@ fieldset {
   border: 3px solid var(--line);
   border-radius: 18px;
   background: var(--panel-strong);
+  text-align: center;
 }
+.product-card .product-art { display: block; margin: 0 auto 10px; }
 .product-card h2 { font-size: 1.2rem; }
 .product-card p { color: var(--muted); }
 .product-card strong { color: var(--secondary); }
@@ -466,7 +463,7 @@ fieldset {
   place-items: center;
   width: 42px;
   height: 42px;
-  margin-bottom: 16px;
+  margin: 0 auto 16px;
   border-radius: 12px;
   color: var(--ink);
   background: linear-gradient(135deg, var(--pink), var(--mint));
@@ -477,11 +474,14 @@ fieldset {
 .achievement-card.locked strong { color: var(--muted); }
 @media (max-width: 720px) {
   .store-choice-grid, .product-grid, .style-choice-grid { grid-template-columns: repeat(2, 1fr); }
-  .store-actions, .intro-card, .avatar-editor { align-items: stretch; flex-direction: column; }
+  .store-actions, .intro-card, .mascot-editor { align-items: stretch; flex-direction: column; }
   .alternatives { grid-template-columns: 1fr; }
   .answer-button { min-height: 60px; }
-  .diorama { min-height: 320px; }
-  .diorama > .avatar { transform: scale(0.8); transform-origin: bottom center; }
+  .diorama { min-height: 360px; }
+  /* No celular os itens quebram em duas fileiras: as prateleiras sobem para não cair sobre o mascote. */
+  .shelf-one { top: 13%; }
+  .shelf-two { top: 20%; }
+  .diorama-mascot { transform: scale(0.8); transform-origin: bottom center; }
   .topbar { align-items: flex-start; }
   .cash-badge { padding: 8px 12px; }
   .form-screen, .welcome-screen, .game-screen { padding: 24px 16px; }

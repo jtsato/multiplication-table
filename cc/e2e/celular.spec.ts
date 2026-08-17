@@ -32,6 +32,41 @@ test.describe('partida no celular', () => {
     expect(transbordou).toBe(false);
   });
 
+  /**
+   * `scrollWidth` da pagina nao pega este caso: `body` tem `overflow-x: hidden`,
+   * entao um rotulo largo demais e recortado em silencio em vez de criar barra
+   * de rolagem. Foi assim que "Desligado" saiu da tela numa caixa de 3,2em que
+   * so tinha sido medida com o "Off" do ingles. O texto vem da traducao, entao
+   * a unica defesa e conferir a caixa de cada rotulo, e nao a da pagina.
+   */
+  test('nenhum rotulo das configuracoes e recortado pela propria caixa', async ({ page }) => {
+    await concluirOnboarding(page);
+    await irParaHome(page);
+    await page.getByRole('button', { name: 'Configurações' }).click();
+    await expect(page.getByRole('heading', { name: 'Configurações' })).toBeVisible();
+
+    const recortados = await page.evaluate(() =>
+      [...document.querySelectorAll<HTMLElement>('.settings *')]
+        .filter((no) => {
+          const temTextoProprio = [...no.childNodes].some(
+            (filho) => filho.nodeType === Node.TEXT_NODE && filho.textContent?.trim(),
+          );
+          return (
+            temTextoProprio &&
+            no.clientWidth > 0 &&
+            getComputedStyle(no).overflowX === 'visible' &&
+            no.scrollWidth > no.clientWidth + 1
+          );
+        })
+        .map((no) => ({
+          texto: no.textContent?.trim().slice(0, 40),
+          sobra: no.scrollWidth - no.clientWidth,
+        })),
+    );
+
+    expect(recortados).toEqual([]);
+  });
+
   test('os alvos de toque tem pelo menos 24 px', async ({ page }) => {
     await concluirOnboarding(page);
     await irParaHome(page);

@@ -75,24 +75,34 @@ export function IslandCompleteScreen({
       </div>
 
       <Mascot palette={island.palette} size={92} mood="cheering" />
-
-      <h1 className="island-complete__title">{t('islandComplete.title')}</h1>
-      <p className="island-complete__subtitle">{t('islandComplete.subtitle', { table })}</p>
-
       <IslandBadge palette={island.palette} status="completed" size={190} />
       <Stars count={progress.stars} size={38} />
 
-      {/* Nao ha ramo "acabou tudo" aqui: fechar a ultima ilha leva direto para
-          a tela de final do jogo, que celebra o arquipelago inteiro. */}
-      {unlockedTable !== null && (
-        <p className="island-complete__unlock">
-          {t('islandComplete.unlocked', { island: t(`islands.${unlockedTable}.name`) })}
-        </p>
-      )}
+      {/* Todo o texto vive num cartao Snow, e nao solto sobre o ceu: o degrade
+          vem da paleta da ilha e vai de quase branco a quase preto, entao
+          nenhuma cor de texto fixa se sustenta sobre ele. A festa fica na arte
+          — papel picado, mascote, medalha e estrelas —, que nao depende de
+          contraste para funcionar. Mesma solucao do diploma no final. */}
+      <div className="island-complete__card">
+        <h1 className="island-complete__title">{t('islandComplete.title')}</h1>
+        <p className="island-complete__subtitle">{t('islandComplete.subtitle', { table })}</p>
 
-      <p className="island-complete__note">{t('islandComplete.keepPracticing')}</p>
+        {/* Nao ha ramo "acabou tudo" aqui: fechar a ultima ilha leva direto
+            para a tela de final do jogo, que celebra o arquipelago inteiro. */}
+        {unlockedTable !== null && (
+          <p className="island-complete__unlock">
+            {t('islandComplete.unlocked', { island: t(`islands.${unlockedTable}.name`) })}
+          </p>
+        )}
 
-      <Button size="lg" icon="🗺️" onClick={onBackToMap}>
+        <p className="island-complete__note">{t('islandComplete.keepPracticing')}</p>
+      </div>
+
+      {/* Ghost, e nao verde: sobre o ceu da ilha quem tem mais contraste e o
+          Snow. A regra continua "a acao que segue em frente e a mais visivel
+          do seu proprio fundo" — muda o fundo, muda a cor. De quebra o icone
+          volta a ser legivel, que no verde saturado se perdia. */}
+      <Button variant="ghost" size="lg" icon="🗺️" onClick={onBackToMap}>
         {t('islandComplete.backToMap')}
       </Button>
     </div>

@@ -1,9 +1,14 @@
 import { DBSchema, IDBPDatabase, openDB } from "idb";
-import type { PlayerProfile } from "../../domain/profile/profile";
+import { DEFAULT_MASCOT, PROFILE_SCHEMA_VERSION, type MascotConfig, type PlayerProfile } from "../../domain/profile/profile";
 
-type PersistedProfile = Omit<PlayerProfile, "schemaVersion" | "audio"> & {
+/** Formato antigo (v1): boneco com pele/cabelo/roupa/acessório. */
+type LegacyAvatar = { accessory?: string };
+
+type PersistedProfile = Omit<PlayerProfile, "schemaVersion" | "audio" | "mascot"> & {
   schemaVersion: number;
   audio?: PlayerProfile["audio"];
+  mascot?: MascotConfig;
+  avatar?: LegacyAvatar;
 };
 
 interface LojinhaDatabase extends DBSchema {
@@ -65,6 +70,15 @@ export class ProfileRepository {
     }
   }
 
+  async remove(id: string): Promise<void> {
+    try {
+      const database = await this.database;
+      await database.delete("profiles", id);
+    } catch (error) {
+      throw new StorageError("Não foi possível apagar o perfil.", { cause: error });
+    }
+  }
+
   async close(): Promise<void> {
     const database = await this.database;
     database.close();
@@ -72,9 +86,13 @@ export class ProfileRepository {
 }
 
 export function migrateProfile(profile: PersistedProfile): PlayerProfile {
+  const { avatar, ...rest } = profile;
   return {
-    ...profile,
-    schemaVersion: 1,
+    ...rest,
+    schemaVersion: PROFILE_SCHEMA_VERSION,
     audio: profile.audio ?? { effects: true, narration: false },
+    // v1 -> v2: o boneco virou mascote. Só o boné tinha equivalente direto,
+    // então ele é preservado e o resto cai no padrão.
+    mascot: profile.mascot ?? { ...DEFAULT_MASCOT, kind: avatar?.accessory === "cap" ? "cap" : DEFAULT_MASCOT.kind },
   };
 }

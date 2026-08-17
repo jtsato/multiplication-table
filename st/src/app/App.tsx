@@ -21,14 +21,19 @@ import {
   createProfile,
   type AccessibilitySettings,
   type AudioSettings,
-  type AvatarConfig,
+  DEFAULT_MASCOT,
+  MASCOT_COLORS,
+  MASCOT_KINDS,
+  type MascotConfig,
   type CreateProfileInput,
   type PlayerProfile,
   type StoreStyle,
 } from "../domain/profile/profile";
 import { ProfileRepository } from "../infrastructure/storage/repository";
 import { narrate, playFeedbackTone } from "../infrastructure/audio/audio";
-import { getAvatarMotionClass, type AvatarMotion } from "./avatarMotion";
+import { ProductArt } from "./art/ProductArt";
+import { Mascot } from "./art/Mascot";
+import { getMascotPalette } from "./art/mascotPalette";
 import { getLocalizedStrings, type LocaleBundle } from "../i18n";
 
 type Screen = "profiles" | "create" | "store" | "game" | "shop" | "settings" | "achievements";
@@ -41,9 +46,8 @@ export function App({ repository }: AppProps) {
   // The locale is read once per mount: switching browser language reloads the app anyway.
   const strings = useMemo(() => getLocalizedStrings(), []);
   const [storage] = useState(() => repository ?? new ProfileRepository());
-  const [profiles, setProfiles] = useState<PlayerProfile[]>([]);
   const [activeProfile, setActiveProfile] = useState<PlayerProfile | null>(null);
-  const [screen, setScreen] = useState<Screen>("profiles");
+  const [screen, setScreen] = useState<Screen>("create");
   const [session, setSession] = useState<DaySession | null>(null);
   const [notice, setNotice] = useState<string>("");
   const [loading, setLoading] = useState(true);
@@ -52,9 +56,15 @@ export function App({ repository }: AppProps) {
 
   useEffect(() => {
     let mounted = true;
+    // Perfil único: o app abre direto na loja salva, ou na criação se não houver nenhuma.
     void storage.list()
       .then((loadedProfiles) => {
-        if (mounted) setProfiles(loadedProfiles);
+        if (!mounted) return;
+        const [saved] = loadedProfiles;
+        if (saved) {
+          setActiveProfile(saved);
+          setScreen("store");
+        }
       })
       .catch(() => {
         if (mounted) setStorageError(strings.storageError);
@@ -71,6 +81,13 @@ export function App({ repository }: AppProps) {
     document.documentElement.lang = strings.locale;
   }, [strings]);
 
+  // Screens swap without a route change, so focus has to be moved deliberately:
+  // otherwise it falls back to <body> and nothing is announced on arrival.
+  // On first paint the loading screen has no #main-content, so nothing is stolen.
+  useEffect(() => {
+    document.getElementById("main-content")?.focus();
+  }, [screen]);
+
   useEffect(() => {
     const handleUpdate = () => setUpdateAvailable(true);
     window.addEventListener("lojinha-update-available", handleUpdate);
@@ -79,7 +96,6 @@ export function App({ repository }: AppProps) {
 
   function persistProfile(profile: PlayerProfile): void {
     setActiveProfile(profile);
-    setProfiles((current) => current.map((candidate) => candidate.id === profile.id ? profile : candidate));
     void storage.save(profile).catch(() => setStorageError(strings.saveError));
   }
 
@@ -87,12 +103,19 @@ export function App({ repository }: AppProps) {
     const profile = createProfile(input);
     try {
       await storage.save(profile);
-      setProfiles((current) => [...current, profile]);
       setActiveProfile(profile);
       setScreen("store");
     } catch {
       setStorageError(strings.createError);
     }
+  }
+
+  async function handleReset(): Promise<void> {
+    if (activeProfile) await storage.remove(activeProfile.id).catch(() => undefined);
+    setActiveProfile(null);
+    setSession(null);
+    setNotice("");
+    setScreen("create");
   }
 
   function startDay(): void {
@@ -204,7 +227,7 @@ export function App({ repository }: AppProps) {
   }
 
   if (loading) return <main className="loading-screen" aria-busy="true">{strings.loading}</main>;
-  if (storageError && !activeProfile && profiles.length === 0) {
+  if (storageError && !activeProfile) {
     return <main className="loading-screen"><h1>{strings.errorTitle}</h1><p>{storageError}</p><button type="button" className="primary-button" onClick={() => window.location.reload()}>{strings.retry}</button></main>;
   }
 
@@ -213,50 +236,34 @@ export function App({ repository }: AppProps) {
       <a className="skip-link" href="#main-content">{strings.skipToContent}</a>
       {updateAvailable && <div className="update-notice" role="status">{strings.updateNotice} <button type="button" className="secondary-button" onClick={() => window.location.reload()}>{strings.updateButton}</button></div>}
       {storageError && <div className="storage-warning" role="alert" aria-live="assertive">{storageError}</div>}
-      {screen === "profiles" && <ProfileSelect strings={strings} profiles={profiles} onCreate={() => setScreen("create")} onSelect={(profile) => { setActiveProfile(profile); setScreen("store"); }} />}
-      {screen === "create" && <ProfileCreate strings={strings} onCancel={() => setScreen("profiles")} onCreate={handleCreate} />}
-      {screen === "store" && activeProfile && <StoreOverview strings={strings} profile={activeProfile} notice={notice} onStart={startDay} onShop={() => setScreen("shop")} onSettings={() => setScreen("settings")} onAchievements={() => setScreen("achievements")} onSwitch={() => { setActiveProfile(null); setScreen("profiles"); }} />}
+      {screen === "create" && <ProfileCreate strings={strings} onCreate={handleCreate} />}
+      {screen === "store" && activeProfile && <StoreOverview strings={strings} profile={activeProfile} notice={notice} onStart={startDay} onShop={() => setScreen("shop")} onSettings={() => setScreen("settings")} onAchievements={() => setScreen("achievements")} />}
       {screen === "game" && activeProfile && session && <GameScreen strings={strings} profile={activeProfile} session={session} onStartQuestion={() => setSession((current) => current ? { ...current, phase: "question" } : current)} onSelectQuantity={(quantity) => setSession((current) => current ? selectQuantity(current, quantity) : current)} onAnswer={answerQuestion} onRetry={() => setSession((current) => current ? retryQuestion(current) : current)} onContinue={() => setSession((current) => current ? continueAfterFeedback(current) : current)} onLeave={() => setScreen("store")} onFinish={finishDay} />}
       {screen === "shop" && activeProfile && <ShopScreen strings={strings} profile={activeProfile} onBack={() => setScreen("store")} onPurchase={purchaseProductById} onCosmeticPurchase={purchaseCosmetic} />}
       {screen === "achievements" && activeProfile && <AchievementsScreen strings={strings} profile={activeProfile} onBack={() => setScreen("store")} />}
-      {screen === "settings" && activeProfile && <SettingsScreen strings={strings} profile={activeProfile} onBack={() => setScreen("store")} onSave={saveSettings} />}
+      {screen === "settings" && activeProfile && <SettingsScreen strings={strings} profile={activeProfile} onBack={() => setScreen("store")} onSave={saveSettings} onReset={handleReset} />}
     </div>
   );
 }
 
-function ProfileSelect({ strings, profiles, onCreate, onSelect }: { strings: LocaleBundle; profiles: PlayerProfile[]; onCreate: () => void; onSelect: (profile: PlayerProfile) => void }) {
-  return (
-    <main id="main-content" className="welcome-screen">
-      <div className="brand-mark" aria-hidden="true"><span>✦</span></div>
-      <p className="eyebrow">{strings.brandTag}</p>
-      <h1>{strings.appName}</h1>
-      <p className="lead">{strings.lead}</p>
-      <section className="profile-panel" aria-labelledby="players-title">
-        <h2 id="players-title">{strings.playerTitle}</h2>
-        {profiles.length === 0 ? <p className="muted">{strings.emptyState}</p> : <div className="profile-grid">{profiles.map((profile) => <button type="button" className="profile-card" key={profile.id} aria-label={strings.selectPlayerLabel(profile.nickname)} onClick={() => onSelect(profile)}><Avatar avatar={profile.avatar} size="small" reducedMotion={profile.accessibility.reducedMotion} strings={strings} /><span><strong>{profile.nickname}</strong><small>{strings.playerSummary(strings.storeText(getStore(profile.store.storeId)).name, profile.day)}</small></span></button>)}</div>}
-        <button type="button" className="primary-button" onClick={onCreate}>{strings.createPlayer}</button>
-      </section>
-    </main>
-  );
-}
-
-function ProfileCreate({ strings, onCancel, onCreate }: { strings: LocaleBundle; onCancel: () => void; onCreate: (input: CreateProfileInput) => Promise<void> }) {
+function ProfileCreate({ strings, onCreate }: { strings: LocaleBundle; onCreate: (input: CreateProfileInput) => Promise<void> }) {
   const [nickname, setNickname] = useState("");
   const [storeId, setStoreId] = useState<StoreId>("bookstore");
   const [style, setStyle] = useState<StoreStyle>("sunrise");
-  const [avatar, setAvatar] = useState<AvatarConfig>({ skin: "warm", hair: "curly", outfit: "apron", accessory: "none" });
+  const [mascot, setMascot] = useState<MascotConfig>(DEFAULT_MASCOT);
   const [reducedMotion, setReducedMotion] = useState(false);
   const [largeText, setLargeText] = useState(false);
 
   return (
-    <main id="main-content" className="form-screen">
-      <button type="button" className="text-button" onClick={onCancel}>{strings.back}</button>
-      <p className="eyebrow">{strings.firstStep}</p>
-      <h1>{strings.createProfile}</h1>
-      <form onSubmit={(event) => { event.preventDefault(); void onCreate({ nickname, storeId, style, avatar, accessibility: { reducedMotion, largeText } }); }}>
+    <main id="main-content" tabIndex={-1} className="form-screen">
+      <div className="brand-mark" aria-hidden="true"><span>✦</span></div>
+      <p className="eyebrow">{strings.brandTag}</p>
+      <h1>{strings.appName}</h1>
+      <p className="lead">{strings.lead}</p>
+      <h2>{strings.createProfile}</h2>
+      <form onSubmit={(event) => { event.preventDefault(); void onCreate({ nickname, storeId, style, mascot, accessibility: { reducedMotion, largeText } }); }}>
         <label htmlFor="nickname">{strings.nicknameLabel}</label>
         <input id="nickname" value={nickname} onChange={(event) => setNickname(event.target.value)} placeholder={strings.nicknamePlaceholder} maxLength={28} autoFocus />
-        <div className="suggestion-row" aria-label={strings.nicknameSuggestionsLabel}>{strings.nicknameSuggestions.map((suggestion) => <button type="button" className="chip-button" key={suggestion} onClick={() => setNickname(suggestion)}>{suggestion}</button>)}</div>
 
         <fieldset>
           <legend>{strings.chooseStore}</legend>
@@ -267,7 +274,15 @@ function ProfileCreate({ strings, onCancel, onCreate }: { strings: LocaleBundle;
 
         <fieldset>
           <legend>{strings.personalAvatar}</legend>
-          <div className="avatar-editor"><Avatar avatar={avatar} size="large" reducedMotion={reducedMotion} strings={strings} /><div className="select-grid"><label>{strings.visual}<select value={avatar.skin} onChange={(event) => setAvatar({ ...avatar, skin: event.target.value as AvatarConfig["skin"] })}>{(["sunny", "warm", "deep"] as const).map((option) => <option value={option} key={option}>{strings.avatarOptions.skin[option]}</option>)}</select></label><label>{strings.hair}<select value={avatar.hair} onChange={(event) => setAvatar({ ...avatar, hair: event.target.value as AvatarConfig["hair"] })}>{(["curly", "short", "long"] as const).map((option) => <option value={option} key={option}>{strings.avatarOptions.hair[option]}</option>)}</select></label><label>{strings.outfit}<select value={avatar.outfit} onChange={(event) => setAvatar({ ...avatar, outfit: event.target.value as AvatarConfig["outfit"] })}>{(["apron", "jacket", "overalls"] as const).map((option) => <option value={option} key={option}>{strings.avatarOptions.outfit[option]}</option>)}</select></label><label>{strings.accessory}<select value={avatar.accessory} onChange={(event) => setAvatar({ ...avatar, accessory: event.target.value as AvatarConfig["accessory"] })}>{(["none", "cap", "glasses", "headphones"] as const).map((option) => <option value={option} key={option}>{strings.avatarOptions.accessory[option]}</option>)}</select></label></div></div>
+          <div className="mascot-editor">
+            <Mascot kind={mascot.kind} color={mascot.color} size={132} reducedMotion={reducedMotion} />
+            <div className="mascot-choices">
+              <p className="choice-label">{strings.mascotKindLabel}</p>
+              <div className="chip-row">{MASCOT_KINDS.map((kind) => <button type="button" key={kind} className={`mascot-chip ${mascot.kind === kind ? "selected" : ""}`} aria-pressed={mascot.kind === kind} onClick={() => setMascot({ ...mascot, kind })}><Mascot kind={kind} color={mascot.color} size={44} reducedMotion />{strings.mascotKinds[kind]}</button>)}</div>
+              <p className="choice-label">{strings.mascotColorLabel}</p>
+              <div className="chip-row">{MASCOT_COLORS.map((color) => <button type="button" key={color} className={`mascot-chip ${mascot.color === color ? "selected" : ""}`} aria-pressed={mascot.color === color} onClick={() => setMascot({ ...mascot, color })}><span className="color-dot" style={{ background: getMascotPalette(color).accent }} aria-hidden="true" />{strings.mascotColors[color]}</button>)}</div>
+            </div>
+          </div>
         </fieldset>
 
         <fieldset><legend>{strings.quickSettings}</legend><label className="check-row"><input type="checkbox" checked={reducedMotion} onChange={(event) => setReducedMotion(event.target.checked)} /> {strings.reduceMotion}</label><label className="check-row"><input type="checkbox" checked={largeText} onChange={(event) => setLargeText(event.target.checked)} /> {strings.largeText}</label></fieldset>
@@ -277,45 +292,59 @@ function ProfileCreate({ strings, onCancel, onCreate }: { strings: LocaleBundle;
   );
 }
 
-function StoreOverview({ strings, profile, notice, onStart, onShop, onSettings, onAchievements, onSwitch }: { strings: LocaleBundle; profile: PlayerProfile; notice: string; onStart: () => void; onShop: () => void; onSettings: () => void; onAchievements: () => void; onSwitch: () => void }) {
+function StoreOverview({ strings, profile, notice, onStart, onShop, onSettings, onAchievements }: { strings: LocaleBundle; profile: PlayerProfile; notice: string; onStart: () => void; onShop: () => void; onSettings: () => void; onAchievements: () => void }) {
   const store = getStore(profile.store.storeId);
   const storeText = strings.storeText(store);
   const objective = createDailyObjective(profile.day + profile.id.length);
   const objectiveText = strings.objectiveText(objective);
   const objectiveDone = profile.objectives.completed.includes(objective.id);
+  // Fecha o ciclo vender -> juntar -> comprar: sem isto a criança não descobre
+  // sozinha para que serve o dinheiro que acabou de entrar no caixa.
+  const nextProduct = store.products
+    .filter((candidate) => !profile.store.unlockedProducts.includes(candidate.id))
+    .sort((a, b) => (a.unlockCost ?? 0) - (b.unlockCost ?? 0))[0];
+  const nextCost = nextProduct?.unlockCost ?? 0;
+  // A loja mostra o que ela realmente tem: os produtos liberados vão para as prateleiras.
+  const half = Math.ceil(profile.store.unlockedProducts.length / 2);
+  const shelves = [profile.store.unlockedProducts.slice(0, half), profile.store.unlockedProducts.slice(half)];
   return (
-    <main id="main-content" className="game-screen">
+    <main id="main-content" tabIndex={-1} className="game-screen">
       <header className="topbar"><div><p className="eyebrow">{strings.yourShop}</p><h1>{storeText.name}</h1></div><div className="cash-badge" aria-label={strings.cashBadgeLabel(profile.cash)}>{strings.money(profile.cash)}</div></header>
       {notice && <div className="notice" role="status" aria-live="polite">{notice}</div>}
-      <section className={`diorama style-${profile.store.style}`} style={{ "--store-color": store.color } as React.CSSProperties} aria-label={strings.dioramaLabel(storeText.name)}><div className="diorama-sky" /><div className="block-shelf shelf-one" /><div className="block-shelf shelf-two" /><div className="counter" /><div className="expansion-blocks" aria-hidden="true">{profile.store.purchasedProducts.map((productId) => <span key={productId} />)}</div><Avatar avatar={profile.avatar} size="large" reducedMotion={profile.accessibility.reducedMotion} strings={strings} /></section>
+      <section className={`diorama style-${profile.store.style}`} style={{ "--store-color": store.color } as React.CSSProperties} aria-label={strings.dioramaLabel(storeText.name)}><div className="diorama-sky" /><div className="block-shelf shelf-one" aria-hidden="true">{shelves[0].map((productId) => <ProductArt key={productId} id={productId} size="small" />)}</div><div className="block-shelf shelf-two" aria-hidden="true">{shelves[1].map((productId) => <ProductArt key={productId} id={productId} size="small" />)}</div><div className="counter" /><div className="expansion-blocks" aria-hidden="true">{profile.store.purchasedProducts.map((productId) => <ProductArt key={productId} id={productId} size="small" />)}</div><Mascot kind={profile.mascot.kind} color={profile.mascot.color} size={132} reducedMotion={profile.accessibility.reducedMotion} className="diorama-mascot" /></section>
       <section className="store-actions"><div><p className="eyebrow">{strings.dayAndChapter(profile.day, profile.chapter)}</p><h2>{strings.ready}</h2><p className="muted">{strings.readyDescription}</p><div className="objective-line"><strong>{strings.objectiveOptional}: {objectiveText.title}</strong><span>{objectiveDone ? strings.completed : objectiveText.description}</span></div><p className="achievement-line">{strings.storeAchievements}: <strong>{profile.achievements.length}</strong></p></div><button type="button" className="primary-button" onClick={onStart}>{strings.startDay}</button></section>
-      <nav className="bottom-actions" aria-label={strings.storeActionsLabel}><button type="button" onClick={onShop}>{strings.menuShop}</button><button type="button" onClick={onAchievements}>{strings.menuAchievements}</button><button type="button" onClick={onSettings}>{strings.menuSettings}</button><button type="button" onClick={onSwitch}>{strings.menuSwitchPlayer}</button></nav>
+      <section className="shop-guide">
+        {nextProduct
+          ? <><ProductArt id={nextProduct.id} size="small" platform platformColor={store.color} /><div><p className="eyebrow">{strings.nextGoal}</p><p>{profile.cash >= nextCost ? strings.canBuyNow(strings.productName(nextProduct), strings.money(nextCost)) : strings.missingAmount(strings.money(nextCost - profile.cash), strings.productName(nextProduct))}</p></div><button type="button" className="secondary-button" onClick={onShop}>{strings.goShopping}</button></>
+          : <p>{strings.allProductsOwned}</p>}
+      </section>
+      {/* Os ícones são decorativos: aria-hidden mantém o nome acessível só com o texto. */}
+      <nav className="bottom-actions" aria-label={strings.storeActionsLabel}><button type="button" onClick={onShop}><span className="menu-icon" aria-hidden="true">🛒</span>{strings.menuShop}</button><button type="button" onClick={onAchievements}><span className="menu-icon" aria-hidden="true">🏆</span>{strings.menuAchievements}</button><button type="button" onClick={onSettings}><span className="menu-icon" aria-hidden="true">⚙️</span>{strings.menuSettings}</button></nav>
     </main>
   );
 }
 
 function GameScreen({ strings, profile, session, onStartQuestion, onSelectQuantity, onAnswer, onRetry, onContinue, onLeave, onFinish }: { strings: LocaleBundle; profile: PlayerProfile; session: DaySession; onStartQuestion: () => void; onSelectQuantity: (quantity: number) => void; onAnswer: (value: number) => void; onRetry: () => void; onContinue: () => void; onLeave: () => void; onFinish: () => void }) {
   const visit = session.phase === "summary" ? undefined : getCurrentVisit(session);
-  if (!visit) return <main id="main-content" className="game-screen"><section className="summary-card"><p className="eyebrow">{strings.finishedDay}</p><h1>{strings.storeSummary}</h1><p className="summary-total">{strings.money(session.revenue)}</p><p>{strings.summaryText}</p><button type="button" className="primary-button" onClick={onFinish}>{strings.saveCash}</button></section></main>;
+  if (!visit) return <main id="main-content" tabIndex={-1} className="game-screen"><section className="summary-card"><p className="eyebrow">{strings.finishedDay}</p><h1>{strings.storeSummary}</h1><p className="summary-total">{strings.money(session.revenue)}</p><p>{strings.summaryText}</p><button type="button" className="primary-button" onClick={onFinish}>{strings.saveCash}</button></section></main>;
 
   const alternatives = generateAlternatives(visit.fact, session.seed + session.currentIndex);
   const hintText = strings.hintText(visit.fact, session.errorsForCurrent);
-  const productName = strings.productName(visit.product).toLowerCase();
-  const request = strings.customerWants(visit.quantity, productName);
+  const request = strings.customerWants(visit.quantity, visit.product);
   return (
-    <main id="main-content" className="game-screen service-screen">
-      <header className="service-header"><button type="button" className="text-button" aria-label={strings.backToShopLabel} onClick={onLeave}>{strings.backToShop}</button><span>{strings.customerCounter(session.completedVisits + 1, session.visits.length)}</span><strong>{strings.money(session.revenue)}</strong></header>
-      <section className="customer-card"><Avatar avatar={profile.avatar} size="small" motion={session.feedback?.kind === "correct" ? "celebrate" : "idle"} reducedMotion={profile.accessibility.reducedMotion} strings={strings} /><div><p className="eyebrow">{strings.customerArrived(visit.customer.name)}</p><h1>{strings.customerPhrase(visit.customer)}</h1><p className="customer-request">{request.before}<strong>{request.emphasis}</strong>{request.after}</p></div></section>
+    <main id="main-content" tabIndex={-1} className="game-screen service-screen">
+      <header className="service-header"><button type="button" className="text-button" aria-label={strings.backToShopLabel} onClick={onLeave}>{strings.backToShop}</button><span>{strings.customerCounter(session.completedVisits + 1, session.visits.length)}</span><span className="header-money"><span className="header-money-item"><small>{strings.cashLabel}</small><strong>{strings.money(profile.cash)}</strong></span><span className="header-money-item"><small>{strings.todayLabel}</small><strong>{strings.money(session.revenue)}</strong></span></span></header>
+      <section className="customer-card"><Mascot kind={profile.mascot.kind} color={profile.mascot.color} size={76} mood={session.feedback?.kind === "correct" ? "celebrate" : "idle"} reducedMotion={profile.accessibility.reducedMotion} /><div><p className="eyebrow">{strings.customerArrived(visit.customer.name)}</p><h1>{strings.customerPhrase(visit.customer)}</h1><p className="customer-request">{request.before}<strong>{request.emphasis}</strong>{request.after}</p></div><ProductArt id={visit.product.id} size="medium" platform /></section>
       {session.phase === "customer" && <section className="question-card intro-card"><p>{strings.howMany}</p><button type="button" className="primary-button" onClick={onStartQuestion}>{strings.seeAccount}</button></section>}
-      {session.phase === "product-select" && <section className="question-card"><p className="eyebrow">{strings.separateProducts}</p><h2>{strings.quantityQuestion(productName)}</h2><div className="product-counter"><button type="button" aria-label={strings.removeProduct} onClick={() => onSelectQuantity(session.selectedQuantity - 1)} disabled={session.selectedQuantity === 0}>−</button><div className="product-pile" aria-label={strings.quantityPileLabel(session.selectedQuantity, visit.quantity)}>{Array.from({ length: session.selectedQuantity }, (_, index) => <span key={index} aria-hidden="true" className="mini-block" />)}</div><button type="button" aria-label={strings.addProduct} onClick={() => onSelectQuantity(session.selectedQuantity + 1)} disabled={session.selectedQuantity === visit.quantity}>+</button></div><p className="muted">{strings.quantityProgress(session.selectedQuantity, visit.quantity)}</p></section>}
-      {(session.phase === "question" || session.phase === "feedback") && <section className="question-card"><p className="equation-context">{strings.equation(visit.quantity, visit.product.price)}</p><h2>{strings.qaTitle}</h2><div className="alternatives" role="group" aria-label={strings.answersLabel}>{alternatives.map((alternative) => <button type="button" key={alternative.value} className="answer-button" onClick={() => session.phase === "question" && onAnswer(alternative.value)} disabled={session.phase === "feedback"}>{strings.money(alternative.value)}</button>)}</div>{session.phase === "feedback" && session.feedback?.kind === "incorrect" && <div className="hint-box" role="status" aria-live="polite"><strong>{strings.wrongAnswer}</strong><p>{hintText}</p>{session.errorsForCurrent >= 4 ? <button type="button" className="secondary-button" onClick={() => onAnswer(visit.fact.answer)}>{strings.useFullAnswer}</button> : <button type="button" className="secondary-button" onClick={onRetry}>{strings.tryAgain}</button>}</div>}{session.phase === "feedback" && session.feedback?.kind === "correct" && <div className="success-box" role="status" aria-live="polite"><strong>{strings.correctAnswer(visit.fact.answer)}</strong><p>{strings.answerAccepted}</p><button type="button" className="primary-button" onClick={onContinue}>{session.completedVisits === session.visits.length ? strings.seeCloseout : strings.nextCustomer}</button></div>}</section>}
+      {session.phase === "product-select" && <section className="question-card"><p className="eyebrow">{strings.separateProducts}</p><h2>{strings.quantityQuestion(visit.product)}</h2><div className="product-counter"><button type="button" aria-label={strings.removeProduct} onClick={() => onSelectQuantity(session.selectedQuantity - 1)} disabled={session.selectedQuantity === 0}>−</button><div className="product-pile" aria-label={strings.quantityPileLabel(session.selectedQuantity, visit.quantity)}>{Array.from({ length: session.selectedQuantity }, (_, index) => <ProductArt key={index} id={visit.product.id} size="tiny" />)}</div><button type="button" aria-label={strings.addProduct} onClick={() => onSelectQuantity(session.selectedQuantity + 1)} disabled={session.selectedQuantity === visit.quantity}>+</button></div><p className="muted">{strings.quantityProgress(session.selectedQuantity, visit.quantity)}</p></section>}
+      {(session.phase === "question" || session.phase === "feedback") && <section className="question-card">{/* O desenho é redundante com a frase abaixo: escondê-lo evita 10 anúncios iguais no leitor de tela. */}<div className="unit-array" aria-hidden="true">{Array.from({ length: visit.quantity }, (_, index) => <span className="unit-item" key={index}><ProductArt id={visit.product.id} size="tiny" /><span className="unit-price">{strings.money(visit.product.price)}</span></span>)}</div><p className="unit-explain">{strings.unitExplain(visit.quantity, visit.product, strings.money(visit.product.price))}</p><p className="equation-context">{strings.equation(visit.quantity, visit.product.price)}</p><h2>{strings.qaTitle}</h2><div className="alternatives" role="group" aria-label={strings.answersLabel}>{alternatives.map((alternative) => <button type="button" key={alternative.value} className="answer-button" onClick={() => session.phase === "question" && onAnswer(alternative.value)} disabled={session.phase === "feedback"}>{strings.money(alternative.value)}</button>)}</div>{session.phase === "feedback" && session.feedback?.kind === "incorrect" && <div className="hint-box" role="status" aria-live="polite"><strong>{strings.wrongAnswer}</strong><p>{hintText}</p>{session.errorsForCurrent >= 4 ? <button type="button" className="secondary-button" onClick={() => onAnswer(visit.fact.answer)}>{strings.useFullAnswer}</button> : <button type="button" className="secondary-button" onClick={onRetry}>{strings.tryAgain}</button>}</div>}{session.phase === "feedback" && session.feedback?.kind === "correct" && <div className="success-box" role="status" aria-live="polite"><strong>{strings.correctAnswer(visit.fact.answer)}</strong><p>{strings.answerAccepted}</p><button type="button" className="primary-button" onClick={onContinue}>{session.completedVisits === session.visits.length ? strings.seeCloseout : strings.nextCustomer}</button></div>}</section>}
     </main>
   );
 }
 
 function AchievementsScreen({ strings, profile, onBack }: { strings: LocaleBundle; profile: PlayerProfile; onBack: () => void }) {
   const achievements = getAchievementProgress(profile.achievements);
-  return <main id="main-content" className="form-screen"><button type="button" className="text-button" onClick={onBack}>← {strings.backToShopLabel}</button><p className="eyebrow">{strings.achievementsEyebrow}</p><h1>{strings.achievements}</h1><p className="muted">{strings.achievementsDescription}</p><div className="product-grid">{achievements.map((achievement) => { const text = strings.achievementText(achievement); return <article className={`product-card achievement-card ${achievement.unlocked ? "unlocked" : "locked"}`} key={achievement.id}><span className="product-icon" aria-hidden="true">{achievement.unlocked ? "✓" : "○"}</span><h2>{text.title}</h2><p>{text.description}</p><strong>{achievement.unlocked ? strings.achievementUnlocked : strings.achievementLocked}</strong></article>; })}</div></main>;
+  return <main id="main-content" tabIndex={-1} className="form-screen"><button type="button" className="text-button" onClick={onBack}>← {strings.backToShopLabel}</button><p className="eyebrow">{strings.achievementsEyebrow}</p><h1>{strings.achievements}</h1><p className="muted">{strings.achievementsDescription}</p><div className="product-grid">{achievements.map((achievement) => { const text = strings.achievementText(achievement); return <article className={`product-card achievement-card ${achievement.unlocked ? "unlocked" : "locked"}`} key={achievement.id}><span className="product-icon" aria-hidden="true">{achievement.unlocked ? "✓" : "○"}</span><h2>{text.title}</h2><p>{text.description}</p><strong>{achievement.unlocked ? strings.achievementUnlocked : strings.achievementLocked}</strong></article>; })}</div></main>;
 }
 
 const COSMETICS = [
@@ -326,15 +355,17 @@ const COSMETICS = [
 
 function ShopScreen({ strings, profile, onBack, onPurchase, onCosmeticPurchase }: { strings: LocaleBundle; profile: PlayerProfile; onBack: () => void; onPurchase: (productId: string, cost: number) => void; onCosmeticPurchase: (cosmeticId: string, cost: number) => void }) {
   const store = getStore(profile.store.storeId);
-  return <main id="main-content" className="form-screen"><button type="button" className="text-button" onClick={onBack}>← {strings.backToShopLabel}</button><header className="topbar"><div><p className="eyebrow">{strings.catalog}</p><h1>{strings.productsNew}</h1></div><div className="cash-badge" aria-label={strings.cashBadgeLabel(profile.cash)}>{strings.money(profile.cash)}</div></header><p className="muted">{strings.catalogDescription}</p><div className="product-grid">{store.products.map((product) => { const unlocked = profile.store.unlockedProducts.includes(product.id); return <article className={`product-card ${unlocked ? "unlocked" : ""}`} key={product.id}><span className="product-icon" aria-hidden="true">▦</span><h2>{strings.productName(product)}</h2><p>{strings.priceLine(product.price)}</p>{unlocked ? <strong>{strings.available}</strong> : <button type="button" className="secondary-button" onClick={() => onPurchase(product.id, product.unlockCost ?? 80)}>{strings.buyForLabel(product.unlockCost ?? 80)}</button>}</article>; })}</div><h2 className="section-title">{strings.decor}</h2><div className="product-grid">{COSMETICS.map((cosmetic) => { const owned = profile.store.cosmetics.includes(cosmetic.id); return <article className="product-card" key={cosmetic.id}><span className="product-icon" aria-hidden="true">✦</span><h2>{strings.cosmeticName(cosmetic.id, cosmetic.name)}</h2><p>{strings.decorDescription}</p>{owned ? <strong>{strings.inCollection}</strong> : <button type="button" className="secondary-button" onClick={() => onCosmeticPurchase(cosmetic.id, cosmetic.cost)}>{strings.buyForLabel(cosmetic.cost)}</button>}</article>; })}</div></main>;
+  return <main id="main-content" tabIndex={-1} className="form-screen"><button type="button" className="text-button" onClick={onBack}>← {strings.backToShopLabel}</button><header className="topbar"><div><p className="eyebrow">{strings.catalog}</p><h1>{strings.productsNew}</h1></div><div className="cash-badge" aria-label={strings.cashBadgeLabel(profile.cash)}>{strings.money(profile.cash)}</div></header><p className="muted">{strings.catalogDescription}</p><div className="product-grid">{store.products.map((product) => { const unlocked = profile.store.unlockedProducts.includes(product.id); return <article className={`product-card ${unlocked ? "unlocked" : ""}`} key={product.id}><ProductArt id={product.id} size="medium" platform platformColor={store.color} /><h2>{strings.productName(product)}</h2><p>{strings.priceLine(product.price)}</p>{unlocked ? <strong>{strings.available}</strong> : <button type="button" className="secondary-button" onClick={() => onPurchase(product.id, product.unlockCost ?? 80)}>{strings.buyForLabel(product.unlockCost ?? 80)}</button>}</article>; })}</div><h2 className="section-title">{strings.decor}</h2><div className="product-grid">{COSMETICS.map((cosmetic) => { const owned = profile.store.cosmetics.includes(cosmetic.id); return <article className="product-card" key={cosmetic.id}><ProductArt id={cosmetic.id} size="medium" platform /><h2>{strings.cosmeticName(cosmetic.id, cosmetic.name)}</h2><p>{strings.decorDescription}</p>{owned ? <strong>{strings.inCollection}</strong> : <button type="button" className="secondary-button" onClick={() => onCosmeticPurchase(cosmetic.id, cosmetic.cost)}>{strings.buyForLabel(cosmetic.cost)}</button>}</article>; })}</div></main>;
 }
 
-function SettingsScreen({ strings, profile, onBack, onSave }: { strings: LocaleBundle; profile: PlayerProfile; onBack: () => void; onSave: (settings: AccessibilitySettings, audio: AudioSettings) => void }) {
+function SettingsScreen({ strings, profile, onBack, onSave, onReset }: { strings: LocaleBundle; profile: PlayerProfile; onBack: () => void; onSave: (settings: AccessibilitySettings, audio: AudioSettings) => void; onReset: () => Promise<void> }) {
   const [settings, setSettings] = useState(profile.accessibility);
   const [audio, setAudio] = useState(profile.audio);
-  return <main id="main-content" className="form-screen"><button type="button" className="text-button" onClick={onBack}>← {strings.backToShopLabel}</button><p className="eyebrow">{strings.settingsEyebrow}</p><h1>{strings.settings}</h1><fieldset><legend>{strings.accessibility}</legend><label className="check-row"><input type="checkbox" checked={settings.reducedMotion} onChange={(event) => setSettings({ ...settings, reducedMotion: event.target.checked })} /> {strings.reduceMotion}</label><label className="check-row"><input type="checkbox" checked={settings.largeText} onChange={(event) => setSettings({ ...settings, largeText: event.target.checked })} /> {strings.largeText}</label><label className="check-row"><input type="checkbox" checked={settings.highContrast} onChange={(event) => setSettings({ ...settings, highContrast: event.target.checked })} /> {strings.highContrast}</label></fieldset><fieldset><legend>{strings.audioAndNarration}</legend><label className="check-row"><input type="checkbox" checked={audio.effects} onChange={(event) => setAudio({ ...audio, effects: event.target.checked })} /> {strings.audioEffects}</label><label className="check-row"><input type="checkbox" checked={audio.narration} onChange={(event) => setAudio({ ...audio, narration: event.target.checked })} /> {strings.narration}</label></fieldset><button type="button" className="primary-button" onClick={() => onSave(settings, audio)}>{strings.saveSettings}</button></main>;
+  // Confirmação em dois passos em vez de window.confirm: apagar a loja de uma
+  // criança por toque acidental seria irreversível.
+  const [confirmingReset, setConfirmingReset] = useState(false);
+  return <main id="main-content" tabIndex={-1} className="form-screen"><button type="button" className="text-button" onClick={onBack}>← {strings.backToShopLabel}</button><p className="eyebrow">{strings.settingsEyebrow}</p><h1>{strings.settings}</h1><fieldset><legend>{strings.accessibility}</legend><label className="check-row"><input type="checkbox" checked={settings.reducedMotion} onChange={(event) => setSettings({ ...settings, reducedMotion: event.target.checked })} /> {strings.reduceMotion}</label><label className="check-row"><input type="checkbox" checked={settings.largeText} onChange={(event) => setSettings({ ...settings, largeText: event.target.checked })} /> {strings.largeText}</label><label className="check-row"><input type="checkbox" checked={settings.highContrast} onChange={(event) => setSettings({ ...settings, highContrast: event.target.checked })} /> {strings.highContrast}</label></fieldset><fieldset><legend>{strings.audioAndNarration}</legend><label className="check-row"><input type="checkbox" checked={audio.effects} onChange={(event) => setAudio({ ...audio, effects: event.target.checked })} /> {strings.audioEffects}</label><label className="check-row"><input type="checkbox" checked={audio.narration} onChange={(event) => setAudio({ ...audio, narration: event.target.checked })} /> {strings.narration}</label></fieldset><button type="button" className="primary-button" onClick={() => onSave(settings, audio)}>{strings.saveSettings}</button><section className="danger-zone"><h2>{strings.resetTitle}</h2><p className="muted">{strings.resetDescription}</p>{confirmingReset
+    ? <div className="reset-confirm" role="alertdialog" aria-label={strings.resetConfirmQuestion}><p><strong>{strings.resetConfirmQuestion}</strong></p><button type="button" className="secondary-button" onClick={() => void onReset()}>{strings.resetConfirm}</button><button type="button" className="primary-button" onClick={() => setConfirmingReset(false)}>{strings.resetCancel}</button></div>
+    : <button type="button" className="secondary-button" onClick={() => setConfirmingReset(true)}>{strings.resetButton}</button>}</section></main>;
 }
 
-function Avatar({ avatar, size, motion = "idle", reducedMotion = false, strings }: { avatar: AvatarConfig; size: "small" | "large"; motion?: AvatarMotion; reducedMotion?: boolean; strings: LocaleBundle }) {
-  return <div role="img" className={`avatar avatar-${size} skin-${avatar.skin} hair-${avatar.hair} outfit-${avatar.outfit} ${getAvatarMotionClass(reducedMotion, motion)}`} aria-label={strings.avatarLabel}><span className="avatar-hair" aria-hidden="true" /><span className="avatar-face" aria-hidden="true" /><span className="avatar-body" aria-hidden="true" /><span className="avatar-accessory" aria-hidden="true">{avatar.accessory === "cap" ? "⌒" : avatar.accessory === "glasses" ? "◌" : avatar.accessory === "headphones" ? "◡" : ""}</span></div>;
-}

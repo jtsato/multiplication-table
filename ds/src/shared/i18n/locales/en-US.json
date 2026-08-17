@@ -1,0 +1,21 @@
+{
+  "app": {
+    "title": "Times Table Battle",
+    "skipToContent": "Skip to content",
+    "languageGroup": "Language",
+    "welcome": "Welcome to the Times Table Battle!"
+  },
+  "battle": {
+    "title": "Battle",
+    "start": "Start battle",
+    "intro": "A wild {{monster}} appeared!",
+    "hero": "Hero",
+    "hp": "{{hp}} / {{maxHp}}"
+  },
+  "math": {
+    "question": "{{a}} × {{b}} = ?"
+  },
+  "monster": {
+    "slime": "Slime"
+  }
+}

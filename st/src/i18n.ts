@@ -18,13 +18,9 @@ export type AppStrings = {
   updateNotice: string;
   updateButton: string;
 
-  // Profile selection
   brandTag: string;
   appName: string;
   lead: string;
-  playerTitle: string;
-  emptyState: string;
-  createPlayer: string;
 
   // Profile creation
   back: string;
@@ -32,27 +28,18 @@ export type AppStrings = {
   createProfile: string;
   nicknameLabel: string;
   nicknamePlaceholder: string;
-  nicknameSuggestions: string[];
-  nicknameSuggestionsLabel: string;
   chooseStore: string;
   chooseStyle: string;
   personalAvatar: string;
   quickSettings: string;
   start: string;
-  visual: string;
-  hair: string;
-  outfit: string;
-  accessory: string;
   reduceMotion: string;
   largeText: string;
   styleLabels: Record<"sunrise" | "ocean" | "garden", string>;
-  avatarOptions: {
-    skin: Record<"sunny" | "warm" | "deep", string>;
-    hair: Record<"curly" | "short" | "long", string>;
-    outfit: Record<"apron" | "jacket" | "overalls", string>;
-    accessory: Record<"none" | "cap" | "glasses" | "headphones", string>;
-  };
-  avatarLabel: string;
+  mascotKindLabel: string;
+  mascotColorLabel: string;
+  mascotKinds: Record<"antenna" | "cap" | "crown" | "bow" | "leaf", string>;
+  mascotColors: Record<"orange" | "mint" | "berry" | "sky" | "grape" | "sun", string>;
 
   // Store overview
   yourShop: string;
@@ -69,7 +56,17 @@ export type AppStrings = {
   menuShop: string;
   menuAchievements: string;
   menuSettings: string;
-  menuSwitchPlayer: string;
+  resetTitle: string;
+  resetDescription: string;
+  resetButton: string;
+  resetConfirmQuestion: string;
+  resetConfirm: string;
+  resetCancel: string;
+
+  todayLabel: string;
+  nextGoal: string;
+  goShopping: string;
+  allProductsOwned: string;
 
   // Notices
   dayClosedPrefix: string;
@@ -145,36 +142,23 @@ const ptBR: AppStrings = {
   brandTag: "Uma loja para descobrir",
   appName: "Lojinha Maluca",
   lead: "Cada compra esconde uma conta. Vamos descobrir quanto custa?",
-  playerTitle: "Quem vai jogar?",
-  emptyState: "Ainda não há jogadores neste dispositivo.",
-  createPlayer: "Criar novo jogador",
-
   back: "← Voltar",
   firstStep: "Primeiro passo",
   createProfile: "Criar perfil",
   nicknameLabel: "Como você quer ser chamado na sua loja?",
   nicknamePlaceholder: "Seu apelido",
-  nicknameSuggestions: ["Lojista Pixel", "Mestre dos Blocos", "Capitão da Loja"],
-  nicknameSuggestionsLabel: "Sugestões de apelido",
   chooseStore: "Escolha sua loja",
   chooseStyle: "Escolha o estilo da loja",
-  personalAvatar: "Personalize seu avatar",
+  personalAvatar: "Monte seu lojista",
   quickSettings: "Configurações rápidas",
   start: "Começar",
-  visual: "Visual",
-  hair: "Cabelo",
-  outfit: "Roupa",
-  accessory: "Acessório",
   reduceMotion: "Reduzir movimento",
   largeText: "Usar texto grande",
   styleLabels: { sunrise: "Amanhecer", ocean: "Oceano", garden: "Jardim" },
-  avatarOptions: {
-    skin: { sunny: "Dourado", warm: "Quente", deep: "Profundo" },
-    hair: { curly: "Cacheado", short: "Curto", long: "Comprido" },
-    outfit: { apron: "Avental", jacket: "Jaqueta", overalls: "Macacão" },
-    accessory: { none: "Nenhum", cap: "Boné", glasses: "Óculos", headphones: "Fones" },
-  },
-  avatarLabel: "Avatar do lojista",
+  mascotKindLabel: "Escolha o chapéu",
+  mascotColorLabel: "Escolha a cor",
+  mascotKinds: { antenna: "Antena", cap: "Boné", crown: "Coroa", bow: "Laço", leaf: "Folhinha" },
+  mascotColors: { orange: "Laranja", mint: "Menta", berry: "Framboesa", sky: "Céu", grape: "Uva", sun: "Sol" },
 
   yourShop: "Sua loja",
   cashLabel: "Saldo",
@@ -187,10 +171,20 @@ const ptBR: AppStrings = {
   storeAchievements: "Conquistas da loja",
   startDay: "Começar dia",
   storeActionsLabel: "Ações da loja",
-  menuShop: "Produtos novos",
+  menuShop: "Novos produtos",
   menuAchievements: "Conquistas",
   menuSettings: "Configurações",
-  menuSwitchPlayer: "Trocar jogador",
+  resetTitle: "Recomeçar",
+  resetDescription: "Apaga a loja atual e começa tudo de novo, do zero.",
+  resetButton: "Recomeçar do zero",
+  resetConfirmQuestion: "Tem certeza? A loja atual será apagada.",
+  resetConfirm: "Sim, apagar tudo",
+  resetCancel: "Não, continuar jogando",
+
+  todayLabel: "Hoje",
+  nextGoal: "Próxima meta",
+  goShopping: "Ir às compras",
+  allProductsOwned: "Você já tem todos os produtos desta loja. Que loja completa!",
 
   dayClosedPrefix: "Dia fechado!",
   cannotAffordProduct: "Ainda não dá para comprar isso. Vamos juntar mais dinheiro primeiro.",
@@ -211,7 +205,7 @@ const ptBR: AppStrings = {
   useFullAnswer: "Usar a conta completa para continuar",
   tryAgain: "Tentar de novo",
   answerAccepted: "Esse valor entrou nas vendas da loja.",
-  nextCustomer: "Próximo cliente",
+  nextCustomer: "Próxima venda",
   seeCloseout: "Ver fechamento",
 
   finishedDay: "Dia encerrado",
@@ -226,7 +220,7 @@ const ptBR: AppStrings = {
   achievementLocked: "Em descoberta",
 
   catalog: "Catálogo",
-  productsNew: "Produtos novos",
+  productsNew: "Novos produtos para a loja",
   catalogDescription: "Escolha o que vai aparecer na próxima expansão.",
   productPrice: "Preço de venda",
   available: "Disponível",
@@ -264,36 +258,23 @@ const enUS: AppStrings = {
   brandTag: "A shop for discovering",
   appName: "Lojinha Maluca",
   lead: "Every purchase hides a math question. Shall we work out the total?",
-  playerTitle: "Who is playing?",
-  emptyState: "There are no players on this device yet.",
-  createPlayer: "Create new player",
-
   back: "← Back",
   firstStep: "First step",
   createProfile: "Create profile",
   nicknameLabel: "What would you like to be called in your shop?",
   nicknamePlaceholder: "Your nickname",
-  nicknameSuggestions: ["Pixel Shopkeeper", "Block Master", "Shop Captain"],
-  nicknameSuggestionsLabel: "Nickname suggestions",
   chooseStore: "Choose your shop",
   chooseStyle: "Choose your shop style",
-  personalAvatar: "Customize your avatar",
+  personalAvatar: "Build your shopkeeper",
   quickSettings: "Quick settings",
   start: "Start",
-  visual: "Look",
-  hair: "Hair",
-  outfit: "Outfit",
-  accessory: "Accessory",
   reduceMotion: "Reduce motion",
   largeText: "Use large text",
   styleLabels: { sunrise: "Sunrise", ocean: "Ocean", garden: "Garden" },
-  avatarOptions: {
-    skin: { sunny: "Golden", warm: "Warm", deep: "Deep" },
-    hair: { curly: "Curly", short: "Short", long: "Long" },
-    outfit: { apron: "Apron", jacket: "Jacket", overalls: "Overalls" },
-    accessory: { none: "None", cap: "Cap", glasses: "Glasses", headphones: "Headphones" },
-  },
-  avatarLabel: "Shopkeeper avatar",
+  mascotKindLabel: "Pick the hat",
+  mascotColorLabel: "Pick the colour",
+  mascotKinds: { antenna: "Antenna", cap: "Cap", crown: "Crown", bow: "Bow", leaf: "Little leaf" },
+  mascotColors: { orange: "Orange", mint: "Mint", berry: "Berry", sky: "Sky", grape: "Grape", sun: "Sun" },
 
   yourShop: "Your shop",
   cashLabel: "Balance",
@@ -309,7 +290,17 @@ const enUS: AppStrings = {
   menuShop: "New products",
   menuAchievements: "Achievements",
   menuSettings: "Settings",
-  menuSwitchPlayer: "Switch player",
+  resetTitle: "Start over",
+  resetDescription: "Deletes the current shop and starts again from scratch.",
+  resetButton: "Start from scratch",
+  resetConfirmQuestion: "Are you sure? The current shop will be deleted.",
+  resetConfirm: "Yes, delete everything",
+  resetCancel: "No, keep playing",
+
+  todayLabel: "Today",
+  nextGoal: "Next goal",
+  goShopping: "Go shopping",
+  allProductsOwned: "You already own every product in this shop. What a complete shop!",
 
   dayClosedPrefix: "Day closed!",
   cannotAffordProduct: "We cannot buy that yet. Let's save up a little more first.",
@@ -330,7 +321,7 @@ const enUS: AppStrings = {
   useFullAnswer: "Use the full calculation to continue",
   tryAgain: "Try again",
   answerAccepted: "That amount went into the shop's sales.",
-  nextCustomer: "Next customer",
+  nextCustomer: "Next sale",
   seeCloseout: "See closing",
 
   finishedDay: "Day closed",
@@ -345,7 +336,7 @@ const enUS: AppStrings = {
   achievementLocked: "Still to discover",
 
   catalog: "Catalog",
-  productsNew: "New products",
+  productsNew: "New products for the shop",
   catalogDescription: "Choose what appears in the next expansion.",
   productPrice: "Sale price",
   available: "Available",
@@ -379,6 +370,73 @@ export const appStrings: Record<UserLocale, AppStrings> = {
  * pt-BR inside the domain modules. Only the translations away from that canonical copy
  * live here, keyed by the same ids, so the domain stays free of locale plumbing.
  */
+/**
+ * Formas de sentença dos produtos. O plural e o gênero não dão para derivar por regra
+ * em português (revista→revistas mas pincel→pincéis, lápis→lápis), então ficam escritos.
+ * O gênero decide "Quantos/Quantas" e "cada um/cada uma"; em inglês é ignorado.
+ */
+type ProductGrammar = { one: string; many: string; gender: "m" | "f" };
+
+const PRODUCT_GRAMMAR: Record<UserLocale, Record<string, ProductGrammar>> = {
+  "pt-BR": {
+    bookmark: { one: "marcador", many: "marcadores", gender: "m" },
+    magazine: { one: "revista", many: "revistas", gender: "f" },
+    book: { one: "livro", many: "livros", gender: "m" },
+    comic: { one: "quadrinho", many: "quadrinhos", gender: "m" },
+    notebook: { one: "caderno", many: "cadernos", gender: "m" },
+    atlas: { one: "atlas", many: "atlas", gender: "m" },
+    pencil: { one: "lápis", many: "lápis", gender: "m" },
+    brush: { one: "pincel", many: "pincéis", gender: "m" },
+    ruler: { one: "régua", many: "réguas", gender: "f" },
+    "drawing-block": { one: "bloco de desenho", many: "blocos de desenho", gender: "m" },
+    "pencil-case": { one: "estojo", many: "estojos", gender: "m" },
+    "small-canvas": { one: "tela pequena", many: "telas pequenas", gender: "f" },
+    cone: { one: "cone", many: "cones", gender: "m" },
+    rope: { one: "corda", many: "cordas", gender: "f" },
+    "sports-bottle": { one: "garrafa esportiva", many: "garrafas esportivas", gender: "f" },
+    shuttlecock: { one: "peteca", many: "petecas", gender: "f" },
+    ball: { one: "bola", many: "bolas", gender: "f" },
+    racket: { one: "raquete", many: "raquetes", gender: "f" },
+    led: { one: "LED para projeto", many: "LEDs para projeto", gender: "m" },
+    "connection-cable": { one: "cabo de conexão", many: "cabos de conexão", gender: "m" },
+    "electronic-button": { one: "botão eletrônico", many: "botões eletrônicos", gender: "m" },
+    sensor: { one: "sensor", many: "sensores", gender: "m" },
+    "mini-motor": { one: "mini motor", many: "mini motores", gender: "m" },
+    "maker-kit": { one: "kit maker", many: "kits maker", gender: "m" },
+  },
+  "en-US": {
+    bookmark: { one: "bookmark", many: "bookmarks", gender: "m" },
+    magazine: { one: "magazine", many: "magazines", gender: "m" },
+    book: { one: "book", many: "books", gender: "m" },
+    comic: { one: "comic", many: "comics", gender: "m" },
+    notebook: { one: "notebook", many: "notebooks", gender: "m" },
+    atlas: { one: "atlas", many: "atlases", gender: "m" },
+    pencil: { one: "pencil", many: "pencils", gender: "m" },
+    brush: { one: "paintbrush", many: "paintbrushes", gender: "m" },
+    ruler: { one: "ruler", many: "rulers", gender: "m" },
+    "drawing-block": { one: "drawing pad", many: "drawing pads", gender: "m" },
+    "pencil-case": { one: "pencil case", many: "pencil cases", gender: "m" },
+    "small-canvas": { one: "small canvas", many: "small canvases", gender: "m" },
+    cone: { one: "cone", many: "cones", gender: "m" },
+    rope: { one: "jump rope", many: "jump ropes", gender: "m" },
+    "sports-bottle": { one: "sports bottle", many: "sports bottles", gender: "m" },
+    shuttlecock: { one: "shuttlecock", many: "shuttlecocks", gender: "m" },
+    ball: { one: "ball", many: "balls", gender: "m" },
+    racket: { one: "racket", many: "rackets", gender: "m" },
+    led: { one: "project LED", many: "project LEDs", gender: "m" },
+    "connection-cable": { one: "jumper cable", many: "jumper cables", gender: "m" },
+    "electronic-button": { one: "push button", many: "push buttons", gender: "m" },
+    sensor: { one: "sensor", many: "sensors", gender: "m" },
+    "mini-motor": { one: "mini motor", many: "mini motors", gender: "m" },
+    "maker-kit": { one: "maker kit", many: "maker kits", gender: "m" },
+  },
+};
+
+function productGrammar(product: Product, locale: UserLocale): ProductGrammar {
+  const fallback: ProductGrammar = { one: product.name.toLowerCase(), many: product.name.toLowerCase(), gender: "m" };
+  return PRODUCT_GRAMMAR[locale]?.[product.id] ?? fallback;
+}
+
 type ContentTranslations = {
   stores: Record<string, { name: string; tagline: string }>;
   products: Record<string, string>;
@@ -447,19 +505,22 @@ const enContent: ContentTranslations = {
 export type LocaleBundle = AppStrings & {
   locale: UserLocale;
   money: (value: number) => string;
-  selectPlayerLabel: (nickname: string) => string;
-  playerSummary: (storeName: string, day: number) => string;
   dioramaLabel: (storeName: string) => string;
   dayAndChapter: (day: number, chapter: number) => string;
   cashBadgeLabel: (cash: number) => string;
+  /** Liga o dinheiro ganho ao que ela pode fazer com ele. */
+  canBuyNow: (productName: string, priceText: string) => string;
+  missingAmount: (missingText: string, productName: string) => string;
   dayClosedNotice: (revenue: number) => string;
   narrateCorrect: (quantity: number, price: number, answer: number) => string;
   narrateRetry: (hint: string) => string;
   customerCounter: (current: number, total: number) => string;
   customerArrived: (name: string) => string;
   /** Split so the requested items keep their <strong> emphasis in the markup. */
-  customerWants: (quantity: number, productName: string) => { before: string; emphasis: string; after: string };
-  quantityQuestion: (productName: string) => string;
+  customerWants: (quantity: number, product: Product) => { before: string; emphasis: string; after: string };
+  quantityQuestion: (product: Product) => string;
+  /** Diz em texto o que o desenho das unidades mostra: quantos itens e o preço de cada um. */
+  unitExplain: (quantity: number, product: Product, priceText: string) => string;
   quantityPileLabel: (selected: number, total: number) => string;
   quantityProgress: (selected: number, total: number) => string;
   equation: (quantity: number, price: number) => string;
@@ -484,16 +545,26 @@ export function getLocalizedStrings(locale: UserLocale = getUserLocale()): Local
   const strings = appStrings[locale] ?? appStrings["pt-BR"];
   const english = locale === "en-US";
   const money = (value: number) => (english ? `$${value}` : `R$ ${value}`);
+  const countedProduct = (product: Product, quantity: number) => {
+    const grammar = productGrammar(product, locale);
+    return quantity === 1 ? grammar.one : grammar.many;
+  };
 
   return {
     ...strings,
     locale,
     money,
-    selectPlayerLabel: (nickname) => (english ? `Select player ${nickname}` : `Selecionar jogador ${nickname}`),
-    playerSummary: (storeName, day) => `${storeName} · ${strings.dayLabel} ${day}`,
     dioramaLabel: (storeName) => (english ? `${storeName} diorama` : `Diorama da ${storeName}`),
     dayAndChapter: (day, chapter) => `${strings.dayLabel} ${day} · ${strings.chapterLabel} ${chapter}`,
     cashBadgeLabel: (cash) => `${strings.cashLabel} ${money(cash)}`,
+    canBuyNow: (productName, priceText) =>
+      english
+        ? `You have enough to buy the ${productName} for ${priceText}!`
+        : `Você já tem dinheiro para comprar ${productName} por ${priceText}!`,
+    missingAmount: (missingText, productName) =>
+      english
+        ? `${missingText} more and the ${productName} is yours.`
+        : `Faltam ${missingText} para comprar ${productName}.`,
     dayClosedNotice: (revenue) =>
       english
         ? `${strings.dayClosedPrefix} ${money(revenue)} went into the cash box.`
@@ -506,12 +577,23 @@ export function getLocalizedStrings(locale: UserLocale = getUserLocale()): Local
     customerCounter: (current, total) =>
       english ? `Customer ${current} of ${total}` : `Cliente ${current} de ${total}`,
     customerArrived: (name) => (english ? `${name} arrived` : `${name} chegou`),
-    customerWants: (quantity, productName) => ({
+    customerWants: (quantity, product) => ({
       before: english ? "I'd like " : "Quero ",
-      emphasis: `${quantity} ${productName}`,
+      emphasis: `${quantity} ${countedProduct(product, quantity)}`,
       after: ".",
     }),
-    quantityQuestion: (productName) => (english ? `How many ${productName}?` : `Quantos ${productName}?`),
+    quantityQuestion: (product) => {
+      const grammar = productGrammar(product, locale);
+      return english
+        ? `How many ${grammar.many}?`
+        : `${grammar.gender === "f" ? "Quantas" : "Quantos"} ${grammar.many}?`;
+    },
+    unitExplain: (quantity, product, priceText) => {
+      const label = countedProduct(product, quantity);
+      if (english) return `${quantity} ${label}, and each one costs ${priceText}.`;
+      const each = productGrammar(product, locale).gender === "f" ? "cada uma" : "cada um";
+      return `${quantity} ${label}, e ${each} custa ${priceText}.`;
+    },
     quantityPileLabel: (selected, total) =>
       english ? `${selected} of ${total} products set aside` : `${selected} de ${total} produtos separados`,
     quantityProgress: (selected, total) =>

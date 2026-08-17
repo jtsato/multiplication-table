@@ -1,6 +1,6 @@
 import { deleteDB } from "idb";
 import { afterEach, describe, expect, it } from "vitest";
-import { createProfile } from "../../domain/profile/profile";
+import { createProfile, PROFILE_SCHEMA_VERSION } from "../../domain/profile/profile";
 import { ProfileRepository } from "./repository";
 
 let openRepository: ProfileRepository | undefined;
@@ -19,7 +19,7 @@ function createRepository(): ProfileRepository {
 describe("profile repository", () => {
   it("saves and loads profiles from IndexedDB", async () => {
     const repository = createRepository();
-    const profile = createProfile({ nickname: "Mestre dos Blocos", storeId: "art", id: "player-2" });
+    const profile = createProfile({ nickname: "Bento", storeId: "art", id: "player-2" });
 
     await repository.save(profile);
 
@@ -29,13 +29,35 @@ describe("profile repository", () => {
 
   it("migrates a profile with an older schema version", async () => {
     const repository = createRepository();
-    const profile = createProfile({ nickname: "Capitão da Loja", storeId: "sports", id: "player-3" });
+    const profile = createProfile({ nickname: "Iara", storeId: "sports", id: "player-3" });
     const oldProfile = { ...profile, schemaVersion: 0, audio: undefined };
 
     await repository.save(oldProfile);
     const loaded = await repository.load("player-3");
 
-    expect(loaded?.schemaVersion).toBe(1);
+    expect(loaded?.schemaVersion).toBe(PROFILE_SCHEMA_VERSION);
     expect(loaded?.audio).toEqual({ effects: true, narration: false });
+  });
+
+  it("turns a v1 avatar into a mascot without losing the shop", async () => {
+    const repository = createRepository();
+    const base: Record<string, unknown> = { ...createProfile({ nickname: "Iara", storeId: "sports", id: "player-4" }) };
+    delete base.mascot;
+    const v1Profile = {
+      ...base,
+      schemaVersion: 1,
+      cash: 640,
+      day: 9,
+      avatar: { skin: "warm", hair: "curly", outfit: "apron", accessory: "cap" },
+    };
+
+    await repository.save(v1Profile as never);
+    const loaded = await repository.load("player-4");
+
+    // O progresso da criança tem de sobreviver à troca de boneco por mascote.
+    expect(loaded?.cash).toBe(640);
+    expect(loaded?.day).toBe(9);
+    expect(loaded?.mascot).toEqual({ kind: "cap", color: "orange" });
+    expect(loaded).not.toHaveProperty("avatar");
   });
 });

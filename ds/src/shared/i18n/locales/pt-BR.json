@@ -1,0 +1,21 @@
+{
+  "app": {
+    "title": "Batalha da Tabuada",
+    "skipToContent": "Pular para o conteúdo",
+    "languageGroup": "Idioma",
+    "welcome": "Bem-vindo(a) à Batalha da Tabuada!"
+  },
+  "battle": {
+    "title": "Batalha",
+    "start": "Iniciar batalha",
+    "intro": "Um {{monster}} selvagem apareceu!",
+    "hero": "Herói",
+    "hp": "{{hp}} / {{maxHp}}"
+  },
+  "math": {
+    "question": "{{a}} × {{b}} = ?"
+  },
+  "monster": {
+    "slime": "Slime"
+  }
+}
