@@ -115,6 +115,7 @@ test.describe('partida no computador', () => {
     await ficarAoLadoDeUmRecurso(page);
     await page.keyboard.press('KeyE');
     await expect(page.locator('.challenge')).toBeVisible();
+    await esperarPainelCentralizado(page);
 
     const comDesafio = await lerEstado(page);
     const certa = comDesafio.desafio!.resposta;

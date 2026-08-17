@@ -79,12 +79,16 @@ export async function esperarJogoPronto(page: Page): Promise<void> {
 }
 
 export async function esperarPainelCentralizado(page: Page): Promise<void> {
-  const caixa = await page.locator('.challenge').boundingBox();
+  const painel = page.locator('.challenge');
+  await expect(painel).toBeVisible();
+  const caixa = await painel.boundingBox();
   const viewport = page.viewportSize();
   expect(caixa).not.toBeNull();
   expect(viewport).not.toBeNull();
   expect(caixa!.x).toBeGreaterThanOrEqual(-1);
   expect(caixa!.x + caixa!.width).toBeLessThanOrEqual(viewport!.width + 1);
+  expect(caixa!.y).toBeGreaterThanOrEqual(-1);
+  expect(caixa!.y + caixa!.height).toBeLessThanOrEqual(viewport!.height + 1);
   expect(Math.abs(caixa!.x + caixa!.width / 2 - viewport!.width / 2)).toBeLessThanOrEqual(2);
 }
 
