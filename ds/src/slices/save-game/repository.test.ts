@@ -42,7 +42,7 @@ describe("migrateSave", () => {
   });
 
   it("rejeita save sem batalha", () => {
-    const { battle: _battle, ...semBatalha } = saveValido();
+    const semBatalha = { version: saveValido().version, locale: saveValido().locale };
     expect(() => migrateSave(semBatalha)).toThrow(/batalha/);
   });
 
