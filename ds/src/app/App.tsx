@@ -3,6 +3,7 @@ import { SkipLink } from "../shared/accessibility/SkipLink";
 import { useI18n } from "../shared/i18n/I18nContext";
 import type { LocaleCode } from "../shared/i18n/locale.types";
 import { BattleScreen } from "../slices/battle/BattleScreen";
+import { saveRepository } from "../slices/save-game/local-storage.repository";
 
 const LOCALES: { code: LocaleCode; label: string }[] = [
   { code: "pt-BR", label: "Português" },
@@ -13,7 +14,10 @@ type Screen = "menu" | "battle";
 
 export function App() {
   const { t, locale, setLocale } = useI18n();
-  const [screen, setScreen] = useState<Screen>("menu");
+  // Auto-resume: batalha salva em andamento volta direto para ela.
+  const [screen, setScreen] = useState<Screen>(() =>
+    saveRepository.load()?.battle ? "battle" : "menu",
+  );
 
   return (
     <>

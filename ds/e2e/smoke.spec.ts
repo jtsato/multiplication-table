@@ -148,4 +148,61 @@ test.describe("Slice 2 — Math Attack", () => {
       "2",
     );
   });
+
+  test("golden path: três acertos, super ataque, vitória e jogar novamente", async ({ page }) => {
+    await page.goto("/");
+    await page.getByRole("button", { name: "Iniciar batalha" }).click();
+
+    for (let i = 0; i < 3; i += 1) {
+      await expect(page.locator(".question")).toBeVisible();
+      const text = (await page.locator(".question").innerText()) ?? "";
+      const match = text.match(/(\d+)\s*×\s*(\d+)/);
+      if (!match) throw new Error(`pergunta inesperada: ${text}`);
+      await page.getByRole("button", { name: String(Number(match[1]) * Number(match[2])) }).click();
+    }
+
+    await expect(page.getByRole("button", { name: "Super Ataque" })).toBeVisible();
+    await page.getByRole("button", { name: "Super Ataque" }).click();
+
+    await expect(page.getByRole("progressbar", { name: "Slime" })).toHaveAttribute(
+      "aria-valuenow",
+      "0",
+    );
+    await expect(page.getByRole("heading", { level: 3, name: "Vitória!" })).toBeVisible();
+    await expect(page.getByText("Você derrotou o Slime!")).toBeVisible();
+    await expectNoSeriousViolations(page);
+
+    await page.getByRole("button", { name: "Jogar novamente" }).click();
+
+    await expect(page.getByRole("progressbar", { name: "Slime" })).toHaveAttribute(
+      "aria-valuenow",
+      "20",
+    );
+    await expect(page.locator(".question")).toBeVisible();
+  });
+
+  test("seis erros derrotam o herói e mostram a tela de derrota", async ({ page }) => {
+    await page.goto("/");
+    await page.getByRole("button", { name: "Iniciar batalha" }).click();
+
+    for (let i = 0; i < 6; i += 1) {
+      await expect(page.locator(".question")).toBeVisible();
+      const text = (await page.locator(".question").innerText()) ?? "";
+      const match = text.match(/(\d+)\s*×\s*(\d+)/);
+      if (!match) throw new Error(`pergunta inesperada: ${text}`);
+      const answer = String(Number(match[1]) * Number(match[2]));
+      await page
+        .getByRole("button", { name: /^\d+$/ })
+        .filter({ hasNotText: answer })
+        .first()
+        .click();
+    }
+
+    await expect(page.getByRole("heading", { level: 3, name: "Derrota!" })).toBeVisible();
+    await expect(page.getByRole("progressbar", { name: "Herói" })).toHaveAttribute(
+      "aria-valuenow",
+      "0",
+    );
+    await expectNoSeriousViolations(page);
+  });
 });

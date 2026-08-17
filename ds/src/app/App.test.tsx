@@ -56,4 +56,33 @@ describe("App", () => {
     );
     expect(screen.getByRole("status")).toHaveTextContent("Um Slime selvagem apareceu!");
   });
+
+  it("retoma a batalha salva ao abrir o aplicativo", () => {
+    window.localStorage.setItem(
+      "batalha-da-tabuada.save",
+      JSON.stringify({
+        version: 1,
+        locale: "pt-BR",
+        battle: {
+          phase: "question",
+          hero: { nameKey: "battle.hero", maxHp: 30, hp: 30 },
+          monster: { nameKey: "monster.slime", maxHp: 20, hp: 14, id: "slime", damage: 5 },
+          question: { a: 6, b: 4, answer: 24 },
+          alternatives: [24, 23, 25, 18],
+          combo: 0,
+          superReady: false,
+          log: [],
+        },
+      }),
+    );
+
+    renderWithI18n(<App />);
+
+    expect(screen.getByRole("heading", { level: 2, name: "Batalha" })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Iniciar batalha" })).not.toBeInTheDocument();
+    expect(screen.getByRole("progressbar", { name: "Slime" })).toHaveAttribute(
+      "aria-valuenow",
+      "14",
+    );
+  });
 });

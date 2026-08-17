@@ -1,0 +1,60 @@
+import { describe, expect, it } from "vitest";
+import { SAVE_VERSION, migrateSave, type GameSave } from "./repository";
+import type { BattleState } from "../battle/battle.types";
+
+function saveValido(): GameSave {
+  return {
+    version: 1,
+    locale: "pt-BR",
+    battle: {
+      phase: "question",
+      hero: { nameKey: "battle.hero", maxHp: 30, hp: 30 },
+      monster: { nameKey: "monster.slime", maxHp: 20, hp: 14, id: "slime", damage: 5 },
+      question: { a: 6, b: 4, answer: 24 },
+      alternatives: [24, 23, 25, 18],
+      combo: 0,
+      superReady: false,
+      log: [],
+    } as BattleState,
+  };
+}
+
+describe("migrateSave", () => {
+  it("aceita um save v1 válido e devolve o save tipado", () => {
+    const save = saveValido();
+    expect(migrateSave(JSON.parse(JSON.stringify(save)))).toEqual(save);
+  });
+
+  it("rejeita valores que não são objetos", () => {
+    expect(() => migrateSave(null)).toThrow(/objeto/);
+    expect(() => migrateSave("texto")).toThrow(/objeto/);
+    expect(() => migrateSave(42)).toThrow(/objeto/);
+  });
+
+  it("rejeita versões de schema desconhecidas", () => {
+    expect(() => migrateSave({ ...saveValido(), version: 0 })).toThrow(/versão/);
+    expect(() => migrateSave({ ...saveValido(), version: 2 })).toThrow(/versão/);
+    expect(() => migrateSave({ ...saveValido(), version: "x" })).toThrow(/versão/);
+  });
+
+  it("rejeita locale inválido", () => {
+    expect(() => migrateSave({ ...saveValido(), locale: "fr-FR" })).toThrow(/locale/);
+  });
+
+  it("rejeita save sem batalha", () => {
+    const { battle: _battle, ...semBatalha } = saveValido();
+    expect(() => migrateSave(semBatalha)).toThrow(/batalha/);
+  });
+
+  it("aceita battle null (jogador no menu)", () => {
+    expect(migrateSave({ version: 1, locale: "pt-BR", battle: null })).toEqual({
+      version: 1,
+      locale: "pt-BR",
+      battle: null,
+    });
+  });
+
+  it("a versão atual do schema é 1", () => {
+    expect(SAVE_VERSION).toBe(1);
+  });
+});

@@ -13,7 +13,14 @@
     "hp": "{{hp}} / {{maxHp}}",
     "correct": "Correto! O {{monster}} sofreu {{damage}} de dano.",
     "almost": "Quase! {{a}} × {{b}} = {{answer}} — o {{monster}} te acertou com {{damage}} de dano.",
-    "combo": "Combo ×{{combo}}"
+    "combo": "Combo ×{{combo}}",
+    "super": "Super Ataque! O {{monster}} sofreu {{damage}} de dano.",
+    "superButton": "Super Ataque",
+    "victory": "Vitória!",
+    "victoryMessage": "Você derrotou o {{monster}}!",
+    "defeat": "Derrota!",
+    "defeatMessage": "O {{monster}} venceu desta vez. Tente de novo!",
+    "playAgain": "Jogar novamente"
   },
   "math": {
     "question": "{{a}} × {{b}} = ?",

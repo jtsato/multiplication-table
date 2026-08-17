@@ -2,7 +2,8 @@ import { describe, expect, it } from "vitest";
 import { createBattle, battleReducer, hpRatio, HERO_MAX_HP } from "./battle";
 import { SLIME } from "./monsters";
 import { HERO_BASE_DAMAGE } from "../player-attack/player-attack";
-import type { BattleState } from "./battle.types";
+import { superAttackDamage } from "../super-attack/super-attack";
+import type { BattleState, MonsterSpec } from "./battle.types";
 
 describe("createBattle", () => {
   const battle: BattleState = createBattle(SLIME);
@@ -185,6 +186,75 @@ describe("battleReducer — combo (Slice 4)", () => {
   it("BEGIN_QUESTION preserva o combo", () => {
     const proximo = proximaPergunta(acertar(comPergunta()));
     expect(proximo.combo).toBe(1);
+  });
+});
+
+describe("battleReducer — super ataque (Slice 5)", () => {
+  const QUESTION = { a: 6, b: 4, answer: 24 };
+  const ALTERNATIVES = [24, 23, 25, 18];
+
+  function comPergunta() {
+    return battleReducer(createBattle(SLIME), {
+      type: "BEGIN_QUESTION",
+      question: QUESTION,
+      alternatives: ALTERNATIVES,
+    });
+  }
+
+  /** Acerta 3 vezes para liberar o super ataque. */
+  function comSuperPronto(monster: MonsterSpec = SLIME): BattleState {
+    let estado = battleReducer(createBattle(monster), {
+      type: "BEGIN_QUESTION",
+      question: QUESTION,
+      alternatives: ALTERNATIVES,
+    });
+    for (let i = 0; i < 3; i += 1) {
+      estado = battleReducer(estado, { type: "ANSWER", value: 24 });
+      estado = battleReducer(estado, {
+        type: "BEGIN_QUESTION",
+        question: QUESTION,
+        alternatives: ALTERNATIVES,
+      });
+    }
+    return estado;
+  }
+
+  it("USE_SUPER_ATTACK causa dano escalado, consome o combo e zera o super", () => {
+    const tanque = { id: "tanque", nameKey: "monster.slime" as const, maxHp: 50, damage: 5 };
+    const estado = comSuperPronto(tanque);
+    expect(estado.superReady).toBe(true);
+
+    const usado = battleReducer(estado, { type: "USE_SUPER_ATTACK" });
+    // 3 acertos de 6 (18) + super (6×3 = 18) sobre 50 de HP → 14
+    expect(usado.monster.hp).toBe(
+      tanque.maxHp - HERO_BASE_DAMAGE * 3 - superAttackDamage(HERO_BASE_DAMAGE, 3),
+    );
+    expect(usado.combo).toBe(0);
+    expect(usado.superReady).toBe(false);
+    expect(usado.phase).toBe("hero-turn");
+    expect(usado.log.at(-1)).toEqual({
+      key: "battle.super",
+      params: { damage: superAttackDamage(HERO_BASE_DAMAGE, 3) },
+    });
+  });
+
+  it("USE_SUPER_ATTACK que zera o HP do monstro entra em victory", () => {
+    // Slime já com 2 HP: três acertos de 6 deixam 2; o super (6×3=18) mata.
+    const estado = comSuperPronto();
+    const morte = battleReducer(estado, { type: "USE_SUPER_ATTACK" });
+    expect(morte.monster.hp).toBe(0);
+    expect(morte.phase).toBe("victory");
+  });
+
+  it("USE_SUPER_ATTACK é ignorado sem o super pronto", () => {
+    const estado = comPergunta();
+    expect(battleReducer(estado, { type: "USE_SUPER_ATTACK" })).toBe(estado);
+  });
+
+  it("USE_SUPER_ATTACK é ignorado fora da fase question", () => {
+    const pronto = comSuperPronto();
+    const turno: BattleState = { ...pronto, phase: "hero-turn" };
+    expect(battleReducer(turno, { type: "USE_SUPER_ATTACK" })).toBe(turno);
   });
 });
 

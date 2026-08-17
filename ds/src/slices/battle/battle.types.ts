@@ -44,4 +44,5 @@ export interface BattleState {
 export type BattleAction =
   | { type: "START_BATTLE"; monster: MonsterSpec }
   | { type: "BEGIN_QUESTION"; question: MultiplicationFact; alternatives: number[] }
-  | { type: "ANSWER"; value: number };
+  | { type: "ANSWER"; value: number }
+  | { type: "USE_SUPER_ATTACK" };

@@ -6,6 +6,8 @@ import { DEFAULT_TABLES, generateQuestion } from "../math-question/generate-ques
 import { generateAlternatives } from "../math-question/generate-alternatives";
 import type { Rng } from "../math-question/question.types";
 import type { BattleAction, Combatant } from "./battle.types";
+import { saveRepository } from "../save-game/local-storage.repository";
+import { SAVE_VERSION } from "../save-game/repository";
 
 const QUESTION_DELAY_MS = 700;
 
@@ -41,16 +43,61 @@ function BattleUnit({ combatant, label }: { combatant: Combatant; label: string 
   );
 }
 
-export function BattleScreen({ rng = Math.random }: { rng?: Rng }) {
+export function BattleEndPanel({
+  phase,
+  monsterName,
+  onPlayAgain,
+}: {
+  phase: "victory" | "defeat";
+  monsterName: string;
+  onPlayAgain: () => void;
+}) {
   const { t } = useI18n();
-  const [battle, dispatch] = useReducer(battleReducer, SLIME, createBattle);
   const headingRef = useRef<HTMLHeadingElement>(null);
-  const alternativesRef = useRef<HTMLDivElement>(null);
+  const victory = phase === "victory";
 
-  // Gerenciamento de foco: ao trocar de tela, o título recebe o foco.
+  // Fim de batalha é uma "tela nova": o título recebe o foco.
   useEffect(() => {
     headingRef.current?.focus();
   }, []);
+
+  return (
+    <div className="battle-end">
+      <h3 id="battle-end-heading" tabIndex={-1} ref={headingRef} className="battle-end-heading">
+        {t(victory ? "battle.victory" : "battle.defeat")}
+      </h3>
+      <p>
+        {t(victory ? "battle.victoryMessage" : "battle.defeatMessage", {
+          monster: monsterName,
+        })}
+      </p>
+      <button type="button" className="button-primary" onClick={onPlayAgain}>
+        {t("battle.playAgain")}
+      </button>
+    </div>
+  );
+}
+
+export function BattleScreen({ rng = Math.random }: { rng?: Rng }) {
+  const { t, locale } = useI18n();
+  const [battle, dispatch] = useReducer(battleReducer, null, () => {
+    const saved = saveRepository.load();
+    return saved?.battle ?? createBattle(SLIME);
+  });
+  const headingRef = useRef<HTMLHeadingElement>(null);
+  const alternativesRef = useRef<HTMLDivElement>(null);
+
+  // Auto-save: qualquer mudança na batalha persiste (schema versionado).
+  useEffect(() => {
+    saveRepository.save({ version: SAVE_VERSION, locale, battle });
+  }, [battle, locale]);
+
+  // Gerenciamento de foco: ao entrar na batalha (intro), o título recebe o foco.
+  useEffect(() => {
+    if (battle.phase === "intro") {
+      headingRef.current?.focus();
+    }
+  }, [battle.phase]);
 
   // Primeira pergunta na intro; novas perguntas após cada turno resolvido.
   useEffect(() => {
@@ -129,7 +176,23 @@ export function BattleScreen({ rng = Math.random }: { rng?: Rng }) {
               </button>
             ))}
           </div>
+          {battle.superReady && (
+            <button
+              type="button"
+              className="super-button"
+              onClick={() => dispatch({ type: "USE_SUPER_ATTACK" })}
+            >
+              {t("battle.superButton")}
+            </button>
+          )}
         </div>
+      )}
+      {(battle.phase === "victory" || battle.phase === "defeat") && (
+        <BattleEndPanel
+          phase={battle.phase}
+          monsterName={monsterName}
+          onPlayAgain={() => dispatch({ type: "START_BATTLE", monster: SLIME })}
+        />
       )}
     </section>
   );

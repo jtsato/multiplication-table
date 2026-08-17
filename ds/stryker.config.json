@@ -11,7 +11,8 @@
     "src/slices/math-question/generate-alternatives.ts",
     "src/slices/player-attack/player-attack.ts",
     "src/slices/monster-turn/monster-turn.ts",
-    "src/slices/combo/combo.ts"
+    "src/slices/combo/combo.ts",
+    "src/slices/super-attack/super-attack.ts"
   ],
   "thresholds": {
     "high": 80,

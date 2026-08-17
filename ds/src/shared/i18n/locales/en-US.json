@@ -13,7 +13,14 @@
     "hp": "{{hp}} / {{maxHp}}",
     "correct": "Correct! The {{monster}} took {{damage}} damage.",
     "almost": "Almost! {{a}} × {{b}} = {{answer}} — the {{monster}} hit you for {{damage}} damage.",
-    "combo": "Combo ×{{combo}}"
+    "combo": "Combo ×{{combo}}",
+    "super": "Super Attack! The {{monster}} took {{damage}} damage.",
+    "superButton": "Super Attack",
+    "victory": "Victory!",
+    "victoryMessage": "You defeated the {{monster}}!",
+    "defeat": "Defeat!",
+    "defeatMessage": "The {{monster}} won this time. Try again!",
+    "playAgain": "Play again"
   },
   "math": {
     "question": "{{a}} × {{b}} = ?",

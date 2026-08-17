@@ -60,10 +60,15 @@ describe("i18n", () => {
       expect(keys).toContain("battle.correct");
       expect(keys).toContain("battle.almost");
       expect(keys).toContain("battle.combo");
+      expect(keys).toContain("battle.super");
+      expect(keys).toContain("battle.superButton");
+      expect(keys).toContain("battle.victory");
+      expect(keys).toContain("battle.defeat");
+      expect(keys).toContain("battle.playAgain");
       expect(keys).toContain("math.question");
       expect(keys).toContain("math.alternatives");
       expect(keys).toContain("monster.slime");
-      expect(keys).toHaveLength(15);
+      expect(keys).toHaveLength(22);
     });
   });
 

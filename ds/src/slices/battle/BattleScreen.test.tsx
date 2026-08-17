@@ -1,12 +1,14 @@
-import { describe, expect, it } from "vitest";
-import { screen } from "@testing-library/react";
+import { beforeEach, describe, expect, it } from "vitest";
+import { act, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { BattleScreen } from "./BattleScreen";
 import { renderWithI18n } from "../../shared/test/render";
 import { seededRng } from "../../shared/test/rng";
 import { SLIME } from "./monsters";
-import { HERO_MAX_HP } from "./battle";
+import { battleReducer, createBattle, HERO_MAX_HP } from "./battle";
 import { HERO_BASE_DAMAGE } from "../player-attack/player-attack";
+import { SAVE_STORAGE_KEY } from "../save-game/local-storage.repository";
+import { SAVE_VERSION } from "../save-game/repository";
 
 function questionNumbers(): { a: number; b: number } {
   const text = screen.getByText(/=\s*\?/).textContent ?? "";
@@ -15,7 +17,25 @@ function questionNumbers(): { a: number; b: number } {
   return { a: Number(match[1]), b: Number(match[2]) };
 }
 
+/** Grava um save com o slime em 14 HP e a pergunta 6 × 4 = 24. */
+function seedBattleSave() {
+  const battle = battleReducer(createBattle(SLIME), {
+    type: "BEGIN_QUESTION",
+    question: { a: 6, b: 4, answer: 24 },
+    alternatives: [24, 23, 25, 18],
+  });
+  const danificado = { ...battle, monster: { ...battle.monster, hp: 14 } };
+  window.localStorage.setItem(
+    SAVE_STORAGE_KEY,
+    JSON.stringify({ version: SAVE_VERSION, locale: "pt-BR", battle: danificado }),
+  );
+}
+
 describe("BattleScreen", () => {
+  beforeEach(() => {
+    window.localStorage.clear();
+  });
+
   it("mostra o título da batalha e recebe o foco ao montar", () => {
     renderWithI18n(<BattleScreen rng={seededRng(1)} />);
     const heading = screen.getByRole("heading", { level: 2, name: "Batalha" });
@@ -113,5 +133,92 @@ describe("BattleScreen", () => {
     renderWithI18n(<BattleScreen rng={seededRng(7)} />);
     await user.keyboard("1");
     expect(screen.getByRole("status")).toHaveTextContent(/Correto|Quase/);
+  });
+
+  it("três acertos liberam o super ataque, que derrota o slime", async () => {
+    const user = userEvent.setup();
+    renderWithI18n(<BattleScreen rng={seededRng(7)} />);
+
+    // Auto-avanço real de 700 ms entre as perguntas.
+    async function responderCorreto() {
+      const { a, b } = questionNumbers();
+      await user.click(screen.getByRole("button", { name: String(a * b) }));
+      await act(async () => {
+        await new Promise((resolve) => setTimeout(resolve, 750));
+      });
+    }
+
+    await responderCorreto();
+    await responderCorreto();
+    await responderCorreto();
+
+    const superButton = screen.getByRole("button", { name: "Super Ataque" });
+    expect(superButton).toBeInTheDocument();
+    await user.click(superButton);
+
+    expect(screen.getByRole("progressbar", { name: "Slime" })).toHaveAttribute(
+      "aria-valuenow",
+      "0",
+    );
+    expect(screen.getByRole("status")).toHaveTextContent("Super Ataque");
+  });
+
+  it("vitória mostra o painel final e Jogar novamente reinicia a batalha", async () => {
+    const user = userEvent.setup();
+    renderWithI18n(<BattleScreen rng={seededRng(7)} />);
+
+    async function responderCorreto() {
+      const { a, b } = questionNumbers();
+      await user.click(screen.getByRole("button", { name: String(a * b) }));
+      await act(async () => {
+        await new Promise((resolve) => setTimeout(resolve, 750));
+      });
+    }
+
+    await responderCorreto();
+    await responderCorreto();
+    await responderCorreto();
+    await user.click(screen.getByRole("button", { name: "Super Ataque" }));
+
+    const vitoria = screen.getByRole("heading", { level: 3, name: "Vitória!" });
+    expect(vitoria).toBeInTheDocument();
+    expect(vitoria).toHaveFocus();
+    expect(screen.getByText("Você derrotou o Slime!")).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "Jogar novamente" }));
+
+    expect(screen.getByRole("progressbar", { name: "Slime" })).toHaveAttribute(
+      "aria-valuenow",
+      String(SLIME.maxHp),
+    );
+    expect(screen.getByText(/=\s*\?/)).toBeInTheDocument();
+  });
+
+  it("salva a batalha automaticamente", () => {
+    renderWithI18n(<BattleScreen rng={seededRng(1)} />);
+    const raw = window.localStorage.getItem(SAVE_STORAGE_KEY);
+    expect(raw).not.toBeNull();
+    const parsed = JSON.parse(raw ?? "{}") as { version: number; locale: string; battle: unknown };
+    expect(parsed.version).toBe(SAVE_VERSION);
+    expect(parsed.locale).toBe("pt-BR");
+    expect(parsed.battle).not.toBeNull();
+  });
+
+  it("restaura uma batalha salva e permite continuar jogando", async () => {
+    seedBattleSave();
+    const user = userEvent.setup();
+    renderWithI18n(<BattleScreen rng={seededRng(7)} />);
+
+    expect(screen.getByRole("progressbar", { name: "Slime" })).toHaveAttribute(
+      "aria-valuenow",
+      "14",
+    );
+    expect(screen.getByText("6 × 4 = ?")).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "24" }));
+    expect(screen.getByRole("progressbar", { name: "Slime" })).toHaveAttribute(
+      "aria-valuenow",
+      "8",
+    );
   });
 });

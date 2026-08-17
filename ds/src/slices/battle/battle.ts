@@ -1,7 +1,8 @@
 import type { BattleAction, BattleState, MonsterSpec } from "./battle.types";
 import { HERO_BASE_DAMAGE, playerAttackDamage } from "../player-attack/player-attack";
 import { monsterAttackDamage, takeMonsterTurn } from "../monster-turn/monster-turn";
-import { SUPER_ATTACK_COMBO, nextCombo } from "../combo/combo";
+import { nextCombo } from "../combo/combo";
+import { canUseSuper, superAttackDamage } from "../super-attack/super-attack";
 
 export const HERO_MAX_HP = 30;
 
@@ -41,7 +42,7 @@ export function battleReducer(state: BattleState, action: BattleAction): BattleS
           ...state,
           monster: { ...state.monster, hp },
           combo,
-          superReady: combo >= SUPER_ATTACK_COMBO,
+          superReady: canUseSuper(combo),
           phase: hp === 0 ? "victory" : "hero-turn",
           log: [...state.log, { key: "battle.correct", params: { damage } }],
         };
@@ -61,6 +62,19 @@ export function battleReducer(state: BattleState, action: BattleAction): BattleS
             params: { a: question.a, b: question.b, answer: question.answer, damage },
           },
         ],
+      };
+    }
+    case "USE_SUPER_ATTACK": {
+      if (!state.superReady || state.phase !== "question") return state;
+      const damage = superAttackDamage(HERO_BASE_DAMAGE, state.combo);
+      const hp = Math.max(0, Math.min(state.monster.maxHp, state.monster.hp - damage));
+      return {
+        ...state,
+        monster: { ...state.monster, hp },
+        combo: 0, // o super consome toda a sequência
+        superReady: false,
+        phase: hp === 0 ? "victory" : "hero-turn",
+        log: [...state.log, { key: "battle.super", params: { damage } }],
       };
     }
     default:
