@@ -23,6 +23,8 @@ function saveValido(): GameSave {
   return {
     version: 1,
     locale: "en-US",
+    progress: { stage: 0 },
+    facts: [],
     battle: null,
   };
 }

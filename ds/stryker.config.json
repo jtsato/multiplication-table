@@ -14,7 +14,9 @@
     "src/slices/combo/combo.ts",
     "src/slices/super-attack/super-attack.ts",
     "src/slices/save-game/repository.ts",
-    "src/slices/save-game/local-storage.repository.ts"
+    "src/slices/save-game/local-storage.repository.ts",
+    "src/slices/progression/progression.ts",
+    "src/slices/adaptive-review/adaptive-review.ts"
   ],
   "thresholds": {
     "high": 80,

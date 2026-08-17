@@ -174,11 +174,43 @@ test.describe("Slice 2 — Math Attack", () => {
 
     await page.getByRole("button", { name: "Jogar novamente" }).click();
 
-    await expect(page.getByRole("progressbar", { name: "Slime" })).toHaveAttribute(
+    // Progressão: o próximo combate é contra o dragão.
+    await expect(page.getByRole("progressbar", { name: "Dragão" })).toHaveAttribute(
       "aria-valuenow",
-      "20",
+      "30",
     );
     await expect(page.locator(".question")).toBeVisible();
+  });
+
+  test("progressão: derrotar o slime avança para o dragão no próximo combate", async ({ page }) => {
+    await page.goto("/");
+    await page.getByRole("button", { name: "Iniciar batalha" }).click();
+
+    for (let i = 0; i < 3; i += 1) {
+      await expect(page.locator(".question")).toBeVisible();
+      const text = (await page.locator(".question").innerText()) ?? "";
+      const match = text.match(/(\d+)\s*×\s*(\d+)/);
+      if (!match) throw new Error(`pergunta inesperada: ${text}`);
+      await page.getByRole("button", { name: String(Number(match[1]) * Number(match[2])) }).click();
+    }
+    await page.getByRole("button", { name: "Super Ataque" }).click();
+    await expect(page.getByRole("heading", { level: 3, name: "Vitória!" })).toBeVisible();
+
+    await page.getByRole("button", { name: "Jogar novamente" }).click();
+
+    await expect(page.getByRole("progressbar", { name: "Dragão" })).toHaveAttribute(
+      "aria-valuenow",
+      "30",
+    );
+    await expect(page.getByText(/Um Dragão selvagem apareceu/)).toBeVisible();
+
+    // O save persiste a progressão: reload continua no dragão.
+    await page.reload();
+    await expect(page.getByRole("progressbar", { name: "Dragão" })).toHaveAttribute(
+      "aria-valuenow",
+      "30",
+    );
+    await expectNoSeriousViolations(page);
   });
 
   test("seis erros derrotam o herói e mostram a tela de derrota", async ({ page }) => {
@@ -233,5 +265,51 @@ test.describe("Slice 7 — Save Game", () => {
     );
     await expect(page.locator(".question")).toBeVisible();
     await expectNoSeriousViolations(page);
+  });
+});
+
+test.describe("Slice 9 — Adaptive Review", () => {
+  test("erros ficam registrados no save para o reforço adaptativo", async ({ page }) => {
+    await page.goto("/");
+    await page.getByRole("button", { name: "Iniciar batalha" }).click();
+
+    await expect(page.locator(".question")).toBeVisible();
+    const text = (await page.locator(".question").innerText()) ?? "";
+    const match = text.match(/(\d+)\s*×\s*(\d+)/);
+    if (!match) throw new Error(`pergunta inesperada: ${text}`);
+    const a = Number(match[1]);
+    const b = Number(match[2]);
+    const resposta = String(a * b);
+
+    // Responder errado: o fato deve ganhar erros no histórico salvo.
+    await page
+      .getByRole("button", { name: /^\d+$/ })
+      .filter({ hasNotText: resposta })
+      .first()
+      .click();
+    await expect(page.getByRole("status")).toContainText("Quase");
+
+    const save = await page.evaluate(() => {
+      const raw = window.localStorage.getItem("batalha-da-tabuada.save") ?? "{}";
+      return JSON.parse(raw) as {
+        facts: { a: number; b: number; attempts: number; errors: number }[];
+      };
+    });
+    const fato =
+      save.facts.find((f) => f.a === a && f.b === b) ??
+      save.facts.find((f) => f.a === b && f.b === a);
+    expect(fato).toBeDefined();
+    expect(fato?.errors).toBeGreaterThanOrEqual(1);
+
+    // O erro persiste após o reload (reforço continua na próxima sessão).
+    await page.reload();
+    const save2 = await page.evaluate(() => {
+      const raw = window.localStorage.getItem("batalha-da-tabuada.save") ?? "{}";
+      return JSON.parse(raw) as { facts: { a: number; b: number; errors: number }[] };
+    });
+    const fato2 =
+      save2.facts.find((f) => f.a === a && f.b === b) ??
+      save2.facts.find((f) => f.a === b && f.b === a);
+    expect(fato2?.errors).toBeGreaterThanOrEqual(1);
   });
 });

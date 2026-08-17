@@ -20,13 +20,16 @@
     "victoryMessage": "Você derrotou o {{monster}}!",
     "defeat": "Derrota!",
     "defeatMessage": "O {{monster}} venceu desta vez. Tente de novo!",
-    "playAgain": "Jogar novamente"
+    "playAgain": "Jogar novamente",
+    "victoryAll": "Você derrotou todos os monstros!"
   },
   "math": {
     "question": "{{a}} × {{b}} = ?",
     "alternatives": "Alternativas"
   },
   "monster": {
-    "slime": "Slime"
+    "slime": "Slime",
+    "dragon": "Dragão",
+    "golem": "Golem"
   }
 }

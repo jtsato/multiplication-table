@@ -4,6 +4,7 @@ import { useI18n } from "../shared/i18n/I18nContext";
 import type { LocaleCode } from "../shared/i18n/locale.types";
 import { BattleScreen } from "../slices/battle/BattleScreen";
 import { saveRepository } from "../slices/save-game/local-storage.repository";
+import { initialProgress, type Progress } from "../slices/progression/progression";
 
 const LOCALES: { code: LocaleCode; label: string }[] = [
   { code: "pt-BR", label: "Português" },
@@ -18,6 +19,11 @@ export function App() {
   const [screen, setScreen] = useState<Screen>(() =>
     saveRepository.load()?.battle ? "battle" : "menu",
   );
+  // Progressão (monstros derrotados / tabuadas) vem do save e sobe ao App.
+  const [progress, setProgress] = useState<Progress>(() => {
+    const saved = saveRepository.load();
+    return saved?.progress ?? initialProgress();
+  });
 
   return (
     <>
@@ -46,7 +52,7 @@ export function App() {
             </button>
           </>
         ) : (
-          <BattleScreen />
+          <BattleScreen progress={progress} onProgressChange={setProgress} />
         )}
       </main>
     </>

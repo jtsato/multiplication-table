@@ -1,24 +1,28 @@
-import { useEffect, useReducer, useRef } from "react";
+import { useCallback, useEffect, useReducer, useRef, useState } from "react";
 import { useI18n } from "../../shared/i18n/I18nContext";
 import { battleReducer, createBattle, hpRatio } from "./battle";
-import { SLIME } from "./monsters";
-import { DEFAULT_TABLES, generateQuestion } from "../math-question/generate-question";
 import { generateAlternatives } from "../math-question/generate-alternatives";
 import type { Rng } from "../math-question/question.types";
 import type { BattleAction, Combatant } from "./battle.types";
+import {
+  advanceProgress,
+  initialProgress,
+  isGameComplete,
+  nextMonster,
+  nextTables,
+  type Progress,
+} from "../progression/progression";
+import {
+  markSeen,
+  pickNextFact,
+  recordAnswer,
+  upsertFact,
+  type FactStats,
+} from "../adaptive-review/adaptive-review";
 import { saveRepository } from "../save-game/local-storage.repository";
 import { SAVE_VERSION } from "../save-game/repository";
 
 const QUESTION_DELAY_MS = 700;
-
-function nextQuestionAction(rng: Rng): BattleAction {
-  const question = generateQuestion(DEFAULT_TABLES, rng);
-  return {
-    type: "BEGIN_QUESTION",
-    question,
-    alternatives: generateAlternatives(question, rng),
-  };
-}
 
 function BattleUnit({ combatant, label }: { combatant: Combatant; label: string }) {
   const { t } = useI18n();
@@ -46,10 +50,12 @@ function BattleUnit({ combatant, label }: { combatant: Combatant; label: string 
 export function BattleEndPanel({
   phase,
   monsterName,
+  allDefeated = false,
   onPlayAgain,
 }: {
   phase: "victory" | "defeat";
   monsterName: string;
+  allDefeated?: boolean;
   onPlayAgain: () => void;
 }) {
   const { t } = useI18n();
@@ -61,16 +67,18 @@ export function BattleEndPanel({
     headingRef.current?.focus();
   }, []);
 
+  const messageKey = victory
+    ? allDefeated
+      ? "battle.victoryAll"
+      : "battle.victoryMessage"
+    : "battle.defeatMessage";
+
   return (
     <div className="battle-end">
       <h3 id="battle-end-heading" tabIndex={-1} ref={headingRef} className="battle-end-heading">
         {t(victory ? "battle.victory" : "battle.defeat")}
       </h3>
-      <p>
-        {t(victory ? "battle.victoryMessage" : "battle.defeatMessage", {
-          monster: monsterName,
-        })}
-      </p>
+      <p>{t(messageKey, { monster: monsterName })}</p>
       <button type="button" className="button-primary" onClick={onPlayAgain}>
         {t("battle.playAgain")}
       </button>
@@ -78,19 +86,64 @@ export function BattleEndPanel({
   );
 }
 
-export function BattleScreen({ rng = Math.random }: { rng?: Rng }) {
+export function BattleScreen({
+  rng = Math.random,
+  progress = initialProgress(),
+  onProgressChange = () => {},
+}: {
+  rng?: Rng;
+  progress?: Progress;
+  onProgressChange?: (progress: Progress) => void;
+}) {
   const { t, locale } = useI18n();
+  const monster = nextMonster(progress);
+  const tables = nextTables(progress);
   const [battle, dispatch] = useReducer(battleReducer, null, () => {
     const saved = saveRepository.load();
-    return saved?.battle ?? createBattle(SLIME);
+    return saved?.battle ?? createBattle(monster);
   });
+  // Histórico por fato (reforço adaptativo) também vem do save.
+  const [facts, setFacts] = useState<FactStats[]>(() => saveRepository.load()?.facts ?? []);
+  const questionIndexRef = useRef(0);
   const headingRef = useRef<HTMLHeadingElement>(null);
   const alternativesRef = useRef<HTMLDivElement>(null);
 
-  // Auto-save: qualquer mudança na batalha persiste (schema versionado).
+  // Auto-save: qualquer mudança na batalha/progresso/fatos persiste.
   useEffect(() => {
-    saveRepository.save({ version: SAVE_VERSION, locale, battle });
-  }, [battle, locale]);
+    saveRepository.save({ version: SAVE_VERSION, locale, battle, progress, facts });
+  }, [battle, locale, progress, facts]);
+
+  // Geração ponderada: reforça erros e fatos esquecidos (regra 12 da estratégia).
+  const gerarPergunta = useCallback((): BattleAction => {
+    const now = questionIndexRef.current;
+    questionIndexRef.current += 1;
+    const fact = pickNextFact(tables, facts, rng, now);
+    setFacts((prev) => {
+      const atual = prev.find((f) => f.a === fact.a && f.b === fact.b);
+      return upsertFact(prev, markSeen(atual, fact, now));
+    });
+    return {
+      type: "BEGIN_QUESTION",
+      question: fact,
+      alternatives: generateAlternatives(fact, rng),
+    };
+  }, [tables, facts, rng]);
+
+  // Registra o desfecho da resposta no histórico do fato (reforço adaptativo).
+  const handleAnswer = useCallback(
+    (value: number) => {
+      if (battle.question) {
+        const { a, b } = battle.question;
+        const correct = value === battle.question.answer;
+        setFacts((prev) => {
+          const atual = prev.find((f) => f.a === a && f.b === b);
+          return atual ? upsertFact(prev, recordAnswer(atual, correct)) : prev;
+        });
+      }
+      dispatch({ type: "ANSWER", value });
+    },
+    [battle.question],
+  );
 
   // Gerenciamento de foco: ao entrar na batalha (intro), o título recebe o foco.
   useEffect(() => {
@@ -102,12 +155,12 @@ export function BattleScreen({ rng = Math.random }: { rng?: Rng }) {
   // Primeira pergunta na intro; novas perguntas após cada turno resolvido.
   useEffect(() => {
     if (battle.phase === "intro") {
-      dispatch(nextQuestionAction(rng));
+      dispatch(gerarPergunta());
     } else if (battle.phase === "hero-turn" || battle.phase === "monster-turn") {
-      const timer = setTimeout(() => dispatch(nextQuestionAction(rng)), QUESTION_DELAY_MS);
+      const timer = setTimeout(() => dispatch(gerarPergunta()), QUESTION_DELAY_MS);
       return () => clearTimeout(timer);
     }
-  }, [battle.phase, rng]);
+  }, [battle.phase, gerarPergunta]);
 
   // Atalhos opcionais 1..4 para as alternativas (regra 11 da estratégia).
   useEffect(() => {
@@ -115,12 +168,12 @@ export function BattleScreen({ rng = Math.random }: { rng?: Rng }) {
     const onKeyDown = (event: KeyboardEvent) => {
       const index = Number(event.key) - 1;
       if (index >= 0 && index < battle.alternatives.length) {
-        dispatch({ type: "ANSWER", value: battle.alternatives[index] });
+        handleAnswer(battle.alternatives[index]);
       }
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [battle.phase, battle.alternatives]);
+  }, [battle.phase, battle.alternatives, handleAnswer]);
 
   // Após responder, a próxima pergunta devolve o foco à primeira alternativa.
   useEffect(() => {
@@ -134,6 +187,16 @@ export function BattleScreen({ rng = Math.random }: { rng?: Rng }) {
   const statusText = lastEntry
     ? t(lastEntry.key, { ...lastEntry.params, monster: monsterName })
     : t("battle.intro", { monster: monsterName });
+
+  // Vitória avança a jornada; o próximo combate usa o monstro/tabuadas seguintes.
+  // Derrota reinicia o mesmo monstro (sem avançar).
+  function handlePlayAgain() {
+    const venceu = battle.phase === "victory";
+    const avancado = advanceProgress(progress);
+    const alvo = venceu && !isGameComplete(avancado) ? avancado : progress;
+    if (alvo !== progress) onProgressChange(alvo);
+    dispatch({ type: "START_BATTLE", monster: nextMonster(alvo) });
+  }
 
   return (
     <section aria-labelledby="battle-heading" className="battle-screen">
@@ -170,7 +233,7 @@ export function BattleScreen({ rng = Math.random }: { rng?: Rng }) {
                 type="button"
                 className="alternative"
                 aria-keyshortcuts={String(index + 1)}
-                onClick={() => dispatch({ type: "ANSWER", value: alt })}
+                onClick={() => handleAnswer(alt)}
               >
                 {alt}
               </button>
@@ -191,7 +254,8 @@ export function BattleScreen({ rng = Math.random }: { rng?: Rng }) {
         <BattleEndPanel
           phase={battle.phase}
           monsterName={monsterName}
-          onPlayAgain={() => dispatch({ type: "START_BATTLE", monster: SLIME })}
+          allDefeated={battle.phase === "victory" && isGameComplete(advanceProgress(progress))}
+          onPlayAgain={handlePlayAgain}
         />
       )}
     </section>

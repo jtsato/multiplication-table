@@ -1,8 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { generateQuestion } from "./generate-question";
+import { DEFAULT_TABLES, generateQuestion } from "./generate-question";
 import { seededRng } from "../../shared/test/rng";
 
 describe("generateQuestion", () => {
+  it("DEFAULT_TABLES cobre as tabuadas de 2 a 9", () => {
+    expect(DEFAULT_TABLES).toEqual([2, 3, 4, 5, 6, 7, 8, 9]);
+  });
   it("gera um fato com resposta igual ao produto", () => {
     const fact = generateQuestion([2, 3, 4], seededRng(42));
     expect(fact.answer).toBe(fact.a * fact.b);

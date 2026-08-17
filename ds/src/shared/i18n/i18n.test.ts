@@ -68,7 +68,10 @@ describe("i18n", () => {
       expect(keys).toContain("math.question");
       expect(keys).toContain("math.alternatives");
       expect(keys).toContain("monster.slime");
-      expect(keys).toHaveLength(22);
+      expect(keys).toContain("monster.dragon");
+      expect(keys).toContain("monster.golem");
+      expect(keys).toContain("battle.victoryAll");
+      expect(keys).toHaveLength(25);
     });
   });
 

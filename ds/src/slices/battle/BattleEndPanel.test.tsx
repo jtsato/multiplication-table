@@ -28,4 +28,12 @@ describe("BattleEndPanel", () => {
     await user.click(screen.getByRole("button", { name: "Jogar novamente" }));
     expect(onPlayAgain).toHaveBeenCalledTimes(1);
   });
+
+  it("mostra a mensagem de jornada completa quando allDefeated", () => {
+    renderWithI18n(
+      <BattleEndPanel phase="victory" monsterName="Golem" allDefeated onPlayAgain={vi.fn()} />,
+    );
+    expect(screen.getByText("Você derrotou todos os monstros!")).toBeInTheDocument();
+    expect(screen.queryByText("Você derrotou o Golem!")).not.toBeInTheDocument();
+  });
 });

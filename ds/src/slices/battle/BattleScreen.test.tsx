@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { act, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { BattleScreen } from "./BattleScreen";
@@ -163,7 +163,7 @@ describe("BattleScreen", () => {
     expect(screen.getByRole("status")).toHaveTextContent("Super Ataque");
   });
 
-  it("vitória mostra o painel final e Jogar novamente reinicia a batalha", async () => {
+  it("vitória mostra o painel final com foco", async () => {
     const user = userEvent.setup();
     renderWithI18n(<BattleScreen rng={seededRng(7)} />);
 
@@ -184,12 +184,38 @@ describe("BattleScreen", () => {
     expect(vitoria).toBeInTheDocument();
     expect(vitoria).toHaveFocus();
     expect(screen.getByText("Você derrotou o Slime!")).toBeInTheDocument();
+  });
+
+  it("vitória avança a progressão e Jogar novamente luta contra o próximo monstro", async () => {
+    const onProgressChange = vi.fn();
+    const user = userEvent.setup();
+    renderWithI18n(
+      <BattleScreen
+        rng={seededRng(7)}
+        progress={{ stage: 0 }}
+        onProgressChange={onProgressChange}
+      />,
+    );
+
+    async function responderCorreto() {
+      const { a, b } = questionNumbers();
+      await user.click(screen.getByRole("button", { name: String(a * b) }));
+      await act(async () => {
+        await new Promise((resolve) => setTimeout(resolve, 750));
+      });
+    }
+
+    await responderCorreto();
+    await responderCorreto();
+    await responderCorreto();
+    await user.click(screen.getByRole("button", { name: "Super Ataque" }));
 
     await user.click(screen.getByRole("button", { name: "Jogar novamente" }));
 
-    expect(screen.getByRole("progressbar", { name: "Slime" })).toHaveAttribute(
+    expect(onProgressChange).toHaveBeenCalledWith({ stage: 1 });
+    expect(screen.getByRole("progressbar", { name: "Dragão" })).toHaveAttribute(
       "aria-valuenow",
-      String(SLIME.maxHp),
+      "30",
     );
     expect(screen.getByText(/=\s*\?/)).toBeInTheDocument();
   });
@@ -220,5 +246,40 @@ describe("BattleScreen", () => {
       "aria-valuenow",
       "8",
     );
+  });
+
+  it("rastreia os fatos respondidos e persiste no save", async () => {
+    const user = userEvent.setup();
+    renderWithI18n(<BattleScreen rng={seededRng(7)} />);
+    const { a, b } = questionNumbers();
+    await user.click(screen.getByRole("button", { name: String(a * b) }));
+
+    const parsed = JSON.parse(window.localStorage.getItem(SAVE_STORAGE_KEY) ?? "{}") as {
+      facts: { a: number; b: number; attempts: number; errors: number }[];
+    };
+    const fato = parsed.facts.find((f) => f.a === a && f.b === b);
+    expect(fato).toBeDefined();
+    expect(fato?.attempts).toBe(1);
+    expect(fato?.errors).toBe(0);
+  });
+
+  it("erros ficam registrados para o reforço adaptativo", async () => {
+    const user = userEvent.setup();
+    renderWithI18n(<BattleScreen rng={seededRng(7)} />);
+    const { a, b } = questionNumbers();
+    const resposta = String(a * b);
+    const errada = screen
+      .getAllByRole("button", { name: /^\d+$/ })
+      .find((btn) => btn.textContent !== resposta);
+    expect(errada).toBeDefined();
+    await user.click(errada!);
+
+    const parsed = JSON.parse(window.localStorage.getItem(SAVE_STORAGE_KEY) ?? "{}") as {
+      facts: { a: number; b: number; attempts: number; errors: number }[];
+    };
+    const fato = parsed.facts.find((f) => f.a === a && f.b === b);
+    expect(fato).toBeDefined();
+    expect(fato?.attempts).toBe(1);
+    expect(fato?.errors).toBe(1);
   });
 });

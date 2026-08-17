@@ -150,17 +150,22 @@ takeMonsterTurn(heroHp: number, monster: MonsterSpec): number // novo HP
 ### rewards / progression / adaptive-review
 
 ```ts
-computeRewards(correct: number, superUsed: boolean): Rewards
+computeRewards(correct: number, superUsed: boolean): Rewards  // futura (pós-POC)
 nextMonster(progress: Progress): MonsterSpec
 nextTables(progress: Progress): number[]
-pickFact(facts: FactStats[], rng: Rng): MultiplicationFact // peso = erro/idade
+// Reforço adaptativo (Sl. 9): peso = 1 + erros*3 + frescor(idade)
+markSeen(prev: FactStats | undefined, fact, now): FactStats
+recordAnswer(stats: FactStats, correct: boolean): FactStats
+pickFact(facts: FactStats[], rng: Rng, now: number): MultiplicationFact
+pickNextFact(tables, facts, rng, now): MultiplicationFact // pool completo das tabuadas
 ```
 
 ### save-game
 
 ```ts
-interface SaveRepository { save(state: GameSave): void; load(): GameSave | null; }
-// GameSave v1: { version: 1, locale, progress, mastery, achievements }
+interface SaveRepository { save(save: GameSave): void; load(): GameSave | null; }
+// GameSave v1 implementado: { version: 1, locale, progress: { stage }, battle, facts[] }
+// (progress e facts preenchidos com padrão na migração quando ausentes)
 migrateSave(raw: unknown): GameSave  // rejeita versões desconhecidas
 ```
 
