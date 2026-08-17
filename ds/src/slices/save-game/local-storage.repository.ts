@@ -3,9 +3,7 @@ import { migrateSave, type GameSave, type SaveRepository } from "./repository";
 export const SAVE_STORAGE_KEY = "batalha-da-tabuada.save";
 
 export class LocalStorageRepository implements SaveRepository {
-  constructor(
-    private readonly storage: Pick<Storage, "getItem" | "setItem" | "removeItem">,
-  ) {}
+  constructor(private readonly storage: Pick<Storage, "getItem" | "setItem" | "removeItem">) {}
 
   save(save: GameSave): void {
     try {

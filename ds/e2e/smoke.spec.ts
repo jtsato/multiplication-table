@@ -206,3 +206,32 @@ test.describe("Slice 2 — Math Attack", () => {
     await expectNoSeriousViolations(page);
   });
 });
+
+test.describe("Slice 7 — Save Game", () => {
+  test("a batalha continua após o reload (estado permanece)", async ({ page }) => {
+    await page.goto("/");
+    await page.getByRole("button", { name: "Iniciar batalha" }).click();
+
+    // Um acerto: slime 20 → 14.
+    await expect(page.locator(".question")).toBeVisible();
+    const text = (await page.locator(".question").innerText()) ?? "";
+    const match = text.match(/(\d+)\s*×\s*(\d+)/);
+    if (!match) throw new Error(`pergunta inesperada: ${text}`);
+    await page.getByRole("button", { name: String(Number(match[1]) * Number(match[2])) }).click();
+    await expect(page.getByRole("progressbar", { name: "Slime" })).toHaveAttribute(
+      "aria-valuenow",
+      "14",
+    );
+
+    await page.reload();
+
+    // Auto-resume: volta para a batalha com o estado salvo.
+    await expect(page.getByRole("heading", { level: 2, name: "Batalha" })).toBeVisible();
+    await expect(page.getByRole("progressbar", { name: "Slime" })).toHaveAttribute(
+      "aria-valuenow",
+      "14",
+    );
+    await expect(page.locator(".question")).toBeVisible();
+    await expectNoSeriousViolations(page);
+  });
+});
