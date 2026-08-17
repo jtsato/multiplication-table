@@ -705,7 +705,8 @@ html[data-reduced-motion='on'] *::after {
    o alinhamento das linhas quando o texto e curto, e `flex-shrink: 0` impede
    que a propria linha esprema a palavra de volta para o transbordo. */
 .toggle-row__state {
-  width: 3.2em;
+  min-width: 3.2em;
+  flex-shrink: 0;
   font-size: var(--text-sm);
   color: var(--muted);
   text-align: right;
