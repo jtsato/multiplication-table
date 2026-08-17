@@ -152,12 +152,27 @@ export type AchievementId =
   | 'firstMission'
   | 'tableTwoDone'
   | 'halfArchipelago'
-  | 'allIslands';
+  | 'allIslands'
+  | 'perfectChallenge';
 
 export interface AchievementState {
   id: AchievementId;
   unlocked: boolean;
   unlockedAt: string | null;
+}
+
+// ---------------------------------------------------------------------------
+// Modo Desafio
+// ---------------------------------------------------------------------------
+
+/** Recorde do Modo Desafio. As regras vivem em `domain/challenge.ts`. */
+export interface ChallengeRecord {
+  /** Melhor numero de acertos de primeira numa corrida. */
+  bestScore: number;
+  /** Duracao da corrida que fez o recorde, em ms. Desempata scores iguais. */
+  bestTimeMs: number | null;
+  runs: number;
+  lastPlayedAt: string | null;
 }
 
 // ---------------------------------------------------------------------------
@@ -171,4 +186,6 @@ export interface GameState {
   progress: GameProgress;
   statistics: PlayerStatistics;
   achievements: AchievementState[];
+  /** Recorde do Modo Desafio, liberado ao concluir o arquipelago. */
+  challenge: ChallengeRecord;
 }

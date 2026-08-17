@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { audioService } from './audio/audioService';
+import { CHALLENGE_QUESTION_COUNT } from './domain/challenge';
 import { getMission, missionsForTable, type MissionDefinition } from './domain/missions';
 import { nextMissionForTable } from './domain/progression';
 import type { AvatarConfig, MascotId } from './domain/types';
@@ -8,6 +9,8 @@ import { I18nProvider } from './i18n/I18nProvider';
 import { GameProvider, useGame, type MissionCompletion } from './state/GameProvider';
 import type { ProgressRepository } from './persistence/ProgressRepository';
 import { AchievementsScreen } from './screens/AchievementsScreen';
+import { ArchipelagoCompleteScreen } from './screens/ArchipelagoCompleteScreen';
+import { ChallengeScreen } from './screens/ChallengeScreen';
 import { HomeScreen } from './screens/HomeScreen';
 import { IslandCompleteScreen } from './screens/IslandCompleteScreen';
 import { LevelResultScreen } from './screens/LevelResultScreen';
@@ -28,6 +31,8 @@ type Screen =
   | 'level'
   | 'result'
   | 'islandComplete'
+  | 'archipelagoComplete'
+  | 'challenge'
   | 'achievements'
   | 'settings';
 
@@ -50,6 +55,12 @@ function Game() {
   const [screen, setScreen] = useState<Screen>('splash');
   const [activeMissionId, setActiveMissionId] = useState<string | null>(null);
   const [finished, setFinished] = useState<FinishedMission | null>(null);
+  // O final pode ser visto duas vezes: ao conquista-lo e ao reabrir o diploma
+  // pela Home. So muda para onde a saida leva de volta.
+  const [finaleOrigin, setFinaleOrigin] = useState<'map' | 'home'>('map');
+  // Contador de corridas do desafio: serve de `key` para remontar a tela e
+  // zerar a sessao quando a crianca joga de novo.
+  const [challengeRun, setChallengeRun] = useState(0);
 
   // Mantem o audio alinhado com as configuracoes salvas.
   useEffect(() => {
@@ -106,6 +117,16 @@ function Game() {
       }
       const completion = game.finishMission(toMissionResult(level, new Date().toISOString()));
       setFinished({ mission, level, completion });
+
+      // Fechar a ultima ilha vai direto para o final: uma celebracao so, a
+      // maior. A tela de ilha concluida ainda anuncia a proxima ilha, que
+      // aqui nao existe mais.
+      if (completion.archipelagoCompleted) {
+        setFinaleOrigin('map');
+        setScreen('archipelagoComplete');
+        return;
+      }
+
       setScreen(completion.islandCompleted ? 'islandComplete' : 'result');
     },
     [game],
@@ -178,6 +199,11 @@ function Game() {
         onAchievements={() => setScreen('achievements')}
         onSettings={() => setScreen('settings')}
         onEditCharacter={() => setScreen('editCharacter')}
+        onDiploma={() => {
+          setFinaleOrigin('home');
+          setScreen('archipelagoComplete');
+        }}
+        onChallenge={() => setScreen('challenge')}
       />
     );
 
@@ -232,6 +258,37 @@ function Game() {
           table={finished.mission.table}
           unlockedTable={finished.completion.unlockedTable}
           onBackToMap={() => setScreen('map')}
+        />
+      );
+    }
+
+    if (screen === 'archipelagoComplete') {
+      return (
+        <ArchipelagoCompleteScreen
+          state={state}
+          origin={finaleOrigin}
+          onBack={() => setScreen(finaleOrigin)}
+          onChallenge={() => setScreen('challenge')}
+        />
+      );
+    }
+
+    if (screen === 'challenge') {
+      return (
+        <ChallengeScreen
+          key={challengeRun}
+          state={state}
+          onAnswer={game.recordAnswer}
+          onFinish={(score, elapsedMs) =>
+            game.finishChallenge({
+              score,
+              total: CHALLENGE_QUESTION_COUNT,
+              elapsedMs,
+              completedAt: new Date().toISOString(),
+            })
+          }
+          onRestart={() => setChallengeRun((run) => run + 1)}
+          onExit={() => setScreen('home')}
         />
       );
     }

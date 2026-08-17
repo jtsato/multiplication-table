@@ -752,26 +752,34 @@ html[data-reduced-motion='on'] *::after {
   box-shadow: 0 4px 0 var(--accent-active);
 }
 
+/* Caixa neutra: acompanha o tamanho do que estiver dentro.
+   O circulo com contorno pertence a amostra de COR (`.swatch`), nao ao
+   contentor — quando ele carregava o circulo de 22px, a miniatura do mascote
+   (bem maior) transbordava por cima do rotulo e o contorno vazio aparecia
+   atras dela, parecendo um radio solto dentro do botao. */
 .picker__swatch {
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  display: inline-block;
-  border: 2px solid rgba(0, 0, 0, 0.15);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  line-height: 0;
 }
 
 .swatch {
   display: block;
-  width: 100%;
-  height: 100%;
-  border-radius: inherit;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2px solid rgba(0, 0, 0, 0.15);
 }
 
 /* ---------------------------------------------------------------------- */
 /* Splash                                                                  */
 /* ---------------------------------------------------------------------- */
 
-/* Momento de marca: Owl Green ocupando a tela inteira, tinta Eel Black. */
+/* Canvas Snow, igual ao resto do app: a abertura nao inverte o fundo so para
+   voltar ao branco um segundo depois. A marca aqui vem dos blocos coloridos e
+   do mascote, nao de uma chapada verde. */
 .splash {
   flex: 1;
   display: flex;
@@ -781,7 +789,7 @@ html[data-reduced-motion='on'] *::after {
   gap: var(--space-3);
   padding: var(--space-8);
   text-align: center;
-  background: var(--accent);
+  background: var(--bg);
   color: var(--fg);
   min-height: 100dvh;
 }
@@ -1009,6 +1017,53 @@ html[data-reduced-motion='on'] *::after {
   flex-direction: column;
   gap: var(--space-3);
   margin-top: auto;
+}
+
+/* Trofeu permanente: fica na Home depois do arquipelago concluido, para que
+   reabrir o app mostre a vitoria em vez de exigir procurar por ela. Par
+   warn-pale / warn-ink e o mesmo ja usado nas pilulas de estatistica. */
+.home__trophy {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  text-align: left;
+  background: var(--warn-pale);
+  color: var(--warn-ink);
+  border: 2px solid var(--warn);
+  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-4);
+  min-height: var(--touch-target);
+  box-shadow: 0 4px 0 color-mix(in oklab, var(--warn), #000000 12%);
+  cursor: pointer;
+  transition:
+    transform var(--motion-fast) var(--ease-standard),
+    box-shadow var(--motion-fast) var(--ease-standard);
+}
+
+.home__trophy:active {
+  transform: translateY(4px);
+  box-shadow: 0 0 0 color-mix(in oklab, var(--warn), #000000 12%);
+}
+
+.home__trophy-icon {
+  font-size: 1.9rem;
+}
+
+.home__trophy-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.home__trophy-title {
+  font-family: var(--font-display-stack);
+  font-size: var(--text-lg);
+  font-weight: 800;
+}
+
+.home__trophy-link {
+  font-size: var(--text-sm);
+  text-decoration: underline;
 }
 
 /* ---------------------------------------------------------------------- */
@@ -1889,6 +1944,329 @@ html[data-reduced-motion='on'] *::after {
 }
 
 /* ---------------------------------------------------------------------- */
+/* Final do jogo                                                          */
+/*                                                                        */
+/* Duas leituras na mesma tela: a cerimonia, em fundo festivo com texto    */
+/* branco, e o diploma, um cartao Snow que se le como documento. O fundo   */
+/* profundo e escolha deliberada — a unica tela que rompe o canvas branco  */
+/* junto com a conclusao de ilha, porque e a unica que acontece uma vez.   */
+/* ---------------------------------------------------------------------- */
+
+.finale {
+  min-height: 100dvh;
+  /* `#root` e um flex column de altura 100%: sem travar o encolhimento, esta
+     tela ficaria com 100dvh de caixa e o conteudo transbordaria para fora
+     dela — o gradiente parava no meio da pagina e o resto virava branco. */
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-5);
+  /* Folga no topo para o icone de som, que flutua sobre qualquer tela. */
+  padding: max(var(--space-8), var(--sound-toggle-safe)) var(--space-5) var(--space-12);
+  text-align: center;
+  color: #ffffff;
+  position: relative;
+  background: linear-gradient(165deg, #1b3a6b, #3b2e73 55%, #7b3fa0);
+}
+
+/* Fixo, e nao absoluto: a tela rola, e papel picado preso ao topo do
+   documento sumiria assim que a crianca descesse ate o diploma. */
+.finale__confetti {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.finale > *:not(.finale__confetti) {
+  position: relative;
+  z-index: 1;
+}
+
+.finale__stage {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: var(--space-4);
+}
+
+.finale__title {
+  font-family: var(--font-display-stack);
+  font-size: var(--text-3xl);
+  letter-spacing: var(--tracking-display);
+  color: #ffffff;
+  text-shadow: 0 3px 0 rgba(0, 0, 0, 0.3);
+}
+
+.finale__subtitle {
+  font-weight: 700;
+  max-width: 400px;
+}
+
+/* Largura escolhida para caber 5 ilhas por linha: com as nove do arquipelago
+   isso da 5 + 4 centradas, e nao uma linha cheia com tres sobras. */
+.finale__islands {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-4) var(--space-3);
+  max-width: 520px;
+}
+
+.finale__island {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+  width: 90px;
+}
+
+.finale__island-name {
+  font-size: var(--text-xs);
+  font-weight: 700;
+  line-height: var(--leading-tight);
+}
+
+/* ── Diploma ─────────────────────────────────────────────────────────── */
+
+.diploma {
+  width: 100%;
+  max-width: 520px;
+  background: var(--bg);
+  color: var(--fg);
+  /* Borda dourada grossa: o cartao precisa parecer um documento, nao mais
+     um card de tela. */
+  border: 4px solid var(--warn);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  box-shadow: 0 6px 0 rgba(0, 0, 0, 0.25);
+  text-align: center;
+}
+
+.diploma__title {
+  font-family: var(--font-display-stack);
+  font-size: var(--text-xl);
+}
+
+.diploma__holder {
+  color: var(--muted);
+  font-size: var(--text-sm);
+  margin-bottom: var(--space-4);
+}
+
+/* Flex, e nao grid: sao cinco numeros, e uma ultima linha incompleta fica
+   centralizada em vez de encostada na primeira coluna. */
+.diploma__grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-2);
+  margin: 0 0 var(--space-4);
+}
+
+.diploma__item {
+  flex: 1 1 140px;
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-2);
+}
+
+.diploma__item dt {
+  font-family: var(--font-display-stack);
+  font-size: var(--text-xs);
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.diploma__item dd {
+  margin: 0;
+  font-family: var(--font-display-stack);
+  font-size: var(--text-xl);
+  font-weight: 800;
+}
+
+.diploma__of {
+  font-size: var(--text-base);
+  color: var(--muted);
+}
+
+.diploma__victory {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+  background: var(--accent-pale);
+  border-radius: var(--radius-md);
+  padding: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+
+.diploma__victory-label {
+  font-family: var(--font-display-stack);
+  font-size: var(--text-xs);
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--success-ink);
+}
+
+.diploma__victory-fact {
+  font-family: var(--font-display-stack);
+  font-size: var(--text-2xl);
+  color: var(--success-ink);
+}
+
+.diploma__victory-note {
+  font-size: var(--text-sm);
+  color: var(--fg);
+}
+
+.diploma__share {
+  font-size: var(--text-sm);
+  color: var(--muted);
+}
+
+.finale__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-3);
+}
+
+/* ---------------------------------------------------------------------- */
+/* Modo Desafio                                                           */
+/*                                                                        */
+/* Reusa `.level__bar`, `.option` e o feedback das fases: e o mesmo loop   */
+/* de perguntas, sem cenario de construcao. O que e proprio daqui e o      */
+/* cronometro e o placar final.                                           */
+/* ---------------------------------------------------------------------- */
+
+.challenge {
+  min-height: 100dvh;
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+  padding-bottom: var(--space-8);
+}
+
+.challenge__clock {
+  font-family: var(--font-display-stack);
+  font-weight: 800;
+  font-size: var(--text-lg);
+  font-variant-numeric: tabular-nums;
+  color: var(--fg);
+}
+
+.challenge__panel {
+  width: min(100%, 560px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+  background: var(--bg);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--elev-raised);
+  padding: var(--space-5);
+  /* `auto` nas duas margens centra o painel na sobra vertical sem mexer no
+     cabecalho, que continua ancorado no topo. */
+  margin: auto var(--space-4);
+  text-align: center;
+}
+
+/* O painel centra seus filhos, o que faria a grade de alternativas encolher
+   ate a largura do conteudo e empilhar tudo numa coluna so. */
+.challenge__panel .level__options,
+.challenge__panel .level__question-row,
+.challenge__panel .level__feedback {
+  width: 100%;
+}
+
+.challenge__heading {
+  font-size: var(--text-2xl);
+}
+
+.challenge__text {
+  font-weight: 700;
+  max-width: 380px;
+}
+
+.challenge__note {
+  font-size: var(--text-sm);
+  color: var(--muted);
+  max-width: 380px;
+}
+
+.challenge__record {
+  background: var(--warn-pale);
+  color: var(--warn-ink);
+  font-family: var(--font-display-stack);
+  font-weight: 800;
+  padding: var(--space-2) var(--space-5);
+  border-radius: var(--radius-pill);
+}
+
+.challenge__scoreboard {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-2);
+  margin: 0;
+  width: 100%;
+}
+
+.challenge__score-item {
+  flex: 1 1 140px;
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-2);
+}
+
+.challenge__score-item dt {
+  font-family: var(--font-display-stack);
+  font-size: var(--text-xs);
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.challenge__score-item dd {
+  margin: 0;
+  font-family: var(--font-display-stack);
+  font-size: var(--text-xl);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.challenge__score-of {
+  font-size: var(--text-base);
+  color: var(--muted);
+}
+
+.challenge__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-3);
+}
+
+/* No telefone as nove ilhas viram tres linhas de tres — um quadro fechado,
+   em vez de duas linhas cheias e uma ilha sozinha no fim. */
+@media (max-width: 480px) {
+  .finale__island {
+    width: 96px;
+  }
+}
+
+/* ---------------------------------------------------------------------- */
 /* Achievements                                                           */
 /* ---------------------------------------------------------------------- */
 
@@ -2213,6 +2591,13 @@ html[data-reduced-motion='on'] *::after {
 /* conteudo nao resolve, porque um elemento `fixed` cobre o que estiver    */
 /* sob ele em qualquer posicao de rolagem. No topo ele divide faixa apenas */
 /* com o chrome, que reserva a folga logo abaixo.                          */
+/*                                                                        */
+/* Cor: Eel Blue escurecido, nao Bee Yellow. O amarelo e a cor do botao    */
+/* secundario e das estrelas — usado aqui, um controle de sistema disputava */
+/* atencao com recompensa e acao. O azul e a cor "utilitaria" do sistema,  */
+/* nao compete com o verde de acao nem com o amarelo de premio, e da 6,0:1 */
+/* no branco (o amarelo dava 1,6:1, abaixo dos 3:1 de 1.4.11 para o limite */
+/* do controle).                                                          */
 /* ---------------------------------------------------------------------- */
 
 .sound-toggle {
@@ -2224,9 +2609,9 @@ html[data-reduced-motion='on'] *::after {
   height: var(--touch-target);
   border: none;
   border-radius: var(--radius-pill);
-  background: var(--warn);
-  color: var(--fg);
-  box-shadow: 0 4px 0 color-mix(in oklab, var(--warn), #000000 18%);
+  background: var(--info-ink);
+  color: #ffffff;
+  box-shadow: 0 4px 0 color-mix(in oklab, var(--info-ink), #000000 18%);
   font-size: 1.3rem;
   display: flex;
   align-items: center;
@@ -2238,10 +2623,10 @@ html[data-reduced-motion='on'] *::after {
 }
 
 .sound-toggle:hover {
-  background: var(--button-secondary-hover);
+  background: color-mix(in oklab, var(--info-ink), #ffffff 12%);
 }
 
 .sound-toggle:active {
   transform: translateY(4px);
-  box-shadow: 0 0 0 color-mix(in oklab, var(--warn), #000000 18%);
+  box-shadow: 0 0 0 color-mix(in oklab, var(--info-ink), #000000 18%);
 }

@@ -1,3 +1,4 @@
+import { createInitialChallenge } from '../domain/challenge';
 import { CURRENT_SCHEMA_VERSION } from '../domain/defaultState';
 
 /**
@@ -17,6 +18,10 @@ export type Migration = (state: JsonRecord) => JsonRecord;
 export const MIGRATIONS: Record<number, Migration> = {
   // Versao 0 = saves sem `schemaVersion` (antes do versionamento existir).
   0: (state) => ({ ...state, schemaVersion: 1 }),
+
+  // 1 -> 2: chegou o Modo Desafio. O save antigo nao tem o bloco `challenge`;
+  // um recorde zerado e a leitura correta de quem nunca correu o desafio.
+  1: (state) => ({ ...state, challenge: createInitialChallenge(), schemaVersion: 2 }),
 };
 
 export interface MigrationResult {

@@ -9,10 +9,22 @@ import {
   type ReactNode,
 } from 'react';
 import { evaluateAchievements } from '../domain/achievements';
+import { applyChallengeResult, type ChallengeRunResult } from '../domain/challenge';
 import { createDefaultState } from '../domain/defaultState';
-import { applyMissionResult, type MissionResult } from '../domain/progression';
+import {
+  applyMissionResult,
+  isArchipelagoComplete,
+  type MissionResult,
+} from '../domain/progression';
 import { recordAnswer as recordAnswerStat, startSession } from '../domain/statistics';
-import type { AchievementId, AvatarConfig, GameState, Locale, MascotId } from '../domain/types';
+import type {
+  AchievementId,
+  AvatarConfig,
+  ChallengeRecord,
+  GameState,
+  Locale,
+  MascotId,
+} from '../domain/types';
 import { detectLocale } from '../i18n/translate';
 import { LocalStorageProgressRepository } from '../persistence/localStorageRepository';
 import type { LoadSource, ProgressRepository } from '../persistence/ProgressRepository';
@@ -31,8 +43,16 @@ import { browserStorageService } from '../persistence/storageService';
 
 const AUTOSAVE_DELAY_MS = 400;
 
+export interface ChallengeCompletion {
+  isNewRecord: boolean;
+  record: ChallengeRecord;
+  newAchievements: AchievementId[];
+}
+
 export interface MissionCompletion {
   islandCompleted: boolean;
+  /** Esta missao fechou a ultima ilha: e o final do jogo. */
+  archipelagoCompleted: boolean;
   unlockedTable: number | null;
   newAchievements: AchievementId[];
 }
@@ -53,6 +73,7 @@ interface GameContextValue {
   selectTable: (table: number) => void;
   recordAnswer: (factKey: string, wasCorrect: boolean) => void;
   finishMission: (result: MissionResult) => MissionCompletion;
+  finishChallenge: (result: ChallengeRunResult) => ChallengeCompletion;
   resetProgress: () => void;
 }
 
@@ -209,7 +230,29 @@ export function GameProvider({ children, repository }: GameProviderProps) {
 
       return {
         islandCompleted: outcome.islandCompleted,
+        // Lido do progresso novo, nao do `state` da tela: quem chamou ainda
+        // esta no render anterior e veria o arquipelago incompleto.
+        archipelagoCompleted: outcome.islandCompleted && isArchipelagoComplete(outcome.progress),
         unlockedTable: outcome.unlockedTable,
+        newAchievements: newlyUnlocked,
+      };
+    },
+    [applyState],
+  );
+
+  /** Encerra uma corrida do Modo Desafio e guarda o recorde, se houve. */
+  const finishChallenge = useCallback(
+    (result: ChallengeRunResult): ChallengeCompletion => {
+      const current = stateRef.current;
+      const outcome = applyChallengeResult(current.challenge, result);
+      const withChallenge: GameState = { ...current, challenge: outcome.record };
+      const { achievements, newlyUnlocked } = evaluateAchievements(withChallenge);
+
+      applyState({ ...withChallenge, achievements });
+
+      return {
+        isNewRecord: outcome.isNewRecord,
+        record: outcome.record,
         newAchievements: newlyUnlocked,
       };
     },
@@ -241,6 +284,7 @@ export function GameProvider({ children, repository }: GameProviderProps) {
       selectTable,
       recordAnswer,
       finishMission,
+      finishChallenge,
       resetProgress,
     }),
     [
@@ -257,6 +301,7 @@ export function GameProvider({ children, repository }: GameProviderProps) {
       selectTable,
       recordAnswer,
       finishMission,
+      finishChallenge,
       resetProgress,
     ],
   );

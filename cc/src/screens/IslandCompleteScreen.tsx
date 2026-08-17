@@ -1,7 +1,7 @@
 import { useEffect, type CSSProperties } from 'react';
 import { audioService } from '../audio/audioService';
 import { getIsland } from '../domain/islands';
-import { getIslandProgress, isArchipelagoComplete } from '../domain/progression';
+import { getIslandProgress } from '../domain/progression';
 import type { GameState } from '../domain/types';
 import { useTranslation } from '../i18n/I18nProvider';
 import { IslandBadge } from '../art/IslandBadge';
@@ -35,7 +35,6 @@ export function IslandCompleteScreen({
   const { t } = useTranslation();
   const island = getIsland(table);
   const progress = getIslandProgress(state.progress, table);
-  const finishedEverything = isArchipelagoComplete(state.progress);
   const confettiColors = [
     island.palette.accent,
     island.palette.accentSoft,
@@ -83,14 +82,12 @@ export function IslandCompleteScreen({
       <IslandBadge palette={island.palette} status="completed" size={190} />
       <Stars count={progress.stars} size={38} />
 
-      {finishedEverything ? (
-        <p className="island-complete__unlock">{t('islandComplete.allDone')}</p>
-      ) : (
-        unlockedTable !== null && (
-          <p className="island-complete__unlock">
-            {t('islandComplete.unlocked', { island: t(`islands.${unlockedTable}.name`) })}
-          </p>
-        )
+      {/* Nao ha ramo "acabou tudo" aqui: fechar a ultima ilha leva direto para
+          a tela de final do jogo, que celebra o arquipelago inteiro. */}
+      {unlockedTable !== null && (
+        <p className="island-complete__unlock">
+          {t('islandComplete.unlocked', { island: t(`islands.${unlockedTable}.name`) })}
+        </p>
       )}
 
       <p className="island-complete__note">{t('islandComplete.keepPracticing')}</p>

@@ -1,4 +1,5 @@
 import { createInitialAchievements } from './achievements';
+import { createInitialChallenge } from './challenge';
 import { createInitialProgress } from './progression';
 import { createInitialStatistics } from './statistics';
 import type {
@@ -14,7 +15,7 @@ import type {
  * Versao atual do schema salvo.
  * Subir este numero exige uma migracao nova em `persistence/migrations.ts`.
  */
-export const CURRENT_SCHEMA_VERSION = 1;
+export const CURRENT_SCHEMA_VERSION = 2;
 
 export const DEFAULT_AVATAR: AvatarConfig = {
   base: 'boy',
@@ -55,5 +56,6 @@ export function createDefaultState(locale: Locale, now: Date = new Date()): Game
     progress: createInitialProgress(),
     statistics: createInitialStatistics(),
     achievements: createInitialAchievements(),
+    challenge: createInitialChallenge(),
   };
 }

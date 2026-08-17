@@ -1,3 +1,4 @@
+import { isPerfectRun } from './challenge';
 import { completedIslandCount, getIslandProgress, isArchipelagoComplete } from './progression';
 import type { AchievementId, AchievementState, GameState } from './types';
 
@@ -57,6 +58,11 @@ export const ACHIEVEMENTS: readonly AchievementDefinition[] = [
     id: 'allIslands',
     icon: '👑',
     check: (state) => isArchipelagoComplete(state.progress),
+  },
+  {
+    id: 'perfectChallenge',
+    icon: '⚔️',
+    check: (state) => isPerfectRun(state.challenge),
   },
 ];
 

@@ -77,8 +77,15 @@ export function LevelScreen({
 
   // O contexto muda a cada resposta (as estatisticas mudam), mas os
   // temporizadores precisam sempre da versao mais recente.
+  //
+  // A copia acontece em efeito, e nao durante o render: escrever num ref no
+  // corpo do componente quebra a pureza que o React exige (e o modo estrito
+  // acusa). Efeito basta porque ninguem le este ref durante o render — so os
+  // callbacks de clique e os `setTimeout`, todos depois do commit.
   const contextRef = useRef(context);
-  contextRef.current = context;
+  useEffect(() => {
+    contextRef.current = context;
+  }, [context]);
 
   const [level, setLevel] = useState<LevelState>(() => createLevelState(context));
   const [showQuitDialog, setShowQuitDialog] = useState(false);

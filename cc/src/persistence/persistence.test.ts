@@ -3,6 +3,7 @@ import { LocalStorageProgressRepository, STORAGE_KEY } from './localStorageRepos
 import { createMemoryStorage, createStorageService } from './storageService';
 import { migrate, readSchemaVersion } from './migrations';
 import { normalizeState } from './schema';
+import { CHALLENGE_QUESTION_COUNT } from '../domain/challenge';
 import { CURRENT_SCHEMA_VERSION, createDefaultState } from '../domain/defaultState';
 import { applyMissionResult, getIslandProgress, islandStatus } from '../domain/progression';
 import { recordAnswer } from '../domain/statistics';
@@ -82,6 +83,20 @@ describe('migracao de schema', () => {
     const result = migrate({ statistics: { totalCorrect: 12 } });
     expect(result.data.statistics).toEqual({ totalCorrect: 12 });
   });
+
+  it('1 -> 2 acrescenta o recorde zerado do Modo Desafio', () => {
+    const result = migrate({ schemaVersion: 1, statistics: { totalCorrect: 12 } });
+
+    expect(result.migrated).toBe(true);
+    expect(result.data.challenge).toEqual({
+      bestScore: 0,
+      bestTimeMs: null,
+      runs: 0,
+      lastPlayedAt: null,
+    });
+    // O progresso de quem ja jogava continua intacto.
+    expect(result.data.statistics).toEqual({ totalCorrect: 12 });
+  });
 });
 
 describe('normalizeState', () => {
@@ -90,6 +105,30 @@ describe('normalizeState', () => {
     const result = normalizeState(JSON.parse(JSON.stringify(defaults)), 'pt-BR');
     expect(result.repaired).toBe(false);
     expect(result.state).toEqual(defaults);
+  });
+
+  it('conserta um recorde de desafio impossivel', () => {
+    const { state, repaired } = normalizeState(
+      {
+        // Placar acima do maximo, tempo negativo e um "recorde" sem placar.
+        challenge: { bestScore: 999, bestTimeMs: -5, runs: 2, lastPlayedAt: 'ontem' },
+      },
+      'pt-BR',
+    );
+
+    expect(repaired).toBe(true);
+    expect(state.challenge.bestScore).toBe(CHALLENGE_QUESTION_COUNT);
+    expect(state.challenge.bestTimeMs).toBe(0);
+    expect(state.challenge.runs).toBe(2);
+    expect(state.challenge.lastPlayedAt).toBeNull();
+  });
+
+  it('nao inventa tempo de recorde para quem nunca pontuou', () => {
+    const { state } = normalizeState(
+      { challenge: { bestScore: 0, bestTimeMs: 42_000, runs: 1, lastPlayedAt: null } },
+      'pt-BR',
+    );
+    expect(state.challenge.bestTimeMs).toBeNull();
   });
 
   it('devolve o padrao quando o dado nao e um objeto', () => {

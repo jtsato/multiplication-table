@@ -25,7 +25,9 @@
     "achievements": "Conquistas",
     "settings": "Configurações",
     "progress": "{{completed}} de {{total}} ilhas concluídas",
-    "changeCharacter": "Mudar personagem"
+    "changeCharacter": "Mudar personagem",
+    "diploma": "Meu diploma de mestre",
+    "challenge": "Desafio Relâmpago"
   },
   "onboarding": {
     "languageTitle": "Escolha seu idioma",
@@ -70,7 +72,7 @@
       "skin3": "Tom 3",
       "skin4": "Tom 4"
     },
-    "mascotLabel": "Companheiro",
+    "mascotLabel": "Mascote",
     "mascot": {
       "bloco": "Bloco",
       "brasa": "Brasa",
@@ -235,9 +237,49 @@
     "title": "Ilha concluída!",
     "subtitle": "Você dominou a tabuada do {{table}}!",
     "unlocked": "Nova ilha liberada: {{island}}",
-    "allDone": "Você concluiu todo o arquipélago! Parabéns!",
     "keepPracticing": "Algumas contas ainda vão aparecer de novo para você treinar.",
     "backToMap": "Ver o mapa"
+  },
+  "archipelagoComplete": {
+    "title": "Mestre da Tabuada!",
+    "subtitle": "Você explorou as {{islands}} ilhas e dominou a tabuada inteira.",
+    "avatarAlt": "Seu personagem usando a coroa de mestre",
+    "islandsTitle": "Seu arquipélago",
+    "diplomaTitle": "Meu diploma",
+    "diplomaHolder": "Explorador do Arquipélago da Tabuada",
+    "stars": "Estrelas",
+    "answers": "Respostas",
+    "accuracy": "Acertos",
+    "bestStreak": "Melhor sequência",
+    "adventures": "Aventuras",
+    "toughest": "Sua vitória mais difícil",
+    "toughestNote": "Você errou {{mistakes}} vezes e no fim dominou.",
+    "share": "Mostre este diploma para alguém que você gosta!",
+    "backToMap": "Ver o mapa",
+    "backToHome": "Voltar ao início"
+  },
+  "challenge": {
+    "title": "Desafio Relâmpago",
+    "subtitle": "Contas de todas as tabuadas misturadas",
+    "briefingTitle": "Ilha Lendária",
+    "briefingText": "São {{total}} contas sorteadas de todas as tabuadas.",
+    "briefingNote": "Sem tempo limite e sem perder: o relógio só marca quanto você demorou.",
+    "currentRecord": "Seu recorde: {{score}} de {{total}} em {{time}}",
+    "start": "Começar o desafio",
+    "clockLabel": "Tempo da corrida",
+    "progress": "{{resolved}} de {{total}} contas respondidas",
+    "quit": "Sair do desafio",
+    "finished": "Desafio concluído!",
+    "newRecord": "Novo recorde!",
+    "score": "Acertos de primeira",
+    "time": "Tempo",
+    "best": "Seu recorde",
+    "resultNote": "Cada corrida sorteia contas novas, com as mais difíceis aparecendo mais vezes.",
+    "again": "Jogar de novo",
+    "back": "Voltar ao início",
+    "quitTitle": "Sair do desafio?",
+    "quitMessage": "A corrida atual não vai contar para o recorde.",
+    "locked": "Conclua todas as ilhas para liberar"
   },
   "achievements": {
     "title": "Conquistas",
@@ -294,6 +336,11 @@
         "name": "Mestre das ilhas",
         "description": "Concluiu todas as ilhas do arquipélago",
         "goal": "Conclua todas as ilhas do arquipélago"
+      },
+      "perfectChallenge": {
+        "name": "Lenda do Arquipélago",
+        "description": "Você acertou o desafio inteiro de primeira!",
+        "goal": "Acerte todas as contas do Desafio Relâmpago de primeira"
       }
     }
   },

@@ -23,7 +23,7 @@ interface OnboardingScreenProps {
   locale: Locale;
   onLocaleChange: (locale: Locale) => void;
   onFinish: (avatar: AvatarConfig, mascotId: MascotId) => void;
-  /** Modo edicao: entra direto na customizacao, sem escolher idioma. */
+  /** Modo edicao: entra pela escolha do personagem, sem escolher idioma. */
   initialAvatar?: AvatarConfig;
   initialMascotId?: MascotId;
   editing?: boolean;
@@ -46,7 +46,10 @@ export function OnboardingScreen({
   onCancel,
 }: OnboardingScreenProps) {
   const { t } = useTranslation();
-  const [step, setStep] = useState<Step>(editing ? 'customize' : 'language');
+  // Editar comeca em 'character', e nao em 'customize': trocar entre menino e
+  // menina precisa estar ao alcance de quem ja criou o personagem, nao so de
+  // quem esta abrindo o jogo pela primeira vez.
+  const [step, setStep] = useState<Step>(editing ? 'character' : 'language');
   const [avatar, setAvatar] = useState<AvatarConfig>(initialAvatar ?? DEFAULT_AVATAR);
   const [mascotId, setMascotId] = useState<MascotId>(initialMascotId ?? DEFAULT_MASCOT_ID);
 
@@ -111,7 +114,13 @@ export function OnboardingScreen({
             </div>
 
             <div className="onboarding__actions">
-              <Button variant="secondary" size="lg" onClick={() => setStep('language')}>
+              {/* Voltar sempre recua um passo; no primeiro passo da edicao,
+                  recuar e sair sem salvar. */}
+              <Button
+                variant="secondary"
+                size="lg"
+                onClick={editing && onCancel ? onCancel : () => setStep('language')}
+              >
                 {t('common.back')}
               </Button>
               <Button size="lg" onClick={() => setStep('customize')}>
@@ -173,7 +182,8 @@ export function OnboardingScreen({
                 labelFor={(option) => t(`onboarding.mascot.${option}`)}
                 renderSwatch={(option) => {
                   const definition = getMascotDefinition(option);
-                  return <Mascot palette={definition.colors} kind={definition.kind} size={40} />;
+                  // 32px cabe na pilula de 48px sem esticar a linha.
+                  return <Mascot palette={definition.colors} kind={definition.kind} size={32} />;
                 }}
               />
             </div>
@@ -193,8 +203,8 @@ export function OnboardingScreen({
                 {t('onboarding.surprise')}
               </Button>
 
-              {editing && onCancel && (
-                <Button variant="ghost" size="lg" onClick={onCancel}>
+              {editing && (
+                <Button variant="ghost" size="lg" onClick={() => setStep('character')}>
                   {t('common.back')}
                 </Button>
               )}

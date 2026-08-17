@@ -25,7 +25,9 @@
     "achievements": "Achievements",
     "settings": "Settings",
     "progress": "{{completed}} of {{total}} islands completed",
-    "changeCharacter": "Change character"
+    "changeCharacter": "Change character",
+    "diploma": "My master diploma",
+    "challenge": "Lightning Challenge"
   },
   "onboarding": {
     "languageTitle": "Choose your language",
@@ -70,7 +72,7 @@
       "skin3": "Tone 3",
       "skin4": "Tone 4"
     },
-    "mascotLabel": "Companion",
+    "mascotLabel": "Pet",
     "mascot": {
       "bloco": "Block",
       "brasa": "Ember",
@@ -235,9 +237,49 @@
     "title": "Island complete!",
     "subtitle": "You mastered the {{table}} times table!",
     "unlocked": "New island unlocked: {{island}}",
-    "allDone": "You finished the whole archipelago! Congratulations!",
     "keepPracticing": "A few facts will come back so you can keep practicing.",
     "backToMap": "See the map"
+  },
+  "archipelagoComplete": {
+    "title": "Times Table Master!",
+    "subtitle": "You explored all {{islands}} islands and mastered every table.",
+    "avatarAlt": "Your character wearing the master's crown",
+    "islandsTitle": "Your archipelago",
+    "diplomaTitle": "My diploma",
+    "diplomaHolder": "Explorer of the Times Table Archipelago",
+    "stars": "Stars",
+    "answers": "Answers",
+    "accuracy": "Correct",
+    "bestStreak": "Best streak",
+    "adventures": "Adventures",
+    "toughest": "Your toughest win",
+    "toughestNote": "You missed it {{mistakes}} times and mastered it in the end.",
+    "share": "Show this diploma to someone you love!",
+    "backToMap": "See the map",
+    "backToHome": "Back to start"
+  },
+  "challenge": {
+    "title": "Lightning Challenge",
+    "subtitle": "Facts from every table, all mixed up",
+    "briefingTitle": "Legendary Island",
+    "briefingText": "{{total}} facts drawn from every table.",
+    "briefingNote": "No time limit and no losing: the clock only tracks how long you took.",
+    "currentRecord": "Your record: {{score}} of {{total}} in {{time}}",
+    "start": "Start the challenge",
+    "clockLabel": "Run time",
+    "progress": "{{resolved}} of {{total}} facts answered",
+    "quit": "Leave challenge",
+    "finished": "Challenge complete!",
+    "newRecord": "New record!",
+    "score": "First-try correct",
+    "time": "Time",
+    "best": "Your record",
+    "resultNote": "Every run draws new facts, and the harder ones show up more often.",
+    "again": "Play again",
+    "back": "Back to start",
+    "quitTitle": "Leave the challenge?",
+    "quitMessage": "This run will not count toward your record.",
+    "locked": "Finish every island to unlock"
   },
   "achievements": {
     "title": "Achievements",
@@ -294,6 +336,11 @@
         "name": "Island master",
         "description": "Completed every island of the archipelago",
         "goal": "Complete every island of the archipelago"
+      },
+      "perfectChallenge": {
+        "name": "Archipelago Legend",
+        "description": "You aced the whole challenge on the first try!",
+        "goal": "Get every Lightning Challenge fact right on the first try"
       }
     }
   },

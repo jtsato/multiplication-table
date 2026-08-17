@@ -4,7 +4,7 @@ import { createQuestion } from '../domain/questions';
 import { pushRecentKey, selectNextFact } from '../domain/review';
 import { randomInt, type Rng } from '../domain/rng';
 import type { MissionResult } from '../domain/progression';
-import type { FactKey, FactStats, Question } from '../domain/types';
+import type { FactKey, FactStats, MultiplicationFact, Question } from '../domain/types';
 
 /**
  * Maquina de estados de UMA missao.
@@ -58,6 +58,14 @@ export interface LevelContext {
   optionCount: number;
   stats: FactStats;
   unlockedTables: readonly number[];
+  /**
+   * Sorteio alternativo das contas. Ausente = revisao adaptativa da ilha.
+   *
+   * Existe para o Modo Desafio, que mistura todas as tabuadas e por isso nao
+   * tem "tabuada da ilha" para partir. Injetar so o sorteio deixa o resto da
+   * maquina de estados intacta e compartilhada entre os dois modos.
+   */
+  selectFact?: (rng: Rng, recentKeys: readonly FactKey[]) => MultiplicationFact;
 }
 
 export function createLevelState(context: LevelContext): LevelState {
@@ -84,12 +92,14 @@ export function createLevelState(context: LevelContext): LevelState {
 
 /** Sorteia a proxima pergunta usando o sistema de revisao adaptativa. */
 function nextQuestion(state: LevelState, rng: Rng, context: LevelContext): Question {
-  const fact = selectNextFact(rng, {
-    table: state.table,
-    unlockedTables: context.unlockedTables,
-    stats: context.stats,
-    recentKeys: state.recentKeys,
-  });
+  const fact = context.selectFact
+    ? context.selectFact(rng, state.recentKeys)
+    : selectNextFact(rng, {
+        table: state.table,
+        unlockedTables: context.unlockedTables,
+        stats: context.stats,
+        recentKeys: state.recentKeys,
+      });
   return createQuestion(rng, fact, state.optionCount, state.lastCorrectIndex);
 }
 

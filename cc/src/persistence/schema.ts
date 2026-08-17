@@ -6,6 +6,7 @@ import {
   SKIN_TONES,
 } from '../domain/avatar';
 import { ACHIEVEMENTS } from '../domain/achievements';
+import { CHALLENGE_QUESTION_COUNT } from '../domain/challenge';
 import { MASCOT_IDS } from '../domain/mascots';
 import { CURRENT_SCHEMA_VERSION, createDefaultState } from '../domain/defaultState';
 import { FIRST_TABLE, TABLES } from '../domain/facts';
@@ -15,6 +16,7 @@ import { createIslandProgress } from '../domain/progression';
 import { SUPPORTED_LOCALES } from '../domain/types';
 import type {
   AchievementState,
+  ChallengeRecord,
   FactStat,
   FactStats,
   GameProgress,
@@ -352,6 +354,32 @@ export interface NormalizeResult {
  * Converte qualquer coisa vinda do storage num `GameState` valido.
  * Nunca lanca excecao: no pior caso devolve o estado padrao.
  */
+function normalizeChallenge(raw: unknown, fallback: ChallengeRecord, mark: Mark): ChallengeRecord {
+  const record = asRecord(raw);
+  if (!record) {
+    mark();
+    return fallback;
+  }
+
+  const bestScore = coerceNumber(record.bestScore, fallback.bestScore, mark, {
+    min: 0,
+    max: CHALLENGE_QUESTION_COUNT,
+  });
+  const rawTime = record.bestTimeMs;
+  const bestTimeMs =
+    rawTime === null || rawTime === undefined
+      ? null
+      : coerceNumber(rawTime, fallback.bestTimeMs ?? 0, mark, { min: 0 });
+
+  return {
+    bestScore,
+    // Recorde sem tempo e um estado impossivel; sem os dois, nao ha recorde.
+    bestTimeMs: bestScore > 0 ? bestTimeMs : null,
+    runs: coerceNumber(record.runs, fallback.runs, mark, { min: 0 }),
+    lastPlayedAt: coerceIsoDate(record.lastPlayedAt ?? null, fallback.lastPlayedAt, mark),
+  };
+}
+
 export function normalizeState(
   raw: unknown,
   fallbackLocale: Locale,
@@ -375,6 +403,7 @@ export function normalizeState(
     progress: normalizeProgress(record.progress, mark),
     statistics: normalizeStatistics(record.statistics, mark),
     achievements: normalizeAchievements(record.achievements, mark),
+    challenge: normalizeChallenge(record.challenge, defaults.challenge, mark),
   };
 
   return { state, repaired };
