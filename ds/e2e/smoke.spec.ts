@@ -39,13 +39,13 @@ test.describe("Slice 0 — Foundation", () => {
 });
 
 test.describe("Slice 1 — Battle Shell", () => {
-  test("inicia a batalha, mostra o slime com HP e mantém acessibilidade", async ({ page }) => {
+  test("inicia a batalha, mostra o vingador com HP e mantém acessibilidade", async ({ page }) => {
     await page.goto("/");
 
     await page.getByRole("button", { name: "Iniciar batalha" }).click();
 
     await expect(page.getByRole("heading", { level: 2, name: "Batalha" })).toBeVisible();
-    await expect(page.getByRole("progressbar", { name: "Slime" })).toHaveAttribute(
+    await expect(page.getByRole("progressbar", { name: "Vingador" })).toHaveAttribute(
       "aria-valuenow",
       "20",
     );
@@ -53,7 +53,7 @@ test.describe("Slice 1 — Battle Shell", () => {
       "aria-valuenow",
       "30",
     );
-    await expect(page.getByRole("status")).toContainText("Um Slime selvagem apareceu!");
+    await expect(page.getByRole("status")).toContainText("Um Vingador selvagem apareceu!");
     await expect(page.getByText("20 / 20")).toBeVisible();
 
     await expectNoSeriousViolations(page);
@@ -71,12 +71,12 @@ test.describe("Slice 2 — Math Attack", () => {
     return { a: Number(match[1]), b: Number(match[2]) };
   }
 
-  test("acertar reduz o HP do slime e avança para a próxima pergunta", async ({ page }) => {
+  test("acertar reduz o HP do vingador e avança para a próxima pergunta", async ({ page }) => {
     const { a, b } = await startBattle(page);
 
     await page.getByRole("button", { name: String(a * b) }).click();
 
-    await expect(page.getByRole("progressbar", { name: "Slime" })).toHaveAttribute(
+    await expect(page.getByRole("progressbar", { name: "Vingador" })).toHaveAttribute(
       "aria-valuenow",
       "14",
     );
@@ -98,7 +98,7 @@ test.describe("Slice 2 — Math Attack", () => {
     await expect(page.getByRole("status")).toContainText("Quase");
     await expect(page.getByRole("status")).toContainText(`${a} × ${b} = ${a * b}`);
     await expect(page.getByRole("status")).toContainText("te acertou");
-    await expect(page.getByRole("progressbar", { name: "Slime" })).toHaveAttribute(
+    await expect(page.getByRole("progressbar", { name: "Vingador" })).toHaveAttribute(
       "aria-valuenow",
       "20",
     );
@@ -143,7 +143,7 @@ test.describe("Slice 2 — Math Attack", () => {
     }
 
     await expect(page.getByText("Combo ×3")).toBeVisible();
-    await expect(page.getByRole("progressbar", { name: "Slime" })).toHaveAttribute(
+    await expect(page.getByRole("progressbar", { name: "Vingador" })).toHaveAttribute(
       "aria-valuenow",
       "2",
     );
@@ -164,25 +164,27 @@ test.describe("Slice 2 — Math Attack", () => {
     await expect(page.getByRole("button", { name: "Super Ataque" })).toBeVisible();
     await page.getByRole("button", { name: "Super Ataque" }).click();
 
-    await expect(page.getByRole("progressbar", { name: "Slime" })).toHaveAttribute(
+    await expect(page.getByRole("progressbar", { name: "Vingador" })).toHaveAttribute(
       "aria-valuenow",
       "0",
     );
     await expect(page.getByRole("heading", { level: 3, name: "Vitória!" })).toBeVisible();
-    await expect(page.getByText("Você derrotou o Slime!")).toBeVisible();
+    await expect(page.getByText("Você derrotou o Vingador!")).toBeVisible();
     await expectNoSeriousViolations(page);
 
     await page.getByRole("button", { name: "Jogar novamente" }).click();
 
-    // Progressão: o próximo combate é contra o dragão.
-    await expect(page.getByRole("progressbar", { name: "Dragão" })).toHaveAttribute(
+    // Progressão: o próximo combate é contra a tiamat.
+    await expect(page.getByRole("progressbar", { name: "Tiamat" })).toHaveAttribute(
       "aria-valuenow",
-      "30",
+      "26",
     );
     await expect(page.locator(".question")).toBeVisible();
   });
 
-  test("progressão: derrotar o slime avança para o dragão no próximo combate", async ({ page }) => {
+  test("progressão: derrotar o vingador avança para tiamat no próximo combate", async ({
+    page,
+  }) => {
     await page.goto("/");
     await page.getByRole("button", { name: "Iniciar batalha" }).click();
 
@@ -198,17 +200,17 @@ test.describe("Slice 2 — Math Attack", () => {
 
     await page.getByRole("button", { name: "Jogar novamente" }).click();
 
-    await expect(page.getByRole("progressbar", { name: "Dragão" })).toHaveAttribute(
+    await expect(page.getByRole("progressbar", { name: "Tiamat" })).toHaveAttribute(
       "aria-valuenow",
-      "30",
+      "26",
     );
-    await expect(page.getByText(/Um Dragão selvagem apareceu/)).toBeVisible();
+    await expect(page.getByText(/Um Tiamat selvagem apareceu/)).toBeVisible();
 
     // O save persiste a progressão: reload continua no dragão.
     await page.reload();
-    await expect(page.getByRole("progressbar", { name: "Dragão" })).toHaveAttribute(
+    await expect(page.getByRole("progressbar", { name: "Tiamat" })).toHaveAttribute(
       "aria-valuenow",
-      "30",
+      "26",
     );
     await expectNoSeriousViolations(page);
   });
@@ -244,13 +246,13 @@ test.describe("Slice 7 — Save Game", () => {
     await page.goto("/");
     await page.getByRole("button", { name: "Iniciar batalha" }).click();
 
-    // Um acerto: slime 20 → 14.
+    // Um acerto: vingador 20 → 14.
     await expect(page.locator(".question")).toBeVisible();
     const text = (await page.locator(".question").innerText()) ?? "";
     const match = text.match(/(\d+)\s*×\s*(\d+)/);
     if (!match) throw new Error(`pergunta inesperada: ${text}`);
     await page.getByRole("button", { name: String(Number(match[1]) * Number(match[2])) }).click();
-    await expect(page.getByRole("progressbar", { name: "Slime" })).toHaveAttribute(
+    await expect(page.getByRole("progressbar", { name: "Vingador" })).toHaveAttribute(
       "aria-valuenow",
       "14",
     );
@@ -259,7 +261,7 @@ test.describe("Slice 7 — Save Game", () => {
 
     // Auto-resume: volta para a batalha com o estado salvo.
     await expect(page.getByRole("heading", { level: 2, name: "Batalha" })).toBeVisible();
-    await expect(page.getByRole("progressbar", { name: "Slime" })).toHaveAttribute(
+    await expect(page.getByRole("progressbar", { name: "Vingador" })).toHaveAttribute(
       "aria-valuenow",
       "14",
     );

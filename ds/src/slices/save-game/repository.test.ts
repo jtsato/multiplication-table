@@ -11,7 +11,7 @@ function saveValido(): GameSave {
     battle: {
       phase: "question",
       hero: { nameKey: "battle.hero", maxHp: 30, hp: 30 },
-      monster: { nameKey: "monster.slime", maxHp: 20, hp: 14, id: "slime", damage: 5 },
+      monster: { nameKey: "monster.avenger", maxHp: 20, hp: 14, id: "avenger", damage: 5 },
       question: { a: 6, b: 4, answer: 24 },
       alternatives: [24, 23, 25, 18],
       combo: 0,

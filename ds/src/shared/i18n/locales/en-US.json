@@ -28,8 +28,15 @@
     "alternatives": "Alternatives"
   },
   "monster": {
-    "slime": "Slime",
-    "dragon": "Dragon",
-    "golem": "Golem"
+    "avenger": "The Avenger",
+    "tiamat": "Tiamat",
+    "shadowDemon": "Shadow Demon",
+    "decay": "Decay",
+    "keleog": "Keleog",
+    "darkling": "Darkling",
+    "lizardmen": "Lizardmen",
+    "bullywugs": "Bullywugs",
+    "warduke": "Warduke",
+    "beholder": "The Beholder"
   }
 }

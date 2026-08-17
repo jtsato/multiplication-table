@@ -1,5 +1,6 @@
 import type { MessageKey } from "../../shared/i18n/i18n";
 import type { MultiplicationFact } from "../math-question/question.types";
+import type { MonsterSpriteId } from "../../art/sprite-ids";
 
 export type BattlePhase =
   "intro" | "question" | "hero-turn" | "monster-turn" | "victory" | "defeat";
@@ -12,7 +13,8 @@ export interface Combatant {
 
 /** Especificação de um monstro (sem HP atual — o estado vivo guarda isso). */
 export interface MonsterSpec extends Omit<Combatant, "hp"> {
-  id: string;
+  /** Identifica também o sprite do monstro (src/art/MonsterAvatar). */
+  id: MonsterSpriteId;
   /** Dano causado ao herói quando ele erra a pergunta. */
   damage: number;
 }

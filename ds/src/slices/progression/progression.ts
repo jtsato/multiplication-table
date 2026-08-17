@@ -6,10 +6,13 @@ export interface Progress {
   stage: number;
 }
 
-/** Tabuadas disponíveis em cada estágio. */
+/** Tabuadas disponíveis em cada estágio da jornada (10 monstros). */
 const TABLES_BY_STAGE: number[][] = [
   [2, 3, 4],
+  [2, 3, 4, 5],
   [2, 3, 4, 5, 6],
+  [2, 3, 4, 5, 6, 7],
+  [2, 3, 4, 5, 6, 7, 8],
   [2, 3, 4, 5, 6, 7, 8, 9],
 ];
 

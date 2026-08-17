@@ -1,12 +1,12 @@
 import { describe, expect, it } from "vitest";
 import { createBattle, battleReducer, hpRatio, HERO_MAX_HP } from "./battle";
-import { SLIME } from "./monsters";
+import { AVENGER } from "./monsters";
 import { HERO_BASE_DAMAGE } from "../player-attack/player-attack";
 import { superAttackDamage } from "../super-attack/super-attack";
 import type { BattleState, MonsterSpec } from "./battle.types";
 
 describe("createBattle", () => {
-  const battle: BattleState = createBattle(SLIME);
+  const battle: BattleState = createBattle(AVENGER);
 
   it("começa na fase intro", () => {
     expect(battle.phase).toBe("intro");
@@ -19,9 +19,9 @@ describe("createBattle", () => {
   });
 
   it("monstro nasce com HP cheio e mantém sua especificação", () => {
-    expect(battle.monster.hp).toBe(SLIME.maxHp);
-    expect(battle.monster.maxHp).toBe(SLIME.maxHp);
-    expect(battle.monster.nameKey).toBe("monster.slime");
+    expect(battle.monster.hp).toBe(AVENGER.maxHp);
+    expect(battle.monster.maxHp).toBe(AVENGER.maxHp);
+    expect(battle.monster.nameKey).toBe("monster.avenger");
   });
 
   it("combo e super ataque começam zerados", () => {
@@ -36,19 +36,19 @@ describe("createBattle", () => {
 
 describe("battleReducer", () => {
   it("START_BATTLE cria uma batalha nova e íntegra", () => {
-    const anterior: BattleState = createBattle(SLIME);
-    const novo = battleReducer(anterior, { type: "START_BATTLE", monster: SLIME });
+    const anterior: BattleState = createBattle(AVENGER);
+    const novo = battleReducer(anterior, { type: "START_BATTLE", monster: AVENGER });
 
     expect(novo).not.toBe(anterior);
     expect(novo.phase).toBe("intro");
     expect(novo.hero.hp).toBe(novo.hero.maxHp);
-    expect(novo.monster.hp).toBe(SLIME.maxHp);
+    expect(novo.monster.hp).toBe(AVENGER.maxHp);
     expect(novo.combo).toBe(0);
     expect(novo.superReady).toBe(false);
   });
 
   it("ações desconhecidas são ignoradas (estado preservado)", () => {
-    const estado: BattleState = createBattle(SLIME);
+    const estado: BattleState = createBattle(AVENGER);
     expect(battleReducer(estado, { type: "ACÃO_DESCONHECIDA" } as never)).toBe(estado);
   });
 });
@@ -58,7 +58,7 @@ describe("battleReducer — perguntas (Slice 2)", () => {
   const ALTERNATIVES = [24, 23, 25, 18];
 
   function comPergunta() {
-    return battleReducer(createBattle(SLIME), {
+    return battleReducer(createBattle(AVENGER), {
       type: "BEGIN_QUESTION",
       question: QUESTION,
       alternatives: ALTERNATIVES,
@@ -74,7 +74,7 @@ describe("battleReducer — perguntas (Slice 2)", () => {
 
   it("acertar reduz o HP do slime pelo dano base e anuncia", () => {
     const acerto = battleReducer(comPergunta(), { type: "ANSWER", value: 24 });
-    expect(acerto.monster.hp).toBe(SLIME.maxHp - HERO_BASE_DAMAGE);
+    expect(acerto.monster.hp).toBe(AVENGER.maxHp - HERO_BASE_DAMAGE);
     expect(acerto.phase).toBe("hero-turn");
     expect(acerto.log.at(-1)).toEqual({
       key: "battle.correct",
@@ -86,17 +86,22 @@ describe("battleReducer — perguntas (Slice 2)", () => {
 
   it("errar faz o monstro atacar e reduz o HP do herói", () => {
     const erro = battleReducer(comPergunta(), { type: "ANSWER", value: 23 });
-    expect(erro.hero.hp).toBe(HERO_MAX_HP - SLIME.damage);
-    expect(erro.monster.hp).toBe(SLIME.maxHp);
+    expect(erro.hero.hp).toBe(HERO_MAX_HP - AVENGER.damage);
+    expect(erro.monster.hp).toBe(AVENGER.maxHp);
     expect(erro.phase).toBe("monster-turn");
     expect(erro.log.at(-1)).toEqual({
       key: "battle.almost",
-      params: { a: 6, b: 4, answer: 24, damage: SLIME.damage },
+      params: { a: 6, b: 4, answer: 24, damage: AVENGER.damage },
     });
   });
 
   it("errar que zera o HP do herói entra em defeat", () => {
-    const feroz = { id: "feroz", nameKey: "monster.slime" as const, maxHp: 20, damage: 99 };
+    const feroz = {
+      id: "avenger" as const,
+      nameKey: "monster.avenger" as const,
+      maxHp: 20,
+      damage: 99,
+    };
     const comPerguntaFeroz = battleReducer(createBattle(feroz), {
       type: "BEGIN_QUESTION",
       question: QUESTION,
@@ -109,8 +114,8 @@ describe("battleReducer — perguntas (Slice 2)", () => {
 
   it("acertar que zera o HP do monstro entra em victory", () => {
     const fraco = {
-      id: "fraco",
-      nameKey: "monster.slime" as const,
+      id: "avenger" as const,
+      nameKey: "monster.avenger" as const,
       maxHp: HERO_BASE_DAMAGE,
       damage: 5,
     };
@@ -125,7 +130,7 @@ describe("battleReducer — perguntas (Slice 2)", () => {
   });
 
   it("ANSWER é ignorado fora da fase question", () => {
-    const intro: BattleState = createBattle(SLIME);
+    const intro: BattleState = createBattle(AVENGER);
     expect(battleReducer(intro, { type: "ANSWER", value: 24 })).toBe(intro);
     const vitoria: BattleState = { ...comPergunta(), phase: "victory" };
     expect(battleReducer(vitoria, { type: "ANSWER", value: 24 })).toBe(vitoria);
@@ -137,7 +142,7 @@ describe("battleReducer — combo (Slice 4)", () => {
   const ALTERNATIVES = [24, 23, 25, 18];
 
   function comPergunta() {
-    return battleReducer(createBattle(SLIME), {
+    return battleReducer(createBattle(AVENGER), {
       type: "BEGIN_QUESTION",
       question: QUESTION,
       alternatives: ALTERNATIVES,
@@ -194,7 +199,7 @@ describe("battleReducer — super ataque (Slice 5)", () => {
   const ALTERNATIVES = [24, 23, 25, 18];
 
   function comPergunta() {
-    return battleReducer(createBattle(SLIME), {
+    return battleReducer(createBattle(AVENGER), {
       type: "BEGIN_QUESTION",
       question: QUESTION,
       alternatives: ALTERNATIVES,
@@ -202,7 +207,7 @@ describe("battleReducer — super ataque (Slice 5)", () => {
   }
 
   /** Acerta 3 vezes para liberar o super ataque. */
-  function comSuperPronto(monster: MonsterSpec = SLIME): BattleState {
+  function comSuperPronto(monster: MonsterSpec = AVENGER): BattleState {
     let estado = battleReducer(createBattle(monster), {
       type: "BEGIN_QUESTION",
       question: QUESTION,
@@ -220,7 +225,12 @@ describe("battleReducer — super ataque (Slice 5)", () => {
   }
 
   it("USE_SUPER_ATTACK causa dano escalado, consome o combo e zera o super", () => {
-    const tanque = { id: "tanque", nameKey: "monster.slime" as const, maxHp: 50, damage: 5 };
+    const tanque = {
+      id: "beholder" as const,
+      nameKey: "monster.avenger" as const,
+      maxHp: 50,
+      damage: 5,
+    };
     const estado = comSuperPronto(tanque);
     expect(estado.superReady).toBe(true);
 

@@ -67,11 +67,18 @@ describe("i18n", () => {
       expect(keys).toContain("battle.playAgain");
       expect(keys).toContain("math.question");
       expect(keys).toContain("math.alternatives");
-      expect(keys).toContain("monster.slime");
-      expect(keys).toContain("monster.dragon");
-      expect(keys).toContain("monster.golem");
+      expect(keys).toContain("monster.avenger");
+      expect(keys).toContain("monster.tiamat");
+      expect(keys).toContain("monster.shadowDemon");
+      expect(keys).toContain("monster.decay");
+      expect(keys).toContain("monster.keleog");
+      expect(keys).toContain("monster.darkling");
+      expect(keys).toContain("monster.lizardmen");
+      expect(keys).toContain("monster.bullywugs");
+      expect(keys).toContain("monster.warduke");
+      expect(keys).toContain("monster.beholder");
       expect(keys).toContain("battle.victoryAll");
-      expect(keys).toHaveLength(25);
+      expect(keys).toHaveLength(32);
     });
   });
 

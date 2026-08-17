@@ -4,7 +4,7 @@ import userEvent from "@testing-library/user-event";
 import { BattleScreen } from "./BattleScreen";
 import { renderWithI18n } from "../../shared/test/render";
 import { seededRng } from "../../shared/test/rng";
-import { SLIME } from "./monsters";
+import { AVENGER } from "./monsters";
 import { battleReducer, createBattle, HERO_MAX_HP } from "./battle";
 import { HERO_BASE_DAMAGE } from "../player-attack/player-attack";
 import { SAVE_STORAGE_KEY } from "../save-game/local-storage.repository";
@@ -17,9 +17,9 @@ function questionNumbers(): { a: number; b: number } {
   return { a: Number(match[1]), b: Number(match[2]) };
 }
 
-/** Grava um save com o slime em 14 HP e a pergunta 6 × 4 = 24. */
+/** Grava um save com o vingador em 14 HP e a pergunta 6 × 4 = 24. */
 function seedBattleSave() {
-  const battle = battleReducer(createBattle(SLIME), {
+  const battle = battleReducer(createBattle(AVENGER), {
     type: "BEGIN_QUESTION",
     question: { a: 6, b: 4, answer: 24 },
     alternatives: [24, 23, 25, 18],
@@ -45,17 +45,17 @@ describe("BattleScreen", () => {
 
   it("anuncia o início da batalha via região de status", () => {
     renderWithI18n(<BattleScreen rng={seededRng(1)} />);
-    expect(screen.getByRole("status")).toHaveTextContent("Um Slime selvagem apareceu!");
+    expect(screen.getByRole("status")).toHaveTextContent("Um Vingador selvagem apareceu!");
   });
 
-  it("mostra herói e slime com suas barras de HP acessíveis", () => {
+  it("mostra herói e vingador com suas barras de HP acessíveis", () => {
     renderWithI18n(<BattleScreen rng={seededRng(1)} />);
     const heroBar = screen.getByRole("progressbar", { name: "Herói" });
     expect(heroBar).toHaveAttribute("aria-valuemax", "30");
     expect(heroBar).toHaveAttribute("aria-valuenow", "30");
-    const slimeBar = screen.getByRole("progressbar", { name: "Slime" });
-    expect(slimeBar).toHaveAttribute("aria-valuemax", "20");
-    expect(slimeBar).toHaveAttribute("aria-valuenow", "20");
+    const vingadorBar = screen.getByRole("progressbar", { name: "Vingador" });
+    expect(vingadorBar).toHaveAttribute("aria-valuemax", "20");
+    expect(vingadorBar).toHaveAttribute("aria-valuenow", "20");
   });
 
   it("mostra o HP como texto (feedback não depende só de cor)", () => {
@@ -72,14 +72,14 @@ describe("BattleScreen", () => {
     expect(new Set(alternatives.map((b) => b.textContent)).size).toBe(4);
   });
 
-  it("acertar reduz o HP do slime e anuncia o dano", async () => {
+  it("acertar reduz o HP do vingador e anuncia o dano", async () => {
     const user = userEvent.setup();
     renderWithI18n(<BattleScreen rng={seededRng(7)} />);
     const { a, b } = questionNumbers();
     await user.click(screen.getByRole("button", { name: String(a * b) }));
-    expect(screen.getByRole("progressbar", { name: "Slime" })).toHaveAttribute(
+    expect(screen.getByRole("progressbar", { name: "Vingador" })).toHaveAttribute(
       "aria-valuenow",
-      String(SLIME.maxHp - HERO_BASE_DAMAGE),
+      String(AVENGER.maxHp - HERO_BASE_DAMAGE),
     );
     expect(screen.getByRole("status")).toHaveTextContent("Correto");
   });
@@ -94,13 +94,13 @@ describe("BattleScreen", () => {
       .find((btn) => btn.textContent !== answer);
     if (!wrong) throw new Error("nenhuma alternativa errada");
     await user.click(wrong);
-    expect(screen.getByRole("progressbar", { name: "Slime" })).toHaveAttribute(
+    expect(screen.getByRole("progressbar", { name: "Vingador" })).toHaveAttribute(
       "aria-valuenow",
-      String(SLIME.maxHp),
+      String(AVENGER.maxHp),
     );
     expect(screen.getByRole("progressbar", { name: "Herói" })).toHaveAttribute(
       "aria-valuenow",
-      String(HERO_MAX_HP - SLIME.damage),
+      String(HERO_MAX_HP - AVENGER.damage),
     );
     expect(screen.getByRole("status")).toHaveTextContent("Quase");
     expect(screen.getByRole("status")).toHaveTextContent(`${a} × ${b} = ${a * b}`);
@@ -135,7 +135,7 @@ describe("BattleScreen", () => {
     expect(screen.getByRole("status")).toHaveTextContent(/Correto|Quase/);
   });
 
-  it("três acertos liberam o super ataque, que derrota o slime", async () => {
+  it("três acertos liberam o super ataque, que derrota o vingador", async () => {
     const user = userEvent.setup();
     renderWithI18n(<BattleScreen rng={seededRng(7)} />);
 
@@ -156,7 +156,7 @@ describe("BattleScreen", () => {
     expect(superButton).toBeInTheDocument();
     await user.click(superButton);
 
-    expect(screen.getByRole("progressbar", { name: "Slime" })).toHaveAttribute(
+    expect(screen.getByRole("progressbar", { name: "Vingador" })).toHaveAttribute(
       "aria-valuenow",
       "0",
     );
@@ -183,7 +183,7 @@ describe("BattleScreen", () => {
     const vitoria = screen.getByRole("heading", { level: 3, name: "Vitória!" });
     expect(vitoria).toBeInTheDocument();
     expect(vitoria).toHaveFocus();
-    expect(screen.getByText("Você derrotou o Slime!")).toBeInTheDocument();
+    expect(screen.getByText("Você derrotou o Vingador!")).toBeInTheDocument();
   });
 
   it("vitória avança a progressão e Jogar novamente luta contra o próximo monstro", async () => {
@@ -213,9 +213,9 @@ describe("BattleScreen", () => {
     await user.click(screen.getByRole("button", { name: "Jogar novamente" }));
 
     expect(onProgressChange).toHaveBeenCalledWith({ stage: 1 });
-    expect(screen.getByRole("progressbar", { name: "Dragão" })).toHaveAttribute(
+    expect(screen.getByRole("progressbar", { name: "Tiamat" })).toHaveAttribute(
       "aria-valuenow",
-      "30",
+      "26",
     );
     expect(screen.getByText(/=\s*\?/)).toBeInTheDocument();
   });
@@ -235,14 +235,14 @@ describe("BattleScreen", () => {
     const user = userEvent.setup();
     renderWithI18n(<BattleScreen rng={seededRng(7)} />);
 
-    expect(screen.getByRole("progressbar", { name: "Slime" })).toHaveAttribute(
+    expect(screen.getByRole("progressbar", { name: "Vingador" })).toHaveAttribute(
       "aria-valuenow",
       "14",
     );
     expect(screen.getByText("6 × 4 = ?")).toBeInTheDocument();
 
     await user.click(screen.getByRole("button", { name: "24" }));
-    expect(screen.getByRole("progressbar", { name: "Slime" })).toHaveAttribute(
+    expect(screen.getByRole("progressbar", { name: "Vingador" })).toHaveAttribute(
       "aria-valuenow",
       "8",
     );

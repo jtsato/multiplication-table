@@ -50,11 +50,11 @@ describe("App", () => {
     await user.click(screen.getByRole("button", { name: "Iniciar batalha" }));
 
     expect(screen.getByRole("heading", { level: 2, name: "Batalha" })).toBeInTheDocument();
-    expect(screen.getByRole("progressbar", { name: "Slime" })).toHaveAttribute(
+    expect(screen.getByRole("progressbar", { name: "Vingador" })).toHaveAttribute(
       "aria-valuenow",
       "20",
     );
-    expect(screen.getByRole("status")).toHaveTextContent("Um Slime selvagem apareceu!");
+    expect(screen.getByRole("status")).toHaveTextContent("Um Vingador selvagem apareceu!");
   });
 
   it("retoma a batalha salva ao abrir o aplicativo", () => {
@@ -66,7 +66,7 @@ describe("App", () => {
         battle: {
           phase: "question",
           hero: { nameKey: "battle.hero", maxHp: 30, hp: 30 },
-          monster: { nameKey: "monster.slime", maxHp: 20, hp: 14, id: "slime", damage: 5 },
+          monster: { nameKey: "monster.avenger", maxHp: 20, hp: 14, id: "avenger", damage: 5 },
           question: { a: 6, b: 4, answer: 24 },
           alternatives: [24, 23, 25, 18],
           combo: 0,
@@ -80,7 +80,7 @@ describe("App", () => {
 
     expect(screen.getByRole("heading", { level: 2, name: "Batalha" })).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "Iniciar batalha" })).not.toBeInTheDocument();
-    expect(screen.getByRole("progressbar", { name: "Slime" })).toHaveAttribute(
+    expect(screen.getByRole("progressbar", { name: "Vingador" })).toHaveAttribute(
       "aria-valuenow",
       "14",
     );

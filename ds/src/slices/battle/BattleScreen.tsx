@@ -1,6 +1,8 @@
-import { useCallback, useEffect, useReducer, useRef, useState } from "react";
+import { useCallback, useEffect, useReducer, useRef, useState, type ReactNode } from "react";
 import { useI18n } from "../../shared/i18n/I18nContext";
 import { battleReducer, createBattle, hpRatio } from "./battle";
+import { HeroAvatar } from "../../art/HeroAvatar";
+import { MonsterAvatar } from "../../art/MonsterAvatar";
 import { generateAlternatives } from "../math-question/generate-alternatives";
 import type { Rng } from "../math-question/question.types";
 import type { BattleAction, Combatant } from "./battle.types";
@@ -24,12 +26,21 @@ import { SAVE_VERSION } from "../save-game/repository";
 
 const QUESTION_DELAY_MS = 700;
 
-function BattleUnit({ combatant, label }: { combatant: Combatant; label: string }) {
+function BattleUnit({
+  combatant,
+  label,
+  portrait,
+}: {
+  combatant: Combatant;
+  label: string;
+  portrait: ReactNode;
+}) {
   const { t } = useI18n();
   const ratio = hpRatio(combatant.hp, combatant.maxHp);
 
   return (
     <div className="battle-unit">
+      {portrait}
       <h3>{label}</h3>
       <div
         role="progressbar"
@@ -205,7 +216,14 @@ export function BattleScreen({
       </h2>
       <p role="status" className="battle-status">
         {lastEntry && (
-          <span className="status-icon" aria-hidden="true">
+          <span
+            className={
+              lastEntry.key === "battle.almost"
+                ? "status-icon status-icon--err"
+                : "status-icon status-icon--ok"
+            }
+            aria-hidden="true"
+          >
             {lastEntry.key === "battle.almost" ? "✗" : "✓"}
           </span>
         )}
@@ -213,8 +231,23 @@ export function BattleScreen({
       </p>
       {battle.combo > 0 && <p className="combo">{t("battle.combo", { combo: battle.combo })}</p>}
       <div className="battlefield">
-        <BattleUnit combatant={battle.hero} label={t(battle.hero.nameKey)} />
-        <BattleUnit combatant={battle.monster} label={monsterName} />
+        <BattleUnit
+          combatant={battle.hero}
+          label={t(battle.hero.nameKey)}
+          portrait={<HeroAvatar size={72} title={t(battle.hero.nameKey)} className="portrait" />}
+        />
+        <BattleUnit
+          combatant={battle.monster}
+          label={monsterName}
+          portrait={
+            <MonsterAvatar
+              monsterId={battle.monster.id}
+              size={72}
+              title={monsterName}
+              className="portrait"
+            />
+          }
+        />
       </div>
       {battle.phase === "question" && battle.question && (
         <div className="question-panel">

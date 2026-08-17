@@ -1,14 +1,26 @@
-/* Tokens de cor com contraste WCAG 2.2 AA (>= 4.5:1 para texto). */
+/*
+ * Tokens do sistema de design — Paleta Interdimensional (contraste WCAG 2.2 AA).
+ *
+ * Vermelho Vingador (#C8102E) — ações principais, erros e botões críticos (Hank).
+ * Amarelo Mestre dos Magos (#FFCD00) — destaque/alertas, combo e super ataque (Presto).
+ * Verde Tiamat (#00875A) — feedback positivo, validações e barra de HP (Tiamat).
+ * Azul Presto (#0052CC) — informação, foco e badges (Diana/Presto).
+ * Fundo Reino Oculto (#1A120B) — masmorras e pergaminhos antigos (dark mode).
+ */
 :root {
-  --color-bg: #fdf6e3;
-  --color-surface: #ffffff;
-  --color-text: #1f2933;
-  --color-text-muted: #4b5563;
-  --color-border: #6b7280;
-  --color-primary: #0b6e4f;
-  --color-primary-hover: #0a5c42;
+  --color-bg: #1a120b;
+  --color-surface: #2a1f16;
+  --color-text: #f5efe6;
+  --color-text-muted: #c9bfae;
+  --color-border: #6b5d4b;
+  --color-primary: #c8102e;
+  --color-primary-hover: #a30d25;
   --color-on-primary: #ffffff;
-  --color-focus: #1d4ed8;
+  --color-success: #00875a;
+  --color-info: #0052cc;
+  --color-highlight: #ffcd00;
+  --color-on-highlight: #1a120b;
+  --color-focus: #ffcd00;
   --target-min: 44px;
   --radius: 8px;
 }
@@ -26,6 +38,7 @@ html {
 body {
   margin: 0;
   font-family:
+    "Inter",
     system-ui,
     -apple-system,
     "Segoe UI",
@@ -39,6 +52,7 @@ body {
 h1,
 h2,
 h3 {
+  font-family: "Cinzel Decorative", Georgia, serif;
   line-height: 1.2;
 }
 
@@ -55,7 +69,7 @@ button {
 }
 
 button:hover {
-  background: #f3f4f6;
+  background: #3a2d20;
 }
 
 /* Foco visível em todos os controles (WCAG 2.4.7 / 2.4.13). */
@@ -169,6 +183,13 @@ button:hover {
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
   padding: 1rem;
+  text-align: center;
+}
+
+/* Retrato (SVG de blocos) de heroi e monstro. */
+.portrait {
+  display: block;
+  margin: 0 auto 0.75rem;
 }
 
 .battle-unit h3 {
@@ -177,7 +198,7 @@ button:hover {
 
 .hp-bar {
   height: 1rem;
-  background: #d1d5db;
+  background: #4a3d2e;
   border-radius: 999px;
   overflow: hidden;
 }
@@ -185,7 +206,7 @@ button:hover {
 .hp-bar-fill {
   display: block;
   height: 100%;
-  background: var(--color-primary);
+  background: var(--color-success);
   border-radius: 999px;
   transition: width 0.3s ease;
 }
@@ -198,14 +219,22 @@ button:hover {
   margin-right: 0.375rem;
 }
 
+.status-icon--ok {
+  color: var(--color-success);
+}
+
+.status-icon--err {
+  color: var(--color-primary);
+}
+
 .combo {
   display: inline-block;
   margin: 0;
   padding: 0.25rem 0.75rem;
-  background: var(--color-surface);
-  border: 2px solid var(--color-primary);
+  background: var(--color-highlight);
+  border: 2px solid var(--color-highlight);
   border-radius: 999px;
-  color: var(--color-primary);
+  color: var(--color-on-highlight);
   font-weight: 700;
   align-self: flex-start;
 }
@@ -235,15 +264,15 @@ button:hover {
 
 .super-button {
   margin-top: 1rem;
-  background: #92400e;
-  color: #ffffff;
-  border-color: #92400e;
+  background: var(--color-highlight);
+  color: var(--color-on-highlight);
+  border-color: var(--color-highlight);
   font-size: 1.125rem;
   font-weight: 700;
 }
 
 .super-button:hover {
-  background: #78350f;
+  background: #e6b800;
 }
 
 .battle-end {
