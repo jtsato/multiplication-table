@@ -2,6 +2,7 @@ import { expect, test } from '@playwright/test';
 import {
   centroDe,
   esperarJogoPronto,
+  esperarPainelCentralizado,
   ficarAoLadoDeUmRecurso,
   irParaOMeioDe,
   lerEstado,
@@ -97,6 +98,7 @@ test.describe('partida no celular', () => {
 
     await colher.tap();
     await expect(page.locator('.challenge')).toBeVisible();
+    await esperarPainelCentralizado(page);
     await page.screenshot({ path: 'e2e/telas/celular-04-desafio.png' });
 
     const estado = await lerEstado(page);

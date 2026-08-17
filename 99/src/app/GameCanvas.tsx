@@ -4,7 +4,6 @@ import { palette } from '../shared/palette';
 import { BuildingView } from '../slices/building';
 import { DayNightView } from '../slices/daynight';
 import { EnemiesView } from '../slices/enemies';
-import { ChallengePanel } from '../slices/math';
 import { PlayerView } from '../slices/player';
 import { ResourcesView } from '../slices/resources';
 import { WorldView } from '../slices/world';
@@ -60,9 +59,6 @@ export function GameCanvas({ isTouch = false }: { isTouch?: boolean }) {
         <BuildingView />
         <EnemiesView />
 
-        {/* Fora das slices de recurso e construcao: o mesmo painel serve as duas,
-            e ele mesmo descobre em que ponto do mundo se ancorar. */}
-        <ChallengePanel />
       </Physics>
     </Canvas>
   );

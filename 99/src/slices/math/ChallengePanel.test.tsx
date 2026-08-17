@@ -1,5 +1,4 @@
 // @vitest-environment jsdom
-import type { ReactNode } from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -7,15 +6,6 @@ import '@testing-library/jest-dom/vitest';
 import { useGameStore } from '../../app/store';
 import { ChallengePanel } from './ChallengePanel';
 import { KeyboardBridge } from '../../test/KeyboardBridge';
-
-/**
- * `drei/Html` precisa do contexto do R3F e de um canvas WebGL para se posicionar
- * na cena. Aqui interessa o conteudo do painel — enunciado, alternativas,
- * feedback — entao ele vira uma `div` comum e o teste roda em jsdom puro.
- */
-vi.mock('@react-three/drei', () => ({
-  Html: ({ children }: { children: ReactNode }) => <div>{children}</div>,
-}));
 
 const state = () => useGameStore.getState();
 const alvo = () => state().nodes[0];
@@ -55,6 +45,19 @@ describe('ChallengePanel', () => {
     for (const option of challenge.options) {
       expect(screen.getByRole('button', { name: String(option) })).toBeInTheDocument();
     }
+  });
+
+  it('monta o desafio na camada centralizada', () => {
+    state().startChallenge(alvo());
+    const { container } = render(
+      <>
+        <KeyboardBridge />
+        <ChallengePanel />
+      </>,
+    );
+
+    expect(container.querySelector('.challenge-overlay')).toBeInTheDocument();
+    expect(container.querySelector('.challenge-overlay .challenge')).toBeInTheDocument();
   });
 
   it('clicar na resposta certa credita a colheita cheia', async () => {

@@ -14,8 +14,22 @@ import {
   fuelRemaining,
   nearestRefuelable,
   placementPosition,
+  snapFencePlacement,
+  type StructureKind,
   type Structure,
 } from './building.logic';
+
+function buildPlacement(
+  buildMode: StructureKind,
+  inventory: Parameters<typeof snapFencePlacement>[2],
+  structures: Parameters<typeof snapFencePlacement>[3],
+  nodes: Parameters<typeof snapFencePlacement>[4],
+) {
+  const manualPosition = placementPosition(playerTransform, playerTransform.yaw);
+  return buildMode === 'cerca'
+    ? snapFencePlacement(manualPosition, playerTransform.yaw, inventory, structures, nodes)
+    : { position: manualPosition, rotation: playerTransform.yaw };
+}
 
 /** Fogueira: tres toras cruzadas, uma chama e a luz que ela emite. */
 function Campfire({ structure }: { structure: Structure }) {
@@ -149,11 +163,18 @@ function PlacementGhost() {
     if (!state.buildMode) return;
 
     const spec = STRUCTURES[state.buildMode];
-    const target = placementPosition(playerTransform, playerTransform.yaw);
-    group.position.set(target.x, target.y, target.z);
-    group.rotation.y = playerTransform.yaw;
+    const placement = buildPlacement(state.buildMode, state.inventory, state.structures, state.nodes);
+    group.position.set(placement.position.x, placement.position.y, placement.position.z);
+    group.rotation.y = placement.rotation;
 
-    const check = checkPlacement(spec, target, state.inventory, state.structures, state.nodes);
+    const check = checkPlacement(
+      spec,
+      placement.position,
+      state.inventory,
+      state.structures,
+      state.nodes,
+      placement.rotation,
+    );
     material.color.set(check.ok ? palette.correct : palette.wrong);
   });
 
@@ -161,7 +182,7 @@ function PlacementGhost() {
   const spec = STRUCTURES[buildMode];
 
   return (
-    <group ref={groupRef}>
+    <group ref={groupRef} name="fantasma-construcao">
       <mesh position={[0, 0.7, 0]}>
         {buildMode === 'cerca' ? (
           <boxGeometry args={[2, 1.4, 0.2]} />
@@ -200,9 +221,10 @@ export function BuildingView() {
   useGameAction('confirmar', () => {
     const state = useGameStore.getState();
     if (!state.buildMode) return;
+    const placement = buildPlacement(state.buildMode, state.inventory, state.structures, state.nodes);
     state.placeStructure(
-      placementPosition(playerTransform, playerTransform.yaw),
-      playerTransform.yaw,
+      placement.position,
+      placement.rotation,
       dayNightClock.seconds,
     );
   });

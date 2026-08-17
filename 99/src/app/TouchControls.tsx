@@ -127,7 +127,7 @@ function ActionButton({
  * Os botoes mostrados dependem do contexto, e nao de um teclado virtual fixo:
  * no celular nao ha espaco para oito comandos ao mesmo tempo. Colher so aparece
  * com algo ao alcance; confirmar e cancelar so no modo construcao. As respostas
- * do desafio ficam no proprio painel ancorado no recurso.
+ * do desafio ficam no painel centralizado da tela.
  */
 export function TouchControls() {
   const highlightedNodeId = useGameStore((state) => state.highlightedNodeId);

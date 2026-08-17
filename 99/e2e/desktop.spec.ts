@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 import {
   esperarJogoPronto,
+  esperarPainelCentralizado,
   ficarAoLadoDeUmRecurso,
   irParaOMeioDe,
   lerEstado,
@@ -88,6 +89,7 @@ test.describe('partida no computador', () => {
 
     await page.keyboard.press('KeyE');
     await expect(page.locator('.challenge')).toBeVisible();
+    await esperarPainelCentralizado(page);
     await page.screenshot({ path: 'e2e/telas/05-desafio.png' });
 
     const comDesafio = await lerEstado(page);
@@ -113,6 +115,7 @@ test.describe('partida no computador', () => {
     await ficarAoLadoDeUmRecurso(page);
     await page.keyboard.press('KeyE');
     await expect(page.locator('.challenge')).toBeVisible();
+    await esperarPainelCentralizado(page);
 
     const comDesafio = await lerEstado(page);
     const certa = comDesafio.desafio!.resposta;

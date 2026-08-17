@@ -1,6 +1,7 @@
 .outcome {
   position: fixed;
   inset: 0;
+  z-index: 20;
   display: grid;
   place-items: center;
   /* Esta camada precisa de clique — ao contrario do HUD, que e transparente
