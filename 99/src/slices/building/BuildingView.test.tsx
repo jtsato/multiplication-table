@@ -140,6 +140,30 @@ describe('BuildingView', () => {
     await renderer.unmount();
   });
 
+  it('confirma uma cerca encaixada em um canto de 90 graus', async () => {
+    encheInventario();
+    act(() => useGameStore.setState({ nodes: [] }));
+    const renderer = await renderScene(<BuildingView />);
+    await renderer.advanceFrames(1, 1 / 60);
+
+    pressKey('KeyC');
+    pressKey('Space');
+    const primeira = state().structures[0];
+
+    playerTransform.x = primeira.position.x + 4.4;
+    playerTransform.z = primeira.position.z - 1;
+    playerTransform.yaw = Math.PI / 2;
+    pressKey('KeyC');
+    pressKey('Space');
+
+    expect(state().structures).toHaveLength(2);
+    expect(state().structures[1].position.x).toBeCloseTo(primeira.position.x + 1);
+    expect(state().structures[1].position.z).toBeCloseTo(primeira.position.z - 1);
+    expect(state().structures[1].rotation).toBeCloseTo(Math.PI / 2);
+
+    await renderer.unmount();
+  });
+
   it('sem recursos nao constroi nem debita nada', async () => {
     posicionaEmLocalLivre();
     const renderer = await renderScene(<BuildingView />);
@@ -155,7 +179,7 @@ describe('BuildingView', () => {
     await renderer.unmount();
   });
 
-  it('recusa construir sobre outra construcao', async () => {
+  it('recusa construir uma fogueira sobre outra construcao', async () => {
     posicionaEmLocalLivre();
     encheInventario();
     const renderer = await renderScene(<BuildingView />);
@@ -165,8 +189,8 @@ describe('BuildingView', () => {
     pressKey('Space');
     const madeiraDepoisDaPrimeira = state().inventory.madeira;
 
-    // Mesma posicao, mesma direcao: a segunda tem que ser recusada.
-    pressKey('KeyC');
+    // A fogueira na mesma posicao nao pode usar o encaixe exclusivo da cerca.
+    pressKey('KeyB');
     pressKey('Space');
 
     expect(state().structures).toHaveLength(1);
