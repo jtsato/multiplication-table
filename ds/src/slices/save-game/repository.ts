@@ -32,8 +32,9 @@ export function migrateSave(raw: unknown): GameSave {
   if (candidate.locale !== "pt-BR" && candidate.locale !== "en-US") {
     throw new Error(`locale inválido: ${String(candidate.locale)}`);
   }
-  // battle: null é válido (jogador no menu); ausente ou não-objeto é inválido.
-  if (candidate.battle !== null && typeof candidate.battle !== "object") {
+  // battle: null é válido (jogador no menu); `typeof null` é "object", então
+  // a checagem abaixo rejeita ausente/não-objeto e aceita null.
+  if (typeof candidate.battle !== "object") {
     throw new Error("save inválido: batalha ausente");
   }
 
