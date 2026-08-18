@@ -52,3 +52,4 @@ Desktop.ini
 **/e2e/.resultados/
 **/playwright-report/
 **/.playwright/
+**/test-results/
