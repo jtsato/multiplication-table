@@ -3,6 +3,7 @@ import { useFrame } from '@react-three/fiber';
 import { CuboidCollider, RigidBody } from '@react-three/rapier';
 import type { Mesh, MeshLambertMaterial, PointLight } from 'three';
 import { useGameStore } from '../../app/store';
+import { useGameAction } from '../../shared/input';
 import { palette } from '../../shared/palette';
 import { cyclePosition, phaseFor } from '../daynight/daynight.logic';
 import { dayNightClock } from '../daynight/dayNightClock';
@@ -60,6 +61,19 @@ function Furniture() {
  * estado do React re-renderizaria a arvore a cada passo na soleira da porta.
  */
 export function HomeView() {
+  /**
+   * A mesma tecla **E** de colher e de acender.
+   *
+   * Prioridade: recurso primeiro, movel depois. Quem esta perto de uma arvore
+   * quis colher, nao abrir o guarda-roupa — e os moveis so respondem de dentro
+   * de casa, onde nao ha recurso nenhum.
+   */
+  useGameAction('interagir', () => {
+    const state = useGameStore.getState();
+    if (state.activeChallenge || state.highlightedNodeId) return;
+    state.openNearbySpot();
+  });
+
   const roofRef = useRef<Mesh>(null);
   const roofMaterialRef = useRef<MeshLambertMaterial>(null);
   const windowLightRef = useRef<PointLight>(null);

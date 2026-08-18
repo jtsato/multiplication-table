@@ -3,6 +3,8 @@ import { DaySummary } from './DaySummary';
 import { Hud } from './Hud';
 import { TouchControls } from './TouchControls';
 import { useIsTouchDevice, useKeyboardBindings } from '../shared/input';
+import { AvatarPanel } from '../slices/avatar';
+import { BedPanel, WallChart } from '../slices/home';
 import { ShopPanel } from '../slices/economy';
 import { ChallengePanel } from '../slices/math';
 import './loading.css';
@@ -54,6 +56,9 @@ export function App() {
       <Hud isTouch={isTouch} />
       <ChallengePanel />
       <ShopPanel />
+      <AvatarPanel />
+      <WallChart />
+      <BedPanel />
       <DaySummary />
       {isTouch && <TouchControls />}
     </>

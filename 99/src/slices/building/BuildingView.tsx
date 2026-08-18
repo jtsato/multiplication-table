@@ -245,7 +245,8 @@ export function BuildingView() {
   useGameAction('interagir', () => {
     const state = useGameStore.getState();
     // O recurso tem prioridade: se ha um no ao alcance, `ResourcesView` cuida.
-    if (state.activeChallenge || state.highlightedNodeId) return;
+    // Um movel da casa tambem vem antes — dentro de casa nao se abastece nada.
+    if (state.activeChallenge || state.highlightedNodeId || state.nearbySpot) return;
 
     const fogueira = nearestRefuelable(state.structures, playerTransform);
     if (!fogueira) return;

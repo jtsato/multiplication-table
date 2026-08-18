@@ -3,6 +3,7 @@ import { useFrame, useThree } from '@react-three/fiber';
 import { CapsuleCollider, RigidBody, type RapierRigidBody } from '@react-three/rapier';
 import { Vector3, type Group } from 'three';
 import { useGameStore } from '../../app/store';
+import { CLOTHES_COLORS, SKIN_TONES } from '../avatar/avatar.logic';
 import { touchAxes } from '../../shared/input';
 import { useHeldKeys } from '../../shared/keyboard';
 import { palette } from '../../shared/palette';
@@ -103,14 +104,39 @@ function usePointerYaw(yawRef: RefObject<number>) {
   }, [yawRef]);
 }
 
-/** Boneco low poly: capsula, cabeca e uma aba que marca a frente. */
+/**
+ * Boneco low poly, vestido conforme a escolha da crianca.
+ *
+ * Tudo e cor de material e primitiva do Three — nenhum asset novo. A silhueta
+ * muda so a forma do corpo e o cabelo; **nenhum acessorio depende dela**, o que
+ * tem teste proprio na slice de avatar.
+ *
+ * Passa pelo React de proposito: a aparencia muda quando a crianca escolhe, o
+ * que e raro, e nao a cada quadro.
+ */
 function PlayerAvatar() {
+  const avatar = useGameStore((state) => state.avatar);
+  const pele = SKIN_TONES[avatar.skin];
+  const roupa = CLOTHES_COLORS[avatar.clothes];
+  const menina = avatar.silhouette === 'menina';
+
   return (
     <group>
+      {/* Corpo. A silhueta "menina" e um tronco levemente mais estreito com uma
+          saia curta na base; a diferenca e de leitura, nao de capacidade. */}
       <mesh position={[0, 0, 0]} castShadow>
-        <capsuleGeometry args={[PLAYER.radius, PLAYER.halfHeight * 2, 4, 8]} />
-        <meshLambertMaterial color={palette.playerBody} flatShading />
+        <capsuleGeometry
+          args={[PLAYER.radius * (menina ? 0.92 : 1), PLAYER.halfHeight * 2, 4, 8]}
+        />
+        <meshLambertMaterial color={roupa} flatShading />
       </mesh>
+      {menina && (
+        <mesh position={[0, -0.42, 0]} castShadow>
+          <coneGeometry args={[PLAYER.radius * 1.5, 0.5, 8]} />
+          <meshLambertMaterial color={roupa} flatShading />
+        </mesh>
+      )}
+
       {/*
         A cabeca fica acima do topo da capsula.
 
@@ -120,13 +146,77 @@ function PlayerAvatar() {
       */}
       <mesh position={[0, 1.05, 0]} castShadow>
         <icosahedronGeometry args={[0.32, 0]} />
-        <meshLambertMaterial color={palette.playerHead} flatShading />
+        <meshLambertMaterial color={pele} flatShading />
       </mesh>
-      {/* Aba do chapeu apontando para +Z: mostra para onde o personagem encara. */}
-      <mesh position={[0, 1.22, 0.16]} castShadow>
-        <boxGeometry args={[0.56, 0.09, 0.42]} />
-        <meshLambertMaterial color={palette.fire} flatShading />
+
+      {/* Cabelo: mais volume na silhueta "menina", mesma cor nas duas. */}
+      <mesh position={[0, 1.16, menina ? -0.06 : 0]} castShadow>
+        <sphereGeometry args={[menina ? 0.36 : 0.3, 8, 6, 0, Math.PI * 2, 0, Math.PI / 1.8]} />
+        <meshLambertMaterial color={palette.playerHair} flatShading />
       </mesh>
+
+      {/* Acessorio de cabeca. */}
+      {avatar.head === 'bone' && (
+        <group position={[0, 1.3, 0]}>
+          <mesh castShadow>
+            <sphereGeometry args={[0.3, 8, 5, 0, Math.PI * 2, 0, Math.PI / 2]} />
+            <meshLambertMaterial color={roupa} flatShading />
+          </mesh>
+          <mesh position={[0, -0.02, 0.28]} castShadow>
+            <boxGeometry args={[0.5, 0.07, 0.34]} />
+            <meshLambertMaterial color={roupa} flatShading />
+          </mesh>
+        </group>
+      )}
+      {avatar.head === 'chapeu' && (
+        <group position={[0, 1.32, 0]}>
+          <mesh castShadow>
+            <cylinderGeometry args={[0.24, 0.26, 0.3, 8]} />
+            <meshLambertMaterial color={palette.trunk} flatShading />
+          </mesh>
+          <mesh position={[0, -0.14, 0]} castShadow>
+            <cylinderGeometry args={[0.48, 0.48, 0.05, 10]} />
+            <meshLambertMaterial color={palette.trunk} flatShading />
+          </mesh>
+        </group>
+      )}
+      {avatar.head === 'coroa' && (
+        <group position={[0, 1.36, 0]}>
+          <mesh castShadow>
+            <cylinderGeometry args={[0.29, 0.29, 0.14, 8, 1, true]} />
+            <meshLambertMaterial color={palette.crown} flatShading side={2} />
+          </mesh>
+          {[0, 1, 2, 3, 4].map((i) => {
+            const angulo = (i / 5) * Math.PI * 2;
+            return (
+              <mesh
+                key={i}
+                position={[Math.cos(angulo) * 0.29, 0.13, Math.sin(angulo) * 0.29]}
+                castShadow
+              >
+                <coneGeometry args={[0.07, 0.16, 4]} />
+                <meshLambertMaterial color={palette.crown} flatShading />
+              </mesh>
+            );
+          })}
+        </group>
+      )}
+
+      {/* Oculos: duas lentes e a ponte, na frente do rosto (+Z). */}
+      {avatar.face === 'oculos' && (
+        <group position={[0, 1.06, 0.28]}>
+          {[-0.13, 0.13].map((offset) => (
+            <mesh key={offset} position={[offset, 0, 0]}>
+              <boxGeometry args={[0.18, 0.14, 0.04]} />
+              <meshBasicMaterial color={palette.glasses} />
+            </mesh>
+          ))}
+          <mesh>
+            <boxGeometry args={[0.1, 0.03, 0.03]} />
+            <meshBasicMaterial color={palette.glasses} />
+          </mesh>
+        </group>
+      )}
     </group>
   );
 }

@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useGameStore } from './store';
+import { HOME_SPOT_LABELS } from '../slices/home';
 import {
   applyDeadzone,
   emitAction,
@@ -135,10 +136,18 @@ export function TouchControls() {
   const buildMode = useGameStore((state) => state.buildMode);
   const inventory = useGameStore((state) => state.inventory);
   const structures = useGameStore((state) => state.structures);
+  const nearbySpot = useGameStore((state) => state.nearbySpot);
 
   const temFogueira = structures.some((structure) => structure.kind === 'fogueira');
-  // Colher aparece com recurso ao alcance; abastecer, quando ja existe fogueira.
-  const podeInteragir = Boolean(highlightedNodeId) || temFogueira;
+  // Colher aparece com recurso ao alcance; abastecer, quando ja existe fogueira;
+  // e o movel, quando a crianca esta em frente a ele dentro de casa.
+  const podeInteragir = Boolean(highlightedNodeId) || Boolean(nearbySpot) || temFogueira;
+
+  const rotuloInteragir = highlightedNodeId
+    ? 'Colher'
+    : nearbySpot
+      ? HOME_SPOT_LABELS[nearbySpot]
+      : 'Acender';
 
   return (
     <div className="touch">
@@ -153,11 +162,7 @@ export function TouchControls() {
         ) : (
           <>
             {!activeChallenge && podeInteragir && (
-              <ActionButton
-                action="interagir"
-                label={highlightedNodeId ? 'Colher' : 'Acender'}
-                variant="interagir"
-              />
+              <ActionButton action="interagir" label={rotuloInteragir} variant="interagir" />
             )}
             <ActionButton
               action="construir-fogueira"

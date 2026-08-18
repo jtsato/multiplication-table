@@ -1,6 +1,8 @@
 import type { StateCreator } from 'zustand';
 import type { GameState } from '../../app/store';
-import type { HomeSpot } from './home.logic';
+import { PHASE_BOUNDS, DAYNIGHT } from '../daynight/daynight.logic';
+import { dayNightClock } from '../daynight/dayNightClock';
+import { secondsUntilNextDawn, type HomeSpot } from './home.logic';
 
 export interface HomeSlice {
   /** Movel ao alcance agora, publicado pela view. */
@@ -14,6 +16,13 @@ export interface HomeSlice {
   /** Abre o painel do movel ao alcance. Ignorado longe de tudo. */
   openNearbySpot: () => void;
   closeSpot: () => void;
+  /**
+   * Dormir: adianta o relogio ate o proximo amanhecer.
+   *
+   * Existe mesmo com a noite curta sendo desejavel. Um porto seguro onde a
+   * crianca nao pode decidir quando o dia acaba nao e dela.
+   */
+  sleep: () => void;
 }
 
 export const createHomeSlice: StateCreator<GameState, [], [], HomeSlice> = (set, get) => ({
@@ -37,4 +46,16 @@ export const createHomeSlice: StateCreator<GameState, [], [], HomeSlice> = (set,
   },
 
   closeSpot: () => set((state) => (state.openSpot ? { openSpot: null } : state)),
+
+  sleep: () => {
+    if (get().openSpot !== 'cama') return;
+    dayNightClock.seconds += secondsUntilNextDawn(
+      dayNightClock.seconds,
+      DAYNIGHT.cycleSeconds,
+      PHASE_BOUNDS.amanhecer.start,
+    );
+    // Fecha a cama primeiro: o resumo do dia assume a tela em seguida, e o
+    // `DayNightView` o abre na virada de fase que acabou de acontecer.
+    set({ openSpot: null });
+  },
 });

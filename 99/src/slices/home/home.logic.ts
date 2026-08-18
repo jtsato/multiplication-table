@@ -112,3 +112,21 @@ export function blocksHome(position: Vec3): boolean {
     Math.abs(position.z - HOME.position.z) <= HOME.halfDepth + HOME.clearance
   );
 }
+
+/**
+ * Quantos segundos faltam ate o proximo amanhecer.
+ *
+ * "Proximo" e literal: dormir durante o amanhecer leva ao amanhecer do dia
+ * seguinte, e nao a zero. Sem isso, dormir de manha nao passaria o tempo e a
+ * cama pareceria quebrada.
+ */
+export function secondsUntilNextDawn(
+  clock: number,
+  cycleSeconds: number,
+  dawnStart: number,
+): number {
+  const posicao = ((clock % cycleSeconds) + cycleSeconds) % cycleSeconds;
+  const alvo = dawnStart * cycleSeconds;
+  const falta = alvo - posicao;
+  return falta > 0 ? falta : falta + cycleSeconds;
+}

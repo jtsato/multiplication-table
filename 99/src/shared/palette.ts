@@ -20,9 +20,13 @@ export const palette = {
   rock: '#8d949e',
   berry: '#d94f6a',
 
-  // Jogador
+  // Jogador. A cor do corpo e da pele vem da escolha da crianca (slice avatar);
+  // estas ficam como padrao e para o que nao e personalizavel.
   playerBody: '#f2a03d',
   playerHead: '#ffd9a0',
+  playerHair: '#4a3728',
+  crown: '#ffd166',
+  glasses: '#2b3242',
 
   // Construcoes
   fire: '#ff8a3d',

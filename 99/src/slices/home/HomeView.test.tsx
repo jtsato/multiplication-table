@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { beforeEach, describe, expect, it } from 'vitest';
-import type { Mesh, MeshLambertMaterial } from 'three';
+import type { Mesh, MeshLambertMaterial, PointLight } from 'three';
 import { useGameStore } from '../../app/store';
 import { renderScene } from '../../test/sceneHarness';
 import { dayNightClock, resetDayNightClock } from '../daynight/dayNightClock';
@@ -15,6 +15,13 @@ const state = () => useGameStore.getState();
 function levarPara(x: number, z: number) {
   playerTransform.x = x;
   playerTransform.z = z;
+}
+
+/** `instance` vem como `Object3D`; o renderizador de teste nao estreita pelo tipo. */
+function luzes(renderer: Awaited<ReturnType<typeof renderScene>>): PointLight[] {
+  return renderer.scene
+    .findAllByType('PointLight')
+    .map((no) => no.instance as unknown as PointLight);
 }
 
 /** Opacidade do telhado — a unica malha transparente da cena. */
@@ -81,13 +88,13 @@ describe('HomeView', () => {
   it('as janelas acendem quando escurece', async () => {
     const renderer = await renderScene(<HomeView />);
     await renderer.advanceFrames(2, 1 / 60);
-    const deDia = renderer.scene.findAllByType('PointLight')[0].instance.intensity;
+    const deDia = luzes(renderer)[0].intensity;
 
     dayNightClock.seconds =
       ((PHASE_BOUNDS.noite.start + PHASE_BOUNDS.noite.end) / 2) * DAYNIGHT.cycleSeconds;
     await renderer.advanceFrames(2, 1 / 60);
 
-    expect(renderer.scene.findAllByType('PointLight')[0].instance.intensity).toBeGreaterThan(deDia);
+    expect(luzes(renderer)[0].intensity).toBeGreaterThan(deDia);
 
     await renderer.unmount();
   });
