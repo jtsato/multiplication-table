@@ -61,8 +61,9 @@ async function answerCurrentQuestion(user: ReturnType<typeof userEvent.setup>) {
 }
 
 async function completeOnboarding(user: ReturnType<typeof userEvent.setup>) {
-  await screen.findByText('Choose your language', {}, { timeout: 3000 });
-  await user.click(screen.getByRole('radio', { name: /English \(US\)/ }));
+  await screen.findByRole('heading', { name: 'Choose your language' }, { timeout: 3000 });
+  await user.click(screen.getByRole('button', { name: /Choose your language.*English \(US\)/ }));
+  await user.click(screen.getByRole('option', { name: /English \(US\)/ }));
   await user.click(screen.getByRole('button', { name: 'Next' }));
 
   await screen.findByText('Who is exploring the islands?');
