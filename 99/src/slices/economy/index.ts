@@ -1,2 +1,14 @@
 export { createEconomySlice, type EconomySlice } from './economy.store';
-export { ECONOMY, coinsFor, factKey } from './economy.logic';
+export {
+  ECONOMY,
+  PURCHASE_MESSAGES,
+  SHOP_ITEMS,
+  SHOP_ORDER,
+  checkPurchase,
+  coinsFor,
+  factKey,
+  formatShopRecipe,
+  type PurchaseRejection,
+  type ShopItem,
+  type ShopItemKind,
+} from './economy.logic';

@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import { useGameStore } from '../../app/store';
-import { ECONOMY, coinsFor, factKey } from './economy.logic';
+import { RESOURCE_KINDS } from '../resources/resources.logic';
+import { ECONOMY, SHOP_ITEMS, coinsFor, factKey } from './economy.logic';
 
 const state = () => useGameStore.getState();
 
@@ -102,5 +103,95 @@ describe('slice da economia', () => {
     expect(state().newFactsToday).toEqual([]);
     expect(state().coins).toBe(moedas);
     expect(state().knownFacts).toEqual(['2x4']);
+  });
+});
+
+describe('loja', () => {
+  const rico = () => {
+    useGameStore.setState({
+      coins: 200,
+      inventory: { madeira: 50, fruta: 50, pedra: 50 },
+    });
+  };
+
+  beforeEach(() => {
+    state().resetEconomy();
+    state().resetResources();
+  });
+
+  it('todo tipo de recurso do jogo e consumido por algum item', () => {
+    for (const kind of RESOURCE_KINDS) {
+      const temDestino = Object.values(SHOP_ITEMS).some((item) => (item.recipe[kind] ?? 0) > 0);
+      expect(temDestino, `${kind} nao e gasto em nada`).toBe(true);
+    }
+  });
+
+  it('recusa sem moeda suficiente', () => {
+    useGameStore.setState({ coins: 0, inventory: { madeira: 50, fruta: 50, pedra: 50 } });
+    state().buy('lanterna-maior');
+
+    expect(state().purchaseError).toBe('sem-moedas');
+    expect(state().owned).toEqual([]);
+  });
+
+  it('recusa sem recurso, mesmo com moeda de sobra', () => {
+    useGameStore.setState({ coins: 999, inventory: { madeira: 0, fruta: 0, pedra: 0 } });
+    state().buy('lanterna-maior');
+
+    expect(state().purchaseError).toBe('sem-recursos');
+    expect(state().owned).toEqual([]);
+  });
+
+  it('debita moedas e recursos na compra', () => {
+    rico();
+    state().buy('lanterna-maior');
+
+    expect(state().coins).toBe(200 - SHOP_ITEMS['lanterna-maior'].coins);
+    expect(state().inventory.madeira).toBe(50 - (SHOP_ITEMS['lanterna-maior'].recipe.madeira ?? 0));
+    expect(state().owned).toContain('lanterna-maior');
+    expect(state().purchaseError).toBeNull();
+  });
+
+  it('nao compra duas vezes um item permanente', () => {
+    rico();
+    state().buy('botas');
+    const depoisDaPrimeira = state().coins;
+    state().buy('botas');
+
+    expect(state().purchaseError).toBe('ja-comprado');
+    expect(state().coins).toBe(depoisDaPrimeira);
+  });
+
+  it('a dica e comprada mais de uma vez e acumula', () => {
+    rico();
+    state().buy('dica');
+    state().buy('dica');
+
+    expect(state().hints).toBe(2);
+    expect(state().owned).not.toContain('dica');
+  });
+
+  it('gastar dica desconta do estoque e avisa quando acaba', () => {
+    rico();
+    state().buy('dica');
+
+    expect(state().useHint()).toBe(true);
+    expect(state().hints).toBe(0);
+    expect(state().useHint()).toBe(false);
+  });
+
+  it('a loja nao abre com um desafio na tela', () => {
+    state().startChallenge(state().nodes[0]);
+    state().toggleShop();
+
+    expect(state().shopOpen).toBe(false);
+    state().cancelChallenge();
+  });
+
+  it('a loja abre e fecha', () => {
+    state().toggleShop();
+    expect(state().shopOpen).toBe(true);
+    state().toggleShop();
+    expect(state().shopOpen).toBe(false);
   });
 });

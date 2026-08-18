@@ -1,6 +1,14 @@
 import type { StateCreator } from 'zustand';
 import type { GameState } from '../../app/store';
-import { coinsFor, factKey } from './economy.logic';
+import { payCost } from '../building/building.logic';
+import {
+  SHOP_ITEMS,
+  checkPurchase,
+  coinsFor,
+  factKey,
+  type PurchaseRejection,
+  type ShopItemKind,
+} from './economy.logic';
 
 export interface EconomySlice {
   /** Total acumulado, atravessa os dias. */
@@ -23,6 +31,19 @@ export interface EconomySlice {
   rewardCorrect: (perGroup: number, groups: number) => void;
   /** O erro zera a sequencia — e so isso. Errar nao tira nada. */
   breakStreak: () => void;
+  /** Melhorias permanentes ja compradas. */
+  owned: ShopItemKind[];
+  /** Dicas em estoque. Consumivel, entao acumula. */
+  hints: number;
+  /** Ultima recusa de compra, exibida na loja. */
+  purchaseError: PurchaseRejection | null;
+  shopOpen: boolean;
+  toggleShop: () => void;
+  closeShop: () => void;
+  /** Compra um item. Recusa vira `purchaseError`. */
+  buy: (kind: ShopItemKind) => void;
+  /** Gasta uma dica. Devolve `false` se nao havia nenhuma. */
+  useHint: () => boolean;
   /** Zera so os contadores do dia. Moedas e fatos atravessam. */
   resetDaily: () => void;
   resetEconomy: () => void;
@@ -30,10 +51,14 @@ export interface EconomySlice {
 
 const DIA_ZERADO = { correctToday: 0, coinsToday: 0, newFactsToday: [] as string[] };
 
-export const createEconomySlice: StateCreator<GameState, [], [], EconomySlice> = (set) => ({
+export const createEconomySlice: StateCreator<GameState, [], [], EconomySlice> = (set, get) => ({
   coins: 0,
   streak: 0,
   knownFacts: [],
+  owned: [],
+  hints: 0,
+  purchaseError: null,
+  shopOpen: false,
   ...DIA_ZERADO,
 
   rewardCorrect: (perGroup, groups) =>
@@ -55,7 +80,54 @@ export const createEconomySlice: StateCreator<GameState, [], [], EconomySlice> =
 
   breakStreak: () => set((state) => (state.streak === 0 ? state : { streak: 0 })),
 
+  toggleShop: () =>
+    set((state) => {
+      // O desafio tem prioridade: dois paineis modais ao mesmo tempo
+      // confundiriam a crianca, e a conta ja esta aberta na tela.
+      if (state.activeChallenge) return state;
+      return { shopOpen: !state.shopOpen, purchaseError: null };
+    }),
+
+  closeShop: () => set((state) => (state.shopOpen ? { shopOpen: false } : state)),
+
+  buy: (kind) => {
+    const state = get();
+    const item = SHOP_ITEMS[kind];
+    const check = checkPurchase(item, state.coins, state.inventory, state.owned);
+
+    if (!check.ok) {
+      set({ purchaseError: check.reason });
+      return;
+    }
+
+    set({
+      coins: state.coins - item.coins,
+      // `payCost` ja recusa pagamento parcial e e a mesma funcao que a
+      // construcao usa — o debito de recurso e um so no jogo inteiro.
+      inventory: payCost(state.inventory, item.recipe),
+      owned: item.repeatable ? state.owned : [...state.owned, kind],
+      hints: kind === 'dica' ? state.hints + 1 : state.hints,
+      purchaseError: null,
+    });
+  },
+
+  useHint: () => {
+    if (get().hints <= 0) return false;
+    set((state) => ({ hints: state.hints - 1 }));
+    return true;
+  },
+
   resetDaily: () => set(DIA_ZERADO),
 
-  resetEconomy: () => set({ coins: 0, streak: 0, knownFacts: [], ...DIA_ZERADO }),
+  resetEconomy: () =>
+    set({
+      coins: 0,
+      streak: 0,
+      knownFacts: [],
+      owned: [],
+      hints: 0,
+      purchaseError: null,
+      shopOpen: false,
+      ...DIA_ZERADO,
+    }),
 });
