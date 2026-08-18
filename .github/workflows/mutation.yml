@@ -26,8 +26,7 @@ jobs:
       fail-fast: false
       matrix:
         # `99` fica fora por enquanto (trabalho em andamento).
-        # `cc` e `st` entram quando tiverem script `test:mutation`.
-        app: [ds]
+        app: [ds, cc, st]
 
     steps:
       - name: Checkout

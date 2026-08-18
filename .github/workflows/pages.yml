@@ -48,6 +48,17 @@ jobs:
         working-directory: ${{ matrix.app }}
         run: npm run ci
 
+      # E2E roda no push, mas o `99` fica fora por enquanto (trabalho em andamento).
+      - name: Install Playwright browser (${{ matrix.app }})
+        if: matrix.app != '99'
+        working-directory: ${{ matrix.app }}
+        run: npx playwright install --with-deps chromium
+
+      - name: Run E2E tests (${{ matrix.app }})
+        if: matrix.app != '99'
+        working-directory: ${{ matrix.app }}
+        run: npm run test:e2e
+
       - name: Upload build output (${{ matrix.app }})
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:

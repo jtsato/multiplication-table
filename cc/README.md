@@ -22,8 +22,9 @@ concluir as missões de uma ilha, a próxima tabuada é liberada.
   que o React declarativo + SVG não resolva melhor para este caso. Toda a
   arte é gerada em código (`src/art`, `src/domain/islands.ts`), sem imagens
   externas.
-- **Vitest + Testing Library** para os testes (unitários e um teste de
-  integração ponta a ponta que monta o app de verdade em jsdom).
+- **Vitest + Testing Library** para testes unitários e de integração.
+- **Playwright** para E2E contra o build de produção (desktop + celular).
+- **Stryker** para mutation testing da lógica crítica (agendado semanalmente no CI).
 - **ESLint + Prettier** para qualidade e formatação de código.
 
 ## Instalação e desenvolvimento
@@ -38,6 +39,8 @@ npm run build      # build de produção em dist/
 npm run preview    # serve o build de produção localmente
 npm run test        # roda a suíte de testes uma vez
 npm run test:watch  # roda os testes em modo watch
+npm run e2e         # testes ponta a ponta (Playwright)
+npm run test:mutation # mutation testing (Stryker)
 npm run typecheck   # apenas checagem de tipos
 npm run lint         # ESLint
 npm run format       # Prettier (escreve)
@@ -63,7 +66,7 @@ src/
 A regra principal: **domínio não conhece UI, UI não conhece storage.**
 `src/domain` só teria que mudar se as regras do jogo mudassem — trocar o
 motor de renderização, o framework, ou o backend de persistência não toca
-nele. Esse é o motivo de haver ~135 testes cobrindo `domain/`, `game/`,
+nele. Esse é o motivo de haver ~274 testes cobrindo `domain/`, `game/`,
 `art/scenes` e `persistence/` isoladamente antes de qualquer tela existir.
 
 ### Fluxo de uma missão
@@ -117,11 +120,12 @@ padrão; no caso comum, ele aproveita o máximo possível do save.
 
 ## Internacionalização
 
-Dois idiomas hoje: `pt-BR` e `en-US`, em `src/i18n/locales/*.json`. Nenhum
+Oito idiomas hoje: `pt-BR`, `en-US`, `de-DE`, `es-ES`, `fr-FR`, `ja-JP`,
+`ko-KR` e `zh-CN`, em `src/i18n/locales/*.json`. Nenhum
 texto fica hardcoded em componente — tudo passa por `t('chave.aninhada')`
-via `useTranslation()`. Um teste (`translate.test.ts`) garante que os dois
+via `useTranslation()`. Um teste (`translate.test.ts`) garante que todos os
 arquivos têm exatamente as mesmas chaves e que todo conteúdo do jogo
-(ilhas, missões, conquistas, opções de personagem) tem tradução nos dois
+(ilhas, missões, conquistas, opções de personagem) tem tradução em todos os
 idiomas.
 
 ### Adicionando um idioma
@@ -144,8 +148,7 @@ tabuada extra (ex: o 11):
    mapa em `MAP_POSITIONS`, todos em `src/domain/islands.ts`.
 3. Defina as missões da ilha em `MISSION_LAYOUT`, em `src/domain/missions.ts`
    (3 missões regulares + 1 desafio final, por convenção).
-4. Adicione as chaves de tradução `islands.<n>.name` / `.biome` nos dois
-   locales.
+4. Adicione as chaves de tradução `islands.<n>.name` / `.biome` em todos os locales.
 5. `createInitialProgress` e a checagem de cobertura de testes já cobrem
    qualquer tabuada nova automaticamente — não é preciso editar mais nada.
 
@@ -156,8 +159,7 @@ tabuada extra (ex: o 11):
    devolve uma lista ordenada de blocos numa grade (veja `bridgeBlocks` como
    referência simples). A ordem da lista é a ordem em que os blocos aparecem
    conforme a criança acerta perguntas.
-3. Adicione as chaves `missions.<scene>.title` / `.brief` / `.done` nos dois
-   locales.
+3. Adicione as chaves `missions.<scene>.title` / `.brief` / `.done` em todos os locales.
 4. Use o novo tipo em `MISSION_LAYOUT`.
 
 ## Testes
