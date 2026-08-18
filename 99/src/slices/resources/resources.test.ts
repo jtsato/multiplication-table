@@ -224,6 +224,37 @@ describe('itemPlacements — contrato visual do desafio', () => {
     expect(new Set(chaves).size).toBe(placements.length);
   });
 
+  /**
+   * Grupos que nao se encostam.
+   *
+   * O teste vizinho compara posicoes identicas, e por isso nunca pegou nada: com
+   * deslocamentos diferentes, dois itens praticamente nunca caem no mesmo ponto
+   * exato — eles so ficam **visualmente** em cima uns dos outros. Foi olhando um
+   * arbusto do Porto na tela que apareceu: com a tabuada do 10 e dez grupos, a
+   * largura de um grupo era 1.04 e o espaco entre grupos, 0.38.
+   *
+   * Contar na tela e a regra que sustenta o jogo. Se os grupos se fundem, o
+   * enunciado vira promessa que a cena nao cumpre.
+   */
+  it('mantem os grupos separados o bastante para serem contados', () => {
+    for (const perGroup of TABUADAS) {
+      for (const groups of [2, 5, 8, 10]) {
+        const placements = itemPlacements({ ...node('a', 0, 0), groups, perGroup });
+        for (const a of placements) {
+          for (const b of placements) {
+            if (a.groupIndex === b.groupIndex) continue;
+            const distancia = Math.hypot(
+              a.position.x - b.position.x,
+              a.position.y - b.position.y,
+              a.position.z - b.position.z,
+            );
+            expect(distancia).toBeGreaterThanOrEqual(0.2);
+          }
+        }
+      }
+    }
+  });
+
   it('posiciona os itens em volta do no, acima do chao', () => {
     const alvo = { ...node('a', 5, -3), groups: 6 };
     for (const p of itemPlacements(alvo)) {

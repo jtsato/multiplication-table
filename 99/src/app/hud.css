@@ -284,3 +284,17 @@
     bottom: 96px;
   }
 }
+
+/*
+  Nome da região.
+
+  Fica junto do dia e da fase, e não num canto próprio: onde a criança está e
+  que horas são pertencem à mesma leitura de "onde eu estou agora".
+*/
+.hud__region {
+  display: block;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--hud-destaque, #ffd166);
+  letter-spacing: 0.02em;
+}

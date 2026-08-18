@@ -1,8 +1,10 @@
 import { useMemo } from 'react';
 import { Instance, Instances } from '@react-three/drei';
 import { CuboidCollider, CylinderCollider, RigidBody } from '@react-three/rapier';
+import { useGameStore } from '../../app/store';
 import { palette } from '../../shared/palette';
 import { createRng, randomRange } from '../../shared/rng';
+import { openingsFor } from '../regions/bridges.logic';
 import {
   REGIONS,
   WORLD_BOUNDS,
@@ -17,6 +19,14 @@ const BASE_THICKNESS = 3;
 const WALL_SEGMENTS = 24;
 /** Altura do mar. Toda regiao precisa mergulhar abaixo disto. */
 const SEA_LEVEL = -1.6;
+/** Metade da largura do tabuleiro, para dimensionar o buraco na parede. */
+const DECK_HALF_WIDTH = 1.6;
+
+/** Menor angulo entre duas direcoes, sempre positivo. */
+function diferencaAngular(a: number, b: number): number {
+  const bruta = Math.abs(a - b) % (Math.PI * 2);
+  return bruta > Math.PI ? Math.PI * 2 - bruta : bruta;
+}
 
 /**
  * Espessura do disco de terra de uma regiao.
@@ -36,16 +46,24 @@ function espessura(regiao: Region): number {
  * a posicao todo quadro briga com o solver do Rapier e produz tremor. Um anel de
  * colisores deixa a contencao a cargo da propria fisica.
  *
- * Enquanto as pontes nao existem, o anel e fechado: a agua nao pune, so nao se
- * entra nela.
+ * O anel abre exatamente onde ha uma ponte comprada, e so ali. A agua nao pune —
+ * simplesmente nao se entra nela.
  */
 function RegionWalls({ regiao }: { regiao: Region }) {
+  const openBridges = useGameStore((state) => state.openBridges);
+
   const segments = useMemo(() => {
     const width = (2 * Math.PI * regiao.radius) / WALL_SEGMENTS;
+    const aberturas = openingsFor(regiao.id, openBridges);
+    // Meio-arco do buraco, medido pela largura do tabuleiro: uma abertura fixa em
+    // radianos ficaria estreita nas regioes grandes e larga demais nas pequenas.
+    const meioArco = Math.atan2(DECK_HALF_WIDTH * 1.6, regiao.radius);
+
     return Array.from({ length: WALL_SEGMENTS }, (_, index) => {
       const angle = (index / WALL_SEGMENTS) * Math.PI * 2;
       return {
         key: index,
+        angle,
         position: [
           regiao.center.x + Math.cos(angle) * regiao.radius,
           regiao.groundY + 1.5,
@@ -56,8 +74,11 @@ function RegionWalls({ regiao }: { regiao: Region }) {
         // Meia-largura com folga, para os segmentos se sobreporem e nao deixarem fresta.
         halfWidth: width * 0.75,
       };
-    });
-  }, [regiao]);
+    }).filter(
+      (segment) =>
+        !aberturas.some((abertura) => diferencaAngular(segment.angle, abertura) < meioArco),
+    );
+  }, [regiao, openBridges]);
 
   return (
     <RigidBody type="fixed" colliders={false}>

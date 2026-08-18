@@ -59,8 +59,15 @@ export const RESOURCES = {
   respawnSeconds: 12,
   /** Quantidade de nos gerados em cada regiao. */
   nodesPerRegion: 6,
-  /** Distancia minima entre nos, para nao nascerem sobrepostos. */
-  minSpacing: 4.5,
+  /**
+   * Distancia minima entre nos, para nao nascerem sobrepostos.
+   *
+   * Subiu de 4.5 quando a tabuada saiu do 2: um no da tabuada do 10 com dez
+   * grupos chega a 2.6 de raio visual, entao dois deles precisam de 5.25 entre
+   * os centros. Com o valor antigo, dois arbustos grandes nasciam entrelacados e
+   * a crianca nao sabia mais qual fruta era de qual conta.
+   */
+  minSpacing: 6,
 } as const;
 
 /**
@@ -175,6 +182,9 @@ export function fullYield(node: ResourceNode): number {
  */
 const ITEMS_PER_ROW = 5;
 
+/** Raio do anel de grupos quando a tabuada e pequena o bastante para caber nele. */
+const BASE_RING_RADIUS = 0.62;
+
 /** Posicao de um item dentro do no, relativa ao centro dele. */
 export interface ItemPlacement {
   groupIndex: number;
@@ -196,9 +206,22 @@ export interface ItemPlacement {
  */
 export function itemPlacements(node: ResourceNode): ItemPlacement[] {
   const placements: ItemPlacement[] = [];
-  const radius = 0.62;
   const itemSpread = 0.26;
   const rowSpacing = 0.3;
+
+  // Largura que uma fileira cheia ocupa, e o raio minimo que impede dois grupos
+  // vizinhos de se encostarem no anel.
+  //
+  // Sem isto o raio era fixo em 0.62 e so funcionava com a tabuada do 2: com dez
+  // grupos de dez, cada grupo media 1.04 de largura e sobrava 0.38 entre um e
+  // outro — os grupos se fundiam num amontoado, e contar na tela, que e a regra
+  // que sustenta o jogo, deixava de ser possivel.
+  const larguraDoGrupo = (Math.min(ITEMS_PER_ROW, node.perGroup) - 1) * itemSpread;
+  const raioNecessario =
+    node.groups > 1
+      ? (larguraDoGrupo + itemSpread) / (2 * Math.sin(Math.PI / node.groups))
+      : 0;
+  const radius = Math.max(BASE_RING_RADIUS, raioNecessario);
 
   for (let groupIndex = 0; groupIndex < node.groups; groupIndex += 1) {
     const angle = (groupIndex / node.groups) * Math.PI * 2;

@@ -1,6 +1,8 @@
 import { useGameStore } from './store';
 import { REJECTION_MESSAGES, STRUCTURES, canAfford, formatRecipe } from '../slices/building';
 import { PHASE_LABELS } from '../slices/daynight';
+import { BRIDGE_MESSAGES, bridgeById } from '../slices/regions';
+import { regionById } from '../slices/regions/regions.logic';
 import { LANTERN } from '../slices/lantern';
 import { RESOURCE_KINDS, RESOURCE_LABELS } from '../slices/resources';
 import './hud.css';
@@ -17,6 +19,9 @@ export function Hud({ isTouch = false }: { isTouch?: boolean } = {}) {
   const activeChallenge = useGameStore((state) => state.activeChallenge);
   const buildMode = useGameStore((state) => state.buildMode);
   const buildError = useGameStore((state) => state.buildError);
+  const currentRegion = useGameStore((state) => state.currentRegion);
+  const nearbyBridge = useGameStore((state) => state.nearbyBridge);
+  const bridgeError = useGameStore((state) => state.bridgeError);
   const clock = useGameStore((state) => state.clock);
   const lanternCharge = useGameStore((state) => state.lanternCharge);
   const coins = useGameStore((state) => state.coins);
@@ -38,6 +43,13 @@ export function Hud({ isTouch = false }: { isTouch?: boolean } = {}) {
   return (
     <div className="hud">
       <div className="hud__panel hud__panel--inventory">
+        {/* Onde a crianca esta. O nome da regiao e o que liga o lugar a
+            tabuada dele — "estou no Pico" e "aqui e a do 9" tem que ser a mesma
+            informacao. */}
+        <span className="hud__region" data-testid="hud-regiao">
+          {regionById(currentRegion).nome}
+        </span>
+
         <span className={`hud__phase hud__phase--${clock.phase}`}>
           <strong>{PHASE_LABELS[clock.phase]}</strong>
           <small>dia {clock.day}</small>
@@ -101,15 +113,30 @@ export function Hud({ isTouch = false }: { isTouch?: boolean } = {}) {
           ))}
         </div>
 
-        {buildError && (
+        {/* A recusa da ponte vem antes de tudo: e a unica que diz para a
+            crianca ir treinar, e nao ir juntar. */}
+        {bridgeError && (
+          <div className="hud__prompt hud__prompt--error" role="alert">
+            {BRIDGE_MESSAGES[bridgeError]}
+          </div>
+        )}
+
+        {!bridgeError && buildError && (
           <div className="hud__prompt hud__prompt--error" role="alert">
             {REJECTION_MESSAGES[buildError]}
           </div>
         )}
 
+        {!bridgeError && !buildError && nearbyBridge && !isTouch && (
+          <div className="hud__prompt" role="status">
+            Aperte <kbd>E</kbd> para construir a ponte ({bridgeById(nearbyBridge)?.coins} moedas ·{' '}
+            {formatRecipe(bridgeById(nearbyBridge)!.recipe)})
+          </div>
+        )}
+
         {/* Convite do entardecer, não alerta: a noite não ameaça mais nada, e o
             que a criança precisa saber é que dá para levar luz com ela. */}
-        {!buildError && clock.phase === 'entardecer' && (
+        {!bridgeError && !buildError && !nearbyBridge && clock.phase === 'entardecer' && (
           <div className="hud__prompt hud__prompt--aviso" role="alert">
             Anoitecendo — acenda a lanterna na fogueira ({Math.ceil(clock.secondsToNextPhase)}s)
           </div>
@@ -117,7 +144,7 @@ export function Hud({ isTouch = false }: { isTouch?: boolean } = {}) {
 
         {/* Sem exclamação e sem contagem: é informação, não pressão. Ficar sem
             carga não tira nada da criança além do que só aparece no escuro. */}
-        {!buildError && clock.phase === 'noite' && cargaFraca && (
+        {!bridgeError && !buildError && !nearbyBridge && clock.phase === 'noite' && cargaFraca && (
           <div className="hud__prompt" role="status">
             A lanterna está fraca
           </div>

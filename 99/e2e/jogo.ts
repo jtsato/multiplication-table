@@ -14,7 +14,11 @@ export interface EstadoJogo {
   desafio: { prompt: string; opcoes: number[]; resposta: number; proposito: string } | null;
   fase: string;
   construcoes: number;
-  jogador: { x: number; z: number };
+  jogador: { x: number; y: number; z: number };
+  /** Regiao onde o jogador esta. */
+  regiao: string;
+  /** Pontes ja compradas. */
+  pontes: string[];
   /** Segundos de carga que restam na lanterna, no instante da leitura. */
   cargaLanterna: number;
   moedas: number;
@@ -45,7 +49,9 @@ export async function lerEstado(page: Page): Promise<EstadoJogo> {
         : null,
       fase: s.clock.phase,
       construcoes: s.structures.length,
-      jogador: { x: ponte.transform.x, z: ponte.transform.z },
+      jogador: { x: ponte.transform.x, y: ponte.transform.y, z: ponte.transform.z },
+      regiao: s.currentRegion,
+      pontes: s.openBridges,
       // Calculado aqui, e nao lido de `lanternCharge`: a amostra do HUD vem com
       // throttle, e o teste precisa do valor do instante.
       cargaLanterna: Math.max(0, s.lantern.chargedUntil - ponte.clock.seconds),

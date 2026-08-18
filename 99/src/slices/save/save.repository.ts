@@ -1,4 +1,5 @@
 import { migrateAvatar, type AvatarSelection } from '../avatar/avatar.logic';
+import { bridgeById } from '../regions/bridges.logic';
 import type { ShopItemKind } from '../economy/economy.logic';
 import { SHOP_ITEMS } from '../economy/economy.logic';
 import { emptyInventory, RESOURCE_KINDS, type Inventory } from '../resources/resources.logic';
@@ -26,6 +27,8 @@ export interface GameSave {
   owned: ShopItemKind[];
   hints: number;
   avatar: AvatarSelection;
+  /** Pontes ja compradas. Ausente num save anterior as regioes, e ai e `[]`. */
+  openBridges: string[];
 }
 
 export interface SaveRepository {
@@ -72,6 +75,20 @@ export function migrateInventory(raw: unknown): Inventory {
   return resultado;
 }
 
+/**
+ * Pontes compradas.
+ *
+ * Uma ponte desconhecida e descartada em silencio, pelo mesmo motivo dos itens:
+ * pode ser de uma versao futura do mapa. E um save de antes das regioes
+ * simplesmente nao tem o campo — a crianca volta com o mundo fechado, que e o
+ * estado correto para quem nunca comprou ponte nenhuma.
+ */
+export function migrateBridges(raw: unknown): string[] {
+  if (raw === undefined) return [];
+  if (!Array.isArray(raw)) throw new Error('pontes invalidas');
+  return raw.filter((item): item is string => typeof item === 'string' && bridgeById(item) !== undefined);
+}
+
 /** Itens comprados. Um item desconhecido e descartado em silencio: pode ser de
  *  uma versao futura do catalogo, e ignora-lo e melhor que recusar o save. */
 export function migrateOwned(raw: unknown): ShopItemKind[] {
@@ -104,6 +121,7 @@ export function migrateSave(raw: unknown): GameSave {
     owned: migrateOwned(candidate.owned),
     hints: migrateCount(candidate.hints, 'dicas'),
     avatar: migrateAvatar(candidate.avatar),
+    openBridges: migrateBridges(candidate.openBridges),
   };
 }
 

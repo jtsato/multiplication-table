@@ -266,6 +266,62 @@ test.describe('partida no computador', () => {
     expect(total).toBeLessThan(certa);
   });
 
+  /**
+   * A promessa da fase inteira, provada no navegador.
+   *
+   * A regra das pontes tem teste de unidade, mas nenhum deles sabe se a parede
+   * invisivel realmente abre, se o tabuleiro sustenta o jogador e se a fisica
+   * deixa atravessar. Isso so o navegador responde.
+   */
+  test('a ponte fechada barra a travessia, e a comprada deixa passar', async ({ page }) => {
+    await page.goto('/');
+    await esperarJogoPronto(page);
+
+    // Fatos da tabuada do 2 inteiros, moeda e recurso de sobra: falta so a ponte.
+    await page.evaluate(() => {
+      window.__tabuada!.store.setState({
+        coins: 300,
+        inventory: { madeira: 60, fruta: 20, pedra: 40 },
+        knownFacts: Array.from({ length: 10 }, (_, i) => `${Math.min(2, i + 1)}x${Math.max(2, i + 1)}`),
+      });
+    });
+
+    // Encostado na beira leste da Praia, de frente para o vao.
+    await page.evaluate(() => window.__tabuada!.teleportar?.(14, 0));
+    await page.waitForTimeout(400);
+    expect((await lerEstado(page)).regiao).toBe('praia');
+
+    // Com a ponte fechada, andar para leste esbarra na parede.
+    await page.keyboard.down('KeyD');
+    await page.waitForTimeout(2500);
+    await soltarTudo(page);
+    const barrado = await lerEstado(page);
+    expect(barrado.regiao).toBe('praia');
+    expect(barrado.jogador.x).toBeLessThan(17);
+    await page.screenshot({ path: 'e2e/telas/21-ponte-fechada.png' });
+
+    // Compra a ponte de onde ela se oferece.
+    await expect(page.getByText(/para construir a ponte/)).toBeVisible();
+    await page.keyboard.press('KeyE');
+    await page.waitForTimeout(400);
+    expect((await lerEstado(page)).pontes).toContain('praia-porto');
+    await page.screenshot({ path: 'e2e/telas/22-ponte-aberta.png' });
+
+    // E agora atravessa.
+    await page.keyboard.down('KeyD');
+    for (let i = 0; i < 60; i += 1) {
+      await page.waitForTimeout(150);
+      if ((await lerEstado(page)).regiao === 'porto') break;
+    }
+    await soltarTudo(page);
+
+    const doOutroLado = await lerEstado(page);
+    expect(doOutroLado.regiao).toBe('porto');
+    // Nao caiu na agua no caminho.
+    expect(doOutroLado.jogador.y).toBeGreaterThan(-1);
+    await page.screenshot({ path: 'e2e/telas/23-do-outro-lado.png' });
+  });
+
   test('construir uma fogueira com o recurso colhido', async ({ page }) => {
     // Recurso suficiente sem precisar colher meia ilha; a colheita ja foi
     // provada nos testes acima.

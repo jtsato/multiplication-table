@@ -33,6 +33,11 @@ export const palette = {
   fireCore: '#ffe08a',
   fence: '#a9743f',
 
+  // As pontes. Madeira mais clara que o tronco, para o tabuleiro ler como
+  // caminho e nao como arvore caida atravessada no rio.
+  bridgeDeck: '#c08b52',
+  bridgeRail: '#a9743f',
+
   // Lanterna: quente, para contrastar com o azul do luar.
   lanternLight: '#ffd98a',
 

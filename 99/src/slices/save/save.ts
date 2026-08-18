@@ -16,6 +16,7 @@ export function snapshot(): GameSave {
     owned: state.owned,
     hints: state.hints,
     avatar: state.avatar,
+    openBridges: state.openBridges,
   };
 }
 
@@ -34,6 +35,7 @@ export function applySave(save: GameSave): void {
     owned: save.owned,
     hints: save.hints,
     avatar: migrateAvatar(save.avatar),
+    openBridges: save.openBridges,
   });
 }
 

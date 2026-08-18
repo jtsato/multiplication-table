@@ -9,6 +9,7 @@ import { dayNightClock } from '../slices/daynight/dayNightClock';
 import { createLanternSlice, type LanternSlice } from '../slices/lantern/lantern.store';
 import { playerTransform } from '../slices/player/playerTransform';
 import { createMathSlice, type MathSlice } from '../slices/math/math.store';
+import { createRegionsSlice, type RegionsSlice } from '../slices/regions/regions.store';
 import { createResourcesSlice, type ResourcesSlice } from '../slices/resources/resources.store';
 import { createWorldSlice, type WorldSlice } from '../slices/world/world.store';
 
@@ -27,7 +28,8 @@ export type GameState = WorldSlice &
   LanternSlice &
   EconomySlice &
   HomeSlice &
-  AvatarSlice;
+  AvatarSlice &
+  RegionsSlice;
 
 export const useGameStore = create<GameState>()((...args) => ({
   ...createWorldSlice(...args),
@@ -39,6 +41,7 @@ export const useGameStore = create<GameState>()((...args) => ({
   ...createEconomySlice(...args),
   ...createHomeSlice(...args),
   ...createAvatarSlice(...args),
+  ...createRegionsSlice(...args),
 }));
 
 /**
@@ -94,4 +97,5 @@ export function restartGame(): void {
   state.resetClock();
   state.resetLantern();
   state.resetEconomy();
+  state.resetRegions();
 }

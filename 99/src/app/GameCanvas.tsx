@@ -6,6 +6,7 @@ import { DayNightView } from '../slices/daynight';
 import { HomeView } from '../slices/home';
 import { LanternView } from '../slices/lantern';
 import { PlayerView } from '../slices/player';
+import { RegionsView } from '../slices/regions';
 import { ResourcesView } from '../slices/resources';
 import { WorldView } from '../slices/world';
 import { useGameStore } from './store';
@@ -61,6 +62,7 @@ export function GameCanvas({ isTouch = false }: { isTouch?: boolean }) {
         <LanternView />
 
         <WorldView seed={worldSeed} />
+        <RegionsView />
         <HomeView />
         <ResourcesView />
         <BuildingView />

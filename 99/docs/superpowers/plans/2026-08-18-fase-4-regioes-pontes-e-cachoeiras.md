@@ -135,7 +135,7 @@ Seis discos numa curva aberta, na ordem didática — Praia (2), Porto (5 e 10),
 (3 e 4), Cachoeira (6), Pomar (7 e 8), Pico (9). Vizinhas se tocam só onde vai a ponte;
 o resto é água.
 
-- [ ] **Step 1: Testes da geografia**
+- [x] **Step 1: Testes da geografia**
 
 Casos: a Praia contém a casa e a origem, porque é onde o jogo começa; `regionAt` devolve
 `null` na água; nenhuma região se sobrepõe a outra; toda região tem pelo menos uma
@@ -143,7 +143,7 @@ tabuada; as tabuadas cobrem 2 a 10 sem repetir e sem buraco; a ordem das regiõe
 ordem didática, não a numérica; regiões vizinhas ficam perto o bastante para uma ponte
 e as não vizinhas, longe demais para atravessar sem uma.
 
-- [ ] **Step 2 a 5:** falha, implementação, verificação, commit.
+- [x] **Step 2 a 5:** falha, implementação, verificação, commit.
 
 ---
 
@@ -155,14 +155,14 @@ e as não vizinhas, longe demais para atravessar sem uma.
 `perGroup` sorteado entre as tabuadas dela. O `kind` continua como está até a Task 4,
 que é quando as colheitas regionais passam a existir.
 
-- [ ] **Step 1: Testes**
+- [x] **Step 1: Testes**
 
 Casos: todo nó cai dentro de alguma região e nenhum na água; o `perGroup` de um nó é uma
 das tabuadas da região onde ele está; toda região recebe pelo menos um nó; nenhuma
 tabuada fica sem nó no mundo inteiro — senão um acessório vira inalcançável de novo, que
 é o defeito que esta fase existe para consertar; a casa continua sem nó dentro.
 
-- [ ] **Step 2 a 5:** falha, implementação, verificação, commit.
+- [x] **Step 2 a 5:** falha, implementação, verificação, commit.
 
 **É aqui que a fase paga o ingresso.** Terminada esta task, `knownFacts` passa a receber
 fatos de todas as tabuadas: chapéu, coroa e óculos ficam alcançáveis, o mural pode
@@ -217,7 +217,7 @@ o defeito da fruta. Mais: decoração comprada não some, e não dá para compra
 exigida. `bridgeIsOpen(bridge, owned)`; `checkBridge(bridge, coins, inventory,
 knownFacts)`; `BRIDGE_MASTERY` como o limiar de domínio.
 
-- [ ] **Step 1: Testes**
+- [x] **Step 1: Testes**
 
 Casos: ponte fechada barra a travessia; comprada e com a tabuada dominada, abre; com
 moedas mas sem domínio, recusa, e a recusa diz **qual** das duas coisas falta; a Praia
@@ -237,7 +237,7 @@ Seis discos de terreno, água entre eles, colisores nas bordas com vão aberto o
 ponte está aberta. A câmera de sombra do sol passa a enquadrar o arquipélago inteiro, e
 não mais `ISLAND.radius`.
 
-- [ ] **Step 1: Testes de cena**
+- [x] **Step 1: Testes de cena**
 
 Casos: existe terreno para cada região; a ponte fechada tem colisor e a aberta não; o
 jogador não atravessa a água nadando.
@@ -269,7 +269,10 @@ de noite; encostar recarrega sem pedir conta; a recarga respeita o teto de carga
 **Files:** `src/app/Hud.tsx`, `Hud.test.tsx`
 
 As moedas se empilham em dezenas no HUD — reforço passivo da tabuada do 10, sem nenhuma
-pergunta ser feita. E o nome da região onde a criança está, para o mundo ficar legível.
+pergunta ser feita. **Isso já existia**, com teste próprio (`hud-dezenas`); foi entregue
+antes desta fase e não precisou ser refeito. O que entrou aqui foi o **nome da região**
+no HUD, para o mundo ficar legível: "estou no Pico" e "aqui é a do 9" têm que ser a mesma
+informação.
 
 - [ ] **Step 1: Testes**
 
@@ -289,3 +292,14 @@ silhueta e os móveis fora da casa — três defeitos que passaram por baixo de 
 verdes. Uma fase que muda o mundo inteiro não termina sem isso.
 
 - [ ] **Step 2:** capturas novas por região, e uma da travessia de ponte.
+
+
+---
+
+## Dívida visual registrada, para a Task 10
+
+Com a tabuada grande, o anel de grupos de um nó cresce muito — um nó da tabuada do 10 com
+dez grupos chega a 2,6 de raio. Os itens ficam legíveis e contáveis, que era o objetivo,
+mas a planta no meio continua do mesmo tamanho: lidos na tela, os grupos parecem orbitar
+a árvore em vez de pertencer a ela. A planta precisa crescer junto com o nó. Não é
+correção de regra, é passe de arte — fica para a Task 10.

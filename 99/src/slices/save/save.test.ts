@@ -42,6 +42,7 @@ const saveValido = (): GameSave => ({
   owned: ['botas'],
   hints: 3,
   avatar: { silhouette: 'menina', skin: 4, clothes: 6, head: 'bone', face: 'nenhum' },
+  openBridges: ['praia-porto'],
 });
 
 describe('migrateSave', () => {
@@ -154,7 +155,7 @@ describe('snapshot e applySave', () => {
   it('recorta so o que e duravel', () => {
     const recorte = snapshot();
     expect(Object.keys(recorte).sort()).toEqual(
-      ['avatar', 'coins', 'hints', 'inventory', 'knownFacts', 'owned', 'version'].sort(),
+      ['avatar', 'coins', 'hints', 'inventory', 'knownFacts', 'openBridges', 'owned', 'version'].sort(),
     );
   });
 
@@ -166,6 +167,9 @@ describe('snapshot e applySave', () => {
     expect(state().owned).toEqual(['botas']);
     expect(state().hints).toBe(3);
     expect(state().avatar.silhouette).toBe('menina');
+    // As pontes atravessam junto: sem isto a crianca perderia a travessia que
+    // conquistou so por fechar a pagina.
+    expect(state().openBridges).toEqual(['praia-porto']);
     expect(snapshot()).toEqual(saveValido());
   });
 
