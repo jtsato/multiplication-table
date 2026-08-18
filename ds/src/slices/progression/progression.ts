@@ -1,43 +1,50 @@
-import { MONSTER_SEQUENCE } from "../battle/monsters";
 import type { MonsterSpec } from "../battle/battle.types";
+import { ENCOUNTERS_PER_MAP, MAPS, TOTAL_ENCOUNTERS, type MapSpec } from "../maps/maps";
 
-/** Estágio atual da jornada (quantos monstros já foram derrotados). */
+/** Estágio atual da jornada: índice do encontro (inimigo comum ou chefão). */
 export interface Progress {
   stage: number;
 }
-
-/** Tabuadas disponíveis em cada estágio da jornada (10 monstros). */
-const TABLES_BY_STAGE: number[][] = [
-  [2, 3, 4],
-  [2, 3, 4, 5],
-  [2, 3, 4, 5, 6],
-  [2, 3, 4, 5, 6, 7],
-  [2, 3, 4, 5, 6, 7, 8],
-  [2, 3, 4, 5, 6, 7, 8, 9],
-];
 
 export function initialProgress(): Progress {
   return { stage: 0 };
 }
 
-/** Monstro do estágio atual (trava no último quando a jornada termina). */
+/** Mapa atual (tabuada) com base no estágio. Trava no último mapa. */
+export function currentMap(progress: Progress): MapSpec {
+  const index = Math.min(Math.floor(progress.stage / ENCOUNTERS_PER_MAP), MAPS.length - 1);
+  return MAPS[index];
+}
+
+/** Índice do mapa atual (0 a 8). */
+export function currentMapIndex(progress: Progress): number {
+  return Math.min(Math.floor(progress.stage / ENCOUNTERS_PER_MAP), MAPS.length - 1);
+}
+
+/** True quando o encontro atual é o chefão do mapa. */
+export function isBossEncounter(progress: Progress): boolean {
+  return progress.stage % ENCOUNTERS_PER_MAP === 1;
+}
+
+/** Tabuada do mapa atual. */
+export function nextMapTable(progress: Progress): number {
+  return currentMap(progress).table;
+}
+
+/** Monstro do encontro atual (inimigo comum ou chefão do mapa). */
 export function nextMonster(progress: Progress): MonsterSpec {
-  return MONSTER_SEQUENCE[Math.min(progress.stage, MONSTER_SEQUENCE.length - 1)];
+  const map = currentMap(progress);
+  return isBossEncounter(progress) ? map.boss : map.minion;
 }
 
-/** Tabuadas do estágio atual (trava na última quando a jornada termina). */
-export function nextTables(progress: Progress): number[] {
-  return TABLES_BY_STAGE[Math.min(progress.stage, TABLES_BY_STAGE.length - 1)];
-}
-
-/** Avança um estágio após derrotar o monstro; trava no fim da jornada. */
+/** Avança um encontro após derrotar o monstro; trava no fim da jornada. */
 export function advanceProgress(progress: Progress): Progress {
-  return { stage: Math.min(progress.stage + 1, MONSTER_SEQUENCE.length) };
+  return { stage: Math.min(progress.stage + 1, TOTAL_ENCOUNTERS) };
 }
 
-/** Jornada completa: todos os monstros derrotados. */
+/** Jornada completa: todos os mapas e chefões derrotados. */
 export function isGameComplete(progress: Progress): boolean {
-  return progress.stage >= MONSTER_SEQUENCE.length;
+  return progress.stage >= TOTAL_ENCOUNTERS;
 }
 
 /** Valida o progresso vindo de um save. */

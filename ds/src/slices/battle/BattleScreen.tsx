@@ -2,27 +2,39 @@ import { useCallback, useEffect, useReducer, useRef, useState, type ReactNode } 
 import { useI18n } from "../../shared/i18n/I18nContext";
 import { battleReducer, createBattle, hpRatio } from "./battle";
 import { HeroAvatar } from "../../art/HeroAvatar";
+import { MascotAvatar } from "../../art/MascotAvatar";
+import { MapBackground } from "../../art/MapBackground";
 import { MonsterAvatar } from "../../art/MonsterAvatar";
 import { generateAlternatives } from "../math-question/generate-alternatives";
 import type { Rng } from "../math-question/question.types";
 import type { BattleAction, Combatant } from "./battle.types";
 import {
   advanceProgress,
+  currentMap,
+  currentMapIndex,
   initialProgress,
+  isBossEncounter,
   isGameComplete,
+  nextMapTable,
   nextMonster,
-  nextTables,
   type Progress,
 } from "../progression/progression";
 import {
   markSeen,
-  pickNextFact,
+  pickNextFactForTable,
   recordAnswer,
   upsertFact,
   type FactStats,
 } from "../adaptive-review/adaptive-review";
 import { saveRepository } from "../save-game/local-storage.repository";
 import { SAVE_VERSION } from "../save-game/repository";
+import {
+  DEFAULT_AVATAR_SELECTION,
+  avatarSpec,
+  mascotForAvatar,
+  type AvatarSelection,
+} from "../avatar/avatar";
+import { MAPS } from "../maps/maps";
 
 const QUESTION_DELAY_MS = 700;
 
@@ -100,15 +112,24 @@ export function BattleEndPanel({
 export function BattleScreen({
   rng = Math.random,
   progress = initialProgress(),
+  avatar = DEFAULT_AVATAR_SELECTION,
   onProgressChange = () => {},
 }: {
   rng?: Rng;
   progress?: Progress;
+  avatar?: AvatarSelection;
   onProgressChange?: (progress: Progress) => void;
 }) {
   const { t, locale } = useI18n();
+  const map = currentMap(progress);
   const monster = nextMonster(progress);
-  const tables = nextTables(progress);
+  const boss = isBossEncounter(progress);
+  const table = nextMapTable(progress);
+  const mapIndex = currentMapIndex(progress);
+  const heroSpec = avatarSpec(avatar.classId);
+  const heroLabel = t(heroSpec.nameKey);
+  const mascot = mascotForAvatar(avatar.classId);
+
   const [battle, dispatch] = useReducer(battleReducer, null, () => {
     const saved = saveRepository.load();
     return saved?.battle ?? createBattle(monster);
@@ -119,16 +140,17 @@ export function BattleScreen({
   const headingRef = useRef<HTMLHeadingElement>(null);
   const alternativesRef = useRef<HTMLDivElement>(null);
 
-  // Auto-save: qualquer mudança na batalha/progresso/fatos persiste.
+  // Auto-save: qualquer mudança na batalha/progresso/fatos/avatar persiste.
   useEffect(() => {
-    saveRepository.save({ version: SAVE_VERSION, locale, battle, progress, facts });
-  }, [battle, locale, progress, facts]);
+    saveRepository.save({ version: SAVE_VERSION, locale, avatar, battle, progress, facts });
+  }, [battle, locale, avatar, progress, facts]);
 
   // Geração ponderada: reforça erros e fatos esquecidos (regra 12 da estratégia).
+  // O mapa define a tabuada; no chefão só entram ?x6 a ?x9.
   const gerarPergunta = useCallback((): BattleAction => {
     const now = questionIndexRef.current;
     questionIndexRef.current += 1;
-    const fact = pickNextFact(tables, facts, rng, now);
+    const fact = pickNextFactForTable(table, facts, rng, now, boss);
     setFacts((prev) => {
       const atual = prev.find((f) => f.a === fact.a && f.b === fact.b);
       return upsertFact(prev, markSeen(atual, fact, now));
@@ -138,7 +160,7 @@ export function BattleScreen({
       question: fact,
       alternatives: generateAlternatives(fact, rng),
     };
-  }, [tables, facts, rng]);
+  }, [table, facts, rng, boss]);
 
   // Registra o desfecho da resposta no histórico do fato (reforço adaptativo).
   const handleAnswer = useCallback(
@@ -153,7 +175,7 @@ export function BattleScreen({
       }
       dispatch({ type: "ANSWER", value });
     },
-    [battle.question],
+    [battle.question, dispatch],
   );
 
   // Gerenciamento de foco: ao entrar na batalha (intro), o título recebe o foco.
@@ -195,11 +217,12 @@ export function BattleScreen({
 
   const monsterName = t(battle.monster.nameKey);
   const lastEntry = battle.log[battle.log.length - 1];
+  const introKey = boss ? "battle.bossIntro" : "battle.minionIntro";
   const statusText = lastEntry
     ? t(lastEntry.key, { ...lastEntry.params, monster: monsterName })
-    : t("battle.intro", { monster: monsterName });
+    : t(introKey, { monster: monsterName });
 
-  // Vitória avança a jornada; o próximo combate usa o monstro/tabuadas seguintes.
+  // Vitória avança a jornada; o próximo combate usa o mapa/encontro seguinte.
   // Derrota reinicia o mesmo monstro (sem avançar).
   function handlePlayAgain() {
     const venceu = battle.phase === "victory";
@@ -211,9 +234,14 @@ export function BattleScreen({
 
   return (
     <section aria-labelledby="battle-heading" className="battle-screen">
+      <MapBackground theme={map.theme} className="battle-map-background" label={t(map.nameKey)} />
       <h2 id="battle-heading" tabIndex={-1} ref={headingRef} className="battle-heading">
         {t("battle.title")}
       </h2>
+      <p className="battle-map-info">
+        {t("battle.mapInfo", { current: mapIndex + 1, total: MAPS.length, table })}
+        {boss && <span className="boss-badge">{t("battle.boss")}</span>}
+      </p>
       <p role="status" className="battle-status">
         {lastEntry && (
           <span
@@ -233,8 +261,24 @@ export function BattleScreen({
       <div className="battlefield">
         <BattleUnit
           combatant={battle.hero}
-          label={t(battle.hero.nameKey)}
-          portrait={<HeroAvatar size={72} title={t(battle.hero.nameKey)} className="portrait" />}
+          label={heroLabel}
+          portrait={
+            <div className="avatar-with-mascot">
+              <HeroAvatar
+                avatarId={avatar.classId}
+                colorId={avatar.colorId}
+                size={72}
+                title={heroLabel}
+                className="portrait"
+              />
+              <MascotAvatar
+                mascotId={mascot}
+                size={28}
+                title={t(heroSpec.mascotNameKey)}
+                className="mascot-in-battle"
+              />
+            </div>
+          }
         />
         <BattleUnit
           combatant={battle.monster}

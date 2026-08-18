@@ -38,7 +38,9 @@ describe("BattleEndPanel", () => {
         onPlayAgain={vi.fn()}
       />,
     );
-    expect(screen.getByText("Você derrotou todos os monstros!")).toBeInTheDocument();
+    expect(
+      screen.getByText("Você derrotou todos os chefes e completou a jornada!"),
+    ).toBeInTheDocument();
     expect(screen.queryByText("Você derrotou o Criatura Observadora!")).not.toBeInTheDocument();
   });
 });

@@ -3,14 +3,18 @@ import type { LocaleCode } from "../../shared/i18n/locale.types";
 import type { Progress } from "../progression/progression";
 import { initialProgress, migrateProgress } from "../progression/progression";
 import type { FactStats } from "../adaptive-review/adaptive-review";
+import type { AvatarSelection } from "../avatar/avatar";
+import { DEFAULT_AVATAR_SELECTION, migrateAvatarSelection } from "../avatar/avatar";
 
 /** Versão atual do schema de save. Incrementar exige migração (migrateSave). */
-export const SAVE_VERSION = 1;
+export const SAVE_VERSION = 2;
 
 export interface GameSave {
   version: typeof SAVE_VERSION;
   locale: LocaleCode;
-  /** Progresso da jornada (monstros derrotados, tabuadas desbloqueadas). */
+  /** Avatar escolhido (classe + cor). */
+  avatar: AvatarSelection;
+  /** Progresso da jornada (mapas/tabuadas e chefões). */
   progress: Progress;
   /** Batalha em andamento; nula quando o jogador está no menu. */
   battle: BattleState | null;
@@ -50,13 +54,34 @@ export function migrateSave(raw: unknown): GameSave {
   if (typeof raw !== "object" || raw === null) {
     throw new Error("save inválido: não é um objeto");
   }
-  const candidate = raw as Partial<GameSave>;
+  const candidate = raw as {
+    version?: unknown;
+    locale?: unknown;
+    avatar?: unknown;
+    progress?: unknown;
+    battle?: unknown;
+    facts?: unknown;
+  };
+
+  if (candidate.locale !== "pt-BR" && candidate.locale !== "en-US") {
+    throw new Error(`locale inválido: ${String(candidate.locale)}`);
+  }
+
+  // v1 → v2: a progressão mudou para mapas por tabuada; o save antigo é
+  // migrado com avatar padrão e jornada reiniciada (batalha antiga descartada).
+  if (candidate.version === 1) {
+    return {
+      version: SAVE_VERSION,
+      locale: candidate.locale as LocaleCode,
+      avatar: DEFAULT_AVATAR_SELECTION,
+      progress: initialProgress(),
+      battle: null,
+      facts: migrateFacts(candidate.facts),
+    };
+  }
 
   if (candidate.version !== SAVE_VERSION) {
     throw new Error(`versão de save não suportada: ${String(candidate.version)}`);
-  }
-  if (candidate.locale !== "pt-BR" && candidate.locale !== "en-US") {
-    throw new Error(`locale inválido: ${String(candidate.locale)}`);
   }
   // battle: null é válido (jogador no menu); `typeof null` é "object", então
   // a checagem abaixo rejeita ausente/não-objeto e aceita null.
@@ -66,10 +91,14 @@ export function migrateSave(raw: unknown): GameSave {
 
   return {
     version: SAVE_VERSION,
-    locale: candidate.locale,
+    locale: candidate.locale as LocaleCode,
+    avatar:
+      candidate.avatar === undefined
+        ? DEFAULT_AVATAR_SELECTION
+        : migrateAvatarSelection(candidate.avatar),
     progress:
       candidate.progress === undefined ? initialProgress() : migrateProgress(candidate.progress),
-    battle: candidate.battle,
+    battle: candidate.battle as BattleState | null,
     facts: migrateFacts(candidate.facts),
   };
 }

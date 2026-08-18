@@ -112,6 +112,8 @@ export type AppStrings = {
   productPrice: string;
   available: string;
   buyFor: string;
+  purchaseReady: string;
+  purchaseNeedsMore: (missingText: string) => string;
   decor: string;
   decorDescription: string;
   inCollection: string;
@@ -192,7 +194,7 @@ const ptBR: AppStrings = {
   cannotAffordCosmetic: "Ainda não dá para comprar essa decoração.",
   cosmeticPurchased: "A decoração nova já pode aparecer na loja!",
 
-  backToShop: "× Voltar para a loja",
+  backToShop: "← Loja",
   backToShopLabel: "Voltar para a loja",
   seeAccount: "Ver a conta",
   howMany: "Vamos descobrir quanto custa a compra.",
@@ -225,6 +227,8 @@ const ptBR: AppStrings = {
   productPrice: "Preço de venda",
   available: "Disponível",
   buyFor: "Comprar por",
+  purchaseReady: "Pode comprar",
+  purchaseNeedsMore: (missingText) => `Falta ${missingText}`,
   decor: "Decorações",
   decorDescription: "Uma mudança visual para a loja.",
   inCollection: "Na coleção",
@@ -308,7 +312,7 @@ const enUS: AppStrings = {
   cannotAffordCosmetic: "We cannot buy that decoration yet.",
   cosmeticPurchased: "The new decoration can show up in the shop now!",
 
-  backToShop: "× Back to the shop",
+  backToShop: "← Shop",
   backToShopLabel: "Back to the shop",
   seeAccount: "See the calculation",
   howMany: "Let's work out what this purchase costs.",
@@ -341,6 +345,8 @@ const enUS: AppStrings = {
   productPrice: "Sale price",
   available: "Available",
   buyFor: "Buy for",
+  purchaseReady: "Can buy",
+  purchaseNeedsMore: (missingText) => `Need ${missingText} more`,
   decor: "Decorations",
   decorDescription: "A new visual touch for the shop.",
   inCollection: "In collection",

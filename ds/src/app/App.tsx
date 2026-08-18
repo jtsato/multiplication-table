@@ -4,7 +4,10 @@ import { useI18n } from "../shared/i18n/I18nContext";
 import type { LocaleCode } from "../shared/i18n/locale.types";
 import { BattleScreen } from "../slices/battle/BattleScreen";
 import { saveRepository } from "../slices/save-game/local-storage.repository";
+import { SAVE_VERSION } from "../slices/save-game/repository";
 import { initialProgress, type Progress } from "../slices/progression/progression";
+import { DEFAULT_AVATAR_SELECTION, type AvatarSelection } from "../slices/avatar/avatar";
+import { MenuScreen } from "./MenuScreen";
 
 const LOCALES: { code: LocaleCode; label: string }[] = [
   { code: "pt-BR", label: "Português" },
@@ -19,11 +22,29 @@ export function App() {
   const [screen, setScreen] = useState<Screen>(() =>
     saveRepository.load()?.battle ? "battle" : "menu",
   );
-  // Progressão (monstros derrotados / tabuadas) vem do save e sobe ao App.
+  // Progressão (mapas/chefões) vem do save e sobe ao App.
   const [progress, setProgress] = useState<Progress>(() => {
     const saved = saveRepository.load();
     return saved?.progress ?? initialProgress();
   });
+  // Avatar selecionado/customizado também persiste no save.
+  const [avatar, setAvatar] = useState<AvatarSelection>(() => {
+    const saved = saveRepository.load();
+    return saved?.avatar ?? DEFAULT_AVATAR_SELECTION;
+  });
+
+  function handleAvatarChange(next: AvatarSelection) {
+    setAvatar(next);
+    const saved = saveRepository.load();
+    saveRepository.save({
+      version: SAVE_VERSION,
+      locale,
+      avatar: next,
+      progress: saved?.progress ?? progress,
+      battle: saved?.battle ?? null,
+      facts: saved?.facts ?? [],
+    });
+  }
 
   return (
     <>
@@ -45,14 +66,14 @@ export function App() {
       </header>
       <main id="conteudo" className="app-main">
         {screen === "menu" ? (
-          <>
-            <p>{t("app.welcome")}</p>
-            <button type="button" className="button-primary" onClick={() => setScreen("battle")}>
-              {t("battle.start")}
-            </button>
-          </>
+          <MenuScreen
+            avatar={avatar}
+            progress={progress}
+            onAvatarChange={handleAvatarChange}
+            onStart={() => setScreen("battle")}
+          />
         ) : (
-          <BattleScreen progress={progress} onProgressChange={setProgress} />
+          <BattleScreen progress={progress} avatar={avatar} onProgressChange={setProgress} />
         )}
       </main>
     </>

@@ -50,7 +50,7 @@ describe("BattleScreen", () => {
 
   it("mostra herói e vingador com suas barras de HP acessíveis", () => {
     renderWithI18n(<BattleScreen rng={seededRng(1)} />);
-    const heroBar = screen.getByRole("progressbar", { name: "Herói" });
+    const heroBar = screen.getByRole("progressbar", { name: "Guerreiro" });
     expect(heroBar).toHaveAttribute("aria-valuemax", "30");
     expect(heroBar).toHaveAttribute("aria-valuenow", "30");
     const vingadorBar = screen.getByRole("progressbar", { name: "Vingador" });
@@ -98,7 +98,7 @@ describe("BattleScreen", () => {
       "aria-valuenow",
       String(AVENGER.maxHp),
     );
-    expect(screen.getByRole("progressbar", { name: "Herói" })).toHaveAttribute(
+    expect(screen.getByRole("progressbar", { name: "Guerreiro" })).toHaveAttribute(
       "aria-valuenow",
       String(HERO_MAX_HP - AVENGER.damage),
     );

@@ -21,8 +21,9 @@ function fakeStorage(initial: Record<string, string> = {}) {
 
 function saveValido(): GameSave {
   return {
-    version: 1,
+    version: 2,
     locale: "en-US",
+    avatar: { classId: "fighter", colorId: "crimson" },
     progress: { stage: 0 },
     facts: [],
     battle: null,

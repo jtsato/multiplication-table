@@ -5,6 +5,51 @@
     "languageGroup": "Language",
     "welcome": "Welcome to the Times Table Battle!"
   },
+  "avatar": {
+    "title": "Choose your hero",
+    "subtitle": "Pick a class and customize the armor color. Every hero has a companion mascot.",
+    "classGroup": "Class",
+    "colorGroup": "Armor color",
+    "mascotLabel": "Mascot: {{name}}",
+    "class": {
+      "fighter": "Fighter",
+      "fighterDescription": "Has great strength and long reach with its sword.",
+      "elf": "Elf",
+      "elfDescription": "Agile, blending physical combat with attack spells.",
+      "cleric": "Cleric",
+      "clericDescription": "Essential for support, focused on healing and defensive magic.",
+      "dwarf": "Dwarf",
+      "dwarfDescription": "Resilient and excellent at dealing massive short-range damage."
+    },
+    "mascot": {
+      "wolf": "Wolf",
+      "owl": "Owl",
+      "phoenix": "Phoenix",
+      "badger": "Badger"
+    },
+    "color": {
+      "crimson": "Red",
+      "royal": "Blue",
+      "forest": "Green",
+      "gold": "Gold",
+      "violet": "Violet",
+      "steel": "Steel"
+    },
+    "start": "Start adventure"
+  },
+  "map": {
+    "title": "Maps",
+    "currentMap": "Current map",
+    "meadow": "Flower Meadow",
+    "desert": "Cactus Desert",
+    "forest": "Enchanted Forest",
+    "cave": "Crystal Cave",
+    "ice": "Frozen Mountain",
+    "volcano": "Ruby Volcano",
+    "sky": "Stormy Skies",
+    "castle": "Dragon Castle",
+    "void": "Void Realm"
+  },
   "battle": {
     "title": "Battle",
     "start": "Start battle",
@@ -21,7 +66,12 @@
     "defeat": "Defeat!",
     "defeatMessage": "The {{monster}} won this time. Try again!",
     "playAgain": "Play again",
-    "victoryAll": "You defeated all the monsters!"
+    "victoryAll": "You defeated every boss and completed the journey!",
+    "mapInfo": "Map {{current}} of {{total}} — Table of {{table}}",
+    "mapName": "{{name}}",
+    "boss": "Boss",
+    "bossIntro": "The boss {{monster}} appeared!",
+    "minionIntro": "A wild {{monster}} appeared!"
   },
   "math": {
     "question": "{{a}} × {{b}} = ?",

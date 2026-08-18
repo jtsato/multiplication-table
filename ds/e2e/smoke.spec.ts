@@ -42,14 +42,14 @@ test.describe("Slice 1 — Battle Shell", () => {
   test("inicia a batalha, mostra o vingador com HP e mantém acessibilidade", async ({ page }) => {
     await page.goto("/");
 
-    await page.getByRole("button", { name: "Iniciar batalha" }).click();
+    await page.getByRole("button", { name: "Iniciar aventura" }).click();
 
     await expect(page.getByRole("heading", { level: 2, name: "Batalha" })).toBeVisible();
     await expect(page.getByRole("progressbar", { name: "Vingador" })).toHaveAttribute(
       "aria-valuenow",
       "20",
     );
-    await expect(page.getByRole("progressbar", { name: "Herói" })).toHaveAttribute(
+    await expect(page.getByRole("progressbar", { name: "Guerreiro" })).toHaveAttribute(
       "aria-valuenow",
       "30",
     );
@@ -60,10 +60,30 @@ test.describe("Slice 1 — Battle Shell", () => {
   });
 });
 
+test.describe("Avatar e Mapas", () => {
+  test("seleciona Elfa, personaliza a cor e inicia no mapa da tabuada do 2", async ({ page }) => {
+    await page.goto("/");
+
+    await page.getByRole("button", { name: /Elfa/ }).click();
+    await page.getByRole("button", { name: "Azul" }).click();
+    await page.getByRole("button", { name: "Iniciar aventura" }).click();
+
+    await expect(page.getByRole("heading", { level: 2, name: "Batalha" })).toBeVisible();
+    await expect(page.getByRole("progressbar", { name: "Elfa" })).toHaveAttribute(
+      "aria-valuemax",
+      "30",
+    );
+    await expect(page.locator(".battle-map-info")).toContainText("Mapa 1 de 9");
+    await expect(page.locator(".map-background--meadow")).toBeVisible();
+    await expect(page.getByRole("img", { name: "Coruja" })).toBeVisible();
+    await expectNoSeriousViolations(page);
+  });
+});
+
 test.describe("Slice 2 — Math Attack", () => {
   async function startBattle(page: import("@playwright/test").Page) {
     await page.goto("/");
-    await page.getByRole("button", { name: "Iniciar batalha" }).click();
+    await page.getByRole("button", { name: "Iniciar aventura" }).click();
     await expect(page.locator(".question")).toBeVisible();
     const text = (await page.locator(".question").innerText()) ?? "";
     const match = text.match(/(\d+)\s*×\s*(\d+)/);
@@ -102,7 +122,7 @@ test.describe("Slice 2 — Math Attack", () => {
       "aria-valuenow",
       "20",
     );
-    await expect(page.getByRole("progressbar", { name: "Herói" })).toHaveAttribute(
+    await expect(page.getByRole("progressbar", { name: "Guerreiro" })).toHaveAttribute(
       "aria-valuenow",
       "25",
     );
@@ -110,7 +130,7 @@ test.describe("Slice 2 — Math Attack", () => {
 
   test("batalha é jogável por teclado (TAB + ENTER)", async ({ page }) => {
     await page.goto("/");
-    await page.getByRole("button", { name: "Iniciar batalha" }).focus();
+    await page.getByRole("button", { name: "Iniciar aventura" }).focus();
     await page.keyboard.press("Enter");
 
     await expect(page.locator(".question")).toBeVisible();
@@ -132,7 +152,7 @@ test.describe("Slice 2 — Math Attack", () => {
 
   test("três acertos em sequência constroem o combo ×3", async ({ page }) => {
     await page.goto("/");
-    await page.getByRole("button", { name: "Iniciar batalha" }).click();
+    await page.getByRole("button", { name: "Iniciar aventura" }).click();
 
     for (let i = 0; i < 3; i += 1) {
       await expect(page.locator(".question")).toBeVisible();
@@ -151,7 +171,7 @@ test.describe("Slice 2 — Math Attack", () => {
 
   test("golden path: três acertos, super ataque, vitória e jogar novamente", async ({ page }) => {
     await page.goto("/");
-    await page.getByRole("button", { name: "Iniciar batalha" }).click();
+    await page.getByRole("button", { name: "Iniciar aventura" }).click();
 
     for (let i = 0; i < 3; i += 1) {
       await expect(page.locator(".question")).toBeVisible();
@@ -186,7 +206,7 @@ test.describe("Slice 2 — Math Attack", () => {
     page,
   }) => {
     await page.goto("/");
-    await page.getByRole("button", { name: "Iniciar batalha" }).click();
+    await page.getByRole("button", { name: "Iniciar aventura" }).click();
 
     for (let i = 0; i < 3; i += 1) {
       await expect(page.locator(".question")).toBeVisible();
@@ -204,7 +224,7 @@ test.describe("Slice 2 — Math Attack", () => {
       "aria-valuenow",
       "26",
     );
-    await expect(page.getByText(/Um Tiamat selvagem apareceu/)).toBeVisible();
+    await expect(page.getByText(/Tiamat apareceu/)).toBeVisible();
 
     // O save persiste a progressão: reload continua no dragão.
     await page.reload();
@@ -217,7 +237,7 @@ test.describe("Slice 2 — Math Attack", () => {
 
   test("seis erros derrotam o herói e mostram a tela de derrota", async ({ page }) => {
     await page.goto("/");
-    await page.getByRole("button", { name: "Iniciar batalha" }).click();
+    await page.getByRole("button", { name: "Iniciar aventura" }).click();
 
     for (let i = 0; i < 6; i += 1) {
       await expect(page.locator(".question")).toBeVisible();
@@ -233,7 +253,7 @@ test.describe("Slice 2 — Math Attack", () => {
     }
 
     await expect(page.getByRole("heading", { level: 3, name: "Derrota!" })).toBeVisible();
-    await expect(page.getByRole("progressbar", { name: "Herói" })).toHaveAttribute(
+    await expect(page.getByRole("progressbar", { name: "Guerreiro" })).toHaveAttribute(
       "aria-valuenow",
       "0",
     );
@@ -244,7 +264,7 @@ test.describe("Slice 2 — Math Attack", () => {
 test.describe("Slice 7 — Save Game", () => {
   test("a batalha continua após o reload (estado permanece)", async ({ page }) => {
     await page.goto("/");
-    await page.getByRole("button", { name: "Iniciar batalha" }).click();
+    await page.getByRole("button", { name: "Iniciar aventura" }).click();
 
     // Um acerto: vingador 20 → 14.
     await expect(page.locator(".question")).toBeVisible();
@@ -273,7 +293,7 @@ test.describe("Slice 7 — Save Game", () => {
 test.describe("Slice 9 — Adaptive Review", () => {
   test("erros ficam registrados no save para o reforço adaptativo", async ({ page }) => {
     await page.goto("/");
-    await page.getByRole("button", { name: "Iniciar batalha" }).click();
+    await page.getByRole("button", { name: "Iniciar aventura" }).click();
 
     await expect(page.locator(".question")).toBeVisible();
     const text = (await page.locator(".question").innerText()) ?? "";

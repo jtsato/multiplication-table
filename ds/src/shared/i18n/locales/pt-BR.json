@@ -5,6 +5,51 @@
     "languageGroup": "Idioma",
     "welcome": "Bem-vindo(a) à Batalha da Tabuada!"
   },
+  "avatar": {
+    "title": "Escolha seu herói",
+    "subtitle": "Selecione uma classe e personalize a cor da armadura. Cada herói tem um mascote companheiro.",
+    "classGroup": "Classe",
+    "colorGroup": "Cor da armadura",
+    "mascotLabel": "Mascote: {{name}}",
+    "class": {
+      "fighter": "Guerreiro",
+      "fighterDescription": "Possui grande força e um longo alcance com sua espada.",
+      "elf": "Elfa",
+      "elfDescription": "Ágil, mistura combate físico com feitiços de ataque.",
+      "cleric": "Clérigo",
+      "clericDescription": "Essencial para o suporte, com foco em cura e magias de defesa.",
+      "dwarf": "Anão",
+      "dwarfDescription": "Resistente e excelente em causar danos massivos a curta distância."
+    },
+    "mascot": {
+      "wolf": "Lobo",
+      "owl": "Coruja",
+      "phoenix": "Fênix",
+      "badger": "Texugo"
+    },
+    "color": {
+      "crimson": "Vermelho",
+      "royal": "Azul",
+      "forest": "Verde",
+      "gold": "Dourado",
+      "violet": "Violeta",
+      "steel": "Aço"
+    },
+    "start": "Iniciar aventura"
+  },
+  "map": {
+    "title": "Mapas",
+    "currentMap": "Mapa atual",
+    "meadow": "Pradaria das Flores",
+    "desert": "Deserto dos Cactos",
+    "forest": "Floresta Encantada",
+    "cave": "Caverna Cristalina",
+    "ice": "Montanha Gelada",
+    "volcano": "Vulcão Rubi",
+    "sky": "Céus Tempestuosos",
+    "castle": "Castelo dos Dragões",
+    "void": "Reino do Vazio"
+  },
   "battle": {
     "title": "Batalha",
     "start": "Iniciar batalha",
@@ -21,7 +66,12 @@
     "defeat": "Derrota!",
     "defeatMessage": "O {{monster}} venceu desta vez. Tente de novo!",
     "playAgain": "Jogar novamente",
-    "victoryAll": "Você derrotou todos os monstros!"
+    "victoryAll": "Você derrotou todos os chefes e completou a jornada!",
+    "mapInfo": "Mapa {{current}} de {{total}} — Tabuada do {{table}}",
+    "mapName": "{{name}}",
+    "boss": "Chefão",
+    "bossIntro": "O chefão {{monster}} apareceu!",
+    "minionIntro": "Um {{monster}} selvagem apareceu!"
   },
   "math": {
     "question": "{{a}} × {{b}} = ?",

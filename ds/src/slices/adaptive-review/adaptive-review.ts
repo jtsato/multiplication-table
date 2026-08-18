@@ -77,6 +77,46 @@ export function factsInTables(tables: number[]): FactStats[] {
   return pairs;
 }
 
+/** Multiplicadores usados pelo chefão de cada mapa (as mais difíceis). */
+export const BOSS_MULTIPLIERS = [6, 7, 8, 9];
+
+/** Fatores cobertos pelas tabuadas da aventura (2 a 10). */
+export const TABLE_FACTORS = [2, 3, 4, 5, 6, 7, 8, 9, 10];
+
+/** Par canônico (a ≤ b) de uma tabuada com um multiplicador. */
+function tablePair(table: number, multiplier: number): FactStats {
+  const a = Math.min(table, multiplier);
+  const b = Math.max(table, multiplier);
+  return { a, b, attempts: 0, errors: 0, lastSeenAt: 0 };
+}
+
+/**
+ * Pool de fatos de uma tabuada específica.
+ * `hardOnly` restringe aos multiplicadores do chefão (?x6 a ?x9).
+ */
+export function factsForTable(table: number, hardOnly = false): FactStats[] {
+  const multipliers = hardOnly ? BOSS_MULTIPLIERS : TABLE_FACTORS;
+  return multipliers.map((multiplier) => tablePair(table, multiplier));
+}
+
+/**
+ * Próxima pergunta focada em uma tabuada (mapa atual).
+ * No modo chefão, só entram os fatos ?x6 a ?x9.
+ */
+export function pickNextFactForTable(
+  table: number,
+  facts: FactStats[],
+  rng: Rng,
+  now: number,
+  hardOnly = false,
+): MultiplicationFact {
+  const pool = factsForTable(table, hardOnly).map((candidate) => {
+    const seen = facts.find((f) => f.a === candidate.a && f.b === candidate.b);
+    return seen ?? candidate;
+  });
+  return pickFact(pool, rng, now);
+}
+
 /** Substitui ou adiciona um fato na lista (imutável). */
 export function upsertFact(facts: FactStats[], stats: FactStats): FactStats[] {
   const index = facts.findIndex((f) => f.a === stats.a && f.b === stats.b);

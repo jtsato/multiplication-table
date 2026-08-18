@@ -1,10 +1,12 @@
 import { describe, expect, it } from "vitest";
 import {
   factWeight,
+  factsForTable,
   factsInTables,
   markSeen,
   pickFact,
   pickNextFact,
+  pickNextFactForTable,
   recordAnswer,
   upsertFact,
   type FactStats,
@@ -197,5 +199,60 @@ describe("upsertFact", () => {
     const c = base({ a: 4, b: 3 });
     const novo = base({ a: 2, b: 3 });
     expect(upsertFact([a, c], novo)).toEqual([a, c, novo]);
+  });
+});
+
+describe("factsForTable", () => {
+  it("cobre a tabuada completa do 2 ao 10", () => {
+    const pool = factsForTable(7);
+    expect(pool).toEqual([
+      { a: 2, b: 7, attempts: 0, errors: 0, lastSeenAt: 0 },
+      { a: 3, b: 7, attempts: 0, errors: 0, lastSeenAt: 0 },
+      { a: 4, b: 7, attempts: 0, errors: 0, lastSeenAt: 0 },
+      { a: 5, b: 7, attempts: 0, errors: 0, lastSeenAt: 0 },
+      { a: 6, b: 7, attempts: 0, errors: 0, lastSeenAt: 0 },
+      { a: 7, b: 7, attempts: 0, errors: 0, lastSeenAt: 0 },
+      { a: 7, b: 8, attempts: 0, errors: 0, lastSeenAt: 0 },
+      { a: 7, b: 9, attempts: 0, errors: 0, lastSeenAt: 0 },
+      { a: 7, b: 10, attempts: 0, errors: 0, lastSeenAt: 0 },
+    ]);
+  });
+
+  it("hardOnly restringe aos multiplicadores do chefão (?x6 a ?x9)", () => {
+    const pool = factsForTable(2, true);
+    expect(pool.map((f) => f.b)).toEqual([6, 7, 8, 9]);
+    expect(pool.map((f) => f.a)).toEqual([2, 2, 2, 2]);
+  });
+
+  it("tabuada 10 usa o 10 como segundo fator no par canônico", () => {
+    const pool = factsForTable(10);
+    expect(pool).toContainEqual({ a: 2, b: 10, attempts: 0, errors: 0, lastSeenAt: 0 });
+    expect(pool).toContainEqual({ a: 10, b: 10, attempts: 0, errors: 0, lastSeenAt: 0 });
+  });
+});
+
+describe("pickNextFactForTable", () => {
+  it("sorteia apenas fatos da tabuada do mapa", () => {
+    const fact = pickNextFactForTable(4, [], seededRng(1), 5);
+    expect(fact.a === 4 || fact.b === 4).toBe(true);
+    expect([2, 3, 4, 5, 6, 7, 8, 9, 10]).toContain(fact.a);
+    expect([2, 3, 4, 5, 6, 7, 8, 9, 10]).toContain(fact.b);
+  });
+
+  it("no chefão só aparecem multiplicadores 6 a 9", () => {
+    for (let seed = 0; seed < 20; seed += 1) {
+      const fact = pickNextFactForTable(5, [], seededRng(seed), 0, true);
+      const hard = [fact.a, fact.b].filter((n) => n === 5);
+      const other = [fact.a, fact.b].find((n) => n !== 5);
+      expect(hard).toHaveLength(1);
+      expect([6, 7, 8, 9]).toContain(other);
+    }
+  });
+
+  it("aplica o histórico de erros da tabuada (reforço adaptativo)", () => {
+    const facts = [{ a: 6, b: 8, attempts: 2, errors: 5, lastSeenAt: 0 }];
+    const rng: Rng = () => 0.2;
+    const escolhido = pickNextFactForTable(8, facts, rng, 10, true);
+    expect(escolhido).toEqual({ a: 6, b: 8, answer: 48 });
   });
 });

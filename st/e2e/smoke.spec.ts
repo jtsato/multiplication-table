@@ -1,4 +1,4 @@
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test, type Locator, type Page } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 
 test.beforeEach(async ({ page }) => {
@@ -40,6 +40,14 @@ async function serveCurrentCustomer(page: Page): Promise<void> {
   expect(correctIndex, `no correct answer offered for ${equation}`).toBeGreaterThanOrEqual(0);
   await page.locator(".answer-button").nth(correctIndex).click();
   await expect(page.locator(".success-box")).toBeVisible();
+}
+
+async function renderedLineCount(locator: Locator): Promise<number> {
+  return locator.evaluate((element) => {
+    const range = document.createRange();
+    range.selectNodeContents(element);
+    return new Set(Array.from(range.getClientRects()).map((rect) => Math.round(rect.top))).size;
+  });
 }
 
 test("creates a player and starts the first shop day", async ({ page }) => {
@@ -230,12 +238,31 @@ test("scrolls the answer feedback into view after selecting an option", async ({
   })).toBe(true);
 });
 
+test("keeps money and navigation labels readable on a narrow screen", async ({ page }) => {
+  await page.setViewportSize({ width: 320, height: 800 });
+  await createPlayer(page);
+  await expect.poll(() => renderedLineCount(page.locator(".cash-badge"))).toBe(1);
+
+  await page.getByRole("button", { name: "Novos produtos" }).click();
+  await expect(page.getByRole("heading", { name: "Novos produtos para a loja" })).toBeVisible();
+  await expect.poll(() => renderedLineCount(page.locator(".cash-badge"))).toBe(1);
+  await expect.poll(() => renderedLineCount(page.locator(".back-button"))).toBe(1);
+
+  await page.getByRole("button", { name: /Voltar para a loja/ }).click();
+  await page.getByRole("button", { name: "Começar dia" }).click();
+  await expect(page.getByText(/Cliente 1 de [56]/)).toBeVisible();
+  await expect.poll(() => renderedLineCount(page.locator(".service-header .back-button"))).toBe(1);
+  for (const money of await page.locator(".header-money-item strong").all()) {
+    await expect.poll(() => renderedLineCount(money)).toBe(1);
+  }
+});
+
 test("signals which shop purchases fit the available cash", async ({ page }) => {
   await createPlayer(page);
   await page.getByRole("button", { name: "Novos produtos" }).click();
   await expect(page.getByRole("heading", { name: "Novos produtos para a loja" })).toBeVisible();
 
-  await expect(page.getByText("Pode comprar", { exact: true })).toHaveCount(5);
+  await expect(page.locator(".purchase-state--can")).toHaveCount(5);
   const unavailableCard = page.locator(".product-card").filter({ hasText: "Falta R$ 30" });
   await expect(unavailableCard).toHaveCount(1);
   await expect(unavailableCard.getByRole("button")).toBeDisabled();

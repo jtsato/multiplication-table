@@ -4,8 +4,8 @@ import { HeroAvatar } from "./HeroAvatar";
 
 describe("HeroAvatar", () => {
   it("expõe o título como rótulo acessível (role img)", () => {
-    render(<HeroAvatar title="Herói" />);
-    expect(screen.getByRole("img", { name: "Herói" })).toBeInTheDocument();
+    render(<HeroAvatar title="Guerreiro" />);
+    expect(screen.getByRole("img", { name: "Guerreiro" })).toBeInTheDocument();
   });
 
   it("é decorativo quando não há título", () => {
@@ -20,11 +20,20 @@ describe("HeroAvatar", () => {
     expect(svg).toHaveAttribute("width", "72");
   });
 
-  it("distingue a silhueta do herói e da heroína", () => {
-    const heroi = render(<HeroAvatar variant="hero" />);
-    const heroina = render(<HeroAvatar variant="heroine" />);
-    expect(heroi.container.querySelector(".hero-avatar--hero")).toBeInTheDocument();
-    expect(heroina.container.querySelector(".hero-avatar--heroine")).toBeInTheDocument();
-    expect(heroina.container.innerHTML).not.toBe(heroi.container.innerHTML);
+  it("tem uma silhueta distinta para cada classe", () => {
+    const classes = ["fighter", "elf", "cleric", "dwarf"] as const;
+    const renderizados = classes.map((avatarId) => {
+      const { container } = render(<HeroAvatar avatarId={avatarId} />);
+      return container.querySelector("svg")?.innerHTML;
+    });
+    expect(new Set(renderizados).size).toBe(classes.length);
+    expect(classes.map((c) => `hero-avatar--${c}`).every((c) => !!c)).toBe(true);
+  });
+
+  it("aplica a cor personalizada da roupa/armadura", () => {
+    const vermelho = render(<HeroAvatar avatarId="fighter" colorId="crimson" />);
+    const azul = render(<HeroAvatar avatarId="fighter" colorId="royal" />);
+    expect(vermelho.container.innerHTML).not.toBe(azul.container.innerHTML);
+    expect(azul.container.innerHTML).toContain("#0052cc");
   });
 });

@@ -132,6 +132,15 @@ h2 { line-height: 1.08; }
   font-weight: 900;
   transition: transform 0.15s ease, filter 0.15s ease;
 }
+.back-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  margin-bottom: 12px;
+  white-space: nowrap;
+}
+.service-header .back-button { margin-bottom: 0; }
 .primary-button {
   color: var(--ink);
   background: linear-gradient(135deg, var(--pink), var(--mint));
@@ -251,6 +260,8 @@ fieldset {
 .topbar, .service-header { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
 .topbar h1 { margin-bottom: 0; font-size: clamp(2rem, 5vw, 3.5rem); }
 .cash-badge {
+  flex-shrink: 0;
+  white-space: nowrap;
   padding: 12px 18px;
   color: var(--ink);
   background: linear-gradient(135deg, var(--yellow), var(--peach));
@@ -337,8 +348,9 @@ fieldset {
 }
 .shop-guide > div { flex: 1; }
 .shop-guide p { margin: 0; }
-.header-money { display: flex; gap: 18px; }
-.header-money-item { display: grid; justify-items: end; line-height: 1.1; }
+.header-money { display: flex; flex-shrink: 0; gap: 18px; }
+.header-money-item { display: grid; justify-items: end; min-width: max-content; line-height: 1.1; }
+.header-money-item strong { white-space: nowrap; }
 .header-money-item small { color: var(--muted); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; }
 .store-actions {
   display: flex;
@@ -439,7 +451,7 @@ fieldset {
 }
 .unit-price { font-size: 0.85rem; font-weight: 900; color: var(--secondary); }
 .unit-explain { margin-bottom: 6px; font-weight: 700; }
-.hint-box, .success-box { margin-top: 18px; padding: 16px; border-radius: 14px; text-align: left; }
+.hint-box, .success-box { margin-top: 18px; padding: 16px; border-radius: 14px; text-align: left; scroll-margin: 24px; }
 .hint-box { background: #f8dfcd; }
 .success-box { background: #dff4d8; }
 .hint-box p, .success-box p { margin: 4px 0 12px; }
@@ -458,6 +470,22 @@ fieldset {
 .product-card h2 { font-size: 1.2rem; }
 .product-card p { color: var(--muted); }
 .product-card strong { color: var(--secondary); }
+.purchase-state {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  min-height: 34px;
+  margin: 8px 0 12px;
+  padding: 6px 10px;
+  border: 2px solid var(--line);
+  border-radius: 999px;
+  font-weight: 900;
+}
+.purchase-state--can { background: var(--mint); border-color: var(--success); }
+.purchase-state--cannot { background: var(--pink); border-color: var(--danger); }
+.product-card button:disabled { cursor: not-allowed; opacity: 0.6; filter: saturate(0.65); }
 .product-icon {
   display: grid;
   place-items: center;
@@ -483,6 +511,10 @@ fieldset {
   .shelf-two { top: 20%; }
   .diorama-mascot { transform: scale(0.8); transform-origin: bottom center; }
   .topbar { align-items: flex-start; }
+  .topbar > div:first-child { min-width: 0; }
+  .service-header { flex-wrap: wrap; row-gap: 12px; }
+  .service-header > :nth-child(2) { margin-left: auto; }
+  .service-header .header-money { flex-basis: 100%; justify-content: flex-end; }
   .cash-badge { padding: 8px 12px; }
   .form-screen, .welcome-screen, .game-screen { padding: 24px 16px; }
 }

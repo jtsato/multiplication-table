@@ -78,7 +78,12 @@ describe("i18n", () => {
       expect(keys).toContain("monster.warduke");
       expect(keys).toContain("monster.beholder");
       expect(keys).toContain("battle.victoryAll");
-      expect(keys).toHaveLength(32);
+      expect(keys).toContain("avatar.class.fighter");
+      expect(keys).toContain("avatar.mascot.wolf");
+      expect(keys).toContain("avatar.color.crimson");
+      expect(keys).toContain("map.meadow");
+      expect(keys).toContain("map.void");
+      expect(keys).toHaveLength(72);
     });
   });
 

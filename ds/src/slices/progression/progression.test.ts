@@ -1,49 +1,60 @@
 import { describe, expect, it } from "vitest";
 import {
   advanceProgress,
+  currentMap,
+  currentMapIndex,
   initialProgress,
+  isBossEncounter,
   isGameComplete,
   migrateProgress,
+  nextMapTable,
   nextMonster,
-  nextTables,
 } from "./progression";
-import { MONSTER_SEQUENCE, AVENGER, TIAMAT, BEHOLDER } from "../battle/monsters";
+import { MAPS, TOTAL_ENCOUNTERS } from "../maps/maps";
 
 describe("progression", () => {
-  it("começa no estágio 0", () => {
+  it("começa no estágio 0 (inimigo comum do mapa 2)", () => {
     expect(initialProgress()).toEqual({ stage: 0 });
+    expect(currentMapIndex(initialProgress())).toBe(0);
+    expect(nextMapTable(initialProgress())).toBe(2);
+    expect(isBossEncounter(initialProgress())).toBe(false);
   });
 
-  it("cada estágio tem seu monstro na sequência", () => {
-    expect(MONSTER_SEQUENCE).toHaveLength(10);
-    expect(nextMonster(initialProgress())).toBe(AVENGER);
-    expect(nextMonster({ stage: 1 })).toBe(TIAMAT);
-    expect(nextMonster({ stage: 9 })).toBe(BEHOLDER);
+  it("cada mapa tem inimigo comum e chefão antes de avançar", () => {
+    expect(nextMonster({ stage: 0 })).toEqual(MAPS[0].minion);
+    expect(nextMonster({ stage: 1 })).toEqual(MAPS[0].boss);
+    expect(isBossEncounter({ stage: 1 })).toBe(true);
+    expect(nextMonster({ stage: 2 })).toEqual(MAPS[1].minion);
+    expect(isBossEncounter({ stage: 2 })).toBe(false);
   });
 
-  it("a sequência de tabuadas desbloqueia progressivamente", () => {
-    expect(nextTables({ stage: 0 })).toEqual([2, 3, 4]);
-    expect(nextTables({ stage: 1 })).toEqual([2, 3, 4, 5]);
-    expect(nextTables({ stage: 2 })).toEqual([2, 3, 4, 5, 6]);
-    expect(nextTables({ stage: 3 })).toEqual([2, 3, 4, 5, 6, 7]);
-    expect(nextTables({ stage: 4 })).toEqual([2, 3, 4, 5, 6, 7, 8]);
-    expect(nextTables({ stage: 9 })).toEqual([2, 3, 4, 5, 6, 7, 8, 9]);
+  it("percorre os nove mapas na ordem das tabuadas", () => {
+    for (let i = 0; i < MAPS.length; i += 1) {
+      const progress = { stage: i * 2 };
+      expect(currentMap(progress)).toBe(MAPS[i]);
+      expect(nextMapTable(progress)).toBe(MAPS[i].table);
+    }
   });
 
-  it("monstros e tabuadas não estouram após o fim da sequência", () => {
-    expect(nextMonster({ stage: 99 })).toBe(BEHOLDER);
-    expect(nextTables({ stage: 99 })).toEqual([2, 3, 4, 5, 6, 7, 8, 9]);
+  it("monstros e mapas não estouram após o fim da jornada", () => {
+    const fim = { stage: 99 };
+    expect(currentMap(fim)).toBe(MAPS[MAPS.length - 1]);
+    expect(nextMapTable(fim)).toBe(10);
+    expect(nextMonster(fim)).toEqual(MAPS[MAPS.length - 1].boss);
   });
 
-  it("advanceProgress avança um estágio e trava no fim", () => {
+  it("advanceProgress avança um encontro e trava no fim", () => {
     expect(advanceProgress({ stage: 0 })).toEqual({ stage: 1 });
-    expect(advanceProgress({ stage: 9 })).toEqual({ stage: 10 });
+    expect(advanceProgress({ stage: TOTAL_ENCOUNTERS - 1 })).toEqual({
+      stage: TOTAL_ENCOUNTERS,
+    });
+    expect(advanceProgress({ stage: TOTAL_ENCOUNTERS })).toEqual({ stage: TOTAL_ENCOUNTERS });
   });
 
-  it("isGameComplete marca o fim da sequência", () => {
+  it("isGameComplete marca o fim da jornada (todos os chefões)", () => {
     expect(isGameComplete({ stage: 0 })).toBe(false);
-    expect(isGameComplete({ stage: 9 })).toBe(false);
-    expect(isGameComplete({ stage: 10 })).toBe(true);
+    expect(isGameComplete({ stage: TOTAL_ENCOUNTERS - 1 })).toBe(false);
+    expect(isGameComplete({ stage: TOTAL_ENCOUNTERS })).toBe(true);
   });
 
   it("migrateProgress aceita um estágio válido", () => {
