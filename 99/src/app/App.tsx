@@ -1,4 +1,5 @@
 import { Suspense, lazy } from 'react';
+import { DaySummary } from './DaySummary';
 import { Hud } from './Hud';
 import { TouchControls } from './TouchControls';
 import { useIsTouchDevice, useKeyboardBindings } from '../shared/input';
@@ -53,6 +54,7 @@ export function App() {
       <Hud isTouch={isTouch} />
       <ChallengePanel />
       <ShopPanel />
+      <DaySummary />
       {isTouch && <TouchControls />}
     </>
   );

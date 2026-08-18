@@ -38,12 +38,25 @@ export interface EconomySlice {
   /** Ultima recusa de compra, exibida na loja. */
   purchaseError: PurchaseRejection | null;
   shopOpen: boolean;
+  /** Ultimo dia cujo resumo ja foi mostrado. Impede reabrir no mesmo amanhecer. */
+  lastSummaryDay: number;
   toggleShop: () => void;
   closeShop: () => void;
   /** Compra um item. Recusa vira `purchaseError`. */
   buy: (kind: ShopItemKind) => void;
   /** Gasta uma dica. Devolve `false` se nao havia nenhuma. */
   useHint: () => boolean;
+  /** O resumo do dia esta na tela? */
+  summaryOpen: boolean;
+  /**
+   * Abre o resumo, uma vez por amanhecer.
+   *
+   * A guarda mora aqui, e nao na view: a virada de fase e publicada mais de uma
+   * vez em quadros seguidos, e sem ela o resumo reabriria sozinho depois de
+   * fechado.
+   */
+  openSummary: (day: number) => void;
+  closeSummary: () => void;
   /** Zera so os contadores do dia. Moedas e fatos atravessam. */
   resetDaily: () => void;
   resetEconomy: () => void;
@@ -59,6 +72,8 @@ export const createEconomySlice: StateCreator<GameState, [], [], EconomySlice> =
   hints: 0,
   purchaseError: null,
   shopOpen: false,
+  summaryOpen: false,
+  lastSummaryDay: 0,
   ...DIA_ZERADO,
 
   rewardCorrect: (perGroup, groups) =>
@@ -89,6 +104,16 @@ export const createEconomySlice: StateCreator<GameState, [], [], EconomySlice> =
     }),
 
   closeShop: () => set((state) => (state.shopOpen ? { shopOpen: false } : state)),
+
+  openSummary: (day) =>
+    set((state) => {
+      if (state.lastSummaryDay >= day) return state;
+      // Fecha a loja: o dia virou, e dois paineis empilhados nao ajudam ninguem.
+      return { summaryOpen: true, lastSummaryDay: day, shopOpen: false };
+    }),
+
+  closeSummary: () =>
+    set((state) => (state.summaryOpen ? { summaryOpen: false, ...DIA_ZERADO } : state)),
 
   buy: (kind) => {
     const state = get();
@@ -128,6 +153,8 @@ export const createEconomySlice: StateCreator<GameState, [], [], EconomySlice> =
       hints: 0,
       purchaseError: null,
       shopOpen: false,
+      summaryOpen: false,
+      lastSummaryDay: 0,
       ...DIA_ZERADO,
     }),
 });

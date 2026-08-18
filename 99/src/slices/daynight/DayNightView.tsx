@@ -75,11 +75,16 @@ export function DayNightView({ isTouch = false }: { isTouch?: boolean } = {}) {
     if (phaseChanged || publishTimerRef.current >= PUBLISH_INTERVAL) {
       publishTimerRef.current = 0;
       lastPhaseRef.current = phase;
+      const day = dayNumber(dayNightClock.seconds);
       publishClock({
         phase,
-        day: dayNumber(dayNightClock.seconds),
+        day,
         secondsToNextPhase: secondsUntilNextPhase(dayNightClock.seconds),
       });
+
+      // O dia fecha no amanhecer. A guarda de "uma vez por dia" mora no store,
+      // porque a virada de fase e publicada em mais de um quadro seguido.
+      if (phase === 'amanhecer') useGameStore.getState().openSummary(day);
     }
   });
 
