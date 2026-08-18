@@ -6,6 +6,7 @@ import '@testing-library/jest-dom/vitest';
 import { LANTERN } from '../slices/lantern';
 import { Hud } from './Hud';
 import { useGameStore } from './store';
+import { RESOURCE_LABELS, emptyInventory } from '../slices/resources/resources.logic';
 
 const state = () => useGameStore.getState();
 
@@ -105,5 +106,42 @@ describe('Hud', () => {
     render(<Hud />);
 
     expect(screen.queryByTestId('hud-dezenas')).not.toBeInTheDocument();
+  });
+});
+
+describe('a lista de recursos', () => {
+  beforeEach(() => {
+    state().resetResources();
+    state().resetRegions();
+  });
+
+  /**
+   * Com nove tipos, listar todos deixaria sete zeros permanentes na tela. O que
+   * aparece e o que a crianca tem mais o que da para colher onde ela esta — a
+   * lista tambem conta o que a regiao oferece.
+   */
+  it('mostra a colheita da regiao onde a crianca esta', () => {
+    render(<Hud />);
+    // A praia da concha e madeira; peixe e do porto.
+    expect(screen.getByText(RESOURCE_LABELS.concha.many)).toBeInTheDocument();
+    expect(screen.queryByText(RESOURCE_LABELS.peixe.many)).not.toBeInTheDocument();
+  });
+
+  it('troca a lista ao mudar de regiao', () => {
+    act(() => state().publishRegion('porto'));
+    render(<Hud />);
+
+    expect(screen.getByText(RESOURCE_LABELS.peixe.many)).toBeInTheDocument();
+    expect(screen.queryByText(RESOURCE_LABELS.concha.many)).not.toBeInTheDocument();
+  });
+
+  it('o que ela ja tem continua visivel fora da regiao de origem', () => {
+    act(() => {
+      useGameStore.setState({ inventory: { ...emptyInventory(), concha: 3 } });
+      state().publishRegion('porto');
+    });
+    render(<Hud />);
+
+    expect(screen.getByText(RESOURCE_LABELS.concha.many)).toBeInTheDocument();
   });
 });

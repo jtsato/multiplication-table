@@ -4,6 +4,7 @@ import { BRIDGES, bridgeFor } from './bridges.logic';
 import { unlockedRegions } from './regions.store';
 import { regionById } from './regions.logic';
 import { factKey } from '../economy/economy.logic';
+import { emptyInventory } from '../resources/resources.logic';
 
 const state = () => useGameStore.getState();
 
@@ -13,7 +14,7 @@ const fatosDe = (table: number) => Array.from({ length: 10 }, (_, i) => factKey(
 function pronta() {
   useGameStore.setState({
     coins: 999,
-    inventory: { madeira: 99, fruta: 99, pedra: 99 },
+    inventory: { ...emptyInventory(), madeira: 99, fruta: 99, pedra: 99 },
     knownFacts: fatosDe(2),
   });
 }
@@ -56,7 +57,7 @@ describe('comprar uma ponte', () => {
   it('recusa sem a tabuada, e nao cobra nada', () => {
     useGameStore.setState({
       coins: 999,
-      inventory: { madeira: 99, fruta: 99, pedra: 99 },
+      inventory: { ...emptyInventory(), madeira: 99, fruta: 99, pedra: 99 },
       knownFacts: [],
     });
     const ponte = bridgeFor('praia', 'porto')!;
@@ -100,7 +101,7 @@ describe('comprar uma ponte', () => {
   it('comprando a cadeia inteira, alcanca as seis regioes', () => {
     useGameStore.setState({
       coins: 9999,
-      inventory: { madeira: 999, fruta: 999, pedra: 999 },
+      inventory: { ...emptyInventory(), madeira: 999, fruta: 999, pedra: 999 },
       knownFacts: BRIDGES.flatMap((ponte) => regionById(ponte.from).tables).flatMap(fatosDe),
     });
 

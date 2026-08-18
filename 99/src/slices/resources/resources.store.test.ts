@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import { useGameStore } from '../../app/store';
 import { fullYield } from './resources.logic';
+import { emptyInventory } from './resources.logic';
 
 const state = () => useGameStore.getState();
 
@@ -10,7 +11,7 @@ describe('slice de recursos', () => {
   });
 
   it('comeca com o inventario zerado e todos os nos disponiveis', () => {
-    expect(state().inventory).toEqual({ madeira: 0, fruta: 0, pedra: 0 });
+    expect(state().inventory).toEqual(emptyInventory());
     expect(state().nodes.every((node) => !node.depleted)).toBe(true);
   });
 
@@ -32,7 +33,7 @@ describe('slice de recursos', () => {
 
   it('ignora um id inexistente sem quebrar', () => {
     state().collectNode('no-que-nao-existe', 10);
-    expect(state().inventory).toEqual({ madeira: 0, fruta: 0, pedra: 0 });
+    expect(state().inventory).toEqual(emptyInventory());
   });
 
   it('limpa o destaque ao colher o no destacado', () => {
@@ -79,7 +80,7 @@ describe('slice de recursos', () => {
 
     state().resetResources();
 
-    expect(state().inventory).toEqual({ madeira: 0, fruta: 0, pedra: 0 });
+    expect(state().inventory).toEqual(emptyInventory());
     expect(state().highlightedNodeId).toBeNull();
     expect(state().nodes.every((node) => !node.depleted)).toBe(true);
   });

@@ -38,6 +38,32 @@ export const CHALLENGE_CONTEXTS: Record<ResourceKind, ChallengeContext> = {
     groupNoun: { one: 'montinho', many: 'montinhos' },
     itemNoun: { one: 'pedra', many: 'pedras', gender: 'f' },
   },
+  concha: {
+    groupNoun: { one: 'cestinho', many: 'cestinhos' },
+    itemNoun: { one: 'concha', many: 'conchas', gender: 'f' },
+  },
+  peixe: {
+    groupNoun: { one: 'rede', many: 'redes' },
+    itemNoun: { one: 'peixe', many: 'peixes', gender: 'm' },
+  },
+  cogumelo: {
+    groupNoun: { one: 'toco', many: 'tocos' },
+    itemNoun: { one: 'cogumelo', many: 'cogumelos', gender: 'm' },
+  },
+  cristal: {
+    groupNoun: { one: 'veio', many: 'veios' },
+    // Plural irregular: "cristais", e nao "cristals". O enunciado usa `many`
+    // direto, entao a forma correta precisa estar escrita aqui.
+    itemNoun: { one: 'cristal', many: 'cristais', gender: 'm' },
+  },
+  mel: {
+    groupNoun: { one: 'colmeia', many: 'colmeias' },
+    itemNoun: { one: 'pote de mel', many: 'potes de mel', gender: 'm' },
+  },
+  gelo: {
+    groupNoun: { one: 'monte', many: 'montes' },
+    itemNoun: { one: 'lasca de gelo', many: 'lascas de gelo', gender: 'f' },
+  },
 };
 
 /**

@@ -86,7 +86,9 @@ export function migrateInventory(raw: unknown): Inventory {
 export function migrateBridges(raw: unknown): string[] {
   if (raw === undefined) return [];
   if (!Array.isArray(raw)) throw new Error('pontes invalidas');
-  return raw.filter((item): item is string => typeof item === 'string' && bridgeById(item) !== undefined);
+  return raw.filter(
+    (item): item is string => typeof item === 'string' && bridgeById(item) !== undefined,
+  );
 }
 
 /** Itens comprados. Um item desconhecido e descartado em silencio: pode ser de

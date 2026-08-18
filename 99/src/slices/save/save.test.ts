@@ -10,6 +10,7 @@ import {
   migrateSave,
   type GameSave,
 } from './save.repository';
+import { emptyInventory } from '../resources/resources.logic';
 
 const state = () => useGameStore.getState();
 
@@ -38,7 +39,7 @@ const saveValido = (): GameSave => ({
   version: SAVE_VERSION,
   coins: 42,
   knownFacts: ['2x4', '3x7'],
-  inventory: { madeira: 5, fruta: 2, pedra: 9 },
+  inventory: { ...emptyInventory(), madeira: 5, fruta: 2, pedra: 9 },
   owned: ['botas'],
   hints: 3,
   avatar: { silhouette: 'menina', skin: 4, clothes: 6, head: 'bone', face: 'nenhum' },
@@ -66,7 +67,7 @@ describe('migrateSave', () => {
 
     expect(resultado.coins).toBe(0);
     expect(resultado.knownFacts).toEqual([]);
-    expect(resultado.inventory).toEqual({ madeira: 0, fruta: 0, pedra: 0 });
+    expect(resultado.inventory).toEqual(emptyInventory());
     expect(resultado.avatar).toEqual(DEFAULT_AVATAR);
   });
 
@@ -155,7 +156,16 @@ describe('snapshot e applySave', () => {
   it('recorta so o que e duravel', () => {
     const recorte = snapshot();
     expect(Object.keys(recorte).sort()).toEqual(
-      ['avatar', 'coins', 'hints', 'inventory', 'knownFacts', 'openBridges', 'owned', 'version'].sort(),
+      [
+        'avatar',
+        'coins',
+        'hints',
+        'inventory',
+        'knownFacts',
+        'openBridges',
+        'owned',
+        'version',
+      ].sort(),
     );
   });
 

@@ -3,6 +3,7 @@ import { useGameStore } from '../../app/store';
 import { dayNightClock } from '../daynight/dayNightClock';
 import { LANTERN, chargeRemaining } from '../lantern';
 import { resolveAnswer } from './math.logic';
+import { emptyInventory } from '../resources/resources.logic';
 
 const state = () => useGameStore.getState();
 
@@ -85,7 +86,7 @@ describe('slice de matematica', () => {
 
   it('responder sem desafio aberto nao faz nada', () => {
     state().answerChallenge(8);
-    expect(state().inventory).toEqual({ madeira: 0, fruta: 0, pedra: 0 });
+    expect(state().inventory).toEqual(emptyInventory());
     expect(state().feedback).toBeNull();
   });
 

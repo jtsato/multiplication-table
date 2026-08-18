@@ -179,14 +179,14 @@ Entram conchas, peixes, cogumelos, cristais, mel e gelo, e a região ganha `harv
 Madeira, fruta e pedra sobrevivem, com região definida. O nó passa a sortear o `kind`
 entre as colheitas da região onde nasceu.
 
-- [ ] **Step 1: Testes**
+- [x] **Step 1: Testes**
 
 Casos: todo `ResourceKind` tem entrada em `CHALLENGE_CONTEXTS`, em `RESOURCE_LABELS` e
 em alguma `harvest` de região — três varreduras que falham se alguém acrescentar um tipo
 pela metade. E a concordância: "Quantas conchas" mas "Quantos cogumelos", provada tipo a
 tipo, porque sem o gênero o enunciado sai errado em português.
 
-- [ ] **Step 2 a 5:** falha, implementação, verificação, commit.
+- [x] **Step 2 a 5:** falha, implementação, verificação, commit.
 
 ---
 
@@ -198,13 +198,13 @@ tipo, porque sem o gênero o enunciado sai errado em português.
 Itens de decoração da casa, cada um custando moedas **e** uma colheita regional. Ralo
 permanente, não consumível — o oposto de item descartável.
 
-- [ ] **Step 1: Testes**
+- [x] **Step 1: Testes**
 
 O caso que vale por si: a varredura "todo recurso do jogo é consumido por alguma coisa"
 passa a cobrir os seis tipos novos. Ela já existe e é ela que impede esta fase de repetir
 o defeito da fruta. Mais: decoração comprada não some, e não dá para comprar duas vezes.
 
-- [ ] **Step 2 a 5:** falha, implementação, verificação, commit.
+- [x] **Step 2 a 5:** falha, implementação, verificação, commit.
 
 ---
 
@@ -296,10 +296,12 @@ verdes. Uma fase que muda o mundo inteiro não termina sem isso.
 
 ---
 
-## Dívida visual registrada, para a Task 10
+## Dívida visual registrada, para a Task 10 — resolvida antes da hora
 
-Com a tabuada grande, o anel de grupos de um nó cresce muito — um nó da tabuada do 10 com
-dez grupos chega a 2,6 de raio. Os itens ficam legíveis e contáveis, que era o objetivo,
-mas a planta no meio continua do mesmo tamanho: lidos na tela, os grupos parecem orbitar
-a árvore em vez de pertencer a ela. A planta precisa crescer junto com o nó. Não é
-correção de regra, é passe de arte — fica para a Task 10.
+Com a tabuada grande, o anel de grupos de um nó crescia até 2,6 de raio: os itens ficavam
+contáveis, mas a planta no meio continuava do mesmo tamanho e o nó lia como uma paliçada
+de quatro metros em volta de uma árvore pequena. Apareceu numa captura do Porto.
+
+Resolvido sem passe de arte: os grupos passaram a se distribuir em **voltas de cinco**,
+subindo em andares como galhos, em vez de disputarem um anel só. O raio caiu de 2,6 para
+1,63 e o nó voltou a ler como planta. O `minSpacing` acompanhou.

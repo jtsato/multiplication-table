@@ -149,6 +149,37 @@
   background: #8d949e;
 }
 
+/*
+  As colheitas de região.
+
+  Cada cor é a mesma do item na cena — o ponto no HUD e a fruta no arbusto têm
+  que ser reconhecíveis um pelo outro, senão o inventário deixa de dizer de onde
+  aquilo veio.
+*/
+.hud__dot--concha {
+  background: #f6e3c8;
+}
+
+.hud__dot--peixe {
+  background: #8fd3f4;
+}
+
+.hud__dot--cogumelo {
+  background: #e07a5f;
+}
+
+.hud__dot--cristal {
+  background: #7fe3f0;
+}
+
+.hud__dot--mel {
+  background: #f2b134;
+}
+
+.hud__dot--gelo {
+  background: #cfeaf7;
+}
+
 /* Faixa inferior: receitas e avisos, centralizados sob o personagem. */
 .hud__bottom {
   position: absolute;

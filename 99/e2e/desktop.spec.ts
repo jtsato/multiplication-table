@@ -8,6 +8,7 @@ import {
   lerEstado,
   responderPeloEnunciado,
   soltarTudo,
+  totalColhido,
 } from './jogo';
 
 /**
@@ -40,7 +41,7 @@ test.describe('partida no computador', () => {
     expect(estado.fase).toBe('dia');
     // A lanterna comeca apagada: acende-la e o gesto que ensina a mecanica.
     expect(estado.cargaLanterna).toBe(0);
-    expect(estado.inventario).toEqual({ madeira: 0, fruta: 0, pedra: 0 });
+    expect(totalColhido(estado)).toBe(0);
 
     await page.screenshot({ path: 'e2e/telas/01-inicio.png' });
   });
@@ -109,7 +110,7 @@ test.describe('partida no computador', () => {
     await page.screenshot({ path: 'e2e/telas/06-acertou.png' });
 
     const depois = await lerEstado(page);
-    const total = depois.inventario.madeira + depois.inventario.fruta + depois.inventario.pedra;
+    const total = totalColhido(depois);
     expect(total).toBe(esperado);
     // O acerto tambem paga moeda: o recurso e o resultado da conta, a moeda e o
     // premio por ter acertado.
@@ -122,7 +123,12 @@ test.describe('partida no computador', () => {
     await page.evaluate(() => {
       window.__tabuada!.store.setState({
         coins: 120,
-        inventory: { madeira: 40, fruta: 20, pedra: 20 },
+        inventory: {
+          ...window.__tabuada!.store.getState().inventory,
+          madeira: 40,
+          fruta: 20,
+          pedra: 20,
+        },
       });
     });
 
@@ -261,7 +267,7 @@ test.describe('partida no computador', () => {
     await page.screenshot({ path: 'e2e/telas/07-errou.png' });
 
     const depois = await lerEstado(page);
-    const total = depois.inventario.madeira + depois.inventario.fruta + depois.inventario.pedra;
+    const total = totalColhido(depois);
     expect(total).toBeGreaterThanOrEqual(1);
     expect(total).toBeLessThan(certa);
   });
@@ -281,8 +287,16 @@ test.describe('partida no computador', () => {
     await page.evaluate(() => {
       window.__tabuada!.store.setState({
         coins: 300,
-        inventory: { madeira: 60, fruta: 20, pedra: 40 },
-        knownFacts: Array.from({ length: 10 }, (_, i) => `${Math.min(2, i + 1)}x${Math.max(2, i + 1)}`),
+        inventory: {
+          ...window.__tabuada!.store.getState().inventory,
+          madeira: 60,
+          fruta: 20,
+          pedra: 40,
+        },
+        knownFacts: Array.from(
+          { length: 10 },
+          (_, i) => `${Math.min(2, i + 1)}x${Math.max(2, i + 1)}`,
+        ),
       });
     });
 
@@ -326,7 +340,14 @@ test.describe('partida no computador', () => {
     // Recurso suficiente sem precisar colher meia ilha; a colheita ja foi
     // provada nos testes acima.
     await page.evaluate(() => {
-      window.__tabuada!.store.setState({ inventory: { madeira: 40, fruta: 10, pedra: 20 } });
+      window.__tabuada!.store.setState({
+        inventory: {
+          ...window.__tabuada!.store.getState().inventory,
+          madeira: 40,
+          fruta: 10,
+          pedra: 20,
+        },
+      });
     });
 
     await page.keyboard.press('KeyB');
@@ -367,7 +388,12 @@ test.describe('partida no computador', () => {
     await page.evaluate(() => {
       const ponte = window.__tabuada!;
       ponte.store.setState({
-        inventory: { madeira: 40, fruta: 10, pedra: 20 },
+        inventory: {
+          ...window.__tabuada!.store.getState().inventory,
+          madeira: 40,
+          fruta: 10,
+          pedra: 20,
+        },
         structures: [
           {
             id: 'fogueira-e2e',

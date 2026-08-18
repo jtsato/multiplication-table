@@ -44,9 +44,9 @@ export interface CoinInput {
 /**
  * Quanto vale um acerto.
  *
- * A base e o **numero da tabuada**, e nao um valor fixo: hoje toda conta paga 2,
- * mas quando as regioes chegarem (Fase 4) a tabuada do 9 vai pagar 9 sozinha,
- * sem nenhuma regra nova. A moeda cresce com a dificuldade de graca.
+ * A base e o **numero da tabuada**, e nao um valor fixo. Com as regioes no ar, um
+ * no do Pico paga 9 e um da Praia paga 2 sem nenhuma regra a mais: a moeda
+ * cresce com a dificuldade de graca, porque a dificuldade ja esta no numero.
  */
 export function coinsFor({ perGroup, streak, factIsNew }: CoinInput): number {
   let coins = perGroup;
@@ -57,10 +57,31 @@ export function coinsFor({ perGroup, streak, factIsNew }: CoinInput): number {
 
 /* ------------------------------------------------------------------ loja --- */
 
-export type ShopItemKind = 'lanterna-maior' | 'botas' | 'dica';
+export type ShopItemKind =
+  | 'lanterna-maior'
+  | 'botas'
+  | 'dica'
+  // Decoracao da casa: o ralo permanente das colheitas de regiao.
+  | 'tapete'
+  | 'aquario'
+  | 'vaso'
+  | 'lustre'
+  | 'prateleira'
+  | 'escultura';
+
+/**
+ * Para que serve o item.
+ *
+ * `ferramenta` muda como se joga; `casa` so enfeita — e e de proposito que
+ * enfeitar custe caro e nao faca nada. Um ralo que nao se consome e o oposto de
+ * item descartavel, que e o que o genero cozy pede: a crianca gasta para ter, e
+ * o que ela tem fica.
+ */
+export type ShopCategory = 'ferramenta' | 'casa';
 
 export interface ShopItem {
   kind: ShopItemKind;
+  category: ShopCategory;
   label: string;
   /** Uma frase curta. A regra de nao exigir leitura fluente vale aqui tambem. */
   effect: string;
@@ -83,12 +104,14 @@ export interface ShopItem {
  * defeito que a fruta tinha antes desta fase — colhida, contada no HUD e nunca
  * gasta em nada.
  *
- * Entre os tres itens, os tres tipos de recurso sao consumidos. Ha um teste que
- * falha se alguem acrescentar um recurso sem destino.
+ * Os nove tipos de recurso do jogo sao consumidos por alguma coisa aqui. Ha uma
+ * varredura que falha se alguem acrescentar um recurso sem destino — foi ela que
+ * cobrou os seis destinos novos quando as colheitas de regiao entraram.
  */
 export const SHOP_ITEMS: Record<ShopItemKind, ShopItem> = {
   'lanterna-maior': {
     kind: 'lanterna-maior',
+    category: 'ferramenta',
     label: 'Lanterna maior',
     effect: 'Ilumina mais longe e dura mais.',
     coins: 30,
@@ -97,6 +120,7 @@ export const SHOP_ITEMS: Record<ShopItemKind, ShopItem> = {
   },
   botas: {
     kind: 'botas',
+    category: 'ferramenta',
     label: 'Botas',
     effect: 'Você anda mais rápido.',
     coins: 25,
@@ -105,15 +129,92 @@ export const SHOP_ITEMS: Record<ShopItemKind, ShopItem> = {
   },
   dica: {
     kind: 'dica',
+    category: 'ferramenta',
     label: 'Dica',
     effect: 'Apaga uma resposta errada.',
     coins: 10,
     recipe: { fruta: 4 },
     repeatable: true,
   },
+
+  /*
+    A casa que cresce.
+
+    Cada peca consome a colheita de uma regiao, e e assim que conchas, peixes,
+    cogumelos, cristais, mel e gelo ganham destino. Sem isto eles entrariam no
+    jogo como a fruta entrou: colhidos, contados no HUD e nunca gastos em nada —
+    contador, e nao recompensa.
+
+    Nenhuma delas faz o menor efeito no jogo, e isso e a intencao. O premio e
+    poder mostrar.
+  */
+  tapete: {
+    kind: 'tapete',
+    category: 'casa',
+    label: 'Tapete de conchas',
+    effect: 'Deixa a sala mais macia.',
+    coins: 20,
+    recipe: { concha: 6 },
+    repeatable: false,
+  },
+  aquario: {
+    kind: 'aquario',
+    category: 'casa',
+    label: 'Aquário',
+    effect: 'Os peixes ficam nadando.',
+    coins: 35,
+    recipe: { peixe: 8 },
+    repeatable: false,
+  },
+  vaso: {
+    kind: 'vaso',
+    category: 'casa',
+    label: 'Vaso de cogumelos',
+    effect: 'Brilha um pouquinho à noite.',
+    coins: 20,
+    recipe: { cogumelo: 6 },
+    repeatable: false,
+  },
+  lustre: {
+    kind: 'lustre',
+    category: 'casa',
+    label: 'Lustre de cristal',
+    effect: 'Espalha luz colorida.',
+    coins: 45,
+    recipe: { cristal: 8 },
+    repeatable: false,
+  },
+  prateleira: {
+    kind: 'prateleira',
+    category: 'casa',
+    label: 'Prateleira de mel',
+    effect: 'Cheira bem de longe.',
+    coins: 25,
+    recipe: { mel: 6 },
+    repeatable: false,
+  },
+  escultura: {
+    kind: 'escultura',
+    category: 'casa',
+    label: 'Escultura de gelo',
+    effect: 'Não derrete nunca.',
+    coins: 40,
+    recipe: { gelo: 8 },
+    repeatable: false,
+  },
 };
 
-export const SHOP_ORDER: readonly ShopItemKind[] = ['lanterna-maior', 'botas', 'dica'];
+export const SHOP_ORDER: readonly ShopItemKind[] = [
+  'lanterna-maior',
+  'botas',
+  'dica',
+  'tapete',
+  'aquario',
+  'vaso',
+  'lustre',
+  'prateleira',
+  'escultura',
+];
 
 export type PurchaseRejection = 'sem-moedas' | 'sem-recursos' | 'ja-comprado';
 

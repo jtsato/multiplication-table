@@ -1,5 +1,6 @@
 import { type Rng, randomRange } from '../../shared/rng';
 import { type Vec3, vec3 } from '../../shared/vec';
+import type { ResourceKind } from '../resources/resources.logic';
 
 /**
  * O arquipelago.
@@ -30,6 +31,13 @@ export interface Region {
   groundY: number;
   /** As tabuadas que os nos daqui perguntam. */
   tables: number[];
+  /**
+   * O que se colhe aqui.
+   *
+   * Toda regiao tem ao menos uma colheita que so ela da — e o que transforma o
+   * inventario em registro de onde a crianca esteve.
+   */
+  harvest: ResourceKind[];
   /**
    * Area livre no meio onde nada e espalhado.
    *
@@ -62,6 +70,7 @@ export const REGIONS: Region[] = [
     radius: 16,
     groundY: 0,
     tables: [2],
+    harvest: ['concha', 'madeira'],
     clearance: 6,
   },
   {
@@ -71,6 +80,7 @@ export const REGIONS: Region[] = [
     radius: 13,
     groundY: 0,
     tables: [5, 10],
+    harvest: ['peixe', 'madeira'],
     clearance: 0,
   },
   {
@@ -80,6 +90,7 @@ export const REGIONS: Region[] = [
     radius: 13,
     groundY: 1.5,
     tables: [3, 4],
+    harvest: ['cogumelo', 'madeira'],
     clearance: 0,
   },
   {
@@ -89,6 +100,7 @@ export const REGIONS: Region[] = [
     radius: 13,
     groundY: 4,
     tables: [6],
+    harvest: ['cristal', 'pedra'],
     clearance: 0,
   },
   {
@@ -98,6 +110,7 @@ export const REGIONS: Region[] = [
     radius: 13,
     groundY: 2,
     tables: [7, 8],
+    harvest: ['fruta', 'mel'],
     clearance: 0,
   },
   {
@@ -107,6 +120,7 @@ export const REGIONS: Region[] = [
     radius: 13,
     groundY: 7,
     tables: [9],
+    harvest: ['gelo', 'pedra'],
     clearance: 0,
   },
 ];

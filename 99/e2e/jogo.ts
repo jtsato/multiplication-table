@@ -9,7 +9,7 @@ import { DAYNIGHT, PHASE_BOUNDS, type DayPhase } from '../src/slices/daynight/da
  */
 
 export interface EstadoJogo {
-  inventario: { madeira: number; fruta: number; pedra: number };
+  inventario: Record<string, number>;
   destacado: string | null;
   desafio: { prompt: string; opcoes: number[]; resposta: number; proposito: string } | null;
   fase: string;
@@ -350,4 +350,15 @@ export async function irParaOMovel(page: Page, movel: 'espelho' | 'mural' | 'cam
   }, movel);
   // Alguns quadros para a fisica assentar e a casa publicar o movel ao alcance.
   await page.waitForTimeout(700);
+}
+
+/**
+ * Tudo que ha no inventario, somado.
+ *
+ * Somar os tres tipos originais a mao deixou de funcionar quando as colheitas de
+ * regiao entraram: uma arvore da Praia pode render concha, e o teste dava zero
+ * sem nada estar errado no jogo.
+ */
+export function totalColhido(estado: EstadoJogo): number {
+  return Object.values(estado.inventario).reduce((soma, quanto) => soma + quanto, 0);
 }

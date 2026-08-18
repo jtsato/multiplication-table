@@ -12,6 +12,7 @@ import {
 } from './resources.logic';
 import { createRng } from '../../shared/rng';
 import { REGIONS, regionAt, regionById } from '../regions/regions.logic';
+import { RESOURCE_KINDS, RESOURCE_LABELS } from './resources.logic';
 import { blocksHome } from '../home/home.logic';
 import { vec3 } from '../../shared/vec';
 
@@ -311,5 +312,60 @@ describe('addToInventory', () => {
 
   it('arredonda para baixo quantidades fracionarias', () => {
     expect(addToInventory(emptyInventory(), 'fruta', 3.9).fruta).toBe(3);
+  });
+});
+
+describe('as colheitas das regioes', () => {
+  it('toda regiao colhe pelo menos um tipo, e todos existem', () => {
+    for (const regiao of REGIONS) {
+      expect(regiao.harvest.length).toBeGreaterThan(0);
+      for (const kind of regiao.harvest) {
+        expect(RESOURCE_KINDS).toContain(kind);
+      }
+    }
+  });
+
+  /**
+   * O inventario tem que virar registro de onde a crianca esteve. Um tipo que
+   * nasce em toda regiao nao conta historia nenhuma, e um tipo que nao nasce em
+   * lugar nenhum e conteudo morto.
+   */
+  it('todo tipo de recurso nasce em alguma regiao', () => {
+    const colhidos = new Set(REGIONS.flatMap((r) => r.harvest));
+    for (const kind of RESOURCE_KINDS) {
+      expect(colhidos, `${kind} nao nasce em regiao nenhuma`).toContain(kind);
+    }
+  });
+
+  it('cada regiao tem uma colheita que so ela da', () => {
+    for (const regiao of REGIONS) {
+      const exclusivas = regiao.harvest.filter(
+        (kind) => !REGIONS.some((outra) => outra.id !== regiao.id && outra.harvest.includes(kind)),
+      );
+      expect(exclusivas.length, `${regiao.id} nao tem colheita propria`).toBeGreaterThan(0);
+    }
+  });
+
+  it('o tipo de um no e uma das colheitas da regiao onde ele nasceu', () => {
+    for (const n of createNodes(createRng(55))) {
+      expect(regionAt(n.position)!.harvest).toContain(n.kind);
+    }
+  });
+
+  it('toda regiao oferece todas as suas colheitas', () => {
+    const nodes = createNodes(createRng(66));
+    for (const regiao of REGIONS) {
+      const oferecidas = new Set(
+        nodes.filter((n) => regionAt(n.position)?.id === regiao.id).map((n) => n.kind),
+      );
+      expect([...oferecidas].sort()).toEqual([...regiao.harvest].sort());
+    }
+  });
+
+  it('todo tipo tem rotulo de singular e plural', () => {
+    for (const kind of RESOURCE_KINDS) {
+      expect(RESOURCE_LABELS[kind].one.length).toBeGreaterThan(0);
+      expect(RESOURCE_LABELS[kind].many.length).toBeGreaterThan(0);
+    }
   });
 });

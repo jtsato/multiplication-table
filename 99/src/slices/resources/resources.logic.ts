@@ -4,7 +4,16 @@ import { blocksHome } from '../home/home.logic';
 import { REGIONS, randomGroundPositionIn } from '../regions/regions.logic';
 import { scatterPositions } from '../world/world.logic';
 
-export type ResourceKind = 'madeira' | 'fruta' | 'pedra';
+/**
+ * O que se colhe.
+ *
+ * Tres tipos sao **materiais** e aparecem em mais de uma regiao — madeira, pedra
+ * e fruta. Os outros seis sao **colheita de regiao**: cada um so existe num
+ * lugar, o que faz o inventario virar registro de onde a crianca esteve. Antes
+ * disto, atravessar a ilha inteira rendia os mesmos tres montinhos.
+ */
+export type ResourceKind =
+  'madeira' | 'fruta' | 'pedra' | 'concha' | 'peixe' | 'cogumelo' | 'cristal' | 'mel' | 'gelo';
 
 /** Um no coletavel no mundo. */
 export interface ResourceNode {
@@ -40,7 +49,17 @@ export interface ResourceNode {
 
 export type Inventory = Record<ResourceKind, number>;
 
-export const RESOURCE_KINDS: readonly ResourceKind[] = ['madeira', 'fruta', 'pedra'];
+export const RESOURCE_KINDS: readonly ResourceKind[] = [
+  'madeira',
+  'fruta',
+  'pedra',
+  'concha',
+  'peixe',
+  'cogumelo',
+  'cristal',
+  'mel',
+  'gelo',
+];
 
 export const RESOURCES = {
   /** Distancia maxima para interagir com um no, em metros. */
@@ -62,12 +81,13 @@ export const RESOURCES = {
   /**
    * Distancia minima entre nos, para nao nascerem sobrepostos.
    *
-   * Subiu de 4.5 quando a tabuada saiu do 2: um no da tabuada do 10 com dez
-   * grupos chega a 2.6 de raio visual, entao dois deles precisam de 5.25 entre
-   * os centros. Com o valor antigo, dois arbustos grandes nasciam entrelacados e
-   * a crianca nao sabia mais qual fruta era de qual conta.
+   * Subiu de 4.5 quando a tabuada saiu do 2. O maior no do jogo — dez grupos da
+   * tabuada do 10 — tem 1.63 de raio visual, entao dois deles precisam de 3.3
+   * entre os centros; cinco deixa folga para eles nao se encostarem nem parecer
+   * um so arbusto. Com o valor antigo, dois nos grandes nasciam entrelacados e a
+   * crianca nao sabia mais qual fruta era de qual conta.
    */
-  minSpacing: 6,
+  minSpacing: 5,
 } as const;
 
 /**
@@ -83,10 +103,18 @@ export const RESOURCE_LABELS: Record<ResourceKind, { one: string; many: string }
   madeira: { one: 'madeira', many: 'madeira' },
   fruta: { one: 'fruta', many: 'frutas' },
   pedra: { one: 'pedra', many: 'pedras' },
+  concha: { one: 'concha', many: 'conchas' },
+  peixe: { one: 'peixe', many: 'peixes' },
+  cogumelo: { one: 'cogumelo', many: 'cogumelos' },
+  cristal: { one: 'cristal', many: 'cristais' },
+  // Contaveis no enunciado ("potes de mel", "lascas de gelo") mas tratados como
+  // massa no HUD, do mesmo jeito que a madeira ja era.
+  mel: { one: 'mel', many: 'mel' },
+  gelo: { one: 'gelo', many: 'gelo' },
 };
 
 export function emptyInventory(): Inventory {
-  return { madeira: 0, fruta: 0, pedra: 0 };
+  return Object.fromEntries(RESOURCE_KINDS.map((kind) => [kind, 0])) as Inventory;
 }
 
 /**
@@ -111,7 +139,9 @@ export function createNodes(rng: Rng): ResourceNode[] {
     positions.forEach((position, index) => {
       nodes.push({
         id: `${regiao.id}-${index}`,
-        kind: RESOURCE_KINDS[nodes.length % RESOURCE_KINDS.length],
+        // Rodizio entre as colheitas da regiao, pelo mesmo motivo da tabuada:
+        // sorteando, uma colheita podia nao aparecer e viraria conteudo morto.
+        kind: regiao.harvest[index % regiao.harvest.length],
         position,
         // 1 a 10 grupos: cobre a tabuada inteira, qualquer que seja ela.
         groups: 1 + Math.floor(rng() * 10),
@@ -182,8 +212,21 @@ export function fullYield(node: ResourceNode): number {
  */
 const ITEMS_PER_ROW = 5;
 
-/** Raio do anel de grupos quando a tabuada e pequena o bastante para caber nele. */
+/** Raio da volta de grupos quando a tabuada e pequena o bastante para caber nela. */
 const BASE_RING_RADIUS = 0.62;
+
+/**
+ * Quantos grupos cabem numa volta em torno do tronco.
+ *
+ * Os que sobram sobem para uma volta acima, como galhos em andares. Sem isto
+ * todos disputavam um anel so: com dez grupos da tabuada do 10 o raio passava de
+ * dois metros, e o no virava uma palicada de quatro metros de diametro — parava
+ * de ler como planta e passava a ler como cerca.
+ */
+const GROUPS_PER_LEVEL = 5;
+
+/** Quanto uma volta sobe em relacao a de baixo. */
+const LEVEL_HEIGHT = 0.62;
 
 /** Posicao de um item dentro do no, relativa ao centro dele. */
 export interface ItemPlacement {
@@ -210,24 +253,29 @@ export function itemPlacements(node: ResourceNode): ItemPlacement[] {
   const rowSpacing = 0.3;
 
   // Largura que uma fileira cheia ocupa, e o raio minimo que impede dois grupos
-  // vizinhos de se encostarem no anel.
+  // vizinhos de se encostarem na volta.
   //
   // Sem isto o raio era fixo em 0.62 e so funcionava com a tabuada do 2: com dez
   // grupos de dez, cada grupo media 1.04 de largura e sobrava 0.38 entre um e
   // outro — os grupos se fundiam num amontoado, e contar na tela, que e a regra
   // que sustenta o jogo, deixava de ser possivel.
+  //
+  // O raio sai da volta mais cheia, e nao do total de grupos: sao no maximo
+  // `GROUPS_PER_LEVEL` por volta, e o resto sobe um andar.
   const larguraDoGrupo = (Math.min(ITEMS_PER_ROW, node.perGroup) - 1) * itemSpread;
+  const porVolta = Math.min(GROUPS_PER_LEVEL, node.groups);
   const raioNecessario =
-    node.groups > 1
-      ? (larguraDoGrupo + itemSpread) / (2 * Math.sin(Math.PI / node.groups))
-      : 0;
+    porVolta > 1 ? (larguraDoGrupo + itemSpread) / (2 * Math.sin(Math.PI / porVolta)) : 0;
   const radius = Math.max(BASE_RING_RADIUS, raioNecessario);
 
   for (let groupIndex = 0; groupIndex < node.groups; groupIndex += 1) {
-    const angle = (groupIndex / node.groups) * Math.PI * 2;
-    // Alterna a altura entre grupos vizinhos para nao virar um anel achatado
-    // e ilegivel quando ha muitos grupos.
-    const height = 1.15 + (groupIndex % 2) * 0.42;
+    const volta = Math.floor(groupIndex / GROUPS_PER_LEVEL);
+    const naVolta = groupIndex % GROUPS_PER_LEVEL;
+    const gruposNestaVolta = Math.min(GROUPS_PER_LEVEL, node.groups - volta * GROUPS_PER_LEVEL);
+    // Cada volta comeca girada meia posicao em relacao a de baixo, para grupos
+    // de andares vizinhos nao ficarem alinhados um sobre o outro.
+    const angle = (naVolta / gruposNestaVolta) * Math.PI * 2 + volta * (Math.PI / GROUPS_PER_LEVEL);
+    const height = 1.15 + volta * LEVEL_HEIGHT;
     const outward = { x: Math.cos(angle), z: Math.sin(angle) };
     // Direcao tangente ao circulo: separa os itens do grupo.
     const tangent = { x: -Math.sin(angle), z: Math.cos(angle) };

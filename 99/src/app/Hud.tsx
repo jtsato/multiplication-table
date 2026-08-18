@@ -22,6 +22,11 @@ export function Hud({ isTouch = false }: { isTouch?: boolean } = {}) {
   const currentRegion = useGameStore((state) => state.currentRegion);
   const nearbyBridge = useGameStore((state) => state.nearbyBridge);
   const bridgeError = useGameStore((state) => state.bridgeError);
+
+  const colheitaDaqui = regionById(currentRegion).harvest;
+  const visiveis = RESOURCE_KINDS.filter(
+    (kind) => inventory[kind] > 0 || colheitaDaqui.includes(kind),
+  );
   const clock = useGameStore((state) => state.clock);
   const lanternCharge = useGameStore((state) => state.lanternCharge);
   const coins = useGameStore((state) => state.coins);
@@ -77,7 +82,15 @@ export function Hud({ isTouch = false }: { isTouch?: boolean } = {}) {
           )}
         </span>
 
-        {RESOURCE_KINDS.map((kind) => (
+        {/*
+          Só o que interessa agora.
+
+          Com nove tipos, listar todos deixaria sete zeros permanentes na tela —
+          e a criança lendo mais números que não significam nada do que números
+          que significam. Aparece o que ela tem, mais o que dá para colher aqui:
+          assim a lista também conta o que esta região oferece.
+        */}
+        {visiveis.map((kind) => (
           <span key={kind} className="hud__resource">
             <i className={`hud__dot hud__dot--${kind}`} aria-hidden="true" />
             {RESOURCE_LABELS[kind].many} <strong>{inventory[kind]}</strong>

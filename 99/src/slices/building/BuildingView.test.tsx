@@ -8,6 +8,7 @@ import { dayNightClock, resetDayNightClock } from '../daynight/dayNightClock';
 import { playerTransform, resetPlayerTransform } from '../player';
 import { BuildingView } from './BuildingView';
 import { BUILDING, STRUCTURES, fuelRemaining, isLit, placementPosition } from './building.logic';
+import { emptyInventory } from '../resources/resources.logic';
 
 const state = () => useGameStore.getState();
 
@@ -20,7 +21,9 @@ function pressKey(code: string) {
 /** Enche o inventário para os testes que não são sobre custo. */
 function encheInventario() {
   act(() => {
-    useGameStore.setState({ inventory: { madeira: 99, fruta: 99, pedra: 99 } });
+    useGameStore.setState({
+      inventory: { ...emptyInventory(), madeira: 99, fruta: 99, pedra: 99 },
+    });
   });
 }
 
@@ -206,7 +209,7 @@ describe('BuildingView', () => {
     pressKey('Space');
 
     expect(state().structures).toHaveLength(0);
-    expect(state().inventory).toEqual({ madeira: 0, fruta: 0, pedra: 0 });
+    expect(state().inventory).toEqual({ ...emptyInventory(), madeira: 0, fruta: 0, pedra: 0 });
     expect(state().buildError).toBe('sem-recursos');
 
     await renderer.unmount();

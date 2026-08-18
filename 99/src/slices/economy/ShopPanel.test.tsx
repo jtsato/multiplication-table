@@ -8,6 +8,7 @@ import { useGameStore } from '../../app/store';
 import { KeyboardBridge } from '../../test/KeyboardBridge';
 import { ShopPanel } from './ShopPanel';
 import { SHOP_ITEMS } from './economy.logic';
+import { emptyInventory } from '../resources/resources.logic';
 
 const state = () => useGameStore.getState();
 
@@ -22,7 +23,10 @@ function montar() {
 
 function enriquecer() {
   act(() => {
-    useGameStore.setState({ coins: 200, inventory: { madeira: 50, fruta: 50, pedra: 50 } });
+    useGameStore.setState({
+      coins: 200,
+      inventory: { ...emptyInventory(), madeira: 50, fruta: 50, pedra: 50 },
+    });
   });
 }
 

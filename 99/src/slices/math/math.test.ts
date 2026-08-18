@@ -6,15 +6,11 @@ import {
   generateChallenge,
   resolveAnswer,
 } from './math.logic';
-import { type ResourceKind, type ResourceNode } from '../resources/resources.logic';
+import { RESOURCE_KINDS, type ResourceKind, type ResourceNode } from '../resources/resources.logic';
 import { createRng } from '../../shared/rng';
 import { vec3 } from '../../shared/vec';
 
-const node = (
-  groups: number,
-  kind: ResourceKind = 'madeira',
-  perGroup = 2,
-): ResourceNode => ({
+const node = (groups: number, kind: ResourceKind = 'madeira', perGroup = 2): ResourceNode => ({
   id: `no-${groups}x${perGroup}`,
   kind,
   position: vec3(0, 0, 0),
@@ -28,9 +24,7 @@ const TABUADAS = [2, 3, 4, 5, 6, 7, 8, 9, 10];
 
 /** Toda a grade: 1 a 10 grupos, nas dez tabuadas, nos três tipos originais. */
 const todosOsNos = (['madeira', 'fruta', 'pedra'] as const).flatMap((kind) =>
-  TABUADAS.flatMap((perGroup) =>
-    Array.from({ length: 10 }, (_, i) => node(i + 1, kind, perGroup)),
-  ),
+  TABUADAS.flatMap((perGroup) => Array.from({ length: 10 }, (_, i) => node(i + 1, kind, perGroup))),
 );
 
 describe('generateChallenge', () => {
@@ -234,6 +228,39 @@ describe('resolveAnswer', () => {
       expect(resolveAnswer(c, c.answer + 3).reward).toBeLessThanOrEqual(
         resolveAnswer(c, c.answer).reward,
       );
+    }
+  });
+});
+
+describe('os enunciados dos recursos novos', () => {
+  it('todo tipo de recurso sabe se descrever', () => {
+    for (const kind of RESOURCE_KINDS) {
+      const contexto = CHALLENGE_CONTEXTS[kind];
+      expect(contexto, `${kind} nao tem enunciado`).toBeDefined();
+      expect(contexto.groupNoun.one.length).toBeGreaterThan(0);
+      expect(contexto.itemNoun.many.length).toBeGreaterThan(0);
+      expect(['m', 'f']).toContain(contexto.itemNoun.gender);
+    }
+  });
+
+  /**
+   * A concordancia nao e detalhe de estilo: sem o genero, o enunciado sai errado
+   * em portugues — "Quantos conchas" em vez de "Quantas conchas". E a razao de o
+   * campo existir desde a primeira fatia.
+   */
+  it('concorda o "quantos/quantas" com o genero do item', () => {
+    for (const kind of RESOURCE_KINDS) {
+      const desafio = generateChallenge({ id: 'x', kind, groups: 3, perGroup: 4 }, createRng(1));
+      const esperado = CHALLENGE_CONTEXTS[kind].itemNoun.gender === 'f' ? 'Quantas' : 'Quantos';
+      expect(desafio.question.startsWith(esperado), `${kind}: "${desafio.question}"`).toBe(true);
+    }
+  });
+
+  it('o enunciado descreve grupos e itens do tipo certo', () => {
+    for (const kind of RESOURCE_KINDS) {
+      const desafio = generateChallenge({ id: 'x', kind, groups: 4, perGroup: 6 }, createRng(2));
+      expect(desafio.prompt).toContain(CHALLENGE_CONTEXTS[kind].groupNoun.many);
+      expect(desafio.prompt).toContain(CHALLENGE_CONTEXTS[kind].itemNoun.many);
     }
   });
 });

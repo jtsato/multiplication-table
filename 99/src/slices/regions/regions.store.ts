@@ -1,12 +1,7 @@
 import type { StateCreator } from 'zustand';
 import type { GameState } from '../../app/store';
 import { payCost } from '../building/building.logic';
-import {
-  bridgeById,
-  checkBridge,
-  reachableFrom,
-  type BridgeRejection,
-} from './bridges.logic';
+import { bridgeById, checkBridge, reachableFrom, type BridgeRejection } from './bridges.logic';
 import { REGION_ORDER, type RegionId } from './regions.logic';
 
 /**
@@ -68,7 +63,8 @@ export const createRegionsSlice: StateCreator<GameState, [], [], RegionsSlice> =
     });
   },
 
-  clearBridgeError: () => set((state) => (state.bridgeError === null ? state : { bridgeError: null })),
+  clearBridgeError: () =>
+    set((state) => (state.bridgeError === null ? state : { bridgeError: null })),
 
   // Guarda de igualdade: `RegionsView` chama a cada quadro em que ha duvida, e
   // sem isto o store notificaria assinantes 60 vezes por segundo sem novidade.

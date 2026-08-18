@@ -7,6 +7,7 @@ import { renderScene } from '../../test/sceneHarness';
 import { playerTransform, resetPlayerTransform } from '../player';
 import { ResourcesView } from './ResourcesView';
 import { fullYield, itemPlacements } from './resources.logic';
+import { emptyInventory } from './resources.logic';
 
 const state = () => useGameStore.getState();
 
@@ -80,7 +81,7 @@ describe('ResourcesView', () => {
     pressKey('KeyE');
 
     expect(state().activeChallenge).toBeNull();
-    expect(state().inventory).toEqual({ madeira: 0, fruta: 0, pedra: 0 });
+    expect(state().inventory).toEqual(emptyInventory());
 
     await renderer.unmount();
   });

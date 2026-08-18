@@ -9,6 +9,7 @@ import { distanceSqXZ } from '../../shared/vec';
 import { playerTransform } from '../player';
 import {
   RESOURCES,
+  RESOURCE_KINDS,
   itemPlacements,
   nearestNodeInRange,
   type ResourceKind,
@@ -18,26 +19,72 @@ import {
 /** Pre-calculado: a comparacao roda uma vez por quadro. */
 const CANCEL_RANGE_SQ = RESOURCES.cancelRange * RESOURCES.cancelRange;
 
-/** Cor e forma dos itens contaveis de cada tipo de no. */
+/** Cor dos itens contaveis de cada tipo de no. */
 const ITEM_COLOR: Record<ResourceKind, string> = {
   madeira: '#c98d4f',
   fruta: palette.berry,
   pedra: palette.rock,
+  concha: palette.shell,
+  peixe: palette.fish,
+  cogumelo: palette.mushroom,
+  cristal: palette.crystal,
+  mel: palette.honey,
+  gelo: palette.ice,
 };
 
-/** Base (tronco, moita ou rocha) de um no. */
+/**
+ * A base de cada tipo — o que segura os itens contaveis.
+ *
+ * Tabela, e nao uma cadeia de `if`: com nove tipos, a versao ramificada viraria
+ * cem linhas de JSX quase igual, e acrescentar um tipo passaria a exigir mexer
+ * no meio do componente em vez de numa linha de dados.
+ */
+const NODE_BASE: Record<ResourceKind, { cor: string; altura: number; forma: FormaDeBase }> = {
+  madeira: { cor: palette.trunk, altura: 0.9, forma: 'arvore' },
+  fruta: { cor: palette.leavesLight, altura: 0.75, forma: 'moita' },
+  pedra: { cor: palette.rock, altura: 0.55, forma: 'rocha' },
+  concha: { cor: palette.shellBase, altura: 0.35, forma: 'monte' },
+  peixe: { cor: palette.barrel, altura: 0.55, forma: 'barril' },
+  cogumelo: { cor: palette.stump, altura: 0.4, forma: 'barril' },
+  cristal: { cor: palette.crystalBase, altura: 0.7, forma: 'cristal' },
+  mel: { cor: palette.hive, altura: 0.8, forma: 'moita' },
+  gelo: { cor: palette.iceBase, altura: 0.6, forma: 'cristal' },
+};
+
+type FormaDeBase = 'arvore' | 'moita' | 'rocha' | 'monte' | 'barril' | 'cristal';
+
+function GeometriaDaBase({ forma }: { forma: FormaDeBase }) {
+  switch (forma) {
+    case 'moita':
+      return <icosahedronGeometry args={[0.85, 0]} />;
+    case 'rocha':
+      return <dodecahedronGeometry args={[0.8, 0]} />;
+    case 'monte':
+      return <coneGeometry args={[0.95, 0.7, 7]} />;
+    case 'barril':
+      return <cylinderGeometry args={[0.55, 0.62, 0.9, 8]} />;
+    case 'cristal':
+      return <octahedronGeometry args={[0.85, 0]} />;
+    default:
+      return <icosahedronGeometry args={[0.85, 0]} />;
+  }
+}
+
+/** Base (tronco, moita, rocha, barril...) de um no. */
 function NodeBase({ node, highlighted }: { node: ResourceNode; highlighted: boolean }) {
   const { x, y, z } = node.position;
   const emissive = highlighted ? palette.highlight : '#000000';
   const emissiveIntensity = highlighted ? 0.45 : 0;
+  const look = NODE_BASE[node.kind];
 
-  if (node.kind === 'madeira') {
+  // A arvore e o unico tipo com duas pecas: tronco e copa.
+  if (look.forma === 'arvore') {
     return (
       <group position={[x, y, z]}>
-        <mesh position={[0, 0.9, 0]} castShadow receiveShadow>
+        <mesh position={[0, look.altura, 0]} castShadow receiveShadow>
           <cylinderGeometry args={[0.18, 0.26, 1.8, 6]} />
           <meshLambertMaterial
-            color={palette.trunk}
+            color={look.cor}
             flatShading
             emissive={emissive}
             emissiveIntensity={emissiveIntensity}
@@ -51,25 +98,11 @@ function NodeBase({ node, highlighted }: { node: ResourceNode; highlighted: bool
     );
   }
 
-  if (node.kind === 'fruta') {
-    return (
-      <mesh position={[x, y + 0.75, z]} castShadow receiveShadow>
-        <icosahedronGeometry args={[0.85, 0]} />
-        <meshLambertMaterial
-          color={palette.leavesLight}
-          flatShading
-          emissive={emissive}
-          emissiveIntensity={emissiveIntensity}
-        />
-      </mesh>
-    );
-  }
-
   return (
-    <mesh position={[x, y + 0.55, z]} castShadow receiveShadow>
-      <dodecahedronGeometry args={[0.8, 0]} />
+    <mesh position={[x, y + look.altura, z]} castShadow receiveShadow>
+      <GeometriaDaBase forma={look.forma} />
       <meshLambertMaterial
-        color={palette.rock}
+        color={look.cor}
         flatShading
         emissive={emissive}
         emissiveIntensity={emissiveIntensity}
@@ -121,11 +154,10 @@ export function ResourcesView() {
    * separadas viraria centenas de draw calls. Como `InstancedMesh`, sao tres.
    */
   const itemsByKind = useMemo(() => {
-    const grouped: Record<ResourceKind, { key: string; position: [number, number, number] }[]> = {
-      madeira: [],
-      fruta: [],
-      pedra: [],
-    };
+    type ItemInstanciado = { key: string; position: [number, number, number] };
+    const grouped = Object.fromEntries(
+      RESOURCE_KINDS.map((kind) => [kind, [] as ItemInstanciado[]]),
+    ) as Record<ResourceKind, ItemInstanciado[]>;
 
     for (const node of readyNodes) {
       for (const placement of itemPlacements(node)) {

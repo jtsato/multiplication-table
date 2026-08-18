@@ -4,6 +4,7 @@ import { lanternChargeSeconds, lanternRadius } from '../lantern/lantern.logic';
 import { playerSpeed } from '../player/player.logic';
 import { RESOURCE_KINDS } from '../resources/resources.logic';
 import { ECONOMY, SHOP_ITEMS, coinsFor, factKey } from './economy.logic';
+import { emptyInventory } from '../resources/resources.logic';
 
 const state = () => useGameStore.getState();
 
@@ -112,7 +113,7 @@ describe('loja', () => {
   const rico = () => {
     useGameStore.setState({
       coins: 200,
-      inventory: { madeira: 50, fruta: 50, pedra: 50 },
+      inventory: { ...emptyInventory(), madeira: 50, fruta: 50, pedra: 50 },
     });
   };
 
@@ -129,7 +130,10 @@ describe('loja', () => {
   });
 
   it('recusa sem moeda suficiente', () => {
-    useGameStore.setState({ coins: 0, inventory: { madeira: 50, fruta: 50, pedra: 50 } });
+    useGameStore.setState({
+      coins: 0,
+      inventory: { ...emptyInventory(), madeira: 50, fruta: 50, pedra: 50 },
+    });
     state().buy('lanterna-maior');
 
     expect(state().purchaseError).toBe('sem-moedas');
@@ -137,7 +141,10 @@ describe('loja', () => {
   });
 
   it('recusa sem recurso, mesmo com moeda de sobra', () => {
-    useGameStore.setState({ coins: 999, inventory: { madeira: 0, fruta: 0, pedra: 0 } });
+    useGameStore.setState({
+      coins: 999,
+      inventory: { ...emptyInventory(), madeira: 0, fruta: 0, pedra: 0 },
+    });
     state().buy('lanterna-maior');
 
     expect(state().purchaseError).toBe('sem-recursos');

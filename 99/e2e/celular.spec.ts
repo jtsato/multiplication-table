@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 import {
+  totalColhido,
   centroDe,
   esperarJogoPronto,
   esperarPainelCentralizado,
@@ -110,13 +111,20 @@ test.describe('partida no celular', () => {
     await page.screenshot({ path: 'e2e/telas/celular-05-acertou.png' });
 
     const depois = await lerEstado(page);
-    const total = depois.inventario.madeira + depois.inventario.fruta + depois.inventario.pedra;
+    const total = totalColhido(depois);
     expect(total).toBe(resposta);
   });
 
   test('construir pelo toque', async ({ page }) => {
     await page.evaluate(() => {
-      window.__tabuada!.store.setState({ inventory: { madeira: 40, fruta: 10, pedra: 20 } });
+      window.__tabuada!.store.setState({
+        inventory: {
+          ...window.__tabuada!.store.getState().inventory,
+          madeira: 40,
+          fruta: 10,
+          pedra: 20,
+        },
+      });
     });
 
     await page.getByRole('button', { name: /Fogueira/ }).tap();
@@ -142,7 +150,12 @@ test.describe('partida no celular', () => {
     await page.evaluate(() => {
       window.__tabuada!.store.setState({
         coins: 120,
-        inventory: { madeira: 40, fruta: 20, pedra: 20 },
+        inventory: {
+          ...window.__tabuada!.store.getState().inventory,
+          madeira: 40,
+          fruta: 20,
+          pedra: 20,
+        },
       });
     });
 

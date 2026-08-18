@@ -20,6 +20,22 @@ export const palette = {
   rock: '#8d949e',
   berry: '#d94f6a',
 
+  // As colheitas de regiao. Cada uma precisa ler de longe como "isto e daqui":
+  // a concha da praia, o peixe do porto, o cogumelo do bosque, o cristal da
+  // cachoeira, o mel do pomar e o gelo do pico.
+  shell: '#f6e3c8',
+  shellBase: '#e8d3a8',
+  fish: '#8fd3f4',
+  barrel: '#a9743f',
+  mushroom: '#e07a5f',
+  stump: '#6b4a2f',
+  crystal: '#7fe3f0',
+  crystalBase: '#4a7f95',
+  honey: '#f2b134',
+  hive: '#c98d4f',
+  ice: '#cfeaf7',
+  iceBase: '#9fc7de',
+
   // Jogador. A cor do corpo e da pele vem da escolha da crianca (slice avatar);
   // estas ficam como padrao e para o que nao e personalizavel.
   playerBody: '#f2a03d',
