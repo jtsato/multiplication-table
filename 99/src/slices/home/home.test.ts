@@ -6,6 +6,7 @@ import { isWithinIsland, ISLAND } from '../world/world.logic';
 import {
   HOME,
   HOME_SPOTS,
+  HOME_SPOT_OFFSETS,
   blocksHome,
   isInHomeLight,
   isInsideHome,
@@ -123,5 +124,25 @@ describe('geracao de recursos com a casa de pe', () => {
   it('a casa nao engole tantos pontos a ponto de faltar recurso', () => {
     const nodes = createNodes(createRng(20260816));
     expect(nodes.length).toBeGreaterThanOrEqual(RESOURCES.nodesPerKind * 3 - 2);
+  });
+});
+
+describe('coordenadas dos moveis', () => {
+  /**
+   * A cena desenha os moveis dentro de um grupo que ja desloca para a casa. Usar
+   * as coordenadas absolutas la somava a posicao da casa duas vezes, e os
+   * moveis apareceram no gramado do lado de fora — visivel so na tela gravada.
+   */
+  it('o deslocamento relativo mais a casa da a posicao absoluta', () => {
+    for (const spot of ['espelho', 'mural', 'cama'] as const) {
+      expect(HOME_SPOTS[spot].x).toBeCloseTo(HOME.position.x + HOME_SPOT_OFFSETS[spot].x);
+      expect(HOME_SPOTS[spot].z).toBeCloseTo(HOME.position.z + HOME_SPOT_OFFSETS[spot].z);
+    }
+  });
+
+  it('todos os moveis ficam dentro das paredes', () => {
+    for (const posicao of Object.values(HOME_SPOTS)) {
+      expect(isInsideHome(posicao)).toBe(true);
+    }
   });
 });

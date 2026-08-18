@@ -86,6 +86,28 @@ medo de errar sem tornar o erro gratuito.
 No amanhecer vem o **resumo do dia**: contas certas, moedas e o que foi aprendido.
 Não é pontuação — é elogio concreto, e de quebra o relatório que o adulto quer ver.
 
+### A casa
+
+A casa **já existe quando o jogo começa**, e é sempre iluminada — o lampião da porta
+nunca apaga. Um porto seguro que precisa ser conquistado não é seguro.
+
+Ao entrar, o telhado fica transparente: a leitura vira a de uma casa de boneca, sem
+carregar outra cena. Dentro do raio de luz dela a **lanterna não gasta e reacende de
+graça**, sem conta e sem moeda.
+
+Três móveis:
+
+- **Espelho** — silhueta, 6 tons de pele, 8 cores de roupa e acessórios. A silhueta
+  escolhida não tranca nada; os acessórios especiais se ganham por marco de tabuada
+  (a coroa exige a do 9 inteira).
+- **Mural da tabuada** — a grade de 1 a 10, preenchendo sozinha conforme a criança
+  domina os fatos. **Aqui consultar é de graça**, e o resultado aparece mesmo do que
+  ainda não foi dominado. No campo, a dica custa moeda; em casa, não custa nada.
+- **Cama** — dormir pula para o próximo amanhecer.
+
+Moedas, fatos dominados, itens comprados e aparência ficam guardados no navegador e
+sobrevivem a fechar a página.
+
 ### A noite
 
 À noite a criança pode resolver mais uma multiplicação na fogueira para **acender a
@@ -127,7 +149,10 @@ src/
 │   ├── building/   # fogueira, cerca, combustível
 │   ├── daynight/   # relógio, fases, céu e luzes
 │   ├── lantern/    # carga como prazo, luz que acompanha o jogador
-│   └── economy/    # moedas, sequência, fatos dominados e a loja
+│   ├── economy/    # moedas, sequência, fatos dominados e a loja
+│   ├── home/       # a casa, o mural da tabuada e a cama
+│   ├── avatar/     # aparência e acessórios por marco
+│   └── save/       # persistência em localStorage
 └── shared/         # sem regra de negócio: paleta, PRNG, vetor, teclado
 ```
 
@@ -151,7 +176,7 @@ assinantes 60 vezes por segundo.
 
 ## Testes
 
-Duas camadas: **333 testes** de unidade/integração no Vitest e **22 testes ponta a
+Duas camadas: **392 testes** de unidade/integração no Vitest e **25 testes ponta a
 ponta** em navegador de verdade com Playwright.
 
 ### Ponta a ponta (Playwright)
@@ -164,7 +189,7 @@ npm run e2e:ui       # modo interativo
 Rodam contra o **build de produção** servido pelo `vite preview` — o mesmo
 artefato que vai para o Pages. Cobrem o que só o navegador prova: WebGL
 inicializa, o WASM do Rapier carrega, a física move o jogador de verdade, e o
-loop matemática → recurso → moeda → loja → noite → lanterna funciona inteiro. O
+loop matemática → recurso → moeda → loja → casa → noite → lanterna funciona inteiro. O
 projeto `celular` emula um Pixel 5 e emite eventos de toque nativos via CDP, de
 modo que o joystick é arrastado por um dedo real, não por eventos sintéticos.
 

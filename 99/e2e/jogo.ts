@@ -18,6 +18,10 @@ export interface EstadoJogo {
   /** Segundos de carga que restam na lanterna, no instante da leitura. */
   cargaLanterna: number;
   moedas: number;
+  emCasa: boolean;
+  movelPerto: string | null;
+  painelAberto: string | null;
+  aparencia: { silhueta: string; pele: number; roupa: number; cabeca: string };
   lojaAberta: boolean;
   comprados: string[];
   dicas: number;
@@ -46,6 +50,15 @@ export async function lerEstado(page: Page): Promise<EstadoJogo> {
       // throttle, e o teste precisa do valor do instante.
       cargaLanterna: Math.max(0, s.lantern.chargedUntil - ponte.clock.seconds),
       moedas: s.coins,
+      emCasa: s.insideHome,
+      movelPerto: s.nearbySpot,
+      painelAberto: s.openSpot,
+      aparencia: {
+        silhueta: s.avatar.silhouette,
+        pele: s.avatar.skin,
+        roupa: s.avatar.clothes,
+        cabeca: s.avatar.head,
+      },
       lojaAberta: s.shopOpen,
       comprados: s.owned,
       dicas: s.hints,
@@ -314,4 +327,21 @@ export async function centroDe(page: Page, seletor: string): Promise<Ponto> {
   const caixa = await page.locator(seletor).boundingBox();
   expect(caixa).not.toBeNull();
   return { x: caixa!.x + caixa!.width / 2, y: caixa!.y + caixa!.height / 2 };
+}
+
+/**
+ * Leva o jogador para dentro da casa, em frente a um movel.
+ *
+ * Usa o teleporte da ponte, como o resto da suite: atravessar a ilha andando
+ * tornaria os testes lentos e instaveis, e andar de verdade ja tem teste proprio.
+ */
+export async function irParaOMovel(page: Page, movel: 'espelho' | 'mural' | 'cama'): Promise<void> {
+  await page.evaluate((alvo) => {
+    const ponte = window.__tabuada!;
+    const pontos = ponte.homeSpots;
+    const ponto = pontos[alvo as keyof typeof pontos];
+    ponte.teleportar!(ponto.x, ponto.z);
+  }, movel);
+  // Alguns quadros para a fisica assentar e a casa publicar o movel ao alcance.
+  await page.waitForTimeout(700);
 }

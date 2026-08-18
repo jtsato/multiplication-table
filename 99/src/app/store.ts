@@ -4,6 +4,7 @@ import { createBuildingSlice, type BuildingSlice } from '../slices/building/buil
 import { createDayNightSlice, type DayNightSlice } from '../slices/daynight/daynight.store';
 import { createEconomySlice, type EconomySlice } from '../slices/economy/economy.store';
 import { createHomeSlice, type HomeSlice } from '../slices/home/home.store';
+import { HOME_SPOTS } from '../slices/home/home.logic';
 import { dayNightClock } from '../slices/daynight/dayNightClock';
 import { createLanternSlice, type LanternSlice } from '../slices/lantern/lantern.store';
 import { playerTransform } from '../slices/player/playerTransform';
@@ -54,6 +55,7 @@ declare global {
       store: typeof useGameStore;
       transform: typeof playerTransform;
       clock: typeof dayNightClock;
+      homeSpots: typeof HOME_SPOTS;
       /**
        * Leva o jogador a um ponto do mapa.
        *
@@ -72,6 +74,8 @@ if (typeof window !== 'undefined') {
     store: useGameStore,
     transform: playerTransform,
     clock: dayNightClock,
+    // Posicoes dos moveis, para o E2E levar o jogador ate eles.
+    homeSpots: HOME_SPOTS,
   };
 }
 

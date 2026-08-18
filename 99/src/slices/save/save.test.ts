@@ -1,15 +1,21 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { act } from 'react';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useGameStore } from '../../app/store';
 import { DEFAULT_AVATAR } from '../avatar/avatar.logic';
-import { applySave, loadGame, snapshot } from './save';
+import { applySave, loadGame, snapshot, startAutoSave } from './save';
 import {
   LocalStorageRepository,
+  saveRepository,
   SAVE_VERSION,
   migrateSave,
   type GameSave,
 } from './save.repository';
 
 const state = () => useGameStore.getState();
+
+afterEach(() => {
+  vi.useRealTimers();
+});
 
 /** Armazenamento de mentira, para não depender do navegador. */
 function memoria(inicial: string | null = null) {
@@ -167,5 +173,63 @@ describe('snapshot e applySave', () => {
     const spy = vi.spyOn(Storage.prototype, 'getItem').mockReturnValue(null);
     expect(loadGame()).toBe(false);
     spy.mockRestore();
+  });
+});
+
+describe('startAutoSave', () => {
+  beforeEach(() => {
+    state().resetEconomy();
+    state().resetAvatar();
+    vi.useFakeTimers();
+  });
+
+  /**
+   * O teste que faltava. Sem o filtro de igualdade, o debounce se rearmava a
+   * cada publicacao do relogio (4 Hz) e o save nunca chegava a acontecer.
+   */
+  it('grava depois de uma mudanca que importa', () => {
+    const gravar = vi.spyOn(saveRepository, 'save');
+    const parar = startAutoSave();
+
+    act(() => state().rewardCorrect(2, 4));
+    vi.advanceTimersByTime(1000);
+
+    expect(gravar).toHaveBeenCalledTimes(1);
+    parar();
+    gravar.mockRestore();
+  });
+
+  it('publicacoes continuas do relogio nao adiam o save para sempre', () => {
+    const gravar = vi.spyOn(saveRepository, 'save');
+    const parar = startAutoSave();
+
+    act(() => state().rewardCorrect(2, 4));
+    // O relogio publicando a 4 Hz durante o atraso: antes, cada tique rearmava
+    // o temporizador e o save nunca saia.
+    for (let i = 0; i < 8; i += 1) {
+      vi.advanceTimersByTime(100);
+      act(() => state().publishClock({ phase: 'dia', day: 1, secondsToNextPhase: 100 - i }));
+    }
+    vi.advanceTimersByTime(1000);
+
+    expect(gravar).toHaveBeenCalled();
+    parar();
+    gravar.mockRestore();
+  });
+
+  it('varias mudancas seguidas escrevem uma vez so', () => {
+    const gravar = vi.spyOn(saveRepository, 'save');
+    const parar = startAutoSave();
+
+    act(() => {
+      state().rewardCorrect(2, 4);
+      state().rewardCorrect(2, 5);
+      state().rewardCorrect(2, 6);
+    });
+    vi.advanceTimersByTime(1000);
+
+    expect(gravar).toHaveBeenCalledTimes(1);
+    parar();
+    gravar.mockRestore();
   });
 });

@@ -4,6 +4,7 @@ import {
   esperarPainelCentralizado,
   ficarAoLadoDeUmRecurso,
   irParaOMeioDe,
+  irParaOMovel,
   lerEstado,
   responderPeloEnunciado,
   soltarTudo,
@@ -155,6 +156,66 @@ test.describe('partida no computador', () => {
     await page.keyboard.press('KeyL');
 
     await expect(page.getByRole('dialog', { name: 'Loja' })).toHaveCount(0);
+  });
+
+  test('a casa: entrar, acender de graca e olhar o mural', async ({ page }) => {
+    await irParaOMovel(page, 'mural');
+
+    const dentro = await lerEstado(page);
+    expect(dentro.emCasa).toBe(true);
+    expect(dentro.movelPerto).toBe('mural');
+    // A lanterna acende sozinha em casa, sem conta e sem moeda.
+    expect(dentro.cargaLanterna).toBeGreaterThan(0);
+    expect(dentro.moedas).toBe(0);
+    await page.screenshot({ path: 'e2e/telas/16-dentro-de-casa.png' });
+
+    await page.keyboard.press('KeyE');
+    const mural = page.getByRole('dialog', { name: 'Mural da tabuada' });
+    await expect(mural).toBeVisible();
+    // Consultar em casa e de graca: o resultado esta na parede para quem olhar.
+    await expect(mural).toContainText('56');
+    await page.screenshot({ path: 'e2e/telas/17-mural.png' });
+
+    await page.getByRole('button', { name: 'Fechar' }).click();
+    await expect(mural).toHaveCount(0);
+  });
+
+  test('o espelho troca a aparencia, e ela sobrevive a recarregar a pagina', async ({ page }) => {
+    await irParaOMovel(page, 'espelho');
+    await page.keyboard.press('KeyE');
+
+    const espelho = page.getByRole('dialog', { name: 'Espelho' });
+    await expect(espelho).toBeVisible();
+
+    await page.getByRole('button', { name: 'Menina' }).click();
+    await page.getByLabel('Tom de pele 5').click();
+    await page.getByLabel('Cor de roupa 3').click();
+    await page.screenshot({ path: 'e2e/telas/18-espelho.png' });
+    await page.getByRole('button', { name: 'Pronto' }).click();
+
+    const escolhido = (await lerEstado(page)).aparencia;
+    expect(escolhido).toMatchObject({ silhueta: 'menina', pele: 4, roupa: 2 });
+    await page.screenshot({ path: 'e2e/telas/19-personagem-vestido.png' });
+
+    // O save grava com atraso; espera passar do debounce antes de recarregar.
+    await page.waitForTimeout(1200);
+    await page.reload();
+    await esperarJogoPronto(page);
+
+    expect((await lerEstado(page)).aparencia).toMatchObject(escolhido);
+  });
+
+  test('a cama leva ao amanhecer', async ({ page }) => {
+    await irParaOMovel(page, 'cama');
+    await page.keyboard.press('KeyE');
+
+    await expect(page.getByRole('dialog', { name: 'Cama' })).toBeVisible();
+    await page.screenshot({ path: 'e2e/telas/20-cama.png' });
+
+    await page.getByRole('button', { name: /Dormir/ }).click();
+    await page.waitForTimeout(700);
+
+    expect((await lerEstado(page)).fase).toBe('amanhecer');
   });
 
   test('o amanhecer fecha o dia com o resumo', async ({ page }) => {

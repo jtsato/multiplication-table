@@ -40,15 +40,39 @@ export const HOME = {
 export type HomeSpot = 'espelho' | 'mural' | 'cama';
 
 /**
- * Onde cada movel fica, relativo ao centro da casa.
+ * Onde cada movel fica, **relativo ao centro da casa**.
  *
  * Encostados nas paredes e afastados entre si mais que `spotRange * 2`, para que
  * nunca haja duvida sobre qual deles a crianca quis usar.
+ *
+ * Relativo e absoluto vivem separados de proposito: a cena desenha os moveis
+ * dentro de um `<group>` que ja desloca para a casa, e usar as coordenadas
+ * absolutas la somaria a posicao da casa duas vezes — foi exatamente o que
+ * aconteceu, e os moveis apareceram do lado de fora.
  */
+export const HOME_SPOT_OFFSETS: Record<HomeSpot, Vec3> = {
+  espelho: vec3(-2.2, 0, -1.4),
+  mural: vec3(2.2, 0, -1.4),
+  cama: vec3(2.2, 0, 1.6),
+};
+
+/** As mesmas posicoes, em coordenadas do mundo. Usadas pela logica de alcance. */
 export const HOME_SPOTS: Record<HomeSpot, Vec3> = {
-  espelho: vec3(HOME.position.x - 2.2, 0, HOME.position.z - 1.4),
-  mural: vec3(HOME.position.x + 2.2, 0, HOME.position.z - 1.4),
-  cama: vec3(HOME.position.x + 2.2, 0, HOME.position.z + 1.6),
+  espelho: vec3(
+    HOME.position.x + HOME_SPOT_OFFSETS.espelho.x,
+    0,
+    HOME.position.z + HOME_SPOT_OFFSETS.espelho.z,
+  ),
+  mural: vec3(
+    HOME.position.x + HOME_SPOT_OFFSETS.mural.x,
+    0,
+    HOME.position.z + HOME_SPOT_OFFSETS.mural.z,
+  ),
+  cama: vec3(
+    HOME.position.x + HOME_SPOT_OFFSETS.cama.x,
+    0,
+    HOME.position.z + HOME_SPOT_OFFSETS.cama.z,
+  ),
 };
 
 export const HOME_SPOT_LABELS: Record<HomeSpot, string> = {

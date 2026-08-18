@@ -50,14 +50,26 @@ let timer: ReturnType<typeof setTimeout> | null = null;
 /**
  * Assina o store e grava com atraso.
  *
- * Com debounce, e nunca por quadro: comprar tres itens seguidos escreve uma vez
- * so, e nada do que muda continuamente — posicao, relogio, carga da lanterna —
- * esta no recorte durável, entao nem chega aqui.
+ * **O filtro de igualdade nao e otimizacao — sem ele o save nunca acontece.** O
+ * store e notificado a 4 Hz o tempo todo (o relogio publica a fase, a lanterna
+ * publica a carga), entao um debounce puro se rearmava a cada tique e o
+ * temporizador nunca chegava ao fim. O bug so apareceu no teste de navegador:
+ * a aparencia escolhida no espelho nao sobrevivia a recarregar a pagina.
+ *
+ * Comparando o recorte duravel, a esmagadora maioria das notificacoes e
+ * descartada de imediato, e o atraso so corre quando algo que importa mudou —
+ * comprar tres itens seguidos ainda escreve uma vez so.
  *
  * Devolve o cancelamento, para os testes nao deixarem timer vivo.
  */
 export function startAutoSave(): () => void {
+  let ultimo = JSON.stringify(snapshot());
+
   const unsubscribe = useGameStore.subscribe(() => {
+    const atual = JSON.stringify(snapshot());
+    if (atual === ultimo) return;
+    ultimo = atual;
+
     if (timer) clearTimeout(timer);
     timer = setTimeout(() => {
       timer = null;

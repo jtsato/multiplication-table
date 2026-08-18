@@ -8,7 +8,7 @@ import { palette } from '../../shared/palette';
 import { cyclePosition, phaseFor } from '../daynight/daynight.logic';
 import { dayNightClock } from '../daynight/dayNightClock';
 import { playerTransform } from '../player/playerTransform';
-import { HOME, HOME_SPOTS, isInsideHome, nearestSpot } from './home.logic';
+import { HOME, HOME_SPOT_OFFSETS, isInsideHome, nearestSpot } from './home.logic';
 
 /** Publicacao para o HUD: 4 Hz basta para "voce esta perto do espelho". */
 const PUBLISH_INTERVAL = 0.25;
@@ -24,19 +24,25 @@ function Furniture() {
   return (
     <>
       {/* Espelho: moldura clara encostada na parede do fundo. */}
-      <mesh position={[HOME_SPOTS.espelho.x, 1.1, HOME_SPOTS.espelho.z - 0.25]} castShadow>
+      <mesh
+        position={[HOME_SPOT_OFFSETS.espelho.x, 1.1, HOME_SPOT_OFFSETS.espelho.z - 0.25]}
+        castShadow
+      >
         <boxGeometry args={[1.1, 1.6, 0.12]} />
         <meshLambertMaterial color={palette.homeMirror} flatShading />
       </mesh>
 
       {/* Mural: quadro grande, do tamanho de uma tabuada inteira. */}
-      <mesh position={[HOME_SPOTS.mural.x, 1.3, HOME_SPOTS.mural.z - 0.25]} castShadow>
+      <mesh
+        position={[HOME_SPOT_OFFSETS.mural.x, 1.3, HOME_SPOT_OFFSETS.mural.z - 0.25]}
+        castShadow
+      >
         <boxGeometry args={[1.6, 1.2, 0.1]} />
         <meshLambertMaterial color={palette.homeChart} flatShading />
       </mesh>
 
       {/* Cama: colchao e travesseiro. */}
-      <group position={[HOME_SPOTS.cama.x, 0, HOME_SPOTS.cama.z]}>
+      <group position={[HOME_SPOT_OFFSETS.cama.x, 0, HOME_SPOT_OFFSETS.cama.z]}>
         <mesh position={[0, 0.3, 0]} castShadow receiveShadow>
           <boxGeometry args={[1.1, 0.5, 1.9]} />
           <meshLambertMaterial color={palette.homeBed} flatShading />
