@@ -12,6 +12,8 @@ export const palette = {
   grassDark: '#3f8f45',
   sand: '#e6c88a',
   water: '#2f7fbf',
+  // Espuma da cachoeira: quase branca, para marcar onde a agua bate.
+  foam: '#dff1fb',
 
   // Cenario
   trunk: '#7a5230',

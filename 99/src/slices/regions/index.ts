@@ -1,3 +1,11 @@
+export { WaterfallView } from './WaterfallView';
+export {
+  WATERFALL,
+  WATERFALLS,
+  dropletHeight,
+  hasWaterfall,
+  waterfallsFor,
+} from './waterfalls.logic';
 export { RegionsView } from './RegionsView';
 export { createRegionsSlice, unlockedRegions, type RegionsSlice } from './regions.store';
 export {
