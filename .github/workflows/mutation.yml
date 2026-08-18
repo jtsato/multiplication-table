@@ -1,0 +1,50 @@
+name: Mutation Testing (weekly)
+
+# O Stryker é caro e não precisa rodar a cada push na main.
+# Roda uma vez por semana, em horário de menor concorrência do GitHub Actions,
+# e também pode ser disparado manualmente com workflow_dispatch.
+on:
+  schedule:
+    # Domingo 06:00 UTC — dia/horário tradicionalmente de baixa carga no GitHub.
+    - cron: '0 6 * * 0'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mutation-testing
+  cancel-in-progress: false
+
+jobs:
+  stryker:
+    name: Stryker (${{ matrix.app }})
+    runs-on: ubuntu-latest
+
+    strategy:
+      # Um app não deve esconder a falha dos outros.
+      fail-fast: false
+      matrix:
+        # `99` fica fora por enquanto (trabalho em andamento).
+        # `cc` e `st` entram quando tiverem script `test:mutation`.
+        app: [ds]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Setup Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+          cache: npm
+          # Uma chave de cache por app.
+          cache-dependency-path: ${{ matrix.app }}/package-lock.json
+
+      - name: Install dependencies (${{ matrix.app }})
+        working-directory: ${{ matrix.app }}
+        run: npm ci --prefer-offline --no-audit --fund=false
+
+      - name: Run mutation tests (${{ matrix.app }})
+        working-directory: ${{ matrix.app }}
+        run: npm run test:mutation
