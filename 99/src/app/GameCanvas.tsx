@@ -3,6 +3,7 @@ import { Physics } from '@react-three/rapier';
 import { palette } from '../shared/palette';
 import { BuildingView } from '../slices/building';
 import { DayNightView } from '../slices/daynight';
+import { LanternView } from '../slices/lantern';
 import { PlayerView } from '../slices/player';
 import { ResourcesView } from '../slices/resources';
 import { WorldView } from '../slices/world';
@@ -52,6 +53,11 @@ export function GameCanvas({ isTouch = false }: { isTouch?: boolean }) {
         */}
         <DayNightView isTouch={isTouch} />
         <PlayerView />
+
+        {/* Depois de `PlayerView`: a lanterna le `playerTransform`, e montada
+            antes ela ficaria um quadro atras do jogador — meio metro a 7 m/s,
+            e num facho de luz isso se ve. */}
+        <LanternView />
 
         <WorldView seed={worldSeed} />
         <ResourcesView />

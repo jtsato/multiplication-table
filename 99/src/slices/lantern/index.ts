@@ -1,3 +1,4 @@
+export { LanternView } from './LanternView';
 export { createLanternSlice, type LanternSlice } from './lantern.store';
 export {
   LANTERN,
