@@ -17,7 +17,7 @@ function questionNumbers(): { a: number; b: number } {
   return { a: Number(match[1]), b: Number(match[2]) };
 }
 
-/** Grava um save com o vingador em 14 HP e a pergunta 6 × 4 = 24. */
+/** Grava um save com o Zangado em 14 HP e a pergunta 6 × 4 = 24. */
 function seedBattleSave() {
   const battle = battleReducer(createBattle(AVENGER), {
     type: "BEGIN_QUESTION",
@@ -45,22 +45,22 @@ describe("BattleScreen", () => {
 
   it("anuncia o início da batalha via região de status", () => {
     renderWithI18n(<BattleScreen rng={seededRng(1)} />);
-    expect(screen.getByRole("status")).toHaveTextContent("Um Vingador selvagem apareceu!");
+    expect(screen.getByRole("status")).toHaveTextContent("Um Zangado selvagem apareceu!");
   });
 
-  it("mostra herói e vingador com suas barras de HP acessíveis", () => {
+  it("mostra herói e Zangado com suas barras de HP acessíveis", () => {
     renderWithI18n(<BattleScreen rng={seededRng(1)} />);
     const heroBar = screen.getByRole("progressbar", { name: "Guerreiro" });
-    expect(heroBar).toHaveAttribute("aria-valuemax", "30");
-    expect(heroBar).toHaveAttribute("aria-valuenow", "30");
-    const vingadorBar = screen.getByRole("progressbar", { name: "Vingador" });
-    expect(vingadorBar).toHaveAttribute("aria-valuemax", "20");
-    expect(vingadorBar).toHaveAttribute("aria-valuenow", "20");
+    expect(heroBar).toHaveAttribute("aria-valuemax", "3");
+    expect(heroBar).toHaveAttribute("aria-valuenow", "3");
+    const zangadoBar = screen.getByRole("progressbar", { name: "Zangado" });
+    expect(zangadoBar).toHaveAttribute("aria-valuemax", "20");
+    expect(zangadoBar).toHaveAttribute("aria-valuenow", "20");
   });
 
   it("mostra o HP como texto (feedback não depende só de cor)", () => {
     renderWithI18n(<BattleScreen rng={seededRng(1)} />);
-    expect(screen.getByText("30 / 30")).toBeInTheDocument();
+    expect(screen.getByText("3 / 3")).toBeInTheDocument();
     expect(screen.getByText("20 / 20")).toBeInTheDocument();
   });
 
@@ -72,16 +72,18 @@ describe("BattleScreen", () => {
     expect(new Set(alternatives.map((b) => b.textContent)).size).toBe(4);
   });
 
-  it("acertar reduz o HP do vingador e anuncia o dano", async () => {
+  it("acertar reduz o HP do Zangado, concede XP e anuncia o dano", async () => {
     const user = userEvent.setup();
     renderWithI18n(<BattleScreen rng={seededRng(7)} />);
     const { a, b } = questionNumbers();
     await user.click(screen.getByRole("button", { name: String(a * b) }));
-    expect(screen.getByRole("progressbar", { name: "Vingador" })).toHaveAttribute(
+    expect(screen.getByRole("progressbar", { name: "Zangado" })).toHaveAttribute(
       "aria-valuenow",
       String(AVENGER.maxHp - HERO_BASE_DAMAGE),
     );
     expect(screen.getByRole("status")).toHaveTextContent("Correto");
+    expect(screen.getByRole("status")).toHaveTextContent("+10 XP");
+    expect(screen.getByText("XP da batalha: 10")).toBeInTheDocument();
   });
 
   it("errar faz o monstro atacar e o herói perder HP", async () => {
@@ -94,13 +96,13 @@ describe("BattleScreen", () => {
       .find((btn) => btn.textContent !== answer);
     if (!wrong) throw new Error("nenhuma alternativa errada");
     await user.click(wrong);
-    expect(screen.getByRole("progressbar", { name: "Vingador" })).toHaveAttribute(
+    expect(screen.getByRole("progressbar", { name: "Zangado" })).toHaveAttribute(
       "aria-valuenow",
       String(AVENGER.maxHp),
     );
     expect(screen.getByRole("progressbar", { name: "Guerreiro" })).toHaveAttribute(
       "aria-valuenow",
-      String(HERO_MAX_HP - AVENGER.damage),
+      String(HERO_MAX_HP - 1),
     );
     expect(screen.getByRole("status")).toHaveTextContent("Quase");
     expect(screen.getByRole("status")).toHaveTextContent(`${a} × ${b} = ${a * b}`);
@@ -135,11 +137,10 @@ describe("BattleScreen", () => {
     expect(screen.getByRole("status")).toHaveTextContent(/Correto|Quase/);
   });
 
-  it("três acertos liberam o super ataque, que derrota o vingador", async () => {
+  it("três acertos acumulam XP e não mostram super ataque", async () => {
     const user = userEvent.setup();
     renderWithI18n(<BattleScreen rng={seededRng(7)} />);
 
-    // Auto-avanço real de 700 ms entre as perguntas.
     async function responderCorreto() {
       const { a, b } = questionNumbers();
       await user.click(screen.getByRole("button", { name: String(a * b) }));
@@ -152,15 +153,20 @@ describe("BattleScreen", () => {
     await responderCorreto();
     await responderCorreto();
 
-    const superButton = screen.getByRole("button", { name: "Super Ataque" });
-    expect(superButton).toBeInTheDocument();
-    await user.click(superButton);
+    expect(screen.getByText("Combo ×3")).toBeInTheDocument();
+    expect(screen.getByText("XP da batalha: 45")).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Super Ataque" })).not.toBeInTheDocument();
+  });
 
-    expect(screen.getByRole("progressbar", { name: "Vingador" })).toHaveAttribute(
-      "aria-valuenow",
-      "0",
+  it("acertar chama onTotalXpChange com o XP multiplicado", async () => {
+    const user = userEvent.setup();
+    const onTotalXpChange = vi.fn();
+    renderWithI18n(
+      <BattleScreen rng={seededRng(7)} totalXp={100} onTotalXpChange={onTotalXpChange} />,
     );
-    expect(screen.getByRole("status")).toHaveTextContent("Super Ataque");
+    const { a, b } = questionNumbers();
+    await user.click(screen.getByRole("button", { name: String(a * b) }));
+    expect(onTotalXpChange).toHaveBeenCalledWith(110);
   });
 
   it("vitória mostra o painel final com foco", async () => {
@@ -178,12 +184,12 @@ describe("BattleScreen", () => {
     await responderCorreto();
     await responderCorreto();
     await responderCorreto();
-    await user.click(screen.getByRole("button", { name: "Super Ataque" }));
+    await responderCorreto();
 
     const vitoria = screen.getByRole("heading", { level: 3, name: "Vitória!" });
     expect(vitoria).toBeInTheDocument();
     expect(vitoria).toHaveFocus();
-    expect(screen.getByText("Você derrotou o Vingador!")).toBeInTheDocument();
+    expect(screen.getByText("Você derrotou o Zangado!")).toBeInTheDocument();
   });
 
   it("vitória avança a progressão e Jogar novamente luta contra o próximo monstro", async () => {
@@ -208,12 +214,12 @@ describe("BattleScreen", () => {
     await responderCorreto();
     await responderCorreto();
     await responderCorreto();
-    await user.click(screen.getByRole("button", { name: "Super Ataque" }));
+    await responderCorreto();
 
     await user.click(screen.getByRole("button", { name: "Jogar novamente" }));
 
     expect(onProgressChange).toHaveBeenCalledWith({ stage: 1 });
-    expect(screen.getByRole("progressbar", { name: "Tiamat" })).toHaveAttribute(
+    expect(screen.getByRole("progressbar", { name: "Tita, a Dragãozinha" })).toHaveAttribute(
       "aria-valuenow",
       "26",
     );
@@ -224,10 +230,16 @@ describe("BattleScreen", () => {
     renderWithI18n(<BattleScreen rng={seededRng(1)} />);
     const raw = window.localStorage.getItem(SAVE_STORAGE_KEY);
     expect(raw).not.toBeNull();
-    const parsed = JSON.parse(raw ?? "{}") as { version: number; locale: string; battle: unknown };
+    const parsed = JSON.parse(raw ?? "{}") as {
+      version: number;
+      locale: string;
+      battle: unknown;
+      totalXp: number;
+    };
     expect(parsed.version).toBe(SAVE_VERSION);
     expect(parsed.locale).toBe("pt-BR");
     expect(parsed.battle).not.toBeNull();
+    expect(parsed.totalXp).toBe(0);
   });
 
   it("restaura uma batalha salva e permite continuar jogando", async () => {
@@ -235,14 +247,14 @@ describe("BattleScreen", () => {
     const user = userEvent.setup();
     renderWithI18n(<BattleScreen rng={seededRng(7)} />);
 
-    expect(screen.getByRole("progressbar", { name: "Vingador" })).toHaveAttribute(
+    expect(screen.getByRole("progressbar", { name: "Zangado" })).toHaveAttribute(
       "aria-valuenow",
       "14",
     );
     expect(screen.getByText("6 × 4 = ?")).toBeInTheDocument();
 
     await user.click(screen.getByRole("button", { name: "24" }));
-    expect(screen.getByRole("progressbar", { name: "Vingador" })).toHaveAttribute(
+    expect(screen.getByRole("progressbar", { name: "Zangado" })).toHaveAttribute(
       "aria-valuenow",
       "8",
     );

@@ -211,7 +211,7 @@
     }
   },
   "study": {
-    "hint": "Each step of the ladder adds {{table}} more blocks.",
+    "hint": "Notice how the answer goes up by {{table}} every time.",
     "play": "Play mission {{order}}",
     "mastered": "You already know this one",
     "struggling": "This one still trips you up"

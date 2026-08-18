@@ -439,7 +439,7 @@ html[data-reduced-motion='on'] *::after {
 }
 
 .btn--sm {
-  font-size: var(--text-sm);
+  font-size: var(--text-base);
   min-height: 40px;
   padding: 0 var(--space-4);
 }
@@ -532,7 +532,7 @@ html[data-reduced-motion='on'] *::after {
 .progress__header {
   display: flex;
   justify-content: space-between;
-  font-size: var(--text-sm);
+  font-size: var(--text-base);
   font-weight: 600;
   margin-bottom: var(--space-2);
   color: var(--muted);
@@ -707,7 +707,7 @@ html[data-reduced-motion='on'] *::after {
 .toggle-row__state {
   min-width: 3.2em;
   flex-shrink: 0;
-  font-size: var(--text-sm);
+  font-size: var(--text-base);
   color: var(--muted);
   text-align: right;
 }
@@ -815,106 +815,86 @@ html[data-reduced-motion='on'] *::after {
   padding: var(--space-3) var(--space-4);
 }
 
-/* A escada: uma linha por conta, do 1 ao 10.
+/* A tabuada escrita, do 1 ao 10.
 
-   `--ladder-block` encolhe conforme a tabuada cresce (a do 10 tem 100 blocos
-   na ultima linha) e `--ladder-cols` quebra cada grupo em fileiras de ate 5,
-   para uma dezena virar um retangulo 5x2 em vez de uma fita que nao cabe. */
-.ladder {
+   Duas colunas de cinco no desktop, lidas de cima para baixo (1-5 na
+   esquerda, 6-10 na direita); uma coluna so no telefone. Sem blocos, o
+   numero pode crescer: e ele que a crianca leva para a missao. */
+.table-list {
   list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
+  display: grid;
+  grid-template-rows: repeat(5, auto);
+  grid-auto-flow: column;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-1) var(--space-8);
 }
 
-.ladder__row {
+.table-list__row {
   display: flex;
   align-items: center;
-  gap: var(--space-3);
-  padding: var(--space-1) var(--space-2);
-  border-radius: var(--radius-sm);
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border-bottom: 2px solid var(--border);
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  font-family: var(--font-display-stack);
+  font-size: var(--text-xl);
+  font-weight: 800;
+  /* Linha de uma linha so: a entrelinha de corpo de texto sobraria em cima e
+     embaixo, e sao esses pixels que decidem se as dez contas cabem na tela do
+     telefone sem rolar. */
+  line-height: 1.2;
+  font-variant-numeric: tabular-nums;
 }
 
 /* Conta que ainda escorrega: fundo Bee Yellow claro. Nunca so a cor - a
    linha tambem ganha o icone de "olho" na ponta. */
-.ladder__row--weak {
+.table-list__row--weak {
   background: #fff4d1;
 }
 
-.ladder__fact {
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
-  min-width: 62px;
+/* Larguras fixas alinham o "=" e a resposta em coluna, como no caderno. */
+.table-list__fact {
+  min-width: 6.5ch;
 }
 
-.ladder__blocks {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
-  flex: 1;
+.table-list__equals {
+  color: var(--meta);
 }
 
-.ladder__group {
-  display: grid;
-  grid-template-columns: repeat(var(--ladder-cols), var(--ladder-block));
-  gap: 2px;
-  padding: 2px;
-  border: 2px solid var(--border);
-  border-radius: 5px;
-  background: var(--bg);
-}
-
-.ladder__block {
-  width: var(--ladder-block);
-  height: var(--ladder-block);
-  border-radius: 2px;
-  background: var(--ladder-color);
-}
-
-.ladder__result {
-  font-family: var(--font-display-stack);
-  font-weight: 800;
-  font-size: var(--text-lg);
-  font-variant-numeric: tabular-nums;
+.table-list__result {
+  min-width: 3.5ch;
   text-align: right;
-  min-width: 42px;
 }
 
-.ladder__mark {
-  min-width: 24px;
-  text-align: center;
+.table-list__mark {
+  margin-left: auto;
+  font-size: var(--text-lg);
+  line-height: 1;
 }
 
-@media (max-width: 480px) {
+@media (max-width: 640px) {
+  .table-list {
+    grid-auto-flow: row;
+    grid-template-rows: none;
+    grid-template-columns: 1fr;
+    /* Em coluna unica quem separa as linhas e a propria borda de baixo; os
+       9 vaos custariam a decima linha. */
+    gap: 0;
+  }
+
+  /* Uma coluna de dez linhas so cabe na tela do telefone com a linha mais
+     baixa e as folgas em volta apertadas. O numero nao encolhe: e ele o
+     motivo da tela existir. */
+  .table-list__row {
+    padding: var(--space-1) var(--space-2);
+  }
+
+  .study__island {
+    margin-bottom: var(--space-2);
+  }
+
   .study__card {
     padding: var(--space-2);
-  }
-
-  .ladder__row {
-    gap: var(--space-2);
-    padding: 2px;
-  }
-
-  .ladder__fact {
-    min-width: 52px;
-    font-size: var(--text-sm);
-  }
-
-  /* No telefone os grupos da tabuada do 10 nao cabem em uma linha so:
-     quebram em duas fileiras dentro da propria linha. */
-  .ladder__blocks {
-    gap: 3px;
-  }
-
-  .ladder__result {
-    min-width: 32px;
-    font-size: var(--text-base);
-  }
-
-  .ladder__mark {
-    min-width: 18px;
-    font-size: var(--text-sm);
   }
 }
 
@@ -1277,7 +1257,7 @@ html[data-reduced-motion='on'] *::after {
 }
 
 .home__trophy-link {
-  font-size: var(--text-sm);
+  font-size: var(--text-base);
   text-decoration: underline;
 }
 
@@ -1372,7 +1352,7 @@ html[data-reduced-motion='on'] *::after {
 
 .island__table {
   color: var(--muted);
-  font-size: var(--text-sm);
+  font-size: var(--text-base);
 }
 
 .island__status {
@@ -1380,7 +1360,7 @@ html[data-reduced-motion='on'] *::after {
   align-items: center;
   gap: var(--space-1);
   font-family: var(--font-display-stack);
-  font-size: var(--text-xs);
+  font-size: var(--text-base);
   font-weight: 800;
   letter-spacing: 0.04em;
   text-transform: uppercase;
@@ -1410,7 +1390,7 @@ html[data-reduced-motion='on'] *::after {
 }
 
 .island__hint {
-  font-size: var(--text-xs);
+  font-size: var(--text-base);
   color: var(--muted);
 }
 
@@ -1468,7 +1448,7 @@ html[data-reduced-motion='on'] *::after {
   background: var(--warn);
   color: var(--fg);
   font-family: var(--font-display-stack);
-  font-size: var(--text-xs);
+  font-size: var(--text-sm);
   letter-spacing: 0.04em;
   text-transform: uppercase;
   padding: var(--space-1) var(--space-3);
@@ -1477,7 +1457,7 @@ html[data-reduced-motion='on'] *::after {
 }
 
 .level__counter {
-  font-size: var(--text-sm);
+  font-size: var(--text-base);
   color: var(--fg);
 }
 
@@ -1598,7 +1578,7 @@ html[data-reduced-motion='on'] *::after {
 
 .level__counter-small {
   color: var(--muted);
-  font-size: var(--text-sm);
+  font-size: var(--text-base);
   margin-bottom: var(--space-1);
 }
 
@@ -1757,7 +1737,7 @@ html[data-reduced-motion='on'] *::after {
 }
 
 .hint__count {
-  font-size: var(--text-sm);
+  font-size: var(--text-base);
   color: var(--muted);
   font-weight: 700;
 }
@@ -2032,7 +2012,7 @@ html[data-reduced-motion='on'] *::after {
 
 .result__stat dt {
   font-family: var(--font-display-stack);
-  font-size: var(--text-xs);
+  font-size: var(--text-sm);
   font-weight: 800;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -2186,7 +2166,7 @@ html[data-reduced-motion='on'] *::after {
 
 .island-complete__note {
   color: var(--muted);
-  font-size: var(--text-sm);
+  font-size: var(--text-base);
 }
 
 /* ---------------------------------------------------------------------- */
@@ -2269,7 +2249,7 @@ html[data-reduced-motion='on'] *::after {
 }
 
 .finale__island-name {
-  font-size: var(--text-xs);
+  font-size: var(--text-sm);
   font-weight: 700;
   line-height: var(--leading-tight);
 }
@@ -2297,7 +2277,7 @@ html[data-reduced-motion='on'] *::after {
 
 .diploma__holder {
   color: var(--muted);
-  font-size: var(--text-sm);
+  font-size: var(--text-base);
   margin-bottom: var(--space-4);
 }
 
@@ -2321,7 +2301,7 @@ html[data-reduced-motion='on'] *::after {
 
 .diploma__item dt {
   font-family: var(--font-display-stack);
-  font-size: var(--text-xs);
+  font-size: var(--text-sm);
   font-weight: 800;
   letter-spacing: 0.05em;
   text-transform: uppercase;
@@ -2353,7 +2333,7 @@ html[data-reduced-motion='on'] *::after {
 
 .diploma__victory-label {
   font-family: var(--font-display-stack);
-  font-size: var(--text-xs);
+  font-size: var(--text-sm);
   font-weight: 800;
   letter-spacing: 0.05em;
   text-transform: uppercase;
@@ -2367,12 +2347,12 @@ html[data-reduced-motion='on'] *::after {
 }
 
 .diploma__victory-note {
-  font-size: var(--text-sm);
+  font-size: var(--text-base);
   color: var(--fg);
 }
 
 .diploma__share {
-  font-size: var(--text-sm);
+  font-size: var(--text-base);
   color: var(--muted);
 }
 
@@ -2444,7 +2424,7 @@ html[data-reduced-motion='on'] *::after {
 }
 
 .challenge__note {
-  font-size: var(--text-sm);
+  font-size: var(--text-base);
   color: var(--muted);
   max-width: 380px;
 }
@@ -2477,7 +2457,7 @@ html[data-reduced-motion='on'] *::after {
 
 .challenge__score-item dt {
   font-family: var(--font-display-stack);
-  font-size: var(--text-xs);
+  font-size: var(--text-sm);
   font-weight: 800;
   letter-spacing: 0.05em;
   text-transform: uppercase;
@@ -2554,7 +2534,7 @@ html[data-reduced-motion='on'] *::after {
 }
 
 .achievement__description {
-  font-size: var(--text-sm);
+  font-size: var(--text-base);
   color: var(--muted);
 }
 
@@ -2588,7 +2568,7 @@ html[data-reduced-motion='on'] *::after {
 
 .stats__item dt {
   font-family: var(--font-display-stack);
-  font-size: var(--text-xs);
+  font-size: var(--text-sm);
   font-weight: 800;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -2624,7 +2604,7 @@ html[data-reduced-motion='on'] *::after {
   font-weight: 800;
   padding: var(--space-1) var(--space-4);
   border-radius: var(--radius-pill);
-  font-size: var(--text-sm);
+  font-size: var(--text-base);
 }
 
 /* ---------------------------------------------------------------------- */
@@ -2663,6 +2643,10 @@ html[data-reduced-motion='on'] *::after {
 @media (min-width: 720px) {
   .level__bar {
     padding: var(--space-4) var(--container-gutter-desktop);
+    /* A margem generosa do desktop e menor que a faixa do icone de som: sem o
+       max(), esta regra apagava a reserva do bloco base e o "0/5" da barra de
+       progresso ia parar debaixo do botao (mesma formula do .screen__header). */
+    padding-right: max(var(--container-gutter-desktop), var(--sound-toggle-safe));
   }
 
   .level__stage {

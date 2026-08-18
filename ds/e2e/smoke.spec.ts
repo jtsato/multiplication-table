@@ -45,15 +45,15 @@ test.describe("Slice 1 — Battle Shell", () => {
     await page.getByRole("button", { name: "Iniciar aventura" }).click();
 
     await expect(page.getByRole("heading", { level: 2, name: "Batalha" })).toBeVisible();
-    await expect(page.getByRole("progressbar", { name: "Vingador" })).toHaveAttribute(
+    await expect(page.getByRole("progressbar", { name: "Zangado" })).toHaveAttribute(
       "aria-valuenow",
       "20",
     );
     await expect(page.getByRole("progressbar", { name: "Guerreiro" })).toHaveAttribute(
       "aria-valuenow",
-      "30",
+      "3",
     );
-    await expect(page.getByRole("status")).toContainText("Um Vingador selvagem apareceu!");
+    await expect(page.getByRole("status")).toContainText("Um Zangado selvagem apareceu!");
     await expect(page.getByText("20 / 20")).toBeVisible();
 
     await expectNoSeriousViolations(page);
@@ -71,7 +71,7 @@ test.describe("Avatar e Mapas", () => {
     await expect(page.getByRole("heading", { level: 2, name: "Batalha" })).toBeVisible();
     await expect(page.getByRole("progressbar", { name: "Elfa" })).toHaveAttribute(
       "aria-valuemax",
-      "30",
+      "3",
     );
     await expect(page.locator(".battle-map-info")).toContainText("Mapa 1 de 9");
     await expect(page.locator(".map-background--meadow")).toBeVisible();
@@ -91,12 +91,17 @@ test.describe("Slice 2 — Math Attack", () => {
     return { a: Number(match[1]), b: Number(match[2]) };
   }
 
+  /** Espera a pergunta voltar a ficar interativa (após o feedback do turno). */
+  async function waitForInteractiveQuestion(page: import("@playwright/test").Page) {
+    await expect(page.locator(".alternative:not(:disabled)").first()).toBeVisible();
+  }
+
   test("acertar reduz o HP do vingador e avança para a próxima pergunta", async ({ page }) => {
     const { a, b } = await startBattle(page);
 
     await page.getByRole("button", { name: String(a * b) }).click();
 
-    await expect(page.getByRole("progressbar", { name: "Vingador" })).toHaveAttribute(
+    await expect(page.getByRole("progressbar", { name: "Zangado" })).toHaveAttribute(
       "aria-valuenow",
       "14",
     );
@@ -118,13 +123,13 @@ test.describe("Slice 2 — Math Attack", () => {
     await expect(page.getByRole("status")).toContainText("Quase");
     await expect(page.getByRole("status")).toContainText(`${a} × ${b} = ${a * b}`);
     await expect(page.getByRole("status")).toContainText("te acertou");
-    await expect(page.getByRole("progressbar", { name: "Vingador" })).toHaveAttribute(
+    await expect(page.getByRole("progressbar", { name: "Zangado" })).toHaveAttribute(
       "aria-valuenow",
       "20",
     );
     await expect(page.getByRole("progressbar", { name: "Guerreiro" })).toHaveAttribute(
       "aria-valuenow",
-      "25",
+      "2",
     );
   });
 
@@ -155,6 +160,7 @@ test.describe("Slice 2 — Math Attack", () => {
     await page.getByRole("button", { name: "Iniciar aventura" }).click();
 
     for (let i = 0; i < 3; i += 1) {
+      await waitForInteractiveQuestion(page);
       await expect(page.locator(".question")).toBeVisible();
       const text = (await page.locator(".question").innerText()) ?? "";
       const match = text.match(/(\d+)\s*×\s*(\d+)/);
@@ -163,17 +169,18 @@ test.describe("Slice 2 — Math Attack", () => {
     }
 
     await expect(page.getByText("Combo ×3")).toBeVisible();
-    await expect(page.getByRole("progressbar", { name: "Vingador" })).toHaveAttribute(
+    await expect(page.getByRole("progressbar", { name: "Zangado" })).toHaveAttribute(
       "aria-valuenow",
       "2",
     );
   });
 
-  test("golden path: três acertos, super ataque, vitória e jogar novamente", async ({ page }) => {
+  test("golden path: quatro acertos, XP, vitória e jogar novamente", async ({ page }) => {
     await page.goto("/");
     await page.getByRole("button", { name: "Iniciar aventura" }).click();
 
-    for (let i = 0; i < 3; i += 1) {
+    for (let i = 0; i < 4; i += 1) {
+      await waitForInteractiveQuestion(page);
       await expect(page.locator(".question")).toBeVisible();
       const text = (await page.locator(".question").innerText()) ?? "";
       const match = text.match(/(\d+)\s*×\s*(\d+)/);
@@ -181,65 +188,64 @@ test.describe("Slice 2 — Math Attack", () => {
       await page.getByRole("button", { name: String(Number(match[1]) * Number(match[2])) }).click();
     }
 
-    await expect(page.getByRole("button", { name: "Super Ataque" })).toBeVisible();
-    await page.getByRole("button", { name: "Super Ataque" }).click();
-
-    await expect(page.getByRole("progressbar", { name: "Vingador" })).toHaveAttribute(
+    await expect(page.getByRole("progressbar", { name: "Zangado" })).toHaveAttribute(
       "aria-valuenow",
       "0",
     );
     await expect(page.getByRole("heading", { level: 3, name: "Vitória!" })).toBeVisible();
-    await expect(page.getByText("Você derrotou o Vingador!")).toBeVisible();
+    await expect(page.getByText("Você derrotou o Zangado!")).toBeVisible();
+    await expect(page.getByText("XP da batalha: 70")).toBeVisible();
+    await expect(page.getByText("XP total: 70")).toBeVisible();
+    await expect(page.getByRole("button", { name: "Super Ataque" })).not.toBeVisible();
     await expectNoSeriousViolations(page);
 
     await page.getByRole("button", { name: "Jogar novamente" }).click();
 
-    // Progressão: o próximo combate é contra a tiamat.
-    await expect(page.getByRole("progressbar", { name: "Tiamat" })).toHaveAttribute(
+    // Progressão: o próximo combate é contra a Tita, a Dragãozinha.
+    await expect(page.getByRole("progressbar", { name: "Tita, a Dragãozinha" })).toHaveAttribute(
       "aria-valuenow",
       "26",
     );
     await expect(page.locator(".question")).toBeVisible();
   });
 
-  test("progressão: derrotar o vingador avança para tiamat no próximo combate", async ({
-    page,
-  }) => {
+  test("progressão: derrotar o Zangado avança para Tita no próximo combate", async ({ page }) => {
     await page.goto("/");
     await page.getByRole("button", { name: "Iniciar aventura" }).click();
 
-    for (let i = 0; i < 3; i += 1) {
+    for (let i = 0; i < 4; i += 1) {
+      await waitForInteractiveQuestion(page);
       await expect(page.locator(".question")).toBeVisible();
       const text = (await page.locator(".question").innerText()) ?? "";
       const match = text.match(/(\d+)\s*×\s*(\d+)/);
       if (!match) throw new Error(`pergunta inesperada: ${text}`);
       await page.getByRole("button", { name: String(Number(match[1]) * Number(match[2])) }).click();
     }
-    await page.getByRole("button", { name: "Super Ataque" }).click();
     await expect(page.getByRole("heading", { level: 3, name: "Vitória!" })).toBeVisible();
 
     await page.getByRole("button", { name: "Jogar novamente" }).click();
 
-    await expect(page.getByRole("progressbar", { name: "Tiamat" })).toHaveAttribute(
+    await expect(page.getByRole("progressbar", { name: "Tita, a Dragãozinha" })).toHaveAttribute(
       "aria-valuenow",
       "26",
     );
-    await expect(page.getByText(/Tiamat apareceu/)).toBeVisible();
+    await expect(page.getByText(/Tita, a Dragãozinha apareceu/)).toBeVisible();
 
     // O save persiste a progressão: reload continua no dragão.
     await page.reload();
-    await expect(page.getByRole("progressbar", { name: "Tiamat" })).toHaveAttribute(
+    await expect(page.getByRole("progressbar", { name: "Tita, a Dragãozinha" })).toHaveAttribute(
       "aria-valuenow",
       "26",
     );
     await expectNoSeriousViolations(page);
   });
 
-  test("seis erros derrotam o herói e mostram a tela de derrota", async ({ page }) => {
+  test("três erros derrotam o herói e mostram a tela de derrota", async ({ page }) => {
     await page.goto("/");
     await page.getByRole("button", { name: "Iniciar aventura" }).click();
 
-    for (let i = 0; i < 6; i += 1) {
+    for (let i = 0; i < 3; i += 1) {
+      await waitForInteractiveQuestion(page);
       await expect(page.locator(".question")).toBeVisible();
       const text = (await page.locator(".question").innerText()) ?? "";
       const match = text.match(/(\d+)\s*×\s*(\d+)/);
@@ -272,7 +278,7 @@ test.describe("Slice 7 — Save Game", () => {
     const match = text.match(/(\d+)\s*×\s*(\d+)/);
     if (!match) throw new Error(`pergunta inesperada: ${text}`);
     await page.getByRole("button", { name: String(Number(match[1]) * Number(match[2])) }).click();
-    await expect(page.getByRole("progressbar", { name: "Vingador" })).toHaveAttribute(
+    await expect(page.getByRole("progressbar", { name: "Zangado" })).toHaveAttribute(
       "aria-valuenow",
       "14",
     );
@@ -281,7 +287,7 @@ test.describe("Slice 7 — Save Game", () => {
 
     // Auto-resume: volta para a batalha com o estado salvo.
     await expect(page.getByRole("heading", { level: 2, name: "Batalha" })).toBeVisible();
-    await expect(page.getByRole("progressbar", { name: "Vingador" })).toHaveAttribute(
+    await expect(page.getByRole("progressbar", { name: "Zangado" })).toHaveAttribute(
       "aria-valuenow",
       "14",
     );

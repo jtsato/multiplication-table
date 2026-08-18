@@ -29,7 +29,7 @@ describe('IslandStudyScreen', () => {
 
     expect(screen.getByRole('heading', { name: 'Tabuada do 2' })).toBeVisible();
     expect(screen.getByText('0 de 4 missões')).toBeVisible();
-    expect(document.querySelectorAll('.ladder__row')).toHaveLength(10);
+    expect(document.querySelectorAll('.table-list__row')).toHaveLength(10);
   });
 
   it('leva para a proxima missao ainda nao concluida', async () => {

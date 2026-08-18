@@ -14,11 +14,18 @@ import { currentMapIndex, type Progress } from "../slices/progression/progressio
 interface MenuScreenProps {
   avatar: AvatarSelection;
   progress: Progress;
+  totalXp: number;
   onAvatarChange: (next: AvatarSelection) => void;
   onStart: () => void;
 }
 
-export function MenuScreen({ avatar, progress, onAvatarChange, onStart }: MenuScreenProps) {
+export function MenuScreen({
+  avatar,
+  progress,
+  totalXp,
+  onAvatarChange,
+  onStart,
+}: MenuScreenProps) {
   const { t } = useI18n();
   const spec = avatarSpec(avatar.classId);
   const mascot = mascotForAvatar(avatar.classId);
@@ -35,6 +42,7 @@ export function MenuScreen({ avatar, progress, onAvatarChange, onStart }: MenuSc
         <MascotAvatar mascotId={mascot} size={40} className="avatar-preview-mascot" />
         <p className="avatar-preview-name">{t(spec.nameKey)}</p>
         <p>{t("avatar.mascotLabel", { name: t(spec.mascotNameKey) })}</p>
+        <p className="menu-total-xp">{t("battle.totalXp", { xp: totalXp })}</p>
       </div>
 
       <fieldset className="avatar-fieldset">

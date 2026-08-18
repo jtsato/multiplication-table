@@ -18,6 +18,25 @@ test.describe('partida no celular', () => {
     expect(transbordou).toBe(false);
   });
 
+  test('a tabuada da ilha cabe inteira na tela do telefone', async ({ page }) => {
+    await concluirOnboarding(page);
+    await page.locator('button.island:not([disabled])').first().click();
+    await expect(page.getByRole('heading', { name: 'Tabuada do 2' })).toBeVisible();
+
+    const linhas = page.locator('.table-list__row');
+    await expect(linhas).toHaveCount(10);
+
+    // As dez linhas E o botao de jogar visiveis de uma vez: a crianca nao
+    // precisa rolar para descobrir que da para pular o estudo.
+    const ultima = await linhas.last().boundingBox();
+    const jogar = await page.getByRole('button', { name: /Jogar a missão/ }).boundingBox();
+    const altura = page.viewportSize()?.height ?? 0;
+    expect(ultima).not.toBeNull();
+    expect(jogar).not.toBeNull();
+    expect(ultima!.y + ultima!.height).toBeLessThanOrEqual(jogar!.y);
+    expect(jogar!.y + jogar!.height).toBeLessThanOrEqual(altura);
+  });
+
   test('a missao funciona no toque', async ({ page }) => {
     await concluirOnboarding(page);
     await entrarNaPrimeiraIlha(page);

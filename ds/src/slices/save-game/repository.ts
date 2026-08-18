@@ -7,7 +7,7 @@ import type { AvatarSelection } from "../avatar/avatar";
 import { DEFAULT_AVATAR_SELECTION, migrateAvatarSelection } from "../avatar/avatar";
 
 /** Versão atual do schema de save. Incrementar exige migração (migrateSave). */
-export const SAVE_VERSION = 2;
+export const SAVE_VERSION = 3;
 
 export interface GameSave {
   version: typeof SAVE_VERSION;
@@ -20,6 +20,8 @@ export interface GameSave {
   battle: BattleState | null;
   /** Histórico por fato para o reforço adaptativo. */
   facts: FactStats[];
+  /** XP total acumulado (base para desbloqueios futuros). */
+  totalXp: number;
 }
 
 export interface SaveRepository {
@@ -46,6 +48,15 @@ export function migrateFacts(raw: unknown): FactStats[] {
   });
 }
 
+/** Valida o XP total de um save; ausente vira 0 (migração). */
+export function migrateTotalXp(raw: unknown): number {
+  if (raw === undefined) return 0;
+  if (typeof raw !== "number" || !Number.isFinite(raw) || raw < 0) {
+    throw new Error("xp inválido");
+  }
+  return Math.floor(raw);
+}
+
 /**
  * Valida e migra um save bruto (ex.: de versões antigas) para o schema atual.
  * Campos novos recebem o padrão (migração); dados inválidos lançam erro.
@@ -61,14 +72,15 @@ export function migrateSave(raw: unknown): GameSave {
     progress?: unknown;
     battle?: unknown;
     facts?: unknown;
+    totalXp?: unknown;
   };
 
   if (candidate.locale !== "pt-BR" && candidate.locale !== "en-US") {
     throw new Error(`locale inválido: ${String(candidate.locale)}`);
   }
 
-  // v1 → v2: a progressão mudou para mapas por tabuada; o save antigo é
-  // migrado com avatar padrão e jornada reiniciada (batalha antiga descartada).
+  // v1 → v3: a progressão mudou para mapas por tabuada; o save antigo é
+  // migrado com avatar padrão, jornada reiniciada e XP zerado.
   if (candidate.version === 1) {
     return {
       version: SAVE_VERSION,
@@ -77,6 +89,28 @@ export function migrateSave(raw: unknown): GameSave {
       progress: initialProgress(),
       battle: null,
       facts: migrateFacts(candidate.facts),
+      totalXp: 0,
+    };
+  }
+
+  // v2 → v3: mantém avatar/progresso/batalha/fatos e adiciona XP zerado.
+  if (candidate.version === 2) {
+    // battle: null é válido (jogador no menu); `typeof null` é "object".
+    if (typeof candidate.battle !== "object") {
+      throw new Error("save inválido: batalha ausente");
+    }
+    return {
+      version: SAVE_VERSION,
+      locale: candidate.locale as LocaleCode,
+      avatar:
+        candidate.avatar === undefined
+          ? DEFAULT_AVATAR_SELECTION
+          : migrateAvatarSelection(candidate.avatar),
+      progress:
+        candidate.progress === undefined ? initialProgress() : migrateProgress(candidate.progress),
+      battle: candidate.battle as BattleState | null,
+      facts: migrateFacts(candidate.facts),
+      totalXp: 0,
     };
   }
 
@@ -100,5 +134,6 @@ export function migrateSave(raw: unknown): GameSave {
       candidate.progress === undefined ? initialProgress() : migrateProgress(candidate.progress),
     battle: candidate.battle as BattleState | null,
     facts: migrateFacts(candidate.facts),
+    totalXp: migrateTotalXp(candidate.totalXp),
   };
 }

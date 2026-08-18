@@ -60,8 +60,8 @@ describe("i18n", () => {
       expect(keys).toContain("battle.correct");
       expect(keys).toContain("battle.almost");
       expect(keys).toContain("battle.combo");
-      expect(keys).toContain("battle.super");
-      expect(keys).toContain("battle.superButton");
+      expect(keys).toContain("battle.xp");
+      expect(keys).toContain("battle.totalXp");
       expect(keys).toContain("battle.victory");
       expect(keys).toContain("battle.defeat");
       expect(keys).toContain("battle.playAgain");

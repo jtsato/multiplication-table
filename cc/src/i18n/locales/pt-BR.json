@@ -211,7 +211,7 @@
     }
   },
   "study": {
-    "hint": "Cada degrau da escada ganha mais {{table}} blocos.",
+    "hint": "Repare como o resultado sobe de {{table}} em {{table}}.",
     "play": "Jogar a missão {{order}}",
     "mastered": "Você já domina esta conta",
     "struggling": "Esta conta ainda escorrega"

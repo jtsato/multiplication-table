@@ -32,6 +32,11 @@ export function App() {
     const saved = saveRepository.load();
     return saved?.avatar ?? DEFAULT_AVATAR_SELECTION;
   });
+  // XP total acumulado persiste para desbloqueios futuros.
+  const [totalXp, setTotalXp] = useState<number>(() => {
+    const saved = saveRepository.load();
+    return saved?.totalXp ?? 0;
+  });
 
   function handleAvatarChange(next: AvatarSelection) {
     setAvatar(next);
@@ -43,6 +48,7 @@ export function App() {
       progress: saved?.progress ?? progress,
       battle: saved?.battle ?? null,
       facts: saved?.facts ?? [],
+      totalXp: saved?.totalXp ?? totalXp,
     });
   }
 
@@ -69,11 +75,18 @@ export function App() {
           <MenuScreen
             avatar={avatar}
             progress={progress}
+            totalXp={totalXp}
             onAvatarChange={handleAvatarChange}
             onStart={() => setScreen("battle")}
           />
         ) : (
-          <BattleScreen progress={progress} avatar={avatar} onProgressChange={setProgress} />
+          <BattleScreen
+            progress={progress}
+            avatar={avatar}
+            totalXp={totalXp}
+            onProgressChange={setProgress}
+            onTotalXpChange={setTotalXp}
+          />
         )}
       </main>
     </>

@@ -48,22 +48,17 @@ test.describe('partida no computador', () => {
 
     // Entrar na ilha passa pela tabuada enquanto a configuracao estiver ligada.
     await expect(page.getByRole('heading', { name: 'Tabuada do 2' })).toBeVisible();
-    await expect(page.locator('.ladder__row')).toHaveCount(10);
+    await expect(page.locator('.table-list__row')).toHaveCount(10);
 
-    // A ultima linha e a mais larga: se ela vazar, a escada nao serve.
-    const escada = page.locator('.ladder').first();
-    const vazamento = await escada.evaluate(
-      (node) =>
-        node.scrollWidth > node.clientWidth + 1 ||
-        document.documentElement.scrollWidth > window.innerWidth + 1,
+    // As dez linhas cabem sem rolagem lateral, em duas colunas de cinco.
+    const vazamento = await page.evaluate(
+      () => document.documentElement.scrollWidth > window.innerWidth + 1,
     );
     expect(vazamento).toBe(false);
 
-    // A estrela e o desenho contam a mesma coisa que o numero: 2 x 10 = 20.
-    const ultima = page.locator('.ladder__row').last();
+    const ultima = page.locator('.table-list__row').last();
     await expect(ultima).toContainText('2 × 10');
     await expect(ultima).toContainText('20');
-    await expect(ultima.locator('.ladder__block')).toHaveCount(20);
 
     await page.getByRole('button', { name: /Jogar a missão/ }).click();
     await expect(page.getByRole('button', { name: 'Começar' })).toBeVisible();
@@ -146,6 +141,22 @@ test.describe('partida no computador', () => {
     const cena = await page.locator('.level__stage .scene').boundingBox();
     expect(cena).not.toBeNull();
     expect(cena!.width / cena!.height).toBeCloseTo(5 / 3, 1);
+  });
+
+  /**
+   * A regra responsiva de >=720px reescrevia o `padding` inteiro da barra e
+   * apagava a faixa reservada ao icone de som: o "0/5" da barra de progresso
+   * ficava debaixo do botao, legivel so por acidente de cor.
+   */
+  test('o contador da barra de progresso nao fica sob o icone de som', async ({ page }) => {
+    await concluirOnboarding(page);
+    await entrarNaPrimeiraIlha(page);
+
+    const contador = await page.locator('.progress__header > :last-child').boundingBox();
+    const som = await page.locator('.sound-toggle').boundingBox();
+    expect(contador).not.toBeNull();
+    expect(som).not.toBeNull();
+    expect(contador!.x + contador!.width).toBeLessThanOrEqual(som!.x);
   });
 
   test('sair da missao pede confirmacao e devolve ao mapa', async ({ page }) => {

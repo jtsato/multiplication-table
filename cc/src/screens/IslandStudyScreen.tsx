@@ -6,7 +6,7 @@ import { useTranslation } from '../i18n/I18nProvider';
 import { IslandBadge } from '../art/IslandBadge';
 import { Button } from '../ui/Button';
 import { ScreenLayout } from '../ui/ScreenLayout';
-import { TableLadder } from '../ui/TableLadder';
+import { TableList } from '../ui/TableList';
 
 interface IslandStudyScreenProps {
   state: GameState;
@@ -61,7 +61,7 @@ export function IslandStudyScreen({ state, table, onPlay, onBack }: IslandStudyS
       </div>
 
       <div className="study__card">
-        <TableLadder table={table} color={island.palette.block} stats={state.statistics.facts} />
+        <TableList table={table} stats={state.statistics.facts} />
       </div>
     </ScreenLayout>
   );

@@ -2,9 +2,10 @@ import type { BattleAction, BattleState, MonsterSpec } from "./battle.types";
 import { HERO_BASE_DAMAGE, playerAttackDamage } from "../player-attack/player-attack";
 import { monsterAttackDamage, takeMonsterTurn } from "../monster-turn/monster-turn";
 import { nextCombo } from "../combo/combo";
-import { canUseSuper, superAttackDamage } from "../super-attack/super-attack";
+import { xpMultiplier, xpReward } from "../xp/xp";
 
-export const HERO_MAX_HP = 30;
+/** Tolerância a erros do herói: 3 erros = derrota (escudos futuros podem aumentar). */
+export const HERO_MAX_HP = 3;
 
 /** Estado inicial de uma batalha contra o monstro dado. */
 export function createBattle(monster: MonsterSpec): BattleState {
@@ -15,7 +16,7 @@ export function createBattle(monster: MonsterSpec): BattleState {
     question: null,
     alternatives: [],
     combo: 0,
-    superReady: false,
+    xp: 0,
     log: [],
   };
 }
@@ -38,13 +39,20 @@ export function battleReducer(state: BattleState, action: BattleAction): BattleS
         const damage = playerAttackDamage(HERO_BASE_DAMAGE);
         const hp = Math.max(0, Math.min(state.monster.maxHp, state.monster.hp - damage));
         const combo = nextCombo(state.combo, true);
+        const xp = xpReward(combo);
         return {
           ...state,
           monster: { ...state.monster, hp },
           combo,
-          superReady: canUseSuper(combo),
+          xp: state.xp + xp,
           phase: hp === 0 ? "victory" : "hero-turn",
-          log: [...state.log, { key: "battle.correct", params: { damage } }],
+          log: [
+            ...state.log,
+            {
+              key: "battle.correct",
+              params: { damage, xp, multiplier: xpMultiplier(combo) },
+            },
+          ],
         };
       }
       const damage = monsterAttackDamage(state.monster.damage);
@@ -53,7 +61,6 @@ export function battleReducer(state: BattleState, action: BattleAction): BattleS
         ...state,
         hero: { ...state.hero, hp: heroHp },
         combo: 0, // erro sempre zera a sequência
-        superReady: false, // erro sempre remove o super ataque
         phase: heroHp === 0 ? "defeat" : "monster-turn",
         log: [
           ...state.log,
@@ -62,19 +69,6 @@ export function battleReducer(state: BattleState, action: BattleAction): BattleS
             params: { a: question.a, b: question.b, answer: question.answer, damage },
           },
         ],
-      };
-    }
-    case "USE_SUPER_ATTACK": {
-      if (!state.superReady || state.phase !== "question") return state;
-      const damage = superAttackDamage(HERO_BASE_DAMAGE, state.combo);
-      const hp = Math.max(0, Math.min(state.monster.maxHp, state.monster.hp - damage));
-      return {
-        ...state,
-        monster: { ...state.monster, hp },
-        combo: 0, // o super consome toda a sequência
-        superReady: false,
-        phase: hp === 0 ? "victory" : "hero-turn",
-        log: [...state.log, { key: "battle.super", params: { damage } }],
       };
     }
     default:

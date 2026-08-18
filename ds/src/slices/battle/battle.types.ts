@@ -37,8 +37,8 @@ export interface BattleState {
   alternatives: number[];
   /** Acertos consecutivos do jogador. */
   combo: number;
-  /** Combo >= 3 habilita o Super Ataque (Slice 5). */
-  superReady: boolean;
+  /** XP acumulado nesta batalha (multiplicado pelo combo). */
+  xp: number;
   /** Mensagens da batalha (chaves i18n + parâmetros). */
   log: BattleLogEntry[];
 }
@@ -46,5 +46,4 @@ export interface BattleState {
 export type BattleAction =
   | { type: "START_BATTLE"; monster: MonsterSpec }
   | { type: "BEGIN_QUESTION"; question: MultiplicationFact; alternatives: number[] }
-  | { type: "ANSWER"; value: number }
-  | { type: "USE_SUPER_ATTACK" };
+  | { type: "ANSWER"; value: number };

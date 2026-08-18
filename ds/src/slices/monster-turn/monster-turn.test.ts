@@ -13,16 +13,20 @@ describe("monsterAttackDamage", () => {
 });
 
 describe("takeMonsterTurn", () => {
-  it("reduz o HP do herói pelo dano do monstro", () => {
-    expect(takeMonsterTurn(30, AVENGER)).toBe(30 - AVENGER.damage);
+  it("cada erro custa 1 ponto de tolerância", () => {
+    expect(takeMonsterTurn(3, AVENGER)).toBe(2);
+    expect(takeMonsterTurn(2, AVENGER)).toBe(1);
+  });
+
+  it("o terceiro erro zera o HP do herói", () => {
+    expect(takeMonsterTurn(1, AVENGER)).toBe(0);
   });
 
   it("nunca deixa o HP do herói abaixo de 0", () => {
-    expect(takeMonsterTurn(3, AVENGER)).toBe(0);
     expect(takeMonsterTurn(0, AVENGER)).toBe(0);
   });
 
-  it("o slime tem dano base fixado", () => {
+  it("o dano do monstro continua existindo para o feedback", () => {
     expect(AVENGER.damage).toBe(5);
   });
 });

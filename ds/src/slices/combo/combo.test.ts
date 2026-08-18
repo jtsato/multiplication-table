@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { SUPER_ATTACK_COMBO, nextCombo } from "./combo";
+import { nextCombo } from "./combo";
 
 describe("nextCombo", () => {
   it("incrementa o combo em um acerto", () => {
@@ -10,9 +10,5 @@ describe("nextCombo", () => {
   it("zera o combo em um erro", () => {
     expect(nextCombo(5, false)).toBe(0);
     expect(nextCombo(0, false)).toBe(0);
-  });
-
-  it("o super ataque exige 3 acertos consecutivos", () => {
-    expect(SUPER_ATTACK_COMBO).toBe(3);
   });
 });

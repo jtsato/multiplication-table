@@ -112,8 +112,7 @@ export type AppStrings = {
   productPrice: string;
   available: string;
   buyFor: string;
-  purchaseReady: string;
-  purchaseNeedsMore: (missingText: string) => string;
+  purchaseUnavailable: (missingText: string, productName: string) => string;
   decor: string;
   decorDescription: string;
   inCollection: string;
@@ -227,8 +226,7 @@ const ptBR: AppStrings = {
   productPrice: "Preço de venda",
   available: "Disponível",
   buyFor: "Comprar por",
-  purchaseReady: "Pode comprar",
-  purchaseNeedsMore: (missingText) => `Falta ${missingText}`,
+  purchaseUnavailable: (missingText, productName) => `Saldo insuficiente. Faltam ${missingText} para comprar ${productName}.`,
   decor: "Decorações",
   decorDescription: "Uma mudança visual para a loja.",
   inCollection: "Na coleção",
@@ -345,8 +343,7 @@ const enUS: AppStrings = {
   productPrice: "Sale price",
   available: "Available",
   buyFor: "Buy for",
-  purchaseReady: "Can buy",
-  purchaseNeedsMore: (missingText) => `Need ${missingText} more`,
+  purchaseUnavailable: (missingText, productName) => `Not enough money. You need ${missingText} more to buy ${productName}.`,
   decor: "Decorations",
   decorDescription: "A new visual touch for the shop.",
   inCollection: "In collection",

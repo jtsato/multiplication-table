@@ -50,29 +50,30 @@ describe("App", () => {
     await user.click(screen.getByRole("button", { name: "Iniciar aventura" }));
 
     expect(screen.getByRole("heading", { level: 2, name: "Batalha" })).toBeInTheDocument();
-    expect(screen.getByRole("progressbar", { name: "Vingador" })).toHaveAttribute(
+    expect(screen.getByRole("progressbar", { name: "Zangado" })).toHaveAttribute(
       "aria-valuenow",
       "20",
     );
-    expect(screen.getByRole("status")).toHaveTextContent("Um Vingador selvagem apareceu!");
+    expect(screen.getByRole("status")).toHaveTextContent("Um Zangado selvagem apareceu!");
   });
 
   it("retoma a batalha salva ao abrir o aplicativo", () => {
     window.localStorage.setItem(
       "batalha-da-tabuada.save",
       JSON.stringify({
-        version: 2,
+        version: 3,
         locale: "pt-BR",
         avatar: { classId: "fighter", colorId: "crimson" },
         progress: { stage: 0 },
+        totalXp: 50,
         battle: {
           phase: "question",
-          hero: { nameKey: "battle.hero", maxHp: 30, hp: 30 },
-          monster: { nameKey: "monster.avenger", maxHp: 14, hp: 8, id: "avenger", damage: 3 },
+          hero: { nameKey: "battle.hero", maxHp: 3, hp: 3 },
+          monster: { nameKey: "monster.avenger", maxHp: 20, hp: 8, id: "avenger", damage: 5 },
           question: { a: 6, b: 4, answer: 24 },
           alternatives: [24, 23, 25, 18],
-          combo: 0,
-          superReady: false,
+          combo: 1,
+          xp: 10,
           log: [],
         },
       }),
@@ -82,7 +83,7 @@ describe("App", () => {
 
     expect(screen.getByRole("heading", { level: 2, name: "Batalha" })).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "Iniciar aventura" })).not.toBeInTheDocument();
-    expect(screen.getByRole("progressbar", { name: "Vingador" })).toHaveAttribute(
+    expect(screen.getByRole("progressbar", { name: "Zangado" })).toHaveAttribute(
       "aria-valuenow",
       "8",
     );

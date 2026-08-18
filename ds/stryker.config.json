@@ -12,7 +12,7 @@
     "src/slices/player-attack/player-attack.ts",
     "src/slices/monster-turn/monster-turn.ts",
     "src/slices/combo/combo.ts",
-    "src/slices/super-attack/super-attack.ts",
+    "src/slices/xp/xp.ts",
     "src/slices/save-game/repository.ts",
     "src/slices/save-game/local-storage.repository.ts",
     "src/slices/progression/progression.ts",

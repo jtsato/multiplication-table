@@ -262,17 +262,13 @@ button:hover {
   font-weight: 600;
 }
 
-.super-button {
-  margin-top: 1rem;
-  background: var(--color-highlight);
-  color: var(--color-on-highlight);
-  border-color: var(--color-highlight);
-  font-size: 1.125rem;
-  font-weight: 700;
+.alternative:disabled {
+  opacity: 0.55;
+  cursor: default;
 }
 
-.super-button:hover {
-  background: #e6b800;
+.question-panel--locked {
+  opacity: 0.6;
 }
 
 .battle-end {
@@ -501,4 +497,24 @@ button:hover {
 
 .mascot-in-battle {
   margin-left: -0.75rem;
+}
+
+/* --- XP / progressão --- */
+.xp-display {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.xp-battle,
+.xp-total,
+.menu-total-xp {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-weight: 600;
+}
+
+.xp-battle {
+  color: var(--color-highlight);
 }

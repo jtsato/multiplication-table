@@ -56,11 +56,11 @@
     "intro": "A wild {{monster}} appeared!",
     "hero": "Hero",
     "hp": "{{hp}} / {{maxHp}}",
-    "correct": "Correct! The {{monster}} took {{damage}} damage.",
+    "correct": "Correct! +{{xp}} XP (×{{multiplier}}) — the {{monster}} took {{damage}} damage.",
     "almost": "Almost! {{a}} × {{b}} = {{answer}} — the {{monster}} hit you for {{damage}} damage.",
     "combo": "Combo ×{{combo}}",
-    "super": "Super Attack! The {{monster}} took {{damage}} damage.",
-    "superButton": "Super Attack",
+    "xp": "Battle XP: {{xp}}",
+    "totalXp": "Total XP: {{xp}}",
     "victory": "Victory!",
     "victoryMessage": "You defeated the {{monster}}!",
     "defeat": "Defeat!",
@@ -78,15 +78,15 @@
     "alternatives": "Alternatives"
   },
   "monster": {
-    "avenger": "The Avenger",
-    "tiamat": "Tiamat",
-    "shadowDemon": "Shadow Demon",
-    "decay": "Decay",
-    "keleog": "Keleog",
-    "darkling": "Darkling",
-    "lizardmen": "Lizardmen",
-    "bullywugs": "Bullywugs",
-    "warduke": "Warduke",
-    "beholder": "The Beholder"
+    "avenger": "Grumpy",
+    "tiamat": "Tita the Little Dragon",
+    "shadowDemon": "Smoky Shadow",
+    "decay": "Moldy",
+    "keleog": "Chuckles",
+    "darkling": "Foggy",
+    "lizardmen": "Lizardy",
+    "bullywugs": "Hopping Toad",
+    "warduke": "Grouchy Duke",
+    "beholder": "Big Eye"
   }
 }

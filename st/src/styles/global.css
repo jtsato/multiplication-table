@@ -51,6 +51,17 @@ button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible
 .skip-link:focus {
   top: 16px;
 }
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
 
 .app-shell {
   min-height: 100vh;
@@ -470,22 +481,9 @@ fieldset {
 .product-card h2 { font-size: 1.2rem; }
 .product-card p { color: var(--muted); }
 .product-card strong { color: var(--secondary); }
-.purchase-state {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  width: 100%;
-  min-height: 34px;
-  margin: 8px 0 12px;
-  padding: 6px 10px;
-  border: 2px solid var(--line);
-  border-radius: 999px;
-  font-weight: 900;
-}
-.purchase-state--can { background: var(--mint); border-color: var(--success); }
-.purchase-state--cannot { background: var(--pink); border-color: var(--danger); }
 .product-card button:disabled { cursor: not-allowed; opacity: 0.6; filter: saturate(0.65); }
+.purchase-button--available { background: var(--mint); border-color: var(--success); }
+.purchase-button--unavailable { cursor: not-allowed; background: var(--pink); border-color: var(--danger); }
 .product-icon {
   display: grid;
   place-items: center;

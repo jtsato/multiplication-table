@@ -28,6 +28,7 @@ import {
 } from "../adaptive-review/adaptive-review";
 import { saveRepository } from "../save-game/local-storage.repository";
 import { SAVE_VERSION } from "../save-game/repository";
+import { xpReward } from "../xp/xp";
 import {
   DEFAULT_AVATAR_SELECTION,
   avatarSpec,
@@ -85,9 +86,13 @@ export function BattleEndPanel({
   const headingRef = useRef<HTMLHeadingElement>(null);
   const victory = phase === "victory";
 
-  // Fim de batalha é uma "tela nova": o título recebe o foco.
+  // Fim de batalha é uma "tela nova": o título recebe o foco e o painel
+  // entra na área visível (evita que a vitória/derrota fique fora da tela).
   useEffect(() => {
-    headingRef.current?.focus();
+    headingRef.current?.focus({ preventScroll: true });
+    if (typeof headingRef.current?.scrollIntoView === "function") {
+      headingRef.current.scrollIntoView({ block: "center" });
+    }
   }, []);
 
   const messageKey = victory
@@ -113,12 +118,17 @@ export function BattleScreen({
   rng = Math.random,
   progress = initialProgress(),
   avatar = DEFAULT_AVATAR_SELECTION,
+  totalXp = 0,
   onProgressChange = () => {},
+  onTotalXpChange = () => {},
 }: {
   rng?: Rng;
   progress?: Progress;
   avatar?: AvatarSelection;
+  /** XP total persistido (base para desbloqueios futuros). */
+  totalXp?: number;
   onProgressChange?: (progress: Progress) => void;
+  onTotalXpChange?: (totalXp: number) => void;
 }) {
   const { t, locale } = useI18n();
   const map = currentMap(progress);
@@ -140,10 +150,18 @@ export function BattleScreen({
   const headingRef = useRef<HTMLHeadingElement>(null);
   const alternativesRef = useRef<HTMLDivElement>(null);
 
-  // Auto-save: qualquer mudança na batalha/progresso/fatos/avatar persiste.
+  // Auto-save: qualquer mudança na batalha/progresso/fatos/avatar/XP persiste.
   useEffect(() => {
-    saveRepository.save({ version: SAVE_VERSION, locale, avatar, battle, progress, facts });
-  }, [battle, locale, avatar, progress, facts]);
+    saveRepository.save({
+      version: SAVE_VERSION,
+      locale,
+      avatar,
+      battle,
+      progress,
+      facts,
+      totalXp,
+    });
+  }, [battle, locale, avatar, progress, facts, totalXp]);
 
   // Geração ponderada: reforça erros e fatos esquecidos (regra 12 da estratégia).
   // O mapa define a tabuada; no chefão só entram ?x6 a ?x9.
@@ -163,11 +181,15 @@ export function BattleScreen({
   }, [table, facts, rng, boss]);
 
   // Registra o desfecho da resposta no histórico do fato (reforço adaptativo).
+  // Acertos também acumulam XP total (multiplicado pelo combo).
   const handleAnswer = useCallback(
     (value: number) => {
       if (battle.question) {
         const { a, b } = battle.question;
         const correct = value === battle.question.answer;
+        if (correct) {
+          onTotalXpChange(totalXp + xpReward(battle.combo + 1));
+        }
         setFacts((prev) => {
           const atual = prev.find((f) => f.a === a && f.b === b);
           return atual ? upsertFact(prev, recordAnswer(atual, correct)) : prev;
@@ -175,7 +197,7 @@ export function BattleScreen({
       }
       dispatch({ type: "ANSWER", value });
     },
-    [battle.question, dispatch],
+    [battle.question, battle.combo, totalXp, onTotalXpChange, dispatch],
   );
 
   // Gerenciamento de foco: ao entrar na batalha (intro), o título recebe o foco.
@@ -209,9 +231,10 @@ export function BattleScreen({
   }, [battle.phase, battle.alternatives, handleAnswer]);
 
   // Após responder, a próxima pergunta devolve o foco à primeira alternativa.
+  // `preventScroll` evita o "pulo" de rolagem que parece recarregar a tela.
   useEffect(() => {
     if (battle.phase === "question" && battle.log.length > 0) {
-      alternativesRef.current?.querySelector("button")?.focus();
+      alternativesRef.current?.querySelector("button")?.focus({ preventScroll: true });
     }
   }, [battle.phase, battle.log.length]);
 
@@ -258,6 +281,10 @@ export function BattleScreen({
         {statusText}
       </p>
       {battle.combo > 0 && <p className="combo">{t("battle.combo", { combo: battle.combo })}</p>}
+      <div className="xp-display">
+        <p className="xp-battle">{t("battle.xp", { xp: battle.xp })}</p>
+        <p className="xp-total">{t("battle.totalXp", { xp: totalXp })}</p>
+      </div>
       <div className="battlefield">
         <BattleUnit
           combatant={battle.hero}
@@ -293,40 +320,38 @@ export function BattleScreen({
           }
         />
       </div>
-      {battle.phase === "question" && battle.question && (
-        <div className="question-panel">
-          <p className="question" aria-live="polite">
-            {t("math.question", { a: battle.question.a, b: battle.question.b })}
-          </p>
+      {(battle.phase === "question" ||
+        battle.phase === "hero-turn" ||
+        battle.phase === "monster-turn") &&
+        battle.question && (
           <div
-            ref={alternativesRef}
-            role="group"
-            aria-label={t("math.alternatives")}
-            className="alternatives"
+            className={`question-panel ${battle.phase !== "question" ? "question-panel--locked" : ""}`}
+            aria-hidden={battle.phase !== "question"}
           >
-            {battle.alternatives.map((alt, index) => (
-              <button
-                key={alt}
-                type="button"
-                className="alternative"
-                aria-keyshortcuts={String(index + 1)}
-                onClick={() => handleAnswer(alt)}
-              >
-                {alt}
-              </button>
-            ))}
-          </div>
-          {battle.superReady && (
-            <button
-              type="button"
-              className="super-button"
-              onClick={() => dispatch({ type: "USE_SUPER_ATTACK" })}
+            <p className="question" aria-live="polite">
+              {t("math.question", { a: battle.question.a, b: battle.question.b })}
+            </p>
+            <div
+              ref={alternativesRef}
+              role="group"
+              aria-label={t("math.alternatives")}
+              className="alternatives"
             >
-              {t("battle.superButton")}
-            </button>
-          )}
-        </div>
-      )}
+              {battle.alternatives.map((alt, index) => (
+                <button
+                  key={alt}
+                  type="button"
+                  className="alternative"
+                  aria-keyshortcuts={String(index + 1)}
+                  disabled={battle.phase !== "question"}
+                  onClick={() => handleAnswer(alt)}
+                >
+                  {alt}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
       {(battle.phase === "victory" || battle.phase === "defeat") && (
         <BattleEndPanel
           phase={battle.phase}

@@ -262,10 +262,15 @@ test("signals which shop purchases fit the available cash", async ({ page }) => 
   await page.getByRole("button", { name: "Novos produtos" }).click();
   await expect(page.getByRole("heading", { name: "Novos produtos para a loja" })).toBeVisible();
 
-  await expect(page.locator(".purchase-state--can")).toHaveCount(5);
-  const unavailableCard = page.locator(".product-card").filter({ hasText: "Falta R$ 30" });
+  await expect(page.locator(".purchase-state")).toHaveCount(0);
+  const unavailableCard = page.locator(".product-card").filter({ has: page.locator(".purchase-button--unavailable") });
   await expect(unavailableCard).toHaveCount(1);
-  await expect(unavailableCard.getByRole("button")).toBeDisabled();
+  const unavailableButton = unavailableCard.getByRole("button");
+  await expect(unavailableButton).toHaveAttribute("aria-disabled", "true");
+  await expect(unavailableButton).toHaveClass(/purchase-button--unavailable/);
+  await expect(unavailableButton).toHaveAttribute("aria-describedby", /purchase-hint/);
+  await unavailableButton.click({ force: true });
+  await expect(page.getByRole("status")).toContainText("Ainda não dá para comprar");
 });
 
 test("uses a visual child-friendly button for returning to the shop", async ({ page }) => {

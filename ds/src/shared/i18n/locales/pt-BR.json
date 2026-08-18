@@ -56,11 +56,11 @@
     "intro": "Um {{monster}} selvagem apareceu!",
     "hero": "Herói",
     "hp": "{{hp}} / {{maxHp}}",
-    "correct": "Correto! O {{monster}} sofreu {{damage}} de dano.",
+    "correct": "Correto! +{{xp}} XP (×{{multiplier}}) — o {{monster}} sofreu {{damage}} de dano.",
     "almost": "Quase! {{a}} × {{b}} = {{answer}} — o {{monster}} te acertou com {{damage}} de dano.",
     "combo": "Combo ×{{combo}}",
-    "super": "Super Ataque! O {{monster}} sofreu {{damage}} de dano.",
-    "superButton": "Super Ataque",
+    "xp": "XP da batalha: {{xp}}",
+    "totalXp": "XP total: {{xp}}",
     "victory": "Vitória!",
     "victoryMessage": "Você derrotou o {{monster}}!",
     "defeat": "Derrota!",
@@ -78,15 +78,15 @@
     "alternatives": "Alternativas"
   },
   "monster": {
-    "avenger": "Vingador",
-    "tiamat": "Tiamat",
-    "shadowDemon": "Demônio das Sombras",
-    "decay": "Decay",
-    "keleog": "Keleog",
-    "darkling": "Darkling",
-    "lizardmen": "Lizardmen",
-    "bullywugs": "Bullywugs",
-    "warduke": "Warduke",
-    "beholder": "Criatura Observadora"
+    "avenger": "Zangado",
+    "tiamat": "Tita, a Dragãozinha",
+    "shadowDemon": "Sombra Fumaça",
+    "decay": "Bolorzinho",
+    "keleog": "Gargalhota",
+    "darkling": "Nebulito",
+    "lizardmen": "Lagartixo",
+    "bullywugs": "Sapão Pulador",
+    "warduke": "Duque Durão",
+    "beholder": "Olhudo"
   }
 }
