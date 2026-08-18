@@ -1,10 +1,11 @@
-import { Suspense, lazy } from 'react';
+import { Suspense, lazy, useEffect } from 'react';
 import { DaySummary } from './DaySummary';
 import { Hud } from './Hud';
 import { TouchControls } from './TouchControls';
 import { useIsTouchDevice, useKeyboardBindings } from '../shared/input';
 import { AvatarPanel } from '../slices/avatar';
 import { BedPanel, WallChart } from '../slices/home';
+import { loadGame, startAutoSave } from '../slices/save';
 import { ShopPanel } from '../slices/economy';
 import { ChallengePanel } from '../slices/math';
 import './loading.css';
@@ -47,6 +48,18 @@ export function App() {
   // Ponte teclado -> acao, montada uma unica vez. As slices escutam a acao, nao
   // a tecla, entao o toque aciona exatamente o mesmo caminho.
   useKeyboardBindings();
+
+  /**
+   * Carrega o progresso e liga a gravacao automatica.
+   *
+   * Antes do canvas de proposito: o mundo se monta com as moedas, os itens e a
+   * aparencia ja no lugar, sem a crianca ver o personagem trocar de roupa
+   * sozinho um segundo depois de entrar.
+   */
+  useEffect(() => {
+    loadGame();
+    return startAutoSave();
+  }, []);
 
   return (
     <>
