@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { useThree } from '@react-three/fiber';
 import { beforeEach, describe, expect, it } from 'vitest';
 import type { Camera } from 'three';
-import { renderScene } from '../../test/sceneHarness';
+import { advanceUntil, renderScene } from '../../test/sceneHarness';
 import { PlayerView } from './PlayerView';
 import { followCameraTarget } from './player.logic';
 import { playerTransform, resetPlayerTransform } from './playerTransform';
@@ -36,7 +36,11 @@ describe('PlayerView', () => {
 
   it('publica a posicao do corpo em playerTransform a cada quadro', async () => {
     const renderer = await renderScene(<PlayerView />);
-    await renderer.advanceFrames(2, 1 / 60);
+    // Espera o corpo do Rapier existir, em vez de apostar em dois quadros: o
+    // `useFrame` sai cedo enquanto `bodyRef` esta vazio, e a posicao ficaria no
+    // zero do `resetPlayerTransform`. Era assim que este teste falhava no CI e
+    // passava aqui.
+    await advanceUntil(renderer, () => playerTransform.y !== 0);
 
     // Spawn definido em PlayerView: [0, 2, 0].
     expect(playerTransform.y).toBeCloseTo(2, 1);
@@ -60,6 +64,9 @@ describe('PlayerView', () => {
       </>,
     );
 
+    // O alvo da camera e derivado de `playerTransform`, entao o corpo precisa
+    // existir antes de a convergencia comecar a valer.
+    await advanceUntil(renderer, () => playerTransform.y !== 0);
     // Suavizacao exponencial: tres segundos de quadros levam a camera ao alvo.
     await renderer.advanceFrames(180, 1 / 60);
 
