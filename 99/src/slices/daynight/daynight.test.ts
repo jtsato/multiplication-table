@@ -5,7 +5,6 @@ import {
   advanceClock,
   cyclePosition,
   dayNumber,
-  isDangerous,
   mixHex,
   phaseFor,
   phaseProgress,
@@ -234,11 +233,33 @@ describe('skyConfigFor', () => {
   });
 });
 
-describe('isDangerous', () => {
-  it('so a noite traz inimigos', () => {
-    expect(isDangerous('noite')).toBe(true);
-    expect(isDangerous('dia')).toBe(false);
-    expect(isDangerous('entardecer')).toBe(false);
-    expect(isDangerous('amanhecer')).toBe(false);
+describe('proporcao das fases', () => {
+  const duracao = (fase: DayPhase) =>
+    (PHASE_BOUNDS[fase].end - PHASE_BOUNDS[fase].start) * CICLO;
+
+  it('a noite dura menos de um quarto do dia', () => {
+    expect(duracao('noite')).toBeLessThan(duracao('dia') / 4);
+  });
+
+  it('a noite cabe em menos de um minuto', () => {
+    expect(duracao('noite')).toBeLessThanOrEqual(50);
+  });
+
+  it('o dia continua sendo a maior parte do ciclo', () => {
+    expect(duracao('dia')).toBeGreaterThan(CICLO / 2);
+  });
+});
+
+describe('luar', () => {
+  it('e claro o bastante para andar sem lanterna', () => {
+    const noite = skyConfigFor(PHASE_BOUNDS.noite.end - 0.001);
+    expect(noite.ambientIntensity).toBeGreaterThanOrEqual(0.6);
+    expect(noite.sunIntensity).toBeGreaterThanOrEqual(0.75);
+  });
+
+  it('ainda e nitidamente mais escuro que o dia', () => {
+    const dia = skyConfigFor(PHASE_BOUNDS.dia.start + 0.1);
+    const noite = skyConfigFor(PHASE_BOUNDS.noite.end - 0.001);
+    expect(noite.ambientIntensity).toBeLessThan(dia.ambientIntensity * 0.7);
   });
 });

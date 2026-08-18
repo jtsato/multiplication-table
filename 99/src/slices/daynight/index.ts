@@ -5,7 +5,6 @@ export {
   DAYNIGHT,
   PHASE_LABELS,
   cyclePosition,
-  isDangerous,
   phaseFor,
   skyConfigFor,
   type DayPhase,

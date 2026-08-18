@@ -18,18 +18,26 @@ export const DAYNIGHT = {
 /**
  * Fronteiras das fases, como fracao do ciclo (0 a 1).
  *
- * O dia ocupa 60% do ciclo — 3 minutos dos 5. E nele que a crianca resolve
- * contas e constroi, e essa parte nao pode ser corrida. O entardecer e um aviso
- * generoso de 30 s antes do perigo, e a noite dura 66 s: tempo de sentir tensao
- * sem virar castigo.
- *
  * Em segundos, com o ciclo de 300 s:
- * dia 180 · entardecer 30 · noite 66 · amanhecer 24
+ * dia 204 · entardecer 24 · noite 48 · amanhecer 24
+ *
+ * A repartição anterior era 180/30/66/24 e servia a outro jogo. Ali a noite era
+ * a prova a ser vencida, e por isso durava: 66 s de perseguicao era o tempo de
+ * sentir tensao sem virar castigo. Sem inimigos, esse tempo nao compra mais
+ * nada — vira espera no escuro.
+ *
+ * Agora a noite e uma janela curta e bonita, com o que so existe no escuro. 48 s
+ * cabem numa carga de lanterna com folga, entao uma conta basta para atravessar
+ * a noite inteira aproveitando.
+ *
+ * O dia cresceu para 204 s porque e nele que a crianca resolve contas, e o
+ * entardecer encolheu para 24 s porque nao anuncia mais perigo nenhum: e so a
+ * virada da luz, e um convite para acender a lanterna.
  */
 export const PHASE_BOUNDS = {
-  dia: { start: 0, end: 0.6 },
-  entardecer: { start: 0.6, end: 0.7 },
-  noite: { start: 0.7, end: 0.92 },
+  dia: { start: 0, end: 0.68 },
+  entardecer: { start: 0.68, end: 0.76 },
+  noite: { start: 0.76, end: 0.92 },
   amanhecer: { start: 0.92, end: 1 },
 } as const;
 
@@ -171,16 +179,22 @@ const PHASE_LIGHTING: Record<DayPhase, { from: SkyConfig; to: SkyConfig }> = {
       skyColor: palette.skyNight,
       sunColor: palette.sunNight,
       /**
-       * Luar: escuro o bastante para dar medo, claro o bastante para jogar.
+       * Luar: escuro o bastante para a lanterna valer a pena, claro o bastante
+       * para nunca atrapalhar.
        *
        * Calibrado olhando o jogo rodando. Com 0.22/0.2 o teste automatizado
        * passava — a asserçao so exige "maior que zero" — mas a tela ficava
-       * praticamente preta: nao dava para ver o terreno, os inimigos nem o
-       * proprio personagem. Numero que passa em teste nao e o mesmo que numero
+       * praticamente preta. Numero que passa em teste nao e o mesmo que numero
        * que funciona.
+       *
+       * A mira mudou junto com o jogo. Antes o escuro era o inimigo e valia
+       * assustar; agora ele e convite, e a escuridao nunca pode ser obstaculo
+       * de navegacao — sem carga na lanterna, a crianca ainda tem que enxergar
+       * o terreno e voltar para casa em paz. O que a lanterna acrescenta e o
+       * detalhe e o que so aparece no escuro, nao a possibilidade de andar.
        */
-      sunIntensity: 0.62,
-      ambientIntensity: 0.5,
+      sunIntensity: 0.78,
+      ambientIntensity: 0.62,
       elevation: 0.05,
     },
   },
@@ -189,8 +203,8 @@ const PHASE_LIGHTING: Record<DayPhase, { from: SkyConfig; to: SkyConfig }> = {
       skyColor: palette.skyNight,
       sunColor: palette.sunNight,
       // Mesmos valores do fim da noite: as fases tem que emendar sem salto.
-      sunIntensity: 0.62,
-      ambientIntensity: 0.5,
+      sunIntensity: 0.78,
+      ambientIntensity: 0.62,
       elevation: 0.05,
     },
     to: {
@@ -238,8 +252,3 @@ export const PHASE_LABELS: Record<DayPhase, string> = {
   noite: 'Noite',
   amanhecer: 'Amanhecer',
 };
-
-/** A escuridao ja chegou ao ponto de fazer os inimigos aparecerem? */
-export function isDangerous(phase: DayPhase): boolean {
-  return phase === 'noite';
-}
