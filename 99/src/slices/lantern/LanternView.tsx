@@ -5,7 +5,7 @@ import { palette } from '../../shared/palette';
 import { useGameStore } from '../../app/store';
 import { dayNightClock } from '../daynight/dayNightClock';
 import { playerTransform } from '../player/playerTransform';
-import { LANTERN, chargeRemaining, lanternIntensity } from './lantern.logic';
+import { chargeRemaining, lanternIntensity, lanternRadius } from './lantern.logic';
 
 /**
  * Onde a luz fica em relacao ao jogador.
@@ -41,6 +41,8 @@ const PUBLISH_INTERVAL = 0.25;
  */
 export function LanternView() {
   const lightRef = useRef<PointLight>(null);
+  // Raro o bastante para passar pelo React: muda uma vez, na compra.
+  const melhorada = useGameStore((state) => state.owned.includes('lanterna-maior'));
   const publishTimerRef = useRef(0);
 
   useFrame((_, delta) => {
@@ -72,7 +74,7 @@ export function LanternView() {
       ref={lightRef}
       color={palette.lanternLight}
       intensity={0}
-      distance={LANTERN.radius}
+      distance={lanternRadius(melhorada)}
       decay={2}
     />
   );

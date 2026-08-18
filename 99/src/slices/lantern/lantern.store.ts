@@ -40,7 +40,8 @@ export const createLanternSlice: StateCreator<GameState, [], [], LanternSlice> =
 
   rechargeLantern: (ratio, now = dayNightClock.seconds) =>
     set((state) => {
-      const lantern = { chargedUntil: rechargeUntil(state.lantern, now, ratio) };
+      const melhorada = state.owned.includes('lanterna-maior');
+      const lantern = { chargedUntil: rechargeUntil(state.lantern, now, ratio, melhorada) };
       // A amostra e atualizada junto: sem isso a barra do HUD so subiria no
       // proximo tick da view, e a recarga pareceria nao ter funcionado.
       return { lantern, lanternCharge: chargeRemaining(lantern, now) };

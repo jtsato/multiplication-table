@@ -2,6 +2,7 @@ import { useEffect, useRef, type RefObject } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import { CapsuleCollider, RigidBody, type RapierRigidBody } from '@react-three/rapier';
 import { Vector3, type Group } from 'three';
+import { useGameStore } from '../../app/store';
 import { touchAxes } from '../../shared/input';
 import { useHeldKeys } from '../../shared/keyboard';
 import { palette } from '../../shared/palette';
@@ -11,6 +12,7 @@ import {
   facingAngle,
   followCameraTarget,
   lerpAngle,
+  playerSpeed,
   smoothingFactor,
   type MoveInput,
 } from './player.logic';
@@ -177,11 +179,12 @@ export function PlayerView() {
     const axisX = (move.right ? 1 : 0) - (move.left ? 1 : 0) + touchAxes.x;
     const axisZ = (move.back ? 1 : 0) - (move.forward ? 1 : 0) + touchAxes.z;
     const direction = axesToDirection(axisX, axisZ, yaw);
+    // Lido do store dentro do quadro, como manda a regra: `getState()`, nunca
+    // hook seletor. As botas mudam uma vez na partida, mas ler aqui evita mais
+    // um assinante do store nesta view.
+    const speed = playerSpeed(useGameStore.getState().owned.includes('botas'));
     const velocity = body.linvel();
-    body.setLinvel(
-      { x: direction.x * PLAYER.speed, y: velocity.y, z: direction.z * PLAYER.speed },
-      true,
-    );
+    body.setLinvel({ x: direction.x * speed, y: velocity.y, z: direction.z * speed }, true);
 
     // 3. Publica a posicao viva para as demais slices lerem no mesmo quadro.
     const translation = body.translation();

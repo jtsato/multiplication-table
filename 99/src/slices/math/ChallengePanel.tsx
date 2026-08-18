@@ -18,6 +18,9 @@ export function ChallengePanel() {
   const feedback = useGameStore((state) => state.feedback);
   const answerChallenge = useGameStore((state) => state.answerChallenge);
   const clearFeedback = useGameStore((state) => state.clearFeedback);
+  const hiddenOptions = useGameStore((state) => state.hiddenOptions);
+  const hints = useGameStore((state) => state.hints);
+  const useHintOnChallenge = useGameStore((state) => state.useHintOnChallenge);
 
   // Lê o desafio do store na hora da tecla, e não da closure do render, para o
   // atalho nunca responder um desafio que já foi trocado ou cancelado.
@@ -47,21 +50,32 @@ export function ChallengePanel() {
           <p className="challenge__question">{challenge.question}</p>
 
           <div className="challenge__options">
-            {challenge.options.map((option, index) => (
-              <button
-                key={option}
-                type="button"
-                className="challenge__option"
-                aria-label={String(option)}
-                onClick={() => answerChallenge(option)}
-              >
-                <span className="challenge__key" aria-hidden="true">
-                  {index + 1}
-                </span>
-                {option}
-              </button>
-            ))}
+            {challenge.options.map((option, index) =>
+              hiddenOptions.includes(option) ? null : (
+                <button
+                  key={option}
+                  type="button"
+                  className="challenge__option"
+                  aria-label={String(option)}
+                  onClick={() => answerChallenge(option)}
+                >
+                  <span className="challenge__key" aria-hidden="true">
+                    {index + 1}
+                  </span>
+                  {option}
+                </button>
+              ),
+            )}
           </div>
+
+          {/* A dica só aparece quando há alguma guardada. Comprar ajuda com
+              moeda ganha em conta certa é uma troca honesta — e é o que tira o
+              medo de errar sem tornar o erro gratuito. */}
+          {hints > 0 && (
+            <button type="button" className="challenge__hint" onClick={useHintOnChallenge}>
+              Usar dica ({hints})
+            </button>
+          )}
         </div>
       ) : (
         feedback && (

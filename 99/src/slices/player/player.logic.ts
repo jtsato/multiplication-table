@@ -10,6 +10,8 @@ export interface MoveInput {
 
 export const PLAYER = {
   speed: 7,
+  /** Multiplicador das botas compradas na loja. */
+  bootsSpeedFactor: 1.25,
   /** Altura do corpo (capsula): 2 * halfHeight + 2 * radius. */
   radius: 0.4,
   halfHeight: 0.4,
@@ -115,4 +117,14 @@ export function lerpAngle(from: number, to: number, t: number): number {
   let diff = ((to - from + Math.PI) % twoPi) - Math.PI;
   if (diff < -Math.PI) diff += twoPi;
   return from + diff * t;
+}
+
+/**
+ * Velocidade atual, considerando as botas.
+ *
+ * Funcao em vez de constante lida direto pelo `PlayerView`: o mesmo motivo da
+ * lanterna — o ponto de uso passa um booleano e nao precisa conhecer a loja.
+ */
+export function playerSpeed(hasBoots: boolean): number {
+  return hasBoots ? PLAYER.speed * PLAYER.bootsSpeedFactor : PLAYER.speed;
 }

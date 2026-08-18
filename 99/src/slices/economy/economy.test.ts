@@ -1,5 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import { useGameStore } from '../../app/store';
+import { lanternChargeSeconds, lanternRadius } from '../lantern/lantern.logic';
+import { playerSpeed } from '../player/player.logic';
 import { RESOURCE_KINDS } from '../resources/resources.logic';
 import { ECONOMY, SHOP_ITEMS, coinsFor, factKey } from './economy.logic';
 
@@ -193,5 +195,65 @@ describe('loja', () => {
     expect(state().shopOpen).toBe(true);
     state().toggleShop();
     expect(state().shopOpen).toBe(false);
+  });
+});
+
+describe('efeitos dos itens', () => {
+  beforeEach(() => {
+    state().resetEconomy();
+    state().resetResources();
+    state().cancelChallenge();
+  });
+
+  it('a lanterna maior ilumina mais longe e dura mais', () => {
+    expect(lanternRadius(true)).toBeGreaterThan(lanternRadius(false));
+    expect(lanternChargeSeconds(true)).toBeGreaterThan(lanternChargeSeconds(false));
+  });
+
+  it('as botas aumentam a velocidade', () => {
+    expect(playerSpeed(true)).toBeGreaterThan(playerSpeed(false));
+  });
+
+  it('a dica apaga uma alternativa errada e gasta do estoque', () => {
+    useGameStore.setState({ hints: 1 });
+    state().startChallenge(state().nodes[0]);
+    const desafio = state().activeChallenge!;
+
+    state().useHintOnChallenge();
+
+    expect(state().hiddenOptions).toHaveLength(1);
+    expect(state().hiddenOptions[0]).not.toBe(desafio.answer);
+    expect(state().hints).toBe(0);
+  });
+
+  it('a dica nunca apaga a resposta certa, nem deixa so ela', () => {
+    useGameStore.setState({ hints: 5 });
+    state().startChallenge(state().nodes[0]);
+    const desafio = state().activeChallenge!;
+
+    for (let i = 0; i < 5; i += 1) state().useHintOnChallenge();
+
+    const restantes = desafio.options.filter((o) => !state().hiddenOptions.includes(o));
+    expect(restantes).toContain(desafio.answer);
+    expect(restantes.length).toBeGreaterThanOrEqual(2);
+  });
+
+  it('sem dica no estoque, nada acontece', () => {
+    state().startChallenge(state().nodes[0]);
+    state().useHintOnChallenge();
+
+    expect(state().hiddenOptions).toEqual([]);
+  });
+
+  it('abrir outro desafio limpa as alternativas apagadas', () => {
+    useGameStore.setState({ hints: 1 });
+    state().startChallenge(state().nodes[0]);
+    state().useHintOnChallenge();
+    expect(state().hiddenOptions).toHaveLength(1);
+
+    state().cancelChallenge();
+    state().startChallenge(state().nodes[1]);
+
+    expect(state().hiddenOptions).toEqual([]);
   });
 });

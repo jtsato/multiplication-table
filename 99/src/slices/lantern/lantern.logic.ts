@@ -35,6 +35,9 @@ export const LANTERN = {
   maxCharges: 2,
   /** Raio iluminado, em metros. */
   radius: 9,
+  /** Raio e carga depois da melhoria comprada na loja. */
+  upgradedRadius: 13,
+  upgradedChargeSeconds: 90,
   /** Abaixo disto a luz comeca a esmaecer e o HUD avisa. */
   lowChargeSeconds: 15,
   /** Forca da luz com a carga cheia. */
@@ -58,10 +61,16 @@ export function isGlowing(lantern: Lantern, now: number): boolean {
  * inteira, e o erro rende a mesma fracao que o erro rende de recurso. Nunca
  * zero — ficar no escuro por ter errado seria punicao, e o jogo nao pune.
  */
-export function rechargeUntil(lantern: Lantern, now: number, ratio: number): number {
-  const ganho = LANTERN.chargeSeconds * Math.min(1, Math.max(0, ratio));
+export function rechargeUntil(
+  lantern: Lantern,
+  now: number,
+  ratio: number,
+  upgraded = false,
+): number {
+  const carga = lanternChargeSeconds(upgraded);
+  const ganho = carga * Math.min(1, Math.max(0, ratio));
   const restante = chargeRemaining(lantern, now);
-  return now + Math.min(restante + ganho, LANTERN.chargeSeconds * LANTERN.maxCharges);
+  return now + Math.min(restante + ganho, carga * LANTERN.maxCharges);
 }
 
 /**
@@ -77,4 +86,19 @@ export function lanternIntensity(lantern: Lantern, now: number): number {
   if (restante <= 0) return 0;
   if (restante >= LANTERN.lowChargeSeconds) return LANTERN.intensity;
   return LANTERN.intensity * (restante / LANTERN.lowChargeSeconds);
+}
+
+/**
+ * Raio e carga de acordo com o que ja foi comprado.
+ *
+ * As constantes deixaram de ser lidas direto: a lanterna melhorada e o primeiro
+ * item da loja, e sem esta indirecao cada ponto de uso precisaria conhecer a
+ * slice de economia. Aqui entra so um booleano.
+ */
+export function lanternRadius(upgraded: boolean): number {
+  return upgraded ? LANTERN.upgradedRadius : LANTERN.radius;
+}
+
+export function lanternChargeSeconds(upgraded: boolean): number {
+  return upgraded ? LANTERN.upgradedChargeSeconds : LANTERN.chargeSeconds;
 }

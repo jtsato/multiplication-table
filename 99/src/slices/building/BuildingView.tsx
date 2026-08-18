@@ -163,7 +163,12 @@ function PlacementGhost() {
     if (!state.buildMode) return;
 
     const spec = STRUCTURES[state.buildMode];
-    const placement = buildPlacement(state.buildMode, state.inventory, state.structures, state.nodes);
+    const placement = buildPlacement(
+      state.buildMode,
+      state.inventory,
+      state.structures,
+      state.nodes,
+    );
     group.position.set(placement.position.x, placement.position.y, placement.position.z);
     group.rotation.y = placement.rotation;
 
@@ -221,12 +226,13 @@ export function BuildingView() {
   useGameAction('confirmar', () => {
     const state = useGameStore.getState();
     if (!state.buildMode) return;
-    const placement = buildPlacement(state.buildMode, state.inventory, state.structures, state.nodes);
-    state.placeStructure(
-      placement.position,
-      placement.rotation,
-      dayNightClock.seconds,
+    const placement = buildPlacement(
+      state.buildMode,
+      state.inventory,
+      state.structures,
+      state.nodes,
     );
+    state.placeStructure(placement.position, placement.rotation, dayNightClock.seconds);
   });
 
   /**

@@ -20,6 +20,15 @@ export interface ChallengeFeedback {
 export interface MathSlice {
   activeChallenge: Challenge | null;
   feedback: ChallengeFeedback | null;
+  /**
+   * Alternativas apagadas pela dica.
+   *
+   * Vive aqui, e nao na economia: e estado da *apresentacao do desafio*, e some
+   * junto com ele. A economia so sabe quantas dicas restam.
+   */
+  hiddenOptions: number[];
+  /** Gasta uma dica e apaga uma alternativa errada do desafio aberto. */
+  useHintOnChallenge: () => void;
   /** Abre um desafio ancorado no alvo. Ignorado se ja houver um aberto. */
   startChallenge: (target: ChallengeTarget, purpose?: ChallengePurpose) => void;
   /** Sorteia quantos feixes de lenha a fogueira vai pedir. */
@@ -42,6 +51,7 @@ export const createMathSlice: StateCreator<GameState, [], [], MathSlice> = (set,
   return {
     activeChallenge: null,
     feedback: null,
+    hiddenOptions: [],
 
     startChallenge: (target, purpose = 'colher') =>
       set((state) => {
@@ -52,7 +62,11 @@ export const createMathSlice: StateCreator<GameState, [], [], MathSlice> = (set,
         const node = state.nodes.find((candidate) => candidate.id === target.id);
         if (node?.depleted) return state;
 
-        return { activeChallenge: generateChallenge(target, rng, purpose), feedback: null };
+        return {
+          activeChallenge: generateChallenge(target, rng, purpose),
+          feedback: null,
+          hiddenOptions: [],
+        };
       }),
 
     rollFuelGroups: () => randomInt(rng, 1, 10),
@@ -98,6 +112,7 @@ export const createMathSlice: StateCreator<GameState, [], [], MathSlice> = (set,
 
       set({
         activeChallenge: null,
+        hiddenOptions: [],
         feedback: {
           targetId: challenge.targetId,
           purpose: challenge.purpose,
@@ -109,7 +124,25 @@ export const createMathSlice: StateCreator<GameState, [], [], MathSlice> = (set,
       });
     },
 
-    cancelChallenge: () => set({ activeChallenge: null }),
+    useHintOnChallenge: () => {
+      const state = get();
+      const challenge = state.activeChallenge;
+      if (!challenge) return;
+
+      const candidatas = challenge.options.filter(
+        // A resposta certa nunca some: a dica reduz a duvida, nao entrega o
+        // resultado nem pode deixar a crianca sem o que acertar.
+        (option) => option !== challenge.answer && !state.hiddenOptions.includes(option),
+      );
+      // Sobrando uma so alternativa errada, apagar deixaria a resposta obvia e
+      // a dica compraria o acerto em vez de ajudar a pensar.
+      if (candidatas.length <= 1) return;
+      if (!state.useHint()) return;
+
+      set({ hiddenOptions: [...state.hiddenOptions, candidatas[0]] });
+    },
+
+    cancelChallenge: () => set({ activeChallenge: null, hiddenOptions: [] }),
 
     clearFeedback: () => set({ feedback: null }),
   };

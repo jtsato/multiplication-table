@@ -139,3 +139,17 @@
   color: #ffd166;
   min-height: 1.2em;
 }
+
+/* Dica: discreta e abaixo das alternativas, para não competir com a conta. */
+.challenge__hint {
+  margin-top: 10px;
+  width: 100%;
+  background: transparent;
+  border: 1px solid rgba(255, 209, 102, 0.6);
+  border-radius: 8px;
+  color: #ffd166;
+  font: inherit;
+  font-size: 13px;
+  padding: 6px;
+  cursor: pointer;
+}

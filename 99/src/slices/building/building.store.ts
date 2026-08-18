@@ -51,7 +51,14 @@ export const createBuildingSlice: StateCreator<GameState, [], [], BuildingSlice>
     if (!kind) return;
 
     const spec = STRUCTURES[kind];
-    const check = checkPlacement(spec, position, state.inventory, state.structures, state.nodes, rotation);
+    const check = checkPlacement(
+      spec,
+      position,
+      state.inventory,
+      state.structures,
+      state.nodes,
+      rotation,
+    );
 
     if (!check.ok) {
       set({ buildError: check.reason });
