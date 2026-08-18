@@ -13,6 +13,8 @@ export interface ChallengeFeedback {
   /** Resposta certa, mostrada tambem no erro — errar tem que ensinar. */
   answer: number;
   reward: number;
+  /** Moedas pagas por esta resposta. Zero no erro: moeda so sai do acerto. */
+  coins: number;
 }
 
 export interface MathSlice {
@@ -80,6 +82,20 @@ export const createMathSlice: StateCreator<GameState, [], [], MathSlice> = (set,
         get().rechargeLantern(ratio);
       }
 
+      /**
+       * A moeda e paga aqui, para os dois propositos.
+       *
+       * Colher e abastecer sao contas iguais em exigencia, entao pagam igual —
+       * o que muda e o que a *outra* recompensa compra. Quem calcula quanto e a
+       * slice de economia; esta so avisa que houve acerto.
+       */
+      const coinsAntes = get().coins;
+      if (outcome.correct) {
+        get().rewardCorrect(challenge.perGroup, challenge.groups);
+      } else {
+        get().breakStreak();
+      }
+
       set({
         activeChallenge: null,
         feedback: {
@@ -88,6 +104,7 @@ export const createMathSlice: StateCreator<GameState, [], [], MathSlice> = (set,
           correct: outcome.correct,
           answer: challenge.answer,
           reward: outcome.reward,
+          coins: get().coins - coinsAntes,
         },
       });
     },

@@ -63,6 +63,7 @@ describe('slice de matematica', () => {
       correct: true,
       answer: challenge.answer,
       reward: challenge.answer,
+      coins: expect.any(Number),
     });
   });
 
@@ -162,6 +163,55 @@ describe('slice de matematica', () => {
       state().answerChallenge(state().activeChallenge!.answer);
 
       expect(chargeRemaining(state().lantern, AGORA)).toBe(0);
+    });
+  });
+  describe('moedas', () => {
+    beforeEach(() => {
+      state().resetEconomy();
+    });
+
+    it('o acerto paga moeda', () => {
+      state().startChallenge(alvo());
+      state().answerChallenge(state().activeChallenge!.answer);
+
+      expect(state().coins).toBeGreaterThan(0);
+    });
+
+    it('o erro nao paga moeda, mas continua rendendo recurso', () => {
+      const node = alvo();
+      state().startChallenge(node);
+      const desafio = state().activeChallenge!;
+      state().answerChallenge(desafio.options.find((o) => o !== desafio.answer)!);
+
+      expect(state().coins).toBe(0);
+      expect(state().inventory[node.kind]).toBeGreaterThanOrEqual(1);
+    });
+
+    it('o erro quebra a sequencia', () => {
+      const [primeiro, segundo] = state().nodes;
+      state().startChallenge(primeiro);
+      state().answerChallenge(state().activeChallenge!.answer);
+      expect(state().streak).toBe(1);
+
+      state().startChallenge(segundo);
+      const desafio = state().activeChallenge!;
+      state().answerChallenge(desafio.options.find((o) => o !== desafio.answer)!);
+
+      expect(state().streak).toBe(0);
+    });
+
+    it('o feedback carrega as moedas ganhas', () => {
+      state().startChallenge(alvo());
+      state().answerChallenge(state().activeChallenge!.answer);
+
+      expect(state().feedback?.coins).toBe(state().coinsToday);
+    });
+
+    it('a conta da fogueira tambem paga moeda', () => {
+      state().startChallenge({ id: 'fogueira-1', kind: 'madeira', groups: 4 }, 'abastecer');
+      state().answerChallenge(state().activeChallenge!.answer);
+
+      expect(state().coins).toBeGreaterThan(0);
     });
   });
 });
