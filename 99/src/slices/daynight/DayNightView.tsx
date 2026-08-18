@@ -64,8 +64,8 @@ export function DayNightView({ isTouch = false }: { isTouch?: boolean } = {}) {
       ambientRef.current.color.set(scratchColor.set(sky.skyColor));
     }
 
-    // Publica com throttle, mas imediatamente na virada de fase: o HUD e o
-    // spawn de inimigos (Fatia 6) nao podem esperar ate um quarto de segundo.
+    // Publica com throttle, mas imediatamente na virada de fase: o HUD nao pode
+    // anunciar a noite um quarto de segundo depois de ela cair.
     const phase = phaseFor(position);
     publishTimerRef.current += delta;
     const phaseChanged = phase !== lastPhaseRef.current;

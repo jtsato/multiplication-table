@@ -1,6 +1,5 @@
 import { Suspense, lazy } from 'react';
 import { Hud } from './Hud';
-import { OutcomeOverlay } from './OutcomeOverlay';
 import { TouchControls } from './TouchControls';
 import { useIsTouchDevice, useKeyboardBindings } from '../shared/input';
 import { ChallengePanel } from '../slices/math';
@@ -50,7 +49,6 @@ export function App() {
       <Hud isTouch={isTouch} />
       <ChallengePanel />
       {isTouch && <TouchControls />}
-      <OutcomeOverlay />
     </>
   );
 }

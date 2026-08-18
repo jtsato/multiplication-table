@@ -13,11 +13,8 @@ export interface EstadoJogo {
   destacado: string | null;
   desafio: { prompt: string; opcoes: number[]; resposta: number; proposito: string } | null;
   fase: string;
-  vida: number;
-  desfecho: string;
   construcoes: number;
   jogador: { x: number; z: number };
-  inimigos: number;
 }
 
 /** Le o estado do jogo pela ponte de depuracao. */
@@ -37,11 +34,8 @@ export async function lerEstado(page: Page): Promise<EstadoJogo> {
           }
         : null,
       fase: s.clock.phase,
-      vida: s.health,
-      desfecho: s.outcome,
       construcoes: s.structures.length,
       jogador: { x: ponte.transform.x, z: ponte.transform.z },
-      inimigos: s.enemies.length,
     };
   });
 }

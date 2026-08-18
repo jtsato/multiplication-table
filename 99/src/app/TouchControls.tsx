@@ -134,11 +134,7 @@ export function TouchControls() {
   const activeChallenge = useGameStore((state) => state.activeChallenge);
   const buildMode = useGameStore((state) => state.buildMode);
   const inventory = useGameStore((state) => state.inventory);
-  const outcome = useGameStore((state) => state.outcome);
   const structures = useGameStore((state) => state.structures);
-
-  // Com a partida decidida, a tela de desfecho assume.
-  if (outcome !== 'jogando') return null;
 
   const temFogueira = structures.some((structure) => structure.kind === 'fogueira');
   // Colher aparece com recurso ao alcance; abastecer, quando ja existe fogueira.

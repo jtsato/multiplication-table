@@ -1,7 +1,6 @@
 import { create } from 'zustand';
 import { createBuildingSlice, type BuildingSlice } from '../slices/building/building.store';
 import { createDayNightSlice, type DayNightSlice } from '../slices/daynight/daynight.store';
-import { createEnemiesSlice, type EnemiesSlice } from '../slices/enemies/enemies.store';
 import { dayNightClock } from '../slices/daynight/dayNightClock';
 import { playerTransform } from '../slices/player/playerTransform';
 import { createMathSlice, type MathSlice } from '../slices/math/math.store';
@@ -19,8 +18,7 @@ export type GameState = WorldSlice &
   ResourcesSlice &
   MathSlice &
   BuildingSlice &
-  DayNightSlice &
-  EnemiesSlice;
+  DayNightSlice;
 
 export const useGameStore = create<GameState>()((...args) => ({
   ...createWorldSlice(...args),
@@ -28,7 +26,6 @@ export const useGameStore = create<GameState>()((...args) => ({
   ...createMathSlice(...args),
   ...createBuildingSlice(...args),
   ...createDayNightSlice(...args),
-  ...createEnemiesSlice(...args),
 }));
 
 /**
@@ -79,5 +76,4 @@ export function restartGame(): void {
   state.cancelChallenge();
   state.clearFeedback();
   state.resetClock();
-  state.resetSurvival();
 }

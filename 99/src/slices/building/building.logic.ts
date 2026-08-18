@@ -59,8 +59,14 @@ export const BUILDING = {
   fenceSnapDistance: 1.5,
   /** Folga minima entre uma construcao e um no de recurso. */
   clearanceFromNodes: 2.2,
-  /** Raio de seguranca da fogueira, usado pelos inimigos na Fatia 6. */
-  fireSafeRadius: 7,
+  /**
+   * Alcance da luz da fogueira, em metros.
+   *
+   * Era `fireSafeRadius: 7`, o raio em que os inimigos recuavam, e a luz usava
+   * o dobro disso. Sem inimigos nao ha zona de seguranca — sobrou so a luz, e o
+   * numero passou a se chamar pelo que faz.
+   */
+  fireLightRadius: 14,
   /** Quanto tempo a fogueira queima quando e acesa, em segundos. */
   fireFuelSeconds: 50,
   /** Alcance para abastecer a fogueira. */

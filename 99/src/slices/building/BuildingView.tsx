@@ -107,7 +107,7 @@ function Campfire({ structure }: { structure: Structure }) {
         position={[0, 1.1, 0]}
         color={palette.fire}
         intensity={26}
-        distance={BUILDING.fireSafeRadius * 2}
+        distance={BUILDING.fireLightRadius}
         decay={2}
       />
     </group>
@@ -232,9 +232,9 @@ export function BuildingView() {
   /**
    * Abastecer a fogueira tambem cobra uma multiplicacao.
    *
-   * E o fecho do loop da POC: de dia a conta rende recurso, de noite ela rende
-   * tempo de fogo — e o fogo e o que segura os inimigos. A mesma tecla **E** da
-   * colheita, porque para a crianca a acao e a mesma: chegar perto e resolver.
+   * E o fecho do loop: de dia a conta rende recurso, a noite ela rende luz. A
+   * mesma tecla **E** da colheita, porque para a crianca a acao e a mesma:
+   * chegar perto e resolver.
    */
   useGameAction('interagir', () => {
     const state = useGameStore.getState();

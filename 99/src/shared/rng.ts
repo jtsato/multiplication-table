@@ -2,8 +2,8 @@
  * PRNG semeado (mulberry32).
  *
  * Todo sorteio do jogo — posicao de recursos, escolha do desafio, distratores,
- * ponto de spawn do inimigo — passa por aqui em vez de `Math.random`. Isso deixa
- * os testes deterministicos: mesma semente, mesmo mundo.
+ * quantos feixes a fogueira pede — passa por aqui em vez de `Math.random`. Isso
+ * deixa os testes deterministicos: mesma semente, mesmo mundo.
  */
 export type Rng = () => number;
 

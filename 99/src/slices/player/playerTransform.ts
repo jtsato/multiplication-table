@@ -3,7 +3,7 @@
  *
  * Por que nao guardar isto no store Zustand: a posicao muda todo quadro, e
  * escrever no store a 60 Hz re-renderizaria toda a arvore assinante. Outras
- * slices (recursos, construcao, inimigos) precisam da posicao *dentro* do
+ * slices (recursos, construcao, lanterna) precisam da posicao *dentro* do
  * proprio `useFrame` delas — ou seja, no mesmo quadro, sem passar pelo React.
  *
  * Este objeto e mutavel de proposito: `PlayerView` escreve nele uma vez por

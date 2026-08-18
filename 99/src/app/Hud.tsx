@@ -1,7 +1,6 @@
 import { useGameStore } from './store';
 import { REJECTION_MESSAGES, STRUCTURES, canAfford, formatRecipe } from '../slices/building';
 import { PHASE_LABELS } from '../slices/daynight';
-import { ENEMIES } from '../slices/enemies';
 import { RESOURCE_KINDS, RESOURCE_LABELS } from '../slices/resources';
 import './hud.css';
 
@@ -18,8 +17,6 @@ export function Hud({ isTouch = false }: { isTouch?: boolean } = {}) {
   const buildMode = useGameStore((state) => state.buildMode);
   const buildError = useGameStore((state) => state.buildError);
   const clock = useGameStore((state) => state.clock);
-  const health = useGameStore((state) => state.health);
-  const enemyCount = useGameStore((state) => state.enemies.length);
 
   return (
     <div className="hud">
@@ -30,18 +27,6 @@ export function Hud({ isTouch = false }: { isTouch?: boolean } = {}) {
           <em>{Math.ceil(clock.secondsToNextPhase)}s</em>
         </span>
 
-        <span
-          className="hud__health"
-          role="meter"
-          aria-label="Vida"
-          aria-valuenow={health}
-          aria-valuemin={0}
-          aria-valuemax={ENEMIES.maxHealth}
-        >
-          <i style={{ width: `${(health / ENEMIES.maxHealth) * 100}%` }} />
-        </span>
-
-        {enemyCount > 0 && <span className="hud__danger">⚠ {enemyCount} à espreita</span>}
         {RESOURCE_KINDS.map((kind) => (
           <span key={kind} className="hud__resource">
             <i className={`hud__dot hud__dot--${kind}`} aria-hidden="true" />

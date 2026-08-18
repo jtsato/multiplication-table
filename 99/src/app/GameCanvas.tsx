@@ -3,7 +3,6 @@ import { Physics } from '@react-three/rapier';
 import { palette } from '../shared/palette';
 import { BuildingView } from '../slices/building';
 import { DayNightView } from '../slices/daynight';
-import { EnemiesView } from '../slices/enemies';
 import { PlayerView } from '../slices/player';
 import { ResourcesView } from '../slices/resources';
 import { WorldView } from '../slices/world';
@@ -42,14 +41,14 @@ export function GameCanvas({ isTouch = false }: { isTouch?: boolean }) {
       <Physics gravity={[0, -22, 0]}>
         {/*
           A ORDEM IMPORTA. O R3F executa os `useFrame` na ordem de montagem, e
-          `PlayerView` e quem escreve `playerTransform` — a posicao que recursos,
-          fantasma de construcao e inimigos leem no mesmo quadro. Com ele por
-          ultimo, como estava, todos consumiam a posicao do quadro anterior: o
-          destaque do recurso acendia um quadro atrasado e, andando a 7 m/s,
-          isso e quase 12 cm de erro em cada decisao de alcance.
+          `PlayerView` e quem escreve `playerTransform` — a posicao que recursos
+          e fantasma de construcao leem no mesmo quadro. Com ele por ultimo, como
+          estava, todos consumiam a posicao do quadro anterior: o destaque do
+          recurso acendia um quadro atrasado e, andando a 7 m/s, isso e quase
+          12 cm de erro em cada decisao de alcance.
 
           O relogio vem antes de tudo pelo mesmo motivo: o combustivel da
-          fogueira e o spawn de inimigos dependem dele.
+          fogueira depende dele.
         */}
         <DayNightView isTouch={isTouch} />
         <PlayerView />
@@ -57,8 +56,6 @@ export function GameCanvas({ isTouch = false }: { isTouch?: boolean }) {
         <WorldView seed={worldSeed} />
         <ResourcesView />
         <BuildingView />
-        <EnemiesView />
-
       </Physics>
     </Canvas>
   );

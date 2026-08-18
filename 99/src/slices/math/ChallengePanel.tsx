@@ -18,7 +18,6 @@ export function ChallengePanel() {
   const feedback = useGameStore((state) => state.feedback);
   const answerChallenge = useGameStore((state) => state.answerChallenge);
   const clearFeedback = useGameStore((state) => state.clearFeedback);
-  const temMonstros = useGameStore((state) => state.enemies.length > 0);
 
   // Lê o desafio do store na hora da tecla, e não da closure do render, para o
   // atalho nunca responder um desafio que já foi trocado ou cancelado.
@@ -46,9 +45,6 @@ export function ChallengePanel() {
         <div className="challenge">
           <p className="challenge__prompt">{challenge.prompt}</p>
           <p className="challenge__question">{challenge.question}</p>
-          {temMonstros && (
-            <p className="challenge__calma">Os monstros ficam lentos. Conte com calma.</p>
-          )}
 
           <div className="challenge__options">
             {challenge.options.map((option, index) => (

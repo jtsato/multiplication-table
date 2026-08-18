@@ -224,9 +224,8 @@ const PHASE_LIGHTING: Record<DayPhase, { from: SkyConfig; to: SkyConfig }> = {
  *
  * A primeira versao usava `raw * raw`, que faz o oposto — o ceu ficava com cara
  * de entardecer durante quase toda a fase e so escurecia no fim. Ficava
- * estranho ver o HUD anunciar "Noite", os inimigos surgirem e o ceu ainda
- * laranja. Com a raiz, o escuro chega logo depois da virada e se mantem, que e
- * o que a fase promete.
+ * estranho ver o HUD anunciar "Noite" e o ceu ainda laranja. Com a raiz, o
+ * escuro chega logo depois da virada e se mantem, que e o que a fase promete.
  */
 export function skyConfigFor(position: number): SkyConfig {
   const t = normalizePosition(position);
