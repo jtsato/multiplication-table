@@ -291,13 +291,32 @@ nenhuma; o nome da região acompanha a travessia.
 
 ### Task 10: Olhar a tela
 
-- [ ] **Step 1:** rodar a suíte e2e e **abrir as capturas em `e2e/telas/`**.
+- [x] **Step 1:** rodar a suíte e2e e **abrir as capturas em `e2e/telas/`**.
 
 Não é formalidade. Foi olhando as telas que apareceram a noite preta, o jogador em
 silhueta e os móveis fora da casa — três defeitos que passaram por baixo de testes
 verdes. Uma fase que muda o mundo inteiro não termina sem isso.
 
-- [ ] **Step 2:** capturas novas por região, e uma da travessia de ponte.
+- [x] **Step 2:** capturas novas por região, e uma da travessia de ponte.
+
+O álbum das seis regiões entrou na suíte e2e como teste, e não só como captura: percorrer
+o arquipélago prova que `regionAt` concorda com o mundo físico em todo lugar.
+
+**Três defeitos que só as capturas mostraram**, nenhum deles visível para os testes que
+existiam:
+
+1. O Pico a sete metros de altura tinha exatamente a grama da Praia — seis regiões eram o
+   mesmo lugar com colheitas diferentes. Cada uma ganhou chão, praia e tufos próprios.
+2. Os itens sumiam **dentro da própria base**: com poucos grupos o anel ficava em 0,62
+   enquanto a moita tinha 0,85. Um nó de mel com um grupo aparecia pelado, sem nada para
+   contar. O raio do anel agora passa por fora da base, e há teste.
+3. E o pior: a view desenhava **três blocos escritos à mão** — madeira, fruta e pedra —
+   enquanto a lista de itens já cobria os nove tipos. Seis recursos eram calculados e
+   jogados fora. O teste de cena novo conta os itens que chegam ao render e falha
+   apontando quantos se perderam.
+
+De quebra, o contraste entre item e base virou regra com teste: a pedra tinha base e itens
+da **mesma cor exata** (razão 1,00), e um graveto cinza sobre uma rocha cinza não se conta.
 
 
 ---

@@ -12,7 +12,7 @@ import {
 } from './resources.logic';
 import { createRng } from '../../shared/rng';
 import { REGIONS, regionAt, regionById } from '../regions/regions.logic';
-import { RESOURCE_KINDS, RESOURCE_LABELS } from './resources.logic';
+import { BASE_RADIUS, RESOURCE_KINDS, RESOURCE_LABELS } from './resources.logic';
 import { blocksHome } from '../home/home.logic';
 import { vec3 } from '../../shared/vec';
 
@@ -366,6 +366,30 @@ describe('as colheitas das regioes', () => {
     for (const kind of RESOURCE_KINDS) {
       expect(RESOURCE_LABELS[kind].one.length).toBeGreaterThan(0);
       expect(RESOURCE_LABELS[kind].many.length).toBeGreaterThan(0);
+    }
+  });
+});
+
+describe('os itens nunca somem dentro da base', () => {
+  /**
+   * Apareceu numa captura do Pomar: os nos de mel estavam pelados, sem nada para
+   * contar. Com poucos grupos o anel ficava no raio minimo de 0,62 enquanto a
+   * moita tinha 0,85 — os itens nasciam **dentro** da base e a cena deixava de
+   * cumprir o que o enunciado prometia.
+   */
+  it('todo item fica por fora da base do proprio no, em qualquer tabuada', () => {
+    for (const kind of RESOURCE_KINDS) {
+      for (const perGroup of TABUADAS) {
+        for (let groups = 1; groups <= 10; groups += 1) {
+          const alvo = { ...node('a', 0, 0), kind, groups, perGroup };
+          for (const p of itemPlacements(alvo)) {
+            const distancia = Math.hypot(p.position.x, p.position.z);
+            expect(distancia, `${kind} groups=${groups} perGroup=${perGroup}`).toBeGreaterThan(
+              BASE_RADIUS[kind],
+            );
+          }
+        }
+      }
     }
   });
 });

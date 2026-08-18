@@ -19,14 +19,20 @@ export const palette = {
   trunk: '#7a5230',
   leaves: '#2f8f4f',
   leavesLight: '#49b06a',
+  // Moita escura: a base sob as frutas. Verde claro tinha praticamente a mesma
+  // luminancia do vermelho da fruta, e as frutas a contar sumiam nela.
+  bushDark: '#1a4f2c',
   rock: '#8d949e',
+  // Rocha escura: a base sob as pedras. Sem ela, item e base tinham a mesma
+  // cor exata e as pedras a contar sumiam dentro do proprio no.
+  rockDark: '#4e545d',
   berry: '#d94f6a',
 
   // As colheitas de regiao. Cada uma precisa ler de longe como "isto e daqui":
   // a concha da praia, o peixe do porto, o cogumelo do bosque, o cristal da
   // cachoeira, o mel do pomar e o gelo do pico.
   shell: '#f6e3c8',
-  shellBase: '#e8d3a8',
+  shellBase: '#b08e55',
   fish: '#8fd3f4',
   barrel: '#a9743f',
   mushroom: '#e07a5f',
@@ -34,9 +40,9 @@ export const palette = {
   crystal: '#7fe3f0',
   crystalBase: '#4a7f95',
   honey: '#f2b134',
-  hive: '#c98d4f',
+  hive: '#7d4f22',
   ice: '#cfeaf7',
-  iceBase: '#9fc7de',
+  iceBase: '#5b87a3',
 
   // Jogador. A cor do corpo e da pele vem da escolha da crianca (slice avatar);
   // estas ficam como padrao e para o que nao e personalizavel.

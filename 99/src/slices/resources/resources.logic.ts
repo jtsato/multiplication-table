@@ -216,6 +216,31 @@ const ITEMS_PER_ROW = 5;
 const BASE_RING_RADIUS = 0.62;
 
 /**
+ * Raio horizontal da base de cada tipo — o tronco, a moita, a rocha.
+ *
+ * Mora aqui, e nao junto da aparencia, porque o **posicionamento** depende dele:
+ * o anel de itens tem que passar por fora da base. Com poucos grupos o anel
+ * ficava no raio minimo de 0,62 enquanto a moita tinha 0,85, e os itens nasciam
+ * dentro dela — um no de mel com um grupo aparecia pelado na tela, sem nada para
+ * contar. `resources.look` desenha a geometria a partir destes mesmos numeros,
+ * para os dois nao poderem divergir.
+ */
+export const BASE_RADIUS: Record<ResourceKind, number> = {
+  madeira: 0.3,
+  fruta: 0.85,
+  pedra: 0.8,
+  concha: 0.95,
+  peixe: 0.62,
+  cogumelo: 0.62,
+  cristal: 0.85,
+  mel: 0.85,
+  gelo: 0.85,
+};
+
+/** Folga entre a base e o primeiro item, para eles nao se encostarem. */
+const BASE_CLEARANCE = 0.32;
+
+/**
  * Quantos grupos cabem numa volta em torno do tronco.
  *
  * Os que sobram sobem para uma volta acima, como galhos em andares. Sem isto
@@ -266,7 +291,9 @@ export function itemPlacements(node: ResourceNode): ItemPlacement[] {
   const porVolta = Math.min(GROUPS_PER_LEVEL, node.groups);
   const raioNecessario =
     porVolta > 1 ? (larguraDoGrupo + itemSpread) / (2 * Math.sin(Math.PI / porVolta)) : 0;
-  const radius = Math.max(BASE_RING_RADIUS, raioNecessario);
+  // Tambem por fora da base: um item escondido dentro do proprio no nao se conta.
+  const foraDaBase = BASE_RADIUS[node.kind] + BASE_CLEARANCE + larguraDoGrupo / 2;
+  const radius = Math.max(BASE_RING_RADIUS, raioNecessario, foraDaBase);
 
   for (let groupIndex = 0; groupIndex < node.groups; groupIndex += 1) {
     const volta = Math.floor(groupIndex / GROUPS_PER_LEVEL);

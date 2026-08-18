@@ -6,8 +6,9 @@ import { useGameStore } from '../../app/store';
 import { renderScene } from '../../test/sceneHarness';
 import { playerTransform, resetPlayerTransform } from '../player';
 import { ResourcesView } from './ResourcesView';
-import { fullYield, itemPlacements } from './resources.logic';
+import { RESOURCE_KINDS, fullYield, itemPlacements } from './resources.logic';
 import { emptyInventory } from './resources.logic';
+import { vec3 } from '../../shared/vec';
 
 const state = () => useGameStore.getState();
 
@@ -138,6 +139,44 @@ describe('ResourcesView', () => {
     expect(state().activeChallenge).toBeNull();
     expect(state().inventory[alvo.kind]).toBe(0);
     expect(state().nodes.find((n) => n.id === alvo.id)?.depleted).toBe(false);
+
+    await renderer.unmount();
+  });
+});
+
+describe('todo tipo de recurso chega a cena', () => {
+  /**
+   * O teste que pega a classe de defeito certa.
+   *
+   * A view desenhava tres blocos escritos a mao — madeira, fruta e pedra —
+   * enquanto `itemsByKind` ja era montado para os nove tipos. Os seis recursos
+   * novos eram calculados e jogados fora, e os nos de mel apareciam pelados na
+   * tela. Contar a malha instanciada de cada tipo prova que o que foi calculado
+   * chegou ao render.
+   */
+  it('desenha uma malha de itens para cada tipo presente no mundo', async () => {
+    const porTipo = RESOURCE_KINDS.map((kind, i) => ({
+      id: `no-${kind}`,
+      kind,
+      position: vec3(i * 12, 0, 0),
+      groups: 3,
+      perGroup: 4,
+      depleted: false,
+    }));
+    useGameStore.setState({ nodes: porTipo, highlightedNodeId: null });
+
+    const renderer = await renderScene(<ResourcesView />);
+
+    // O renderizador de teste nao materializa `InstancedMesh`, mas cada
+    // `<Instance>` aparece como um `Group`. Contar os grupos e, na pratica,
+    // contar os itens que chegaram a cena.
+    const esperados = porTipo.reduce((soma, no) => soma + itemPlacements(no).length, 0);
+    const grupos = renderer.scene.findAllByType('Group').length;
+
+    expect(esperados).toBe(RESOURCE_KINDS.length * 3 * 4);
+    expect(grupos, 'itens calculados que nao chegaram ao render').toBeGreaterThanOrEqual(
+      esperados,
+    );
 
     await renderer.unmount();
   });

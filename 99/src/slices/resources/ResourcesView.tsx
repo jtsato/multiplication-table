@@ -8,6 +8,14 @@ import { palette } from '../../shared/palette';
 import { distanceSqXZ } from '../../shared/vec';
 import { playerTransform } from '../player';
 import {
+  ITEM_COLOR,
+  ITEM_SHAPE,
+  NODE_BASE,
+  type FormaDeBase,
+  type FormaDeItem,
+} from './resources.look';
+import { BASE_RADIUS } from './resources.logic';
+import {
   RESOURCES,
   RESOURCE_KINDS,
   itemPlacements,
@@ -19,54 +27,46 @@ import {
 /** Pre-calculado: a comparacao roda uma vez por quadro. */
 const CANCEL_RANGE_SQ = RESOURCES.cancelRange * RESOURCES.cancelRange;
 
-/** Cor dos itens contaveis de cada tipo de no. */
-const ITEM_COLOR: Record<ResourceKind, string> = {
-  madeira: '#c98d4f',
-  fruta: palette.berry,
-  pedra: palette.rock,
-  concha: palette.shell,
-  peixe: palette.fish,
-  cogumelo: palette.mushroom,
-  cristal: palette.crystal,
-  mel: palette.honey,
-  gelo: palette.ice,
-};
+/** A geometria do item contavel, escolhida pela forma do tipo. */
+function GeometriaDoItem({ forma }: { forma: FormaDeItem }) {
+  switch (forma) {
+    case 'graveto':
+      return <boxGeometry args={[0.12, 0.34, 0.12]} />;
+    case 'bolinha':
+      return <icosahedronGeometry args={[0.16, 0]} />;
+    case 'pedrinha':
+      return <dodecahedronGeometry args={[0.16, 0]} />;
+    case 'lasca':
+      return <octahedronGeometry args={[0.17, 0]} />;
+    case 'pote':
+      return <cylinderGeometry args={[0.12, 0.14, 0.24, 6]} />;
+    case 'chapeu':
+      return <coneGeometry args={[0.17, 0.26, 7]} />;
+    default:
+      return <icosahedronGeometry args={[0.16, 0]} />;
+  }
+}
 
 /**
- * A base de cada tipo — o que segura os itens contaveis.
+ * A geometria sai do mesmo `BASE_RADIUS` que posiciona os itens.
  *
- * Tabela, e nao uma cadeia de `if`: com nove tipos, a versao ramificada viraria
- * cem linhas de JSX quase igual, e acrescentar um tipo passaria a exigir mexer
- * no meio do componente em vez de numa linha de dados.
+ * Se a base fosse desenhada com um raio proprio, ela poderia crescer e voltar a
+ * engolir os itens sem nenhum teste perceber — o teste mede posicao, nao pixel.
  */
-const NODE_BASE: Record<ResourceKind, { cor: string; altura: number; forma: FormaDeBase }> = {
-  madeira: { cor: palette.trunk, altura: 0.9, forma: 'arvore' },
-  fruta: { cor: palette.leavesLight, altura: 0.75, forma: 'moita' },
-  pedra: { cor: palette.rock, altura: 0.55, forma: 'rocha' },
-  concha: { cor: palette.shellBase, altura: 0.35, forma: 'monte' },
-  peixe: { cor: palette.barrel, altura: 0.55, forma: 'barril' },
-  cogumelo: { cor: palette.stump, altura: 0.4, forma: 'barril' },
-  cristal: { cor: palette.crystalBase, altura: 0.7, forma: 'cristal' },
-  mel: { cor: palette.hive, altura: 0.8, forma: 'moita' },
-  gelo: { cor: palette.iceBase, altura: 0.6, forma: 'cristal' },
-};
-
-type FormaDeBase = 'arvore' | 'moita' | 'rocha' | 'monte' | 'barril' | 'cristal';
-
-function GeometriaDaBase({ forma }: { forma: FormaDeBase }) {
+function GeometriaDaBase({ forma, raio }: { forma: FormaDeBase; raio: number }) {
   switch (forma) {
     case 'moita':
-      return <icosahedronGeometry args={[0.85, 0]} />;
+      return <icosahedronGeometry args={[raio, 0]} />;
     case 'rocha':
-      return <dodecahedronGeometry args={[0.8, 0]} />;
+      return <dodecahedronGeometry args={[raio, 0]} />;
     case 'monte':
-      return <coneGeometry args={[0.95, 0.7, 7]} />;
+      return <coneGeometry args={[raio, 0.7, 7]} />;
     case 'barril':
-      return <cylinderGeometry args={[0.55, 0.62, 0.9, 8]} />;
+      return <cylinderGeometry args={[raio * 0.9, raio, 0.9, 8]} />;
     case 'cristal':
-      return <octahedronGeometry args={[0.85, 0]} />;
+      return <octahedronGeometry args={[raio, 0]} />;
     default:
-      return <icosahedronGeometry args={[0.85, 0]} />;
+      return <icosahedronGeometry args={[raio, 0]} />;
   }
 }
 
@@ -100,7 +100,7 @@ function NodeBase({ node, highlighted }: { node: ResourceNode; highlighted: bool
 
   return (
     <mesh position={[x, y + look.altura, z]} castShadow receiveShadow>
-      <GeometriaDaBase forma={look.forma} />
+      <GeometriaDaBase forma={look.forma} raio={BASE_RADIUS[node.kind]} />
       <meshLambertMaterial
         color={look.cor}
         flatShading
@@ -231,37 +231,16 @@ export function ResourcesView() {
 
       {highlighted && <HighlightRing node={highlighted} />}
 
-      {/* Gravetos: caixinhas alongadas presas aos galhos. */}
-      {itemsByKind.madeira.length > 0 && (
-        <Instances limit={512} range={itemsByKind.madeira.length} castShadow>
-          <boxGeometry args={[0.12, 0.34, 0.12]} />
-          <meshLambertMaterial color={ITEM_COLOR.madeira} flatShading />
-          {itemsByKind.madeira.map((item) => (
-            <Instance key={item.key} position={item.position} />
-          ))}
-        </Instances>
-      )}
-
-      {/* Frutas: esferas vermelhas, o item mais facil de contar de longe. */}
-      {itemsByKind.fruta.length > 0 && (
-        <Instances limit={512} range={itemsByKind.fruta.length} castShadow>
-          <icosahedronGeometry args={[0.16, 0]} />
-          <meshLambertMaterial color={ITEM_COLOR.fruta} flatShading />
-          {itemsByKind.fruta.map((item) => (
-            <Instance key={item.key} position={item.position} />
-          ))}
-        </Instances>
-      )}
-
-      {/* Pedrinhas soltas em volta da rocha. */}
-      {itemsByKind.pedra.length > 0 && (
-        <Instances limit={512} range={itemsByKind.pedra.length} castShadow>
-          <dodecahedronGeometry args={[0.16, 0]} />
-          <meshLambertMaterial color={ITEM_COLOR.pedra} flatShading />
-          {itemsByKind.pedra.map((item) => (
-            <Instance key={item.key} position={item.position} />
-          ))}
-        </Instances>
+      {RESOURCE_KINDS.map((kind) =>
+        itemsByKind[kind].length > 0 ? (
+          <Instances key={kind} limit={1024} range={itemsByKind[kind].length} castShadow>
+            <GeometriaDoItem forma={ITEM_SHAPE[kind]} />
+            <meshLambertMaterial color={ITEM_COLOR[kind]} flatShading />
+            {itemsByKind[kind].map((item) => (
+              <Instance key={item.key} position={item.position} />
+            ))}
+          </Instances>
+        ) : null,
       )}
     </>
   );
