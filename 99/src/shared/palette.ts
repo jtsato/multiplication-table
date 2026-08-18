@@ -29,9 +29,8 @@ export const palette = {
   fireCore: '#ffe08a',
   fence: '#a9743f',
 
-  // Inimigos
-  enemy: '#3b2f52',
-  enemyEye: '#ff5470',
+  // Lanterna: quente, para contrastar com o azul do luar.
+  lanternLight: '#ffd98a',
 
   // Ceu por fase do ciclo
   skyDay: '#8fd4ff',
