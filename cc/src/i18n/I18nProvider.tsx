@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components -- O hook `useTranslation` fica colocado junto do provider de propósito; separar não melhora HMR nesta base e aumentaria o número de arquivos sem ganho real. */
 import { createContext, useContext, useMemo, type ReactNode } from 'react';
 import type { Locale } from '../domain/types';
 import { createTranslator, type TranslateFn, type TranslationParams } from './translate';

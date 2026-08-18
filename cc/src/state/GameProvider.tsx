@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components -- O hook `useGame` fica colocado junto do provider de propósito; separar o contexto inteiro (interface + tipos de retorno) não melhora HMR nesta base e aumentaria o número de arquivos sem ganho real. */
 import {
   createContext,
   useCallback,
