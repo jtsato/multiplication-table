@@ -44,7 +44,7 @@ Testing Library, Playwright.
 - Altera os valores de `PHASE_BOUNDS` e de `PHASE_LIGHTING.noite` / `.amanhecer`.
 - Remove `isDangerous`.
 
-- [ ] **Step 1: Escrever os testes de duração e de legibilidade da noite**
+- [x] **Step 1: Escrever os testes de duração e de legibilidade da noite**
 
 Em `daynight.test.ts`, apagar o `describe('isDangerous')` inteiro e o import de
 `isDangerous`. Acrescentar:
@@ -85,7 +85,7 @@ describe('luar', () => {
 Importar `DAYNIGHT` e o tipo `DayPhase` no bloco de imports do teste, se ainda não
 estiverem lá.
 
-- [ ] **Step 2: Rodar os testes e confirmar a falha correta**
+- [x] **Step 2: Rodar os testes e confirmar a falha correta**
 
 Run: `npm test -- --run src/slices/daynight/daynight.test.ts`
 
@@ -93,7 +93,7 @@ Expected: FAIL nas novas asserções — a noite hoje dura 66 s e o luar está e
 `ambientIntensity 0.5` / `sunIntensity 0.62`. Os testes antigos de fronteira, escrita
 sobre `PHASE_BOUNDS` de forma simbólica, continuam passando.
 
-- [ ] **Step 3: Aplicar os novos números**
+- [x] **Step 3: Aplicar os novos números**
 
 Em `daynight.logic.ts`:
 
@@ -123,14 +123,14 @@ export const PHASE_BOUNDS = {
 
 4. Apagar `isDangerous` e a linha correspondente em `src/slices/daynight/index.ts`.
 
-- [ ] **Step 4: Rodar os testes**
+- [x] **Step 4: Rodar os testes**
 
 Run: `npm test -- --run src/slices/daynight/daynight.test.ts`
 
 Expected: PASS, incluindo os testes preexistentes de fronteira, de monotonicidade do
 escurecimento e de continuidade entre fases.
 
-- [ ] **Step 5: Commitar**
+- [x] **Step 5: Commitar**
 
 ```powershell
 git add src/slices/daynight
@@ -157,7 +157,7 @@ git commit -m "feat: shorten night and brighten moonlight"
   `survivedNight` e todas as ações correspondentes.
 - `restartGame` deixa de chamar `resetSurvival`.
 
-- [ ] **Step 1: Apagar a slice e as referências**
+- [x] **Step 1: Apagar a slice e as referências**
 
 ```powershell
 git rm -r src/slices/enemies
@@ -185,21 +185,21 @@ Em seguida, remover as referências, uma a uma:
 - `e2e/jogo.ts:40-44` — tirar `vida`, `desfecho` e `inimigos` do estado exposto ao
   teste.
 
-- [ ] **Step 2: Rodar typecheck para achar o que sobrou**
+- [x] **Step 2: Rodar typecheck para achar o que sobrou**
 
 Run: `npm run typecheck`
 
 Expected: PASS. O TypeScript strict é o que garante que nenhuma referência ficou
 para trás; se algo falhar aqui, é uma referência esquecida, não um teste ruim.
 
-- [ ] **Step 3: Rodar a suíte inteira**
+- [x] **Step 3: Rodar a suíte inteira**
 
 Run: `npm test -- --run`
 
 Expected: PASS. Qualquer teste que ainda cite vida, dano ou desfecho deve ser
 **apagado**, não adaptado — a mecânica não existe mais.
 
-- [ ] **Step 4: Confirmar que não sobrou vestígio**
+- [x] **Step 4: Confirmar que não sobrou vestígio**
 
 Run: `git grep -n "enemies\|health\|outcome\|inimigo\|ENEMIES\|survivedNight" -- src e2e`
 
@@ -207,7 +207,7 @@ Expected: nenhuma linha. `outcome` é a única palavra ambígua: se aparecer, te
 apenas a variável local de `resolveAnswer`/`answerChallenge`, que é o resultado da
 resposta e nada tem a ver com desfecho de partida.
 
-- [ ] **Step 5: Commitar**
+- [x] **Step 5: Commitar**
 
 ```powershell
 git add -A src e2e
@@ -232,7 +232,7 @@ git commit -m "feat: remove night enemies, damage and defeat"
   `rechargeUntil(lantern, now, ratio)`, `lanternIntensity(lantern, now)`.
 - Produces `LanternSlice = { lantern, rechargeLantern(ratio, now?), resetLantern() }`.
 
-- [ ] **Step 1: Escrever os testes da lógica pura**
+- [x] **Step 1: Escrever os testes da lógica pura**
 
 Criar `lantern.test.ts`:
 
@@ -286,13 +286,13 @@ describe('lanternIntensity', () => {
 });
 ```
 
-- [ ] **Step 2: Rodar e confirmar a falha**
+- [x] **Step 2: Rodar e confirmar a falha**
 
 Run: `npm test -- --run src/slices/lantern/lantern.test.ts`
 
 Expected: FAIL — o módulo ainda não existe.
 
-- [ ] **Step 3: Implementar a lógica pura**
+- [x] **Step 3: Implementar a lógica pura**
 
 Em `lantern.logic.ts`, espelhar deliberadamente `fuelRemaining` / `refuelUntil` de
 `building.logic.ts` — é o mesmo modelo, já provado, e a semelhança é o que torna as
@@ -328,13 +328,13 @@ próximo de `fireCore`.
 Compor `LanternSlice` em `GameState` no `store.ts` e chamar `resetLantern()` em
 `restartGame`.
 
-- [ ] **Step 4: Rodar os testes**
+- [x] **Step 4: Rodar os testes**
 
 Run: `npm test -- --run src/slices/lantern`
 
 Expected: PASS.
 
-- [ ] **Step 5: Commitar**
+- [x] **Step 5: Commitar**
 
 ```powershell
 git add src/slices/lantern src/app/store.ts src/shared/palette.ts
@@ -354,7 +354,7 @@ git commit -m "feat: add lantern charge slice"
 - `answerChallenge` com `purpose: 'abastecer'` passa a renovar **fogueira e lanterna**
   com a mesma proporção.
 
-- [ ] **Step 1: Escrever o teste de integração entre as slices**
+- [x] **Step 1: Escrever o teste de integração entre as slices**
 
 Em `math.store.test.ts`:
 
@@ -385,13 +385,13 @@ it('errar acende menos, e nunca deixa a lanterna apagada', () => {
 
 Seguir o padrão de reset entre testes que o arquivo já usa.
 
-- [ ] **Step 2: Rodar e confirmar a falha**
+- [x] **Step 2: Rodar e confirmar a falha**
 
 Run: `npm test -- --run src/slices/math/math.store.test.ts`
 
 Expected: FAIL — hoje o ramo `abastecer` só chama `refuelStructure`.
 
-- [ ] **Step 3: Ligar a recarga**
+- [x] **Step 3: Ligar a recarga**
 
 Em `answerChallenge`, no ramo `abastecer`, calcular a proporção uma única vez e
 aplicá-la aos dois destinos:
@@ -407,14 +407,14 @@ slice de matemática continua decidindo apenas *quanto* o acerto vale; quem sabe
 aplicar continua sendo cada slice de destino. Uma conta, dois efeitos — o fogo do
 acampamento e a luz que a criança leva com ela.
 
-- [ ] **Step 4: Rodar os testes de matemática e de construção**
+- [x] **Step 4: Rodar os testes de matemática e de construção**
 
 Run: `npm test -- --run src/slices/math src/slices/building src/slices/lantern`
 
 Expected: PASS, incluindo os testes preexistentes de colheita, recompensa parcial e
 feedback.
 
-- [ ] **Step 5: Commitar**
+- [x] **Step 5: Commitar**
 
 ```powershell
 git add src/slices/math
@@ -434,7 +434,7 @@ git commit -m "feat: recharge lantern from the campfire challenge"
 **Interfaces:**
 - `LanternView` sem props; lê `playerTransform` e `dayNightClock` dentro do `useFrame`.
 
-- [ ] **Step 1: Escrever o teste de cena**
+- [x] **Step 1: Escrever o teste de cena**
 
 Criar `LanternView.test.tsx` com o helper `renderScene` de `src/test/sceneHarness.tsx`:
 
@@ -465,13 +465,13 @@ it('acende com carga e acompanha o jogador', async () => {
 });
 ```
 
-- [ ] **Step 2: Rodar e confirmar a falha**
+- [x] **Step 2: Rodar e confirmar a falha**
 
 Run: `npm test -- --run src/slices/lantern/LanternView.test.tsx`
 
 Expected: FAIL — o componente ainda não existe.
 
-- [ ] **Step 3: Implementar a view**
+- [x] **Step 3: Implementar a view**
 
 `LanternView` monta uma `pointLight` com `color={palette.lanternLight}`,
 `distance={LANTERN.radius}` e `decay={2}`. No `useFrame`:
@@ -489,13 +489,13 @@ motivo que o comentário de ordem já explica: quem lê `playerTransform` tem qu
 depois de quem escreve, sob pena de a luz ficar um quadro atrás do jogador — a 7 m/s,
 é meio metro de atraso, e num facho de luz isso se vê.
 
-- [ ] **Step 4: Rodar os testes de cena**
+- [x] **Step 4: Rodar os testes de cena**
 
 Run: `npm test -- --run src/slices/lantern`
 
 Expected: PASS.
 
-- [ ] **Step 5: Commitar**
+- [x] **Step 5: Commitar**
 
 ```powershell
 git add src/slices/lantern src/app/GameCanvas.tsx
@@ -516,7 +516,7 @@ git commit -m "feat: render the lantern light following the player"
 - O HUD assina `lantern` e `clock`; a barra de carga é publicada a partir de valores
   discretos, sem leitura por quadro.
 
-- [ ] **Step 1: Escrever as asserções do HUD**
+- [x] **Step 1: Escrever as asserções do HUD**
 
 `src/app/` ainda não tem nenhum arquivo de teste. `Hud.test.tsx` é o primeiro, e por
 isso precisa abrir com `// @vitest-environment jsdom` na primeira linha — a convenção
@@ -543,14 +543,14 @@ it('no entardecer convida a acender a lanterna, sem ameacar', () => {
 });
 ```
 
-- [ ] **Step 2: Rodar e confirmar a falha**
+- [x] **Step 2: Rodar e confirmar a falha**
 
 Run: `npm test -- --run src/app/Hud.test.tsx`
 
 Expected: FAIL — a barra de carga não existe e o aviso do entardecer ainda diz
 "A noite está chegando — acenda uma fogueira!".
 
-- [ ] **Step 3: Trocar a barra e o texto**
+- [x] **Step 3: Trocar a barra e o texto**
 
 No `Hud.tsx`, no lugar exato onde estava a barra de vida, um `role="meter"` com
 `aria-label="Lanterna"` cuja largura vem da carga restante sobre
@@ -577,13 +577,13 @@ Em `TouchControls.tsx`, conferir que o botão **Lenha** continua aparecendo pert
 fogueira e ajustar o rótulo para **Acender**, que agora descreve melhor o que a ação
 faz.
 
-- [ ] **Step 4: Rodar os testes de UI**
+- [x] **Step 4: Rodar os testes de UI**
 
 Run: `npm test -- --run src/app`
 
 Expected: PASS.
 
-- [ ] **Step 5: Commitar**
+- [x] **Step 5: Commitar**
 
 ```powershell
 git add src/app
@@ -599,12 +599,12 @@ git commit -m "feat: show lantern charge in the HUD"
 - Modify: `e2e/desktop.spec.ts`
 - Modify: `e2e/celular.spec.ts`
 
-- [ ] **Step 1: Expor a lanterna à ponte de depuração**
+- [x] **Step 1: Expor a lanterna à ponte de depuração**
 
 Em `e2e/jogo.ts`, no lugar dos campos `vida`/`desfecho`/`inimigos` removidos na Task 2,
 expor `cargaLanterna: chargeRemaining(s.lantern, clock.seconds)`.
 
-- [ ] **Step 2: Reescrever o fluxo de noite dos dois projetos**
+- [x] **Step 2: Reescrever o fluxo de noite dos dois projetos**
 
 Os testes atuais provam "sobreviver até o amanhecer". Esse desfecho não existe mais.
 Substituir pelo fluxo novo, em `desktop.spec.ts` e `celular.spec.ts`:
@@ -623,7 +623,7 @@ areia, o personagem sem cabeça e a noite escura demais para jogar — e esta fa
 é uma aposta visual sobre o que é aconchegante. O número que passa no teste não é o
 mesmo que funciona na tela.
 
-- [ ] **Step 3: Rodar o projeto inteiro**
+- [x] **Step 3: Rodar o projeto inteiro**
 
 Run:
 
@@ -636,7 +636,7 @@ npm run build
 
 Expected: todos com código 0.
 
-- [ ] **Step 4: Rodar os testes ponta a ponta**
+- [x] **Step 4: Rodar os testes ponta a ponta**
 
 Run: `npm run e2e`
 
@@ -645,7 +645,7 @@ Expected: `desktop` e `celular` passam. Abrir as telas gravadas em `e2e/telas/` 
 acolhedora com ela acesa. Se não estiver, o ajuste é nos números da Task 1 e no raio da
 Task 3 — não no teste.
 
-- [ ] **Step 5: Atualizar o README e conferir o diff**
+- [x] **Step 5: Atualizar o README e conferir o diff**
 
 O README ainda descreve um jogo de sobrevivência: o título, a frase "sem fogo, a noite
 vence", a tabela de controles com vida e inimigos, e o parágrafo do ciclo de 3 minutos.
@@ -662,7 +662,7 @@ git status --short
 Confirmar que só arquivos do projeto `99` foram tocados e que as mudanças
 preexistentes em `cc`, `ds` e `st` continuam intactas.
 
-- [ ] **Step 6: Commitar**
+- [x] **Step 6: Commitar**
 
 ```powershell
 git add e2e README.md
