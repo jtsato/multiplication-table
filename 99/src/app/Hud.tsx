@@ -1,6 +1,7 @@
 import { useGameStore } from './store';
 import { REJECTION_MESSAGES, STRUCTURES, canAfford, formatRecipe } from '../slices/building';
 import { PHASE_LABELS } from '../slices/daynight';
+import { LANTERN } from '../slices/lantern';
 import { RESOURCE_KINDS, RESOURCE_LABELS } from '../slices/resources';
 import './hud.css';
 
@@ -17,6 +18,10 @@ export function Hud({ isTouch = false }: { isTouch?: boolean } = {}) {
   const buildMode = useGameStore((state) => state.buildMode);
   const buildError = useGameStore((state) => state.buildError);
   const clock = useGameStore((state) => state.clock);
+  const lanternCharge = useGameStore((state) => state.lanternCharge);
+
+  const cargaCheia = LANTERN.chargeSeconds * LANTERN.maxCharges;
+  const cargaFraca = lanternCharge < LANTERN.lowChargeSeconds;
 
   return (
     <div className="hud">
@@ -25,6 +30,17 @@ export function Hud({ isTouch = false }: { isTouch?: boolean } = {}) {
           <strong>{PHASE_LABELS[clock.phase]}</strong>
           <small>dia {clock.day}</small>
           <em>{Math.ceil(clock.secondsToNextPhase)}s</em>
+        </span>
+
+        <span
+          className="hud__lantern"
+          role="meter"
+          aria-label="Lanterna"
+          aria-valuenow={Math.ceil(lanternCharge)}
+          aria-valuemin={0}
+          aria-valuemax={cargaCheia}
+        >
+          <i style={{ width: `${Math.min(100, (lanternCharge / cargaCheia) * 100)}%` }} />
         </span>
 
         {RESOURCE_KINDS.map((kind) => (
@@ -69,11 +85,19 @@ export function Hud({ isTouch = false }: { isTouch?: boolean } = {}) {
           </div>
         )}
 
-        {/* Aviso do entardecer: a criança precisa saber que o tempo de montar o
-            acampamento está acabando, e o que fazer com ele. */}
+        {/* Convite do entardecer, não alerta: a noite não ameaça mais nada, e o
+            que a criança precisa saber é que dá para levar luz com ela. */}
         {!buildError && clock.phase === 'entardecer' && (
           <div className="hud__prompt hud__prompt--aviso" role="alert">
-            A noite está chegando — acenda uma fogueira! ({Math.ceil(clock.secondsToNextPhase)}s)
+            Anoitecendo — acenda a lanterna na fogueira ({Math.ceil(clock.secondsToNextPhase)}s)
+          </div>
+        )}
+
+        {/* Sem exclamação e sem contagem: é informação, não pressão. Ficar sem
+            carga não tira nada da criança além do que só aparece no escuro. */}
+        {!buildError && clock.phase === 'noite' && cargaFraca && (
+          <div className="hud__prompt" role="status">
+            A lanterna está fraca
           </div>
         )}
 

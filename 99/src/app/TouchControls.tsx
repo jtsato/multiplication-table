@@ -155,7 +155,7 @@ export function TouchControls() {
             {!activeChallenge && podeInteragir && (
               <ActionButton
                 action="interagir"
-                label={highlightedNodeId ? 'Colher' : 'Lenha'}
+                label={highlightedNodeId ? 'Colher' : 'Acender'}
                 variant="interagir"
               />
             )}

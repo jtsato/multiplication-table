@@ -80,7 +80,7 @@
   color: #ffb98a;
 }
 
-.hud__health {
+.hud__lantern {
   display: block;
   height: 9px;
   border-radius: 999px;
@@ -88,17 +88,13 @@
   overflow: hidden;
 }
 
-.hud__health i {
+.hud__lantern i {
   display: block;
   height: 100%;
   border-radius: 999px;
-  background: linear-gradient(90deg, #ff6b6b, #ffb46b);
+  /* Quente, como a luz: a barra e o mesmo objeto que o facho na cena. */
+  background: linear-gradient(90deg, #ffb347, #ffd98a);
   transition: width 0.25s ease;
-}
-
-.hud__danger {
-  color: #ff9d9d;
-  font-size: 13px;
 }
 
 .hud__resource strong {
