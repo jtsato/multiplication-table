@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import { SUPPORTED_LOCALES, type GameState, type Locale } from '../domain/types';
-import { localeMeta } from '../i18n/translate';
+import { type GameState, type Locale } from '../domain/types';
 import { useTranslation } from '../i18n/I18nProvider';
 import { Button } from '../ui/Button';
 import { ConfirmDialog } from '../ui/ConfirmDialog';
+import { LanguageChoice } from '../ui/LanguageChoice';
 import { ScreenLayout } from '../ui/ScreenLayout';
 import { ToggleRow } from '../ui/ToggleRow';
 
@@ -43,24 +43,11 @@ export function SettingsScreen({
 
       <section className="settings__section">
         <h2 className="settings__section-title">{t('settings.language')}</h2>
-        <div className="settings__languages">
-          {SUPPORTED_LOCALES.map((locale) => {
-            const meta = localeMeta(locale);
-            const selected = state.settings.locale === locale;
-            return (
-              <Button
-                key={locale}
-                variant={selected ? 'primary' : 'secondary'}
-                size="lg"
-                icon={meta.flag}
-                aria-pressed={selected}
-                onClick={() => onLocaleChange(locale)}
-              >
-                {meta.name}
-              </Button>
-            );
-          })}
-        </div>
+        <LanguageChoice
+          legend={t('settings.language')}
+          value={state.settings.locale}
+          onChange={onLocaleChange}
+        />
       </section>
 
       <section className="settings__section">

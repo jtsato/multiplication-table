@@ -11,12 +11,12 @@ import {
 } from '../domain/avatar';
 import { DEFAULT_AVATAR, DEFAULT_MASCOT_ID } from '../domain/defaultState';
 import { getMascotDefinition, MASCOT_IDS } from '../domain/mascots';
-import { SUPPORTED_LOCALES, type AvatarConfig, type Locale, type MascotId } from '../domain/types';
-import { localeMeta } from '../i18n/translate';
+import { type AvatarConfig, type Locale, type MascotId } from '../domain/types';
 import { useTranslation } from '../i18n/I18nProvider';
 import { Avatar } from '../art/Avatar';
 import { Mascot } from '../art/Mascot';
 import { Button } from '../ui/Button';
+import { LanguageChoice } from '../ui/LanguageChoice';
 import { OptionPicker } from '../ui/OptionPicker';
 
 interface OnboardingScreenProps {
@@ -78,22 +78,11 @@ export function OnboardingScreen({
             <p className="onboarding__subtitle">{t('onboarding.languageSubtitle')}</p>
 
             <div className="onboarding__languages">
-              {SUPPORTED_LOCALES.map((option) => {
-                const meta = localeMeta(option);
-                return (
-                  <Button
-                    key={option}
-                    variant={option === locale ? 'primary' : 'secondary'}
-                    size="lg"
-                    block
-                    icon={meta.flag}
-                    aria-pressed={option === locale}
-                    onClick={() => onLocaleChange(option)}
-                  >
-                    {meta.name}
-                  </Button>
-                );
-              })}
+              <LanguageChoice
+                legend={t('onboarding.languageTitle')}
+                value={locale}
+                onChange={onLocaleChange}
+              />
             </div>
 
             <Button size="lg" block onClick={() => setStep('character')}>

@@ -784,6 +784,74 @@ html[data-reduced-motion='on'] *::after {
 }
 
 /* ---------------------------------------------------------------------- */
+/* Escolha de idioma                                                       */
+/* ---------------------------------------------------------------------- */
+
+/* Escolha, nao acao: sem o verde do botao primario e sem a sombra chapada
+   que convida ao "apertar para avancar". A opcao marcada se diferencia pela
+   marca de radio, pela borda e pelo peso do texto â€” nunca so pela cor. */
+.language-choice {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.language-option {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  min-height: var(--touch-target);
+  padding: var(--space-3) var(--space-4);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--bg);
+  color: var(--fg);
+  font-size: var(--text-lg);
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color var(--motion-fast) var(--ease-standard);
+}
+
+.language-option--selected {
+  border-color: var(--accent);
+  background: var(--accent-pale);
+  font-weight: 800;
+}
+
+/* Circulo vazio -> circulo com miolo: a mesma gramatica do radio de
+   formulario, que a crianca ja viu em prova de escola. */
+.language-option__mark {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border: 2px solid var(--edge-underside);
+  border-radius: 50%;
+  background: var(--bg);
+}
+
+.language-option--selected .language-option__mark {
+  border-color: var(--accent-active);
+}
+
+.language-option--selected .language-option__mark::after {
+  content: '';
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--accent-active);
+}
+
+.language-option__flag {
+  font-size: var(--text-xl);
+  line-height: 1;
+}
+
+/* ---------------------------------------------------------------------- */
 /* Splash                                                                  */
 /* ---------------------------------------------------------------------- */
 
@@ -890,11 +958,9 @@ html[data-reduced-motion='on'] *::after {
   margin-bottom: var(--space-2);
 }
 
+/* O espaco antes do "Continuar" separa a escolha da acao. */
 .onboarding__languages {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-  margin-bottom: var(--space-4);
+  margin-bottom: var(--space-6);
 }
 
 .onboarding__bases {
@@ -2441,12 +2507,6 @@ html[data-reduced-motion='on'] *::after {
   font-size: var(--text-lg);
   margin-bottom: var(--space-3);
   color: var(--color-text-on-dark);
-}
-
-.settings__languages {
-  display: flex;
-  gap: var(--space-2);
-  flex-wrap: wrap;
 }
 
 .settings__section--danger {

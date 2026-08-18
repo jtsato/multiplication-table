@@ -100,14 +100,18 @@ export function ConfirmDialog({
         <p className="dialog__message" id="dialog-message">
           {message}
         </p>
-        {/* Quem manda na cor e o risco, nao a posicao: a acao segura leva o
-            verde primario (e o foco), e a que sai/apaga fica no branco discreto
-            ou no vermelho. Verde na saida convidava a crianca a desistir. */}
+        {/* Duas saidas, duas cores bem diferentes: voltar ao jogo em Bee
+            Yellow ("espera, fica"), e a resposta a pergunta do titulo no verde
+            primario. O botao seguro e o que recebe o foco, entao Enter sem ler
+            nada continua sendo o que nao faz estrago.
+
+            Quando a acao apaga dados (`tone="danger"`), o verde da lugar ao
+            Cardinal Red: confirmar ali nao e so sair de uma tela. */}
         <div className="dialog__actions">
-          <Button ref={cancelRef} variant="primary" size="lg" onClick={onCancel}>
+          <Button ref={cancelRef} variant="secondary" size="lg" onClick={onCancel}>
             {cancelLabel}
           </Button>
-          <Button variant={tone === 'danger' ? 'danger' : 'ghost'} size="lg" onClick={onConfirm}>
+          <Button variant={tone === 'danger' ? 'danger' : 'primary'} size="lg" onClick={onConfirm}>
             {confirmLabel}
           </Button>
         </div>
