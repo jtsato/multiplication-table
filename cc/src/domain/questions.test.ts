@@ -45,6 +45,26 @@ describe('buildDistractors', () => {
       expect([36, 35, 48, 49]).toContain(value);
     }
   });
+
+  it('preenche a quantidade pedida mesmo para fatos minusculos', () => {
+    const rng = createSeededRng(4);
+    for (const fact of [
+      { a: 1, b: 1 },
+      { a: 2, b: 1 },
+      { a: 1, b: 2 },
+    ]) {
+      for (const count of [3, 4]) {
+        const distractors = buildDistractors(rng, fact, count);
+        expect(distractors).toHaveLength(count);
+        expect(new Set(distractors).size).toBe(count);
+        expect(distractors).not.toContain(fact.a * fact.b);
+        for (const value of distractors) {
+          expect(value).toBeGreaterThan(0);
+          expect(Number.isInteger(value)).toBe(true);
+        }
+      }
+    }
+  });
 });
 
 describe('createQuestion', () => {
@@ -63,6 +83,13 @@ describe('createQuestion', () => {
     const rng = createSeededRng(12);
     expect(createQuestion(rng, { a: 2, b: 3 }, 3).options).toHaveLength(3);
     expect(createQuestion(rng, { a: 2, b: 3 }, 4).options).toHaveLength(4);
+  });
+
+  it('limita a quantidade de alternativas ao intervalo permitido', () => {
+    const rng = createSeededRng(12);
+    expect(createQuestion(rng, { a: 2, b: 3 }, 2).options).toHaveLength(3);
+    expect(createQuestion(rng, { a: 2, b: 3 }, 0).options).toHaveLength(3);
+    expect(createQuestion(rng, { a: 2, b: 3 }, 99).options).toHaveLength(4);
   });
 
   it('nunca repete a posicao da correta informada em avoidCorrectIndex', () => {

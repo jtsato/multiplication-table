@@ -28,9 +28,11 @@
 ### Task 1: Add the failing CSS contract test
 
 **Files:**
+
 - Create: `cc/src/styles/desktopViewportFit.test.ts`
 
 **Interfaces:**
+
 - Consumes: the existing `cc/src/styles/global.css` file loaded with `readFileSync`.
 - Produces: named assertions for the `.level`, `.level__stage`, `.level__stage .scene`, and `.level__panel` CSS rules.
 
@@ -103,10 +105,12 @@ git commit -m "test: cover desktop viewport fit"
 ### Task 2: Implement the CSS-only viewport fit
 
 **Files:**
+
 - Modify: `cc/src/styles/global.css:894-1000` — gameplay shell, stage, scene, and panel rules.
 - Modify: `cc/src/styles/global.css:1694-1710` — desktop stage/scene breakpoint rules.
 
 **Interfaces:**
+
 - Consumes: the selectors and assertions from `desktopViewportFit.test.ts`.
 - Produces: a first-render layout that uses the current viewport without React measurement or resize state.
 
@@ -190,9 +194,11 @@ git commit -m "fix: fit gameplay layout to desktop viewport"
 ### Task 3: Run automated checks and visual verification
 
 **Files:**
+
 - No new files expected. If a check exposes a defect, modify only `cc/src/styles/global.css` or `cc/src/styles/desktopViewportFit.test.ts`, then repeat the relevant test cycle before committing the correction.
 
 **Interfaces:**
+
 - Consumes: the CSS implementation and its regression test from Task 2.
 - Produces: verified behavior at tall and wide/short desktop viewport sizes, with all project checks passing.
 

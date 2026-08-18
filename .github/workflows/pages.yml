@@ -48,14 +48,12 @@ jobs:
         working-directory: ${{ matrix.app }}
         run: npm run ci
 
-      # E2E roda no push, mas o `99` fica fora por enquanto (trabalho em andamento).
+      # E2E roda no push, para os quatro apps.
       - name: Install Playwright browser (${{ matrix.app }})
-        if: matrix.app != '99'
         working-directory: ${{ matrix.app }}
         run: npx playwright install --with-deps chromium
 
       - name: Run E2E tests (${{ matrix.app }})
-        if: matrix.app != '99'
         working-directory: ${{ matrix.app }}
         run: npm run test:e2e
 

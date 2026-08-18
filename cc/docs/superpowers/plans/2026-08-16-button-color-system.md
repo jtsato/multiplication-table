@@ -23,9 +23,11 @@
 ### Task 1: Add failing CSS contracts for button colors
 
 **Files:**
+
 - Create: `src/styles/buttonColors.test.ts`
 
 **Interfaces:**
+
 - Consumes: the literal contents of `src/styles/global.css`.
 - Produces: a red test contract for the button tokens and interaction selectors implemented in Task 2.
 
@@ -82,11 +84,13 @@ git commit -m "test: define button color contracts"
 ### Task 2: Implement the game button color hierarchy
 
 **Files:**
+
 - Modify: `src/styles/global.css:9-24` for button tokens.
 - Modify: `src/styles/global.css:111-190` for button variant states.
 - Test: `src/styles/buttonColors.test.ts`
 
 **Interfaces:**
+
 - Consumes: the failing CSS contract from Task 1.
 - Produces: `.btn` variants that use shared tokens and communicate hover, active, disabled, and danger states without changing React props.
 
@@ -95,26 +99,26 @@ git commit -m "test: define button color contracts"
 Add these declarations to `:root`:
 
 ```css
-  --button-primary-bg: #f5b82e;
-  --button-primary-hover: #ffd166;
-  --button-primary-active: #d99a17;
-  --button-primary-text: #172b4d;
-  --button-primary-shadow: #b98208;
-  --button-secondary-bg: #fff4c2;
-  --button-secondary-hover: #ffebb0;
-  --button-secondary-active: #f1d77a;
-  --button-secondary-text: #3d2b00;
-  --button-secondary-border: #d59a13;
-  --button-ghost-bg: #e8f3ff;
-  --button-ghost-hover: #d7ebff;
-  --button-ghost-active: #b9d8f4;
-  --button-ghost-text: #174a78;
-  --button-ghost-border: #96c2e8;
-  --button-danger-bg: #e9665a;
-  --button-danger-hover: #f27c70;
-  --button-danger-active: #c94b42;
-  --button-danger-text: #431a1e;
-  --button-danger-border: #a73735;
+--button-primary-bg: #f5b82e;
+--button-primary-hover: #ffd166;
+--button-primary-active: #d99a17;
+--button-primary-text: #172b4d;
+--button-primary-shadow: #b98208;
+--button-secondary-bg: #fff4c2;
+--button-secondary-hover: #ffebb0;
+--button-secondary-active: #f1d77a;
+--button-secondary-text: #3d2b00;
+--button-secondary-border: #d59a13;
+--button-ghost-bg: #e8f3ff;
+--button-ghost-hover: #d7ebff;
+--button-ghost-active: #b9d8f4;
+--button-ghost-text: #174a78;
+--button-ghost-border: #96c2e8;
+--button-danger-bg: #e9665a;
+--button-danger-hover: #f27c70;
+--button-danger-active: #c94b42;
+--button-danger-text: #431a1e;
+--button-danger-border: #a73735;
 ```
 
 - [ ] **Step 2: Replace hard-coded variant colors and add explicit states**
@@ -187,9 +191,11 @@ git commit -m "feat: refine game button color hierarchy"
 ### Task 3: Add failing contract for the interface grid background
 
 **Files:**
+
 - Create: `src/styles/interfaceBackground.test.ts`
 
 **Interfaces:**
+
 - Consumes: the literal contents of `src/styles/global.css`.
 - Produces: a red contract for the navy interface background, grid texture, and light shell headings implemented in Task 4.
 
@@ -214,12 +220,8 @@ describe('interface background', () => {
 
   it('applies a static 52 pixel grid to the body shell', () => {
     expect(css).toContain('background-color: var(--color-bg);');
-    expect(css).toContain(
-      'linear-gradient(var(--color-bg-grid) 1px, transparent 1px)',
-    );
-    expect(css).toContain(
-      'linear-gradient(90deg, var(--color-bg-grid) 1px, transparent 1px)',
-    );
+    expect(css).toContain('linear-gradient(var(--color-bg-grid) 1px, transparent 1px)');
+    expect(css).toContain('linear-gradient(90deg, var(--color-bg-grid) 1px, transparent 1px)');
     expect(css).toContain('background-size: 52px 52px;');
   });
 });
@@ -241,12 +243,14 @@ git commit -m "test: define interface background contract"
 ### Task 4: Implement the navy grid shell without changing mission scenes
 
 **Files:**
+
 - Modify: `src/styles/global.css:9-55` for background and shell text tokens.
 - Modify: `src/styles/global.css:206-225` for shared screen headings.
 - Modify: `src/styles/global.css:630-650` for home headings.
 - Test: `src/styles/interfaceBackground.test.ts`
 
 **Interfaces:**
+
 - Consumes: the failing background contract from Task 3.
 - Produces: a static navy grid on the global interface shell while leaving `.level` and island biome backgrounds untouched.
 
@@ -255,10 +259,10 @@ git commit -m "test: define interface background contract"
 Add these declarations to `:root`:
 
 ```css
-  --color-bg: #172f6b;
-  --color-bg-grid: rgba(255, 255, 255, 0.08);
-  --color-text-on-dark: #f4f7ff;
-  --color-text-soft-on-dark: #cbd8f5;
+--color-bg: #172f6b;
+--color-bg-grid: rgba(255, 255, 255, 0.08);
+--color-text-on-dark: #f4f7ff;
+--color-text-soft-on-dark: #cbd8f5;
 ```
 
 - [ ] **Step 2: Apply the non-animated grid to `body`**
@@ -266,12 +270,12 @@ Add these declarations to `:root`:
 Replace the flat body background with:
 
 ```css
-  background-color: var(--color-bg);
-  background-image:
-    linear-gradient(var(--color-bg-grid) 1px, transparent 1px),
-    linear-gradient(90deg, var(--color-bg-grid) 1px, transparent 1px);
-  background-size: 52px 52px;
-  background-position: 0 0;
+background-color: var(--color-bg);
+background-image:
+  linear-gradient(var(--color-bg-grid) 1px, transparent 1px),
+  linear-gradient(90deg, var(--color-bg-grid) 1px, transparent 1px);
+background-size: 52px 52px;
+background-position: 0 0;
 ```
 
 Do not add a background rule to `.level`; its existing inline island palette must continue to own the mission backdrop.
@@ -311,10 +315,12 @@ git commit -m "feat: add navy grid interface background"
 ### Task 5: Verify contrast, behavior, and production output
 
 **Files:**
+
 - Modify: none.
 - Test: `src/styles/buttonColors.test.ts`, `src/styles/interfaceBackground.test.ts`, existing full suite.
 
 **Interfaces:**
+
 - Consumes: the completed CSS system from Tasks 2 and 4.
 - Produces: evidence that the visual change preserves accessibility and application behavior.
 

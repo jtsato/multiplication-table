@@ -3,7 +3,9 @@ import {
   advance,
   buildProgress,
   createLevelState,
+  currentFactKey,
   currentQuestionNumber,
+  isFinished,
   levelAccuracy,
   REVEAL_AFTER_WRONG_ATTEMPTS,
   retryQuestion,
@@ -270,5 +272,39 @@ describe('contadores de tela', () => {
 
     const finished = playThrough(context, 15, true);
     expect(currentQuestionNumber(finished)).toBe(finished.totalQuestions);
+  });
+});
+
+describe('casos limite', () => {
+  it('buildProgress devolve 0 quando a missao nao tem perguntas', () => {
+    const state = { ...createLevelState(makeContext()), totalQuestions: 0 };
+    expect(buildProgress(state)).toBe(0);
+  });
+
+  it('levelAccuracy devolve 0 quando a missao nao tem perguntas', () => {
+    const state = { ...createLevelState(makeContext()), totalQuestions: 0 };
+    expect(levelAccuracy(state)).toBe(0);
+  });
+
+  it('advance ignora chamadas fora da fase correct', () => {
+    const context = makeContext();
+    const rng = createSeededRng(16);
+    const state = createLevelState(context);
+    expect(advance(state, rng, context)).toBe(state);
+  });
+
+  it('retryQuestion ignora chamadas fora da fase wrong', () => {
+    const state = createLevelState(makeContext());
+    expect(retryQuestion(state)).toBe(state);
+  });
+
+  it('currentFactKey devolve null quando nao ha pergunta', () => {
+    expect(currentFactKey(createLevelState(makeContext()))).toBeNull();
+  });
+
+  it('isFinished so e verdadeiro na fase finished', () => {
+    const state = createLevelState(makeContext());
+    expect(isFinished(state)).toBe(false);
+    expect(isFinished({ ...state, phase: 'finished' })).toBe(true);
   });
 });

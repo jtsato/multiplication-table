@@ -30,17 +30,17 @@ mas não terá mais como elemento principal três faixas idênticas de terreno. 
 landmark ocupará o centro do badge e usará as cores do `BiomePalette`, com
 formas simples o bastante para continuar legível no tamanho atual.
 
-| Tabuada | Bioma | Landmark |
-| ---: | --- | --- |
-| 2 | fields | flor sobre degraus verdes |
-| 3 | forest | pinheiro |
-| 4 | mountains | cristal |
-| 5 | beach | veleiro |
-| 6 | magicForest | estrela e brilhos |
-| 7 | caves | entrada de caverna com cristal |
-| 8 | ice | floco de neve |
-| 9 | volcano | vulcão |
-| 10 | city | castelo |
+| Tabuada | Bioma       | Landmark                       |
+| ------: | ----------- | ------------------------------ |
+|       2 | fields      | flor sobre degraus verdes      |
+|       3 | forest      | pinheiro                       |
+|       4 | mountains   | cristal                        |
+|       5 | beach       | veleiro                        |
+|       6 | magicForest | estrela e brilhos              |
+|       7 | caves       | entrada de caverna com cristal |
+|       8 | ice         | floco de neve                  |
+|       9 | volcano     | vulcão                         |
+|      10 | city        | castelo                        |
 
 O estado do jogo continua sendo comunicado por mais de um canal:
 

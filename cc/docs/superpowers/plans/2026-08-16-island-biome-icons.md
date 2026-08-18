@@ -22,10 +22,12 @@
 ### Task 1: Add the landmark rendering contract and failing coverage
 
 **Files:**
+
 - Create: `src/art/IslandBadge.test.tsx`
 - Read: `src/domain/islands.ts`, `src/domain/types.ts`, `src/art/IslandBadge.tsx`
 
 **Interfaces:**
+
 - Consumes: `ISLANDS`, `IslandStatus`, `BiomePalette`.
 - Produces: the expected `IslandBadge` prop contract with `biome: BiomeId` and a stable `data-landmark` marker for each rendered landmark.
 
@@ -41,16 +43,10 @@ describe('IslandBadge landmarks', () => {
   it('renders a distinct landmark for every island biome', () => {
     for (const island of ISLANDS) {
       const { container, unmount } = render(
-        <IslandBadge
-          biome={island.biome}
-          palette={island.palette}
-          status="available"
-        />,
+        <IslandBadge biome={island.biome} palette={island.palette} status="available" />,
       );
 
-      expect(
-        container.querySelector(`[data-landmark="${island.biome}"]`),
-      ).not.toBeNull();
+      expect(container.querySelector(`[data-landmark="${island.biome}"]`)).not.toBeNull();
       unmount();
     }
   });
@@ -62,11 +58,7 @@ describe('IslandBadge landmarks', () => {
 ```tsx
 it('keeps the lock overlay for locked islands', () => {
   const { container } = render(
-    <IslandBadge
-      biome="forest"
-      palette={ISLANDS[1].palette}
-      status="locked"
-    />,
+    <IslandBadge biome="forest" palette={ISLANDS[1].palette} status="locked" />,
   );
 
   expect(container.querySelector('[data-landmark="forest"]')).not.toBeNull();
@@ -76,11 +68,7 @@ it('keeps the lock overlay for locked islands', () => {
 
 it('keeps a completion accent for completed islands', () => {
   const { container } = render(
-    <IslandBadge
-      biome="city"
-      palette={ISLANDS[8].palette}
-      status="completed"
-    />,
+    <IslandBadge biome="city" palette={ISLANDS[8].palette} status="completed" />,
   );
 
   expect(container.querySelector('[data-landmark="city"]')).not.toBeNull();
@@ -97,10 +85,12 @@ Expected: FAIL because `IslandBadge` does not yet accept `biome` and does not ye
 ### Task 2: Implement distinct palette-driven SVG landmarks
 
 **Files:**
+
 - Modify: `src/art/IslandBadge.tsx`
 - Modify: `src/screens/WorldMapScreen.tsx:54-57`
 
 **Interfaces:**
+
 - Consumes: `BiomeId`, `BiomePalette`, `IslandStatus`.
 - Produces: `IslandBadgeProps = { biome: BiomeId; palette: BiomePalette; status: IslandStatus; size?: number }` and one `[data-landmark="<biome>"]` group per render.
 
@@ -109,12 +99,7 @@ Expected: FAIL because `IslandBadge` does not yet accept `biome` and does not ye
 In `WorldMapScreen.tsx`, update the badge call to:
 
 ```tsx
-<IslandBadge
-  biome={island.biome}
-  palette={island.palette}
-  status={status}
-  size={140}
-/>
+<IslandBadge biome={island.biome} palette={island.palette} status={status} size={140} />
 ```
 
 In `IslandBadge.tsx`, import `BiomeId` and add `biome: BiomeId` to `IslandBadgeProps`.
@@ -149,14 +134,20 @@ Keep the geometry inside the existing `viewBox="0 0 120 104"`, center the landma
 Render the selected landmark after the SVG opens and before the status-specific overlay:
 
 ```tsx
-{LANDMARKS[biome](palette)}
-{locked && <LockedOverlay />}
-{completed && (
-  <g data-completion-accent aria-hidden="true">
-    <rect x="94" y="8" width="4" height="15" fill={palette.blockDark} />
-    <rect x="98" y="8" width="12" height="7" fill={palette.accent} />
-  </g>
-)}
+{
+  LANDMARKS[biome](palette);
+}
+{
+  locked && <LockedOverlay />;
+}
+{
+  completed && (
+    <g data-completion-accent aria-hidden="true">
+      <rect x="94" y="8" width="4" height="15" fill={palette.blockDark} />
+      <rect x="98" y="8" width="12" height="7" fill={palette.accent} />
+    </g>
+  );
+}
 ```
 
 Keep the existing lock overlay geometry and colors unchanged, and keep the SVG decorative with `aria-hidden="true"`.
@@ -170,9 +161,11 @@ Expected: PASS for all nine landmark cases, the locked overlay case, and the com
 ### Task 3: Run the complete validation suite and inspect the map
 
 **Files:**
+
 - Modify: none unless a validation failure identifies a necessary correction in `src/art/IslandBadge.tsx` or `src/screens/WorldMapScreen.tsx`.
 
 **Interfaces:**
+
 - Consumes: the completed landmark renderer and existing map tests.
 - Produces: a buildable, lint-clean map with the approved visual direction.
 

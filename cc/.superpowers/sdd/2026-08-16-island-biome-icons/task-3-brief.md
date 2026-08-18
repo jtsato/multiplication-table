@@ -1,6 +1,7 @@
 ### Task 3: Run the complete validation suite and inspect the map
 
 **Files:**
+
 - Modify: none unless a validation failure identifies a necessary correction in `src/art/IslandBadge.tsx` or `src/screens/WorldMapScreen.tsx`.
 
 Run these commands from `C:\Dev\00-work\multiplication-table\cc`:

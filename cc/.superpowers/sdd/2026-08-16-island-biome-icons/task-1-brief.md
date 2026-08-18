@@ -1,10 +1,12 @@
 ### Task 1: Add the landmark rendering contract and failing coverage
 
 **Files:**
+
 - Create: `src/art/IslandBadge.test.tsx`
 - Read: `src/domain/islands.ts`, `src/domain/types.ts`, `src/art/IslandBadge.tsx`
 
 **Interfaces:**
+
 - Consumes: `ISLANDS`, `IslandStatus`, `BiomePalette`.
 - Produces: the expected `IslandBadge` prop contract with `biome: BiomeId` and a stable `data-landmark` marker for each rendered landmark.
 
@@ -20,16 +22,10 @@ describe('IslandBadge landmarks', () => {
   it('renders a distinct landmark for every island biome', () => {
     for (const island of ISLANDS) {
       const { container, unmount } = render(
-        <IslandBadge
-          biome={island.biome}
-          palette={island.palette}
-          status="available"
-        />,
+        <IslandBadge biome={island.biome} palette={island.palette} status="available" />,
       );
 
-      expect(
-        container.querySelector(`[data-landmark="${island.biome}"]`),
-      ).not.toBeNull();
+      expect(container.querySelector(`[data-landmark="${island.biome}"]`)).not.toBeNull();
       unmount();
     }
   });
@@ -41,11 +37,7 @@ describe('IslandBadge landmarks', () => {
 ```tsx
 it('keeps the lock overlay for locked islands', () => {
   const { container } = render(
-    <IslandBadge
-      biome="forest"
-      palette={ISLANDS[1].palette}
-      status="locked"
-    />,
+    <IslandBadge biome="forest" palette={ISLANDS[1].palette} status="locked" />,
   );
 
   expect(container.querySelector('[data-landmark="forest"]')).not.toBeNull();
@@ -55,11 +47,7 @@ it('keeps the lock overlay for locked islands', () => {
 
 it('keeps a completion accent for completed islands', () => {
   const { container } = render(
-    <IslandBadge
-      biome="city"
-      palette={ISLANDS[8].palette}
-      status="completed"
-    />,
+    <IslandBadge biome="city" palette={ISLANDS[8].palette} status="completed" />,
   );
 
   expect(container.querySelector('[data-landmark="city"]')).not.toBeNull();

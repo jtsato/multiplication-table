@@ -23,12 +23,12 @@ pois têm semântica visual própria.
 
 Usar uma paleta ensolarada com azul-marinho como âncora de leitura:
 
-| Variante | Fundo base | Texto | Intenção |
-| --- | --- | --- | --- |
-| Primário | `#f5b82e` | `#172b4d` | Ação principal, energética e positiva |
-| Secundário | `#fff4c2` | `#3d2b00` | Alternativa clara, ainda relacionada ao amarelo |
-| Ghost | `#e8f3ff` | `#174a78` | Navegação e ações de menor destaque |
-| Perigo | `#e9665a` | `#431a1e` | Ação destrutiva, com linguagem coral |
+| Variante   | Fundo base | Texto     | Intenção                                        |
+| ---------- | ---------- | --------- | ----------------------------------------------- |
+| Primário   | `#f5b82e`  | `#172b4d` | Ação principal, energética e positiva           |
+| Secundário | `#fff4c2`  | `#3d2b00` | Alternativa clara, ainda relacionada ao amarelo |
+| Ghost      | `#e8f3ff`  | `#174a78` | Navegação e ações de menor destaque             |
+| Perigo     | `#e9665a`  | `#431a1e` | Ação destrutiva, com linguagem coral            |
 
 Estados:
 

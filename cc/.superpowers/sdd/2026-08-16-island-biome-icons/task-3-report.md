@@ -10,12 +10,12 @@ Validation was completed. The test suite passes, but type checking, linting, and
 
 ## Exact validation summary
 
-| Command | Result | Evidence |
-| --- | --- | --- |
-| `npm run typecheck` | Failed (exit 1) | Initial run: `IslandCompleteScreen.tsx(61,8)` missing `biome`, plus two TS2532 errors. Rerun after the permitted correction: only `src/art/IslandBadge.test.tsx(30,18)` and `(44,18)` remain, both `Object is possibly 'undefined'`. |
-| `npm run lint` | Failed (exit 1) | `src/screens/LevelScreen.tsx(81,3)`: `react-hooks/refs` reports assignment to `contextRef.current` during render. Warnings only: `I18nProvider.tsx(27,17)` and `GameProvider.tsx(267,17)` for `react-refresh/only-export-components`. |
-| `npm test` | Passed (exit 0) | Vitest: 10 test files passed; 138 tests passed. Node emitted one experimental `localStorage` warning. |
-| `npm run build` | Failed (exit 1) | `tsc -b` stops on the same two TS2532 errors in `src/art/IslandBadge.test.tsx(30,18)` and `(44,18)` before Vite runs. |
+| Command             | Result          | Evidence                                                                                                                                                                                                                              |
+| ------------------- | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `npm run typecheck` | Failed (exit 1) | Initial run: `IslandCompleteScreen.tsx(61,8)` missing `biome`, plus two TS2532 errors. Rerun after the permitted correction: only `src/art/IslandBadge.test.tsx(30,18)` and `(44,18)` remain, both `Object is possibly 'undefined'`.  |
+| `npm run lint`      | Failed (exit 1) | `src/screens/LevelScreen.tsx(81,3)`: `react-hooks/refs` reports assignment to `contextRef.current` during render. Warnings only: `I18nProvider.tsx(27,17)` and `GameProvider.tsx(267,17)` for `react-refresh/only-export-components`. |
+| `npm test`          | Passed (exit 0) | Vitest: 10 test files passed; 138 tests passed. Node emitted one experimental `localStorage` warning.                                                                                                                                 |
+| `npm run build`     | Failed (exit 1) | `tsc -b` stops on the same two TS2532 errors in `src/art/IslandBadge.test.tsx(30,18)` and `(44,18)` before Vite runs.                                                                                                                 |
 
 ## Static landmark SVG review
 

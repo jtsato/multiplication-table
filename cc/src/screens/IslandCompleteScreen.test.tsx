@@ -11,12 +11,7 @@ describe('IslandCompleteScreen celebration', () => {
     const state = createDefaultState('en-US');
     const { container } = render(
       <I18nProvider locale="en-US">
-        <IslandCompleteScreen
-          state={state}
-          table={2}
-          unlockedTable={3}
-          onBackToMap={vi.fn()}
-        />
+        <IslandCompleteScreen state={state} table={2} unlockedTable={3} onBackToMap={vi.fn()} />
       </I18nProvider>,
     );
 

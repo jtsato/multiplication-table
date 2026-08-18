@@ -1,59 +1,257 @@
 <style>
-  .mood-board { color: #173451; }
-  .mood-board h2 { margin-bottom: .35rem; }
-  .mood-board .subtitle { margin-bottom: 1.35rem; }
-  .mood-options { display:grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap:1rem; }
-  .mood-option { background:#fff; border:2px solid #dce8ef; border-radius:18px; padding:.85rem; cursor:pointer; transition:.16s ease; }
-  .mood-option:hover,.mood-option.selected { border-color:#2f9cf4; box-shadow:0 10px 24px rgba(43,123,173,.16); transform:translateY(-2px); }
-  .mood-option h3 { margin:.75rem 0 .3rem; font-size:1rem; }
-  .mood-option p { margin:0; color:#70839a; font-size:.79rem; line-height:1.4; }
-  .mood-scene { min-height:190px; border-radius:14px; display:grid; place-items:center; position:relative; overflow:hidden; }
-  .mood-scene--a { background:linear-gradient(#9edbff,#e7f8ff); }
-  .mood-scene--b { background:linear-gradient(#d7c6fa,#fff2fb); }
-  .mood-scene--c { background:linear-gradient(#ffd66e,#ff9a7b); }
-  .mascot-wrap { display:flex; align-items:center; gap:22px; }
-  .mascot-svg { width:112px; height:112px; overflow:visible; filter:drop-shadow(0 8px 0 rgba(31,63,93,.13)); }
-  .float { animation:float 1.8s ease-in-out infinite; }
-  .blink { animation:blink 3s ease-in-out infinite; }
-  .spark { position:absolute; color:#fff4a6; font-size:1.8rem; animation:spark 1.4s ease-in-out infinite; }
-  .spark--one { top:25px; left:29%; }
-  .spark--two { top:55px; right:28%; animation-delay:.4s; }
-  .wave-hand { font-size:2rem; animation:wave 1.2s ease-in-out infinite; transform-origin:bottom left; }
-  .confetti-mini { position:absolute; width:8px; height:18px; border-radius:2px; animation:fall 1.8s linear infinite; }
-  .c1 { left:18%; top:0; background:#fff; transform:rotate(18deg); }
-  .c2 { left:78%; top:12px; background:#5ce1e6; transform:rotate(-22deg); animation-delay:.4s; }
-  .c3 { left:35%; top:-10px; background:#ffef59; transform:rotate(42deg); animation-delay:.8s; }
-  .speech { position:absolute; right:12px; bottom:16px; background:#fff; color:#5d4f9d; padding:.45rem .7rem; border-radius:12px; font-weight:800; font-size:.72rem; }
-  @keyframes float { 0%,100%{transform:translateY(5px)} 50%{transform:translateY(-7px)} }
-  @keyframes blink { 0%,42%,48%,100%{transform:scaleY(1)} 45%{transform:scaleY(.12)} }
-  @keyframes wave { 0%,100%{transform:rotate(9deg)} 50%{transform:rotate(-16deg)} }
-  @keyframes spark { 0%,100%{opacity:.35;transform:scale(.8) rotate(0)} 50%{opacity:1;transform:scale(1.15) rotate(18deg)} }
-  @keyframes fall { from{transform:translateY(-30px) rotate(0)} to{transform:translateY(220px) rotate(260deg)} }
-  @media(max-width:900px){.mood-options{grid-template-columns:1fr}.mood-option{max-width:520px}}
+  .mood-board {
+    color: #173451;
+  }
+  .mood-board h2 {
+    margin-bottom: 0.35rem;
+  }
+  .mood-board .subtitle {
+    margin-bottom: 1.35rem;
+  }
+  .mood-options {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+  }
+  .mood-option {
+    background: #fff;
+    border: 2px solid #dce8ef;
+    border-radius: 18px;
+    padding: 0.85rem;
+    cursor: pointer;
+    transition: 0.16s ease;
+  }
+  .mood-option:hover,
+  .mood-option.selected {
+    border-color: #2f9cf4;
+    box-shadow: 0 10px 24px rgba(43, 123, 173, 0.16);
+    transform: translateY(-2px);
+  }
+  .mood-option h3 {
+    margin: 0.75rem 0 0.3rem;
+    font-size: 1rem;
+  }
+  .mood-option p {
+    margin: 0;
+    color: #70839a;
+    font-size: 0.79rem;
+    line-height: 1.4;
+  }
+  .mood-scene {
+    min-height: 190px;
+    border-radius: 14px;
+    display: grid;
+    place-items: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .mood-scene--a {
+    background: linear-gradient(#9edbff, #e7f8ff);
+  }
+  .mood-scene--b {
+    background: linear-gradient(#d7c6fa, #fff2fb);
+  }
+  .mood-scene--c {
+    background: linear-gradient(#ffd66e, #ff9a7b);
+  }
+  .mascot-wrap {
+    display: flex;
+    align-items: center;
+    gap: 22px;
+  }
+  .mascot-svg {
+    width: 112px;
+    height: 112px;
+    overflow: visible;
+    filter: drop-shadow(0 8px 0 rgba(31, 63, 93, 0.13));
+  }
+  .float {
+    animation: float 1.8s ease-in-out infinite;
+  }
+  .blink {
+    animation: blink 3s ease-in-out infinite;
+  }
+  .spark {
+    position: absolute;
+    color: #fff4a6;
+    font-size: 1.8rem;
+    animation: spark 1.4s ease-in-out infinite;
+  }
+  .spark--one {
+    top: 25px;
+    left: 29%;
+  }
+  .spark--two {
+    top: 55px;
+    right: 28%;
+    animation-delay: 0.4s;
+  }
+  .wave-hand {
+    font-size: 2rem;
+    animation: wave 1.2s ease-in-out infinite;
+    transform-origin: bottom left;
+  }
+  .confetti-mini {
+    position: absolute;
+    width: 8px;
+    height: 18px;
+    border-radius: 2px;
+    animation: fall 1.8s linear infinite;
+  }
+  .c1 {
+    left: 18%;
+    top: 0;
+    background: #fff;
+    transform: rotate(18deg);
+  }
+  .c2 {
+    left: 78%;
+    top: 12px;
+    background: #5ce1e6;
+    transform: rotate(-22deg);
+    animation-delay: 0.4s;
+  }
+  .c3 {
+    left: 35%;
+    top: -10px;
+    background: #ffef59;
+    transform: rotate(42deg);
+    animation-delay: 0.8s;
+  }
+  .speech {
+    position: absolute;
+    right: 12px;
+    bottom: 16px;
+    background: #fff;
+    color: #5d4f9d;
+    padding: 0.45rem 0.7rem;
+    border-radius: 12px;
+    font-weight: 800;
+    font-size: 0.72rem;
+  }
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(5px);
+    }
+    50% {
+      transform: translateY(-7px);
+    }
+  }
+  @keyframes blink {
+    0%,
+    42%,
+    48%,
+    100% {
+      transform: scaleY(1);
+    }
+    45% {
+      transform: scaleY(0.12);
+    }
+  }
+  @keyframes wave {
+    0%,
+    100% {
+      transform: rotate(9deg);
+    }
+    50% {
+      transform: rotate(-16deg);
+    }
+  }
+  @keyframes spark {
+    0%,
+    100% {
+      opacity: 0.35;
+      transform: scale(0.8) rotate(0);
+    }
+    50% {
+      opacity: 1;
+      transform: scale(1.15) rotate(18deg);
+    }
+  }
+  @keyframes fall {
+    from {
+      transform: translateY(-30px) rotate(0);
+    }
+    to {
+      transform: translateY(220px) rotate(260deg);
+    }
+  }
+  @media (max-width: 900px) {
+    .mood-options {
+      grid-template-columns: 1fr;
+    }
+    .mood-option {
+      max-width: 520px;
+    }
+  }
 </style>
 
 <div class="mood-board">
   <h2>Como o mascote pode ficar mais vivo?</h2>
-  <p class="subtitle">A base comum é um rosto claramente feliz; a diferença está em quanto movimento aparece no dia a dia.</p>
+  <p class="subtitle">
+    A base comum é um rosto claramente feliz; a diferença está em quanto movimento aparece no dia a
+    dia.
+  </p>
 
   <div class="mood-options">
     <div class="mood-option" data-choice="happy-float" onclick="toggleSelect(this)">
       <div class="label">A · RECOMENDADA PARA O DIA A DIA</div>
       <div class="mood-scene mood-scene--a">
         <div class="mascot-wrap float">
-          <svg class="mascot-svg" viewBox="0 0 64 64"><rect x="10" y="12" width="44" height="40" rx="4" fill="#ffd23f"/><rect x="10" y="12" width="44" height="8" rx="4" fill="#fff" opacity=".35"/><rect x="20" y="25" width="8" height="9" rx="1" fill="#2b2233"/><rect x="36" y="25" width="8" height="9" rx="1" fill="#2b2233"/><rect x="22" y="26" width="3" height="3" fill="#fff"/><rect x="38" y="26" width="3" height="3" fill="#fff"/><path d="M23 40q9 10 18 0" fill="none" stroke="#2b2233" stroke-width="4" stroke-linecap="square"/><rect x="14" y="36" width="6" height="5" fill="#ff91aa"/><rect x="44" y="36" width="6" height="5" fill="#ff91aa"/><rect x="16" y="52" width="12" height="6" rx="2" fill="#d19a12"/><rect x="36" y="52" width="12" height="6" rx="2" fill="#d19a12"/><rect x="30" y="3" width="4" height="10" fill="#d19a12"/><rect x="24" y="0" width="16" height="6" rx="2" fill="#ff8fa3"/></svg>
+          <svg class="mascot-svg" viewBox="0 0 64 64">
+            <rect x="10" y="12" width="44" height="40" rx="4" fill="#ffd23f" />
+            <rect x="10" y="12" width="44" height="8" rx="4" fill="#fff" opacity=".35" />
+            <rect x="20" y="25" width="8" height="9" rx="1" fill="#2b2233" />
+            <rect x="36" y="25" width="8" height="9" rx="1" fill="#2b2233" />
+            <rect x="22" y="26" width="3" height="3" fill="#fff" />
+            <rect x="38" y="26" width="3" height="3" fill="#fff" />
+            <path
+              d="M23 40q9 10 18 0"
+              fill="none"
+              stroke="#2b2233"
+              stroke-width="4"
+              stroke-linecap="square"
+            />
+            <rect x="14" y="36" width="6" height="5" fill="#ff91aa" />
+            <rect x="44" y="36" width="6" height="5" fill="#ff91aa" />
+            <rect x="16" y="52" width="12" height="6" rx="2" fill="#d19a12" />
+            <rect x="36" y="52" width="12" height="6" rx="2" fill="#d19a12" />
+            <rect x="30" y="3" width="4" height="10" fill="#d19a12" />
+            <rect x="24" y="0" width="16" height="6" rx="2" fill="#ff8fa3" />
+          </svg>
         </div>
         <span class="spark spark--one">✦</span><span class="spark spark--two">✦</span>
       </div>
       <h3>Sorriso + flutuação suave</h3>
-      <p>O mascote respira/flutua levemente e mantém uma expressão alegre sem distrair da tabuada.</p>
+      <p>
+        O mascote respira/flutua levemente e mantém uma expressão alegre sem distrair da tabuada.
+      </p>
     </div>
 
     <div class="mood-option" data-choice="tap-wave" onclick="toggleSelect(this)">
       <div class="label">B · MAIS INTERATIVA</div>
       <div class="mood-scene mood-scene--b">
         <div class="mascot-wrap blink">
-          <svg class="mascot-svg" viewBox="0 0 64 64"><rect x="10" y="12" width="44" height="40" rx="4" fill="#c98cff"/><rect x="10" y="12" width="44" height="8" rx="4" fill="#fff" opacity=".35"/><rect x="20" y="26" width="8" height="3" rx="1" fill="#2b2233"/><path d="M36 28q4-5 8 0" fill="none" stroke="#2b2233" stroke-width="3"/><path d="M23 40q9 10 18 0" fill="none" stroke="#2b2233" stroke-width="4" stroke-linecap="square"/><rect x="14" y="36" width="6" height="5" fill="#ffe6f5"/><rect x="44" y="36" width="6" height="5" fill="#ffe6f5"/><rect x="16" y="52" width="12" height="6" rx="2" fill="#8550bc"/><rect x="36" y="52" width="12" height="6" rx="2" fill="#8550bc"/><rect x="30" y="3" width="4" height="10" fill="#8550bc"/><rect x="24" y="0" width="16" height="6" rx="2" fill="#ffd23f"/></svg>
+          <svg class="mascot-svg" viewBox="0 0 64 64">
+            <rect x="10" y="12" width="44" height="40" rx="4" fill="#c98cff" />
+            <rect x="10" y="12" width="44" height="8" rx="4" fill="#fff" opacity=".35" />
+            <rect x="20" y="26" width="8" height="3" rx="1" fill="#2b2233" />
+            <path d="M36 28q4-5 8 0" fill="none" stroke="#2b2233" stroke-width="3" />
+            <path
+              d="M23 40q9 10 18 0"
+              fill="none"
+              stroke="#2b2233"
+              stroke-width="4"
+              stroke-linecap="square"
+            />
+            <rect x="14" y="36" width="6" height="5" fill="#ffe6f5" />
+            <rect x="44" y="36" width="6" height="5" fill="#ffe6f5" />
+            <rect x="16" y="52" width="12" height="6" rx="2" fill="#8550bc" />
+            <rect x="36" y="52" width="12" height="6" rx="2" fill="#8550bc" />
+            <rect x="30" y="3" width="4" height="10" fill="#8550bc" />
+            <rect x="24" y="0" width="16" height="6" rx="2" fill="#ffd23f" />
+          </svg>
           <span class="wave-hand">👋</span>
         </div>
         <span class="speech">Toque em mim!</span>
@@ -65,13 +263,29 @@
     <div class="mood-option" data-choice="celebration" onclick="toggleSelect(this)">
       <div class="label">C · PARA ACERTOS E CONCLUSÕES</div>
       <div class="mood-scene mood-scene--c">
-        <span class="confetti-mini c1"></span><span class="confetti-mini c2"></span><span class="confetti-mini c3"></span>
+        <span class="confetti-mini c1"></span><span class="confetti-mini c2"></span
+        ><span class="confetti-mini c3"></span>
         <div class="mascot-wrap float">
-          <svg class="mascot-svg" viewBox="0 0 64 64"><path d="M10 32 0 24M54 32l10-8" stroke="#2b2233" stroke-width="5"/><rect x="10" y="12" width="44" height="40" rx="4" fill="#58d5b1"/><rect x="10" y="12" width="44" height="8" rx="4" fill="#fff" opacity=".35"/><path d="M20 29q4-5 8 0M36 29q4-5 8 0" fill="none" stroke="#2b2233" stroke-width="3"/><path d="M22 39q10 15 20 0" fill="#2b2233"/><rect x="14" y="36" width="6" height="5" fill="#ff91aa"/><rect x="44" y="36" width="6" height="5" fill="#ff91aa"/><rect x="16" y="52" width="12" height="6" rx="2" fill="#258b78"/><rect x="36" y="52" width="12" height="6" rx="2" fill="#258b78"/><rect x="30" y="3" width="4" height="10" fill="#258b78"/><rect x="24" y="0" width="16" height="6" rx="2" fill="#fff36b"/></svg>
+          <svg class="mascot-svg" viewBox="0 0 64 64">
+            <path d="M10 32 0 24M54 32l10-8" stroke="#2b2233" stroke-width="5" />
+            <rect x="10" y="12" width="44" height="40" rx="4" fill="#58d5b1" />
+            <rect x="10" y="12" width="44" height="8" rx="4" fill="#fff" opacity=".35" />
+            <path d="M20 29q4-5 8 0M36 29q4-5 8 0" fill="none" stroke="#2b2233" stroke-width="3" />
+            <path d="M22 39q10 15 20 0" fill="#2b2233" />
+            <rect x="14" y="36" width="6" height="5" fill="#ff91aa" />
+            <rect x="44" y="36" width="6" height="5" fill="#ff91aa" />
+            <rect x="16" y="52" width="12" height="6" rx="2" fill="#258b78" />
+            <rect x="36" y="52" width="12" height="6" rx="2" fill="#258b78" />
+            <rect x="30" y="3" width="4" height="10" fill="#258b78" />
+            <rect x="24" y="0" width="16" height="6" rx="2" fill="#fff36b" />
+          </svg>
         </div>
       </div>
       <h3>Modo festa</h3>
-      <p>Reservado para acertos, missão completa e ilha desbloqueada: braços erguidos, sorriso aberto e papel picado.</p>
+      <p>
+        Reservado para acertos, missão completa e ilha desbloqueada: braços erguidos, sorriso aberto
+        e papel picado.
+      </p>
     </div>
   </div>
 </div>

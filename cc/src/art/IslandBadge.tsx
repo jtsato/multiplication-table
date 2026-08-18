@@ -75,8 +75,22 @@ const LANDMARKS: Record<BiomeId, (palette: BiomePalette) => ReactNode> = {
   ice: (palette) => (
     <>
       <rect x="58" y="10" width="4" height="46" fill={palette.blockLight} />
-      <rect x="58" y="10" width="4" height="46" fill={palette.blockLight} transform="rotate(60 60 33)" />
-      <rect x="58" y="10" width="4" height="46" fill={palette.blockLight} transform="rotate(120 60 33)" />
+      <rect
+        x="58"
+        y="10"
+        width="4"
+        height="46"
+        fill={palette.blockLight}
+        transform="rotate(60 60 33)"
+      />
+      <rect
+        x="58"
+        y="10"
+        width="4"
+        height="46"
+        fill={palette.blockLight}
+        transform="rotate(120 60 33)"
+      />
       <rect x="56" y="29" width="8" height="8" fill={palette.accent} />
     </>
   ),

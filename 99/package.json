@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
-  "description": "POC 3D de sobrevivencia educacional: a tabuada do 2 e a ferramenta de progresso para coletar, construir e sobreviver a noite.",
+  "description": "Numi 99: jogo 3D cozy de tabuada. A crianca explora uma ilha, resolve multiplicacoes para colher recursos e ganhar moedas, e atravessa a noite curta com uma lanterna.",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
@@ -16,6 +16,7 @@
     "format:check": "prettier --check .",
     "e2e": "playwright test",
     "e2e:ui": "playwright test --ui",
+    "test:e2e": "playwright test",
     "ci": "npm run lint && npm run typecheck && npm run test && npm run build"
   },
   "dependencies": {

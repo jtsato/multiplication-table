@@ -23,10 +23,12 @@
 ### Task 1: Lock the overworld UI palette in contract tests
 
 **Files:**
+
 - Modify: `src/styles/buttonColors.test.ts`
 - Modify: `src/styles/interfaceBackground.test.ts`
 
 **Interfaces:**
+
 - Consumes: the approved Overworld UI token values from the design specification.
 - Produces: failing tests that describe the exact interface palette required by the CSS implementation task.
 
@@ -44,7 +46,7 @@ Use these exact expectations in the existing `it.each` table:
   ['--button-ghost-text', '#2f4f36'],
   ['--button-danger-bg', '#c45b4b'],
   ['--button-danger-text', '#fff3df'],
-]
+];
 ```
 
 Keep the existing interaction-selector assertions unchanged so hover and active states remain part of the contract.
@@ -84,9 +86,11 @@ git commit -m "test: define overworld ui palette"
 ### Task 2: Apply the overworld CSS token system and UI states
 
 **Files:**
+
 - Modify: `src/styles/global.css:9-50` and all later selectors containing the old UI color literals
 
 **Interfaces:**
+
 - Consumes: the failing token contracts from Task 1.
 - Produces: a semantic CSS palette used by every interface surface, button state, status message, focus ring, card, and shadow.
 
@@ -174,12 +178,14 @@ git commit -m "feat: apply overworld ui palette"
 ### Task 3: Recolor biome, mascot, and avatar domain data
 
 **Files:**
+
 - Modify: `src/domain/islands.ts`
 - Modify: `src/domain/mascots.ts`
 - Modify: `src/domain/avatar.ts`
 - Create: `src/domain/visualPalette.test.ts`
 
 **Interfaces:**
+
 - Consumes: the existing `BiomePalette`, `MascotColors`, and avatar color maps.
 - Produces: the same exported types and functions with new material-based color values; `getPalette`, `getMascotDefinition`, and `OUTFIT_COLORS_HEX` signatures do not change.
 
@@ -250,17 +256,17 @@ Expected: FAIL on the old island, outfit, and mascot values.
 
 Use the following material palette table, keeping the existing object keys and biome-to-table mapping:
 
-| Biome | `skyTop` / `skyBottom` | `groundTop` / `groundMid` / `groundDeep` | `water` / `waterDeep` | `block` / `blockLight` / `blockDark` | `accent` / `accentSoft` |
-| --- | --- | --- | --- | --- | --- |
-| fields | `#72b7d6` / `#d9ecdf` | `#70a84a` / `#4f8738` / `#734b2b` | `#4c9fbe` / `#2f6f88` | `#b7864b` / `#d5ad70` / `#78552f` | `#d8b341` / `#9fc56b` |
-| forest | `#5a9ab8` / `#cfe2d3` | `#497a3c` / `#345b32` / `#5a402a` | `#3f8798` / `#29616f` | `#8a633d` / `#b08150` / `#5f4227` | `#d6b246` / `#89b86c` |
-| mountains | `#7f9cae` / `#d9e4e5` | `#929c9c` / `#6b7777` / `#444e4e` | `#5c99ac` / `#3c6674` | `#7a8582` / `#b1bbb3` / `#4c5754` | `#d3a63a` / `#a8c2c0` |
-| beach | `#67b6d0` / `#f1dfb5` | `#d8bc78` / `#b99558` / `#8c6d42` | `#4e9eb7` / `#2d6e82` | `#b8744b` / `#d59a65` / `#75432f` | `#d35a45` / `#e9c861` |
-| magicForest | `#5c557f` / `#c9bfdc` | `#648c58` / `#456a43` / `#4e3f5e` | `#6f74ae` / `#4a4f7f` | `#856a9d` / `#b49aca` / `#5a456c` | `#d8b84f` / `#8ac3a0` |
-| caves | `#252c36` / `#4b4b4a` | `#6e6654` / `#504a3d` / `#2f2c28` | `#3a8d82` / `#256158` | `#8b7150` / `#b59a6e` / `#584633` | `#d4a947` / `#8ac0a5` |
-| ice | `#75b4c8` / `#e5f2ee` | `#d7e5df` / `#a6c4c0` / `#6e9493` | `#67abc0` / `#3d7180` | `#9fc2c5` / `#d9ece8` / `#648e95` | `#d8b348` / `#f2f1da` |
-| volcano | `#493541` / `#b85b43` | `#5b423c` / `#3c2b2d` / `#211d21` | `#c45b35` / `#7a2e27` | `#8a4d3b` / `#b97148` / `#572f31` | `#e2a83e` / `#c85a3d` |
-| city | `#5f9fbc` / `#e5d7ba` | `#777c72` / `#595f5b` / `#3b413e` | `#4f8fa4` / `#2d6172` | `#b09b68` / `#d4bc7d` / `#78623e` | `#d4a53e` / `#99b4a0` |
+| Biome       | `skyTop` / `skyBottom` | `groundTop` / `groundMid` / `groundDeep` | `water` / `waterDeep` | `block` / `blockLight` / `blockDark` | `accent` / `accentSoft` |
+| ----------- | ---------------------- | ---------------------------------------- | --------------------- | ------------------------------------ | ----------------------- |
+| fields      | `#72b7d6` / `#d9ecdf`  | `#70a84a` / `#4f8738` / `#734b2b`        | `#4c9fbe` / `#2f6f88` | `#b7864b` / `#d5ad70` / `#78552f`    | `#d8b341` / `#9fc56b`   |
+| forest      | `#5a9ab8` / `#cfe2d3`  | `#497a3c` / `#345b32` / `#5a402a`        | `#3f8798` / `#29616f` | `#8a633d` / `#b08150` / `#5f4227`    | `#d6b246` / `#89b86c`   |
+| mountains   | `#7f9cae` / `#d9e4e5`  | `#929c9c` / `#6b7777` / `#444e4e`        | `#5c99ac` / `#3c6674` | `#7a8582` / `#b1bbb3` / `#4c5754`    | `#d3a63a` / `#a8c2c0`   |
+| beach       | `#67b6d0` / `#f1dfb5`  | `#d8bc78` / `#b99558` / `#8c6d42`        | `#4e9eb7` / `#2d6e82` | `#b8744b` / `#d59a65` / `#75432f`    | `#d35a45` / `#e9c861`   |
+| magicForest | `#5c557f` / `#c9bfdc`  | `#648c58` / `#456a43` / `#4e3f5e`        | `#6f74ae` / `#4a4f7f` | `#856a9d` / `#b49aca` / `#5a456c`    | `#d8b84f` / `#8ac3a0`   |
+| caves       | `#252c36` / `#4b4b4a`  | `#6e6654` / `#504a3d` / `#2f2c28`        | `#3a8d82` / `#256158` | `#8b7150` / `#b59a6e` / `#584633`    | `#d4a947` / `#8ac0a5`   |
+| ice         | `#75b4c8` / `#e5f2ee`  | `#d7e5df` / `#a6c4c0` / `#6e9493`        | `#67abc0` / `#3d7180` | `#9fc2c5` / `#d9ece8` / `#648e95`    | `#d8b348` / `#f2f1da`   |
+| volcano     | `#493541` / `#b85b43`  | `#5b423c` / `#3c2b2d` / `#211d21`        | `#c45b35` / `#7a2e27` | `#8a4d3b` / `#b97148` / `#572f31`    | `#e2a83e` / `#c85a3d`   |
+| city        | `#5f9fbc` / `#e5d7ba`  | `#777c72` / `#595f5b` / `#3b413e`        | `#4f8fa4` / `#2d6172` | `#b09b68` / `#d4bc7d` / `#78623e`    | `#d4a53e` / `#99b4a0`   |
 
 - [ ] **Step 4: Replace mascot and avatar color maps**
 
@@ -307,6 +313,7 @@ git commit -m "feat: recolor overworld domain palettes"
 ### Task 4: Align SVG art, splash, and celebration colors
 
 **Files:**
+
 - Modify: `src/art/Avatar.tsx`
 - Modify: `src/art/Decor.tsx`
 - Modify: `src/art/IslandBadge.tsx`
@@ -320,6 +327,7 @@ git commit -m "feat: recolor overworld domain palettes"
 - Modify: `src/art/SceneView.test.tsx` only where a fixture asserts the changed visual contract
 
 **Interfaces:**
+
 - Consumes: the material colors from `src/domain/islands.ts`, `src/domain/mascots.ts`, and `src/domain/avatar.ts`.
 - Produces: the same SVG props and screen behavior with no old blue/rose/neon-purple literals in active source.
 
@@ -373,9 +381,11 @@ git commit -m "feat: align cc art with overworld palette"
 ### Task 5: Run the complete verification sweep
 
 **Files:**
+
 - Modify: none unless a verification command exposes a color contract or formatting issue from Tasks 1–4
 
 **Interfaces:**
+
 - Consumes: the completed CSS, domain, art, and test changes.
 - Produces: verified build artifacts and evidence that the old active palette is gone from `cc/src`.
 
@@ -430,4 +440,3 @@ If formatting or a test fixture requires a final adjustment, run:
 git add src
 git commit -m "fix: verify overworld palette integration"
 ```
-

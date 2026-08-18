@@ -101,7 +101,9 @@ Tudo fica em `localStorage`, atrás de duas camadas:
 O estado salvo é versionado:
 
 ```ts
-{ schemaVersion: 1, player, settings, progress, statistics, achievements }
+{
+  schemaVersion: (1, player, settings, progress, statistics, achievements);
+}
 ```
 
 Ao carregar, o save passa por três etapas, cada uma tolerante a falha:

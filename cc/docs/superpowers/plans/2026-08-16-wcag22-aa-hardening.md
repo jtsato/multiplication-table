@@ -23,10 +23,12 @@
 ### Task 1: Tornar o diálogo de confirmação modal acessível ao teclado
 
 **Files:**
+
 - Modify: `src/ui/ConfirmDialog.tsx`
 - Create: `src/ui/ConfirmDialog.test.tsx`
 
 **Interfaces:**
+
 - Consumes: `ConfirmDialogProps`, `Button` com suporte a `ref`, `role="alertdialog"` e callbacks `onConfirm`/`onCancel` existentes.
 - Produces: ao abrir, o foco entra no botão de cancelamento; Tab e Shift+Tab circulam pelos controles do diálogo; Escape cancela; ao fechar, o foco retorna ao elemento que estava ativo antes da abertura.
 
@@ -156,10 +158,12 @@ git commit --only src/ui/ConfirmDialog.tsx src/ui/ConfirmDialog.test.tsx -m "fea
 ### Task 2: Expor corretamente a cena e o botão de aceno
 
 **Files:**
+
 - Modify: `src/art/SceneView.tsx`
 - Modify: `src/art/SceneView.test.tsx`
 
 **Interfaces:**
+
 - Consumes: `SceneViewProps.ariaLabel`, grupo interno do herói com `role="button"` e chave `a11y.heroWave` existentes.
 - Produces: o SVG da cena usa `role="group"` com sua descrição, e o botão do herói continua sendo encontrado separadamente por leitores de tela e testes de acessibilidade.
 
@@ -183,7 +187,9 @@ it('separa a semântica da cena do botão do herói', () => {
     </I18nProvider>,
   );
 
-  expect(screen.getByRole('group', { name: 'Progresso da construção: 0 por cento' })).toBeInTheDocument();
+  expect(
+    screen.getByRole('group', { name: 'Progresso da construção: 0 por cento' }),
+  ).toBeInTheDocument();
   expect(screen.queryByRole('img')).not.toBeInTheDocument();
   expect(screen.getByRole('button', { name: 'Tap to wave' })).toBeInTheDocument();
 });
@@ -230,9 +236,11 @@ git commit --only src/art/SceneView.tsx src/art/SceneView.test.tsx -m "fix: expo
 ### Task 3: Melhorar o indicador de foco para fundos claros e amarelos
 
 **Files:**
+
 - Modify: `src/styles/global.css`
 
 **Interfaces:**
+
 - Consumes: `:focus-visible` global e seletor de foco de `ToggleRow` existentes.
 - Produces: um token `--color-focus` compartilhado, com indicador visível sobre o fundo da aplicação, botões amarelos e grupo SVG do herói.
 
@@ -297,9 +305,11 @@ git commit --only src/styles/global.css -m "fix: strengthen keyboard focus contr
 ### Task 4: Verificação integrada WCAG
 
 **Files:**
+
 - Modify: nenhum arquivo inicialmente; corrigir somente os arquivos das tarefas anteriores se uma verificação reproduzir uma falha desta funcionalidade.
 
 **Interfaces:**
+
 - Consumes: testes e correções das tarefas 1–3.
 - Produces: evidência de que teclado, semântica, foco, movimento existente e fluxo do jogo continuam funcionando juntos.
 

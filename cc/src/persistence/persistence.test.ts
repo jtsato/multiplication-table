@@ -7,7 +7,7 @@ import { CHALLENGE_QUESTION_COUNT } from '../domain/challenge';
 import { CURRENT_SCHEMA_VERSION, createDefaultState } from '../domain/defaultState';
 import { applyMissionResult, getIslandProgress, islandStatus } from '../domain/progression';
 import { recordAnswer } from '../domain/statistics';
-import type { GameState } from '../domain/types';
+import type { GameSettings, GameState } from '../domain/types';
 
 function makeRepository() {
   const backend = createMemoryStorage();
@@ -217,6 +217,145 @@ describe('normalizeState', () => {
     expect(first?.unlocked).toBe(true);
     const knownIds: string[] = state.achievements.map((entry) => entry.id);
     expect(knownIds).not.toContain('conquista-removida');
+  });
+
+  it('clampa campos numericos negativos', () => {
+    const { state, repaired } = normalizeState(
+      { challenge: { bestScore: 0, bestTimeMs: null, runs: -3, lastPlayedAt: null } },
+      'pt-BR',
+    );
+    expect(repaired).toBe(true);
+    expect(state.challenge.runs).toBe(0);
+  });
+
+  it('preserva datas validas do recorde', () => {
+    const { state } = normalizeState(
+      {
+        challenge: {
+          bestScore: 5,
+          bestTimeMs: 1000,
+          runs: 1,
+          lastPlayedAt: '2026-02-01T09:00:00.000Z',
+        },
+      },
+      'pt-BR',
+    );
+    expect(state.challenge.bestTimeMs).toBe(1000);
+    expect(state.challenge.lastPlayedAt).toBe('2026-02-01T09:00:00.000Z');
+  });
+
+  it('remove estatisticas de fatos sem tentativas', () => {
+    const { state, repaired } = normalizeState(
+      { statistics: { facts: { '2x3': { attempts: 0, correct: 0 } } } },
+      'pt-BR',
+    );
+    expect(state.statistics.facts['2x3']).toBeUndefined();
+    expect(repaired).toBe(true);
+  });
+
+  it('repara ids de missao duplicados', () => {
+    const { state, repaired } = normalizeState(
+      {
+        progress: { islands: { '2': { unlocked: true, completedMissionIds: ['t2-m1', 't2-m1'] } } },
+      },
+      'pt-BR',
+    );
+    expect(getIslandProgress(state.progress, 2).completedMissionIds).toEqual(['t2-m1']);
+    expect(repaired).toBe(true);
+  });
+
+  it('clampa bestStreak ao currentStreak', () => {
+    const { state, repaired } = normalizeState(
+      { statistics: { currentStreak: 4, bestStreak: 2 } },
+      'pt-BR',
+    );
+    expect(state.statistics.bestStreak).toBe(4);
+    expect(repaired).toBe(true);
+  });
+
+  it('campo novo ausente nao marca reparo', () => {
+    const defaults = createDefaultState('pt-BR');
+    const without = JSON.parse(JSON.stringify(defaults)) as GameState;
+    delete (without.settings as Partial<GameSettings>).studyBeforeMission;
+    const { repaired } = normalizeState(without, 'pt-BR');
+    expect(repaired).toBe(false);
+  });
+
+  it('island unlocked invalido vira bloqueado fora da primeira ilha', () => {
+    const { state, repaired } = normalizeState(
+      { progress: { islands: { '3': { unlocked: 'sim' } } } },
+      'pt-BR',
+    );
+    expect(getIslandProgress(state.progress, 3).unlocked).toBe(false);
+    expect(repaired).toBe(true);
+  });
+
+  it('conquista bloqueada com data invalida fica sem data', () => {
+    const { state } = normalizeState(
+      {
+        achievements: [
+          { id: 'firstCorrect', unlocked: false, unlockedAt: '2026-01-01T00:00:00.000Z' },
+        ],
+      },
+      'pt-BR',
+    );
+    const achievement = state.achievements.find((entry) => entry.id === 'firstCorrect');
+    expect(achievement?.unlocked).toBe(false);
+    expect(achievement?.unlockedAt).toBeNull();
+  });
+
+  it('preserva unlockedAt de conquista desbloqueada', () => {
+    const { state } = normalizeState(
+      {
+        achievements: [
+          { id: 'firstCorrect', unlocked: true, unlockedAt: '2026-01-01T00:00:00.000Z' },
+        ],
+      },
+      'pt-BR',
+    );
+    const achievement = state.achievements.find((entry) => entry.id === 'firstCorrect');
+    expect(achievement?.unlocked).toBe(true);
+    expect(achievement?.unlockedAt).toBe('2026-01-01T00:00:00.000Z');
+  });
+
+  it('conquista com unlocked invalido fica bloqueada', () => {
+    const { state } = normalizeState(
+      { achievements: [{ id: 'firstCorrect', unlocked: 'sim' }] },
+      'pt-BR',
+    );
+    const achievement = state.achievements.find((entry) => entry.id === 'firstCorrect');
+    expect(achievement?.unlocked).toBe(false);
+  });
+
+  it('clampa currentStreak e playSessions negativos', () => {
+    const { state, repaired } = normalizeState(
+      { statistics: { currentStreak: -1, playSessions: -2 } },
+      'pt-BR',
+    );
+    expect(state.statistics.currentStreak).toBe(0);
+    expect(state.statistics.playSessions).toBe(0);
+    expect(repaired).toBe(true);
+  });
+
+  it('descarta estatistica de fato invalida', () => {
+    const { state, repaired } = normalizeState(
+      { statistics: { facts: { '2x3': 'lixo' } } },
+      'pt-BR',
+    );
+    expect(state.statistics.facts['2x3']).toBeUndefined();
+    expect(repaired).toBe(true);
+  });
+
+  it('repara createdAt invalido', () => {
+    const now = new Date('2026-01-01T00:00:00.000Z');
+    const defaults = createDefaultState('pt-BR', now);
+    const { state, repaired } = normalizeState(
+      { player: { createdAt: 'nao-e-data' } },
+      'pt-BR',
+      now,
+    );
+    expect(state.player.createdAt).toBe(defaults.player.createdAt);
+    expect(repaired).toBe(true);
   });
 });
 

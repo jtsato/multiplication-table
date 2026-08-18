@@ -1,10 +1,12 @@
 ### Task 2: Implement distinct palette-driven SVG landmarks
 
 **Files:**
+
 - Modify: `src/art/IslandBadge.tsx`
 - Modify: `src/screens/WorldMapScreen.tsx:54-57`
 
 **Interfaces:**
+
 - Consumes: `BiomeId`, `BiomePalette`, `IslandStatus`.
 - Produces: `IslandBadgeProps = { biome: BiomeId; palette: BiomePalette; status: IslandStatus; size?: number }` and one `[data-landmark="<biome>"]` group per render.
 

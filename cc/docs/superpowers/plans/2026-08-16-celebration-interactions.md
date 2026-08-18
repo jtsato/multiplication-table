@@ -23,11 +23,13 @@
 ### Task 1: Modelar os humores visuais do mascote e cobrir a apresentação
 
 **Files:**
+
 - Modify: `src/art/Mascot.tsx`
 - Modify: `src/styles/global.css`
 - Create: `src/art/Mascot.test.tsx`
 
 **Interfaces:**
+
 - Consumes: `MascotProps` existente, `MascotKind` e `MascotPalette` já usados pelo jogo.
 - Produces: `mood` aceita `'happy' | 'waving' | 'cheering' | 'thinking'`; os elementos SVG continuam recebendo as classes `.mascot` e `.mascot--<mood>`.
 
@@ -126,15 +128,21 @@ Em `src/styles/global.css`, manter `.mascot--cheering` como salto, acrescentar u
 }
 
 @keyframes mascot-float {
-  50% { transform: translateY(-3px); }
+  50% {
+    transform: translateY(-3px);
+  }
 }
 
 @keyframes mascot-wave {
-  50% { transform: translateY(-3px) rotate(4deg); }
+  50% {
+    transform: translateY(-3px) rotate(4deg);
+  }
 }
 
 @keyframes mascot-arm-wave {
-  50% { transform: rotate(-24deg); }
+  50% {
+    transform: rotate(-24deg);
+  }
 }
 ```
 
@@ -158,6 +166,7 @@ git commit --only src/art/Mascot.tsx src/art/Mascot.test.tsx src/styles/global.c
 ### Task 2: Fazer o avatar acenar na tela inicial e durante a missão
 
 **Files:**
+
 - Modify: `src/screens/HomeScreen.tsx`
 - Modify: `src/art/SceneView.tsx`
 - Modify: `src/styles/global.css`
@@ -165,6 +174,7 @@ git commit --only src/art/Mascot.tsx src/art/Mascot.test.tsx src/styles/global.c
 - Create: `src/art/SceneView.test.tsx`
 
 **Interfaces:**
+
 - Consumes: `Avatar`, `Mascot`, `Button`, `audioService`, `useTranslation` e o estado `GameState` existentes.
 - Produces: o clique/teclado do avatar dispara somente o aceno; `onEditCharacter` fica ligado ao botão de edição; `SceneView` passa `mood="waving"` enquanto o aceno estiver ativo.
 
@@ -190,7 +200,13 @@ it('separa o aceno do avatar da edição do personagem', async () => {
 
   render(
     <I18nProvider locale="en-US">
-      <HomeScreen state={state} onPlay={vi.fn()} onAchievements={vi.fn()} onSettings={vi.fn()} onEditCharacter={onEditCharacter} />
+      <HomeScreen
+        state={state}
+        onPlay={vi.fn()}
+        onAchievements={vi.fn()}
+        onSettings={vi.fn()}
+        onEditCharacter={onEditCharacter}
+      />
     </I18nProvider>,
   );
 
@@ -273,8 +289,12 @@ Em `global.css`, adicionar `.avatar--waving` e os estilos do novo grupo `.home__
 }
 
 @keyframes avatar-wave {
-  25% { transform: rotate(-5deg); }
-  75% { transform: rotate(5deg); }
+  25% {
+    transform: rotate(-5deg);
+  }
+  75% {
+    transform: rotate(5deg);
+  }
 }
 
 .home__avatar-group {
@@ -309,11 +329,13 @@ git commit --only src/screens/HomeScreen.tsx src/art/SceneView.tsx src/screens/H
 ### Task 3: Aplicar a hierarquia amarela aos controles de ação
 
 **Files:**
+
 - Modify: `src/styles/global.css`
 - Modify: `src/ui/SoundToggle.tsx` only if a semantic class or pressed-state hook is needed; otherwise CSS-only.
 - Create: `src/ui/Button.test.tsx`
 
 **Interfaces:**
+
 - Consumes: variantes `primary`, `secondary`, `ghost`, `danger` de `Button` e classe `.sound-toggle` existentes.
 - Produces: todas as ações mantêm as mesmas props e semântica, mas usam amarelos com contraste e feedback de pressionamento consistentes.
 
@@ -329,10 +351,13 @@ import { describe, expect, it } from 'vitest';
 import { Button } from './Button';
 
 describe('Button variants', () => {
-  it.each(['primary', 'secondary', 'ghost', 'danger'] as const)('preserva a classe %s', (variant) => {
-    render(<Button variant={variant}>Ação</Button>);
-    expect(screen.getByRole('button', { name: 'Ação' })).toHaveClass(`btn--${variant}`);
-  });
+  it.each(['primary', 'secondary', 'ghost', 'danger'] as const)(
+    'preserva a classe %s',
+    (variant) => {
+      render(<Button variant={variant}>Ação</Button>);
+      expect(screen.getByRole('button', { name: 'Ação' })).toHaveClass(`btn--${variant}`);
+    },
+  );
 });
 ```
 
@@ -408,11 +433,13 @@ git commit --only src/ui/Button.test.tsx src/styles/global.css -m "feat: unify a
 ### Task 4: Substituir o confete por papel picado e verificar a comemoração
 
 **Files:**
+
 - Modify: `src/screens/IslandCompleteScreen.tsx`
 - Modify: `src/styles/global.css`
 - Create: `src/screens/IslandCompleteScreen.test.tsx`
 
 **Interfaces:**
+
 - Consumes: `island.palette`, `Mascot mood="cheering"`, `IslandBadge` e `Button` existentes.
 - Produces: a tela de conclusão renderiza uma coleção determinística de peças `.confetti` com classes de forma e variáveis CSS; o mascote continua `cheering`.
 
@@ -495,13 +522,31 @@ Substituir o tamanho único atual por estilos que diferenciem tiras, pontos e qu
   transform: rotate(var(--confetti-rotation));
 }
 
-.confetti--strip { width: 0.45rem; height: 1.25rem; border-radius: 0.1rem; }
-.confetti--dot { width: 0.7rem; height: 0.7rem; border-radius: 50%; }
-.confetti--square { width: 0.8rem; height: 0.8rem; border-radius: 0.15rem; }
+.confetti--strip {
+  width: 0.45rem;
+  height: 1.25rem;
+  border-radius: 0.1rem;
+}
+.confetti--dot {
+  width: 0.7rem;
+  height: 0.7rem;
+  border-radius: 50%;
+}
+.confetti--square {
+  width: 0.8rem;
+  height: 0.8rem;
+  border-radius: 0.15rem;
+}
 
 @keyframes confetti-fall {
-  0% { transform: translateY(-1rem) rotate(var(--confetti-rotation)); opacity: 1; }
-  100% { transform: translateY(110vh) rotate(calc(var(--confetti-rotation) + 360deg)); opacity: 0.55; }
+  0% {
+    transform: translateY(-1rem) rotate(var(--confetti-rotation));
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(110vh) rotate(calc(var(--confetti-rotation) + 360deg));
+    opacity: 0.55;
+  }
 }
 ```
 
@@ -525,9 +570,11 @@ git commit --only src/screens/IslandCompleteScreen.tsx src/screens/IslandComplet
 ### Task 5: Verificação integrada e revisão visual
 
 **Files:**
+
 - Modify: nenhum arquivo de implementação; somente corrigir os arquivos das tarefas anteriores se uma verificação reproduzir uma falha desta funcionalidade.
 
 **Interfaces:**
+
 - Consumes: todos os componentes e testes das tarefas 1–4.
 - Produces: evidência de que a interação, a comemoração e os estilos compilam sem alterar o fluxo do jogo.
 

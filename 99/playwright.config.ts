@@ -65,9 +65,17 @@ export default defineConfig({
   ],
 
   webServer: {
-    command: `npm run preview -- --port ${PORT} --strictPort`,
+    // Build antes do preview: `dist/` e ignorado pelo git, entao um clone limpo
+    // nao tem o que servir. Localmente costuma haver um build antigo por perto,
+    // o que esconde o problema ate o dia em que o CI roda num checkout novo.
+    command: `npm run build && npm run preview -- --port ${PORT} --strictPort`,
     url: `http://localhost:${PORT}`,
-    reuseExistingServer: true,
-    timeout: 120_000,
+    // Reaproveitar servidor e conveniencia de quem esta desenvolvendo. No CI e
+    // perigoso: um preview sobrevivente serviria um build antigo e a suite
+    // passaria testando o artefato errado.
+    reuseExistingServer: !process.env.CI,
+    // O bundle carrega o WASM do Rapier (2.2 MB); com o build junto, 120 s ficam
+    // apertados numa maquina fria do CI.
+    timeout: 180_000,
   },
 });
