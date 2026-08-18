@@ -3,7 +3,6 @@ export { createMathSlice, type MathSlice, type ChallengeFeedback } from './math.
 export {
   CHALLENGE_CONTEXTS,
   OPTION_COUNT,
-  TABLE,
   buildDistractors,
   generateChallenge,
   resolveAnswer,

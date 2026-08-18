@@ -17,6 +17,15 @@ export interface ResourceNode {
    */
   groups: number;
   /**
+   * Itens por grupo — o **numero da tabuada** deste no.
+   *
+   * Mora no no, e nao numa constante global, porque quem manda nele e a regiao:
+   * um no do Pico pergunta a tabuada do 9, um da Praia pergunta a do 2. Enquanto
+   * isso era `RESOURCES.itemsPerGroup`, o jogo inteiro ficava preso em uma
+   * tabuada so, e metade do conteudo ja escrito era inalcancavel.
+   */
+  perGroup: number;
+  /**
    * Colhido e ainda em recuperacao.
    *
    * Estado explicito em vez de um `readyAt` comparado com o relogio: prontidao
@@ -47,13 +56,19 @@ export const RESOURCES = {
   cancelRange: 5.2,
   /** Tempo ate um no esgotado voltar, em segundos. */
   respawnSeconds: 12,
-  /** Quantos itens cada grupo do objeto vale. */
-  itemsPerGroup: 2,
   /** Quantidade de nos gerados por tipo. */
   nodesPerKind: 7,
   /** Distancia minima entre nos, para nao nascerem sobrepostos. */
   minSpacing: 4.5,
 } as const;
+
+/**
+ * Tabuada usada por quem ainda nao tem regiao.
+ *
+ * Provisorio, e de proposito visivel: na Task 3 a regiao passa a decidir e esta
+ * constante sai. Um numero solto no meio de `createNodes` esconderia isso.
+ */
+export const DEFAULT_PER_GROUP = 2;
 
 /** Rotulo no singular/plural para o HUD e para os enunciados. */
 export const RESOURCE_LABELS: Record<ResourceKind, { one: string; many: string }> = {
@@ -83,8 +98,10 @@ export function createNodes(rng: Rng): ResourceNode[] {
       id: `${kind}-${index}`,
       kind,
       position,
-      // 1 a 10 grupos: com 2 itens por grupo, cobre a tabuada do 2 inteira.
+      // 1 a 10 grupos: cobre a tabuada inteira, qualquer que seja ela.
       groups: 1 + Math.floor(rng() * 10),
+      // A regiao passa a mandar nisto na Task 3; ate la, a tabuada do 2.
+      perGroup: DEFAULT_PER_GROUP,
       depleted: false,
     };
   });
@@ -128,8 +145,19 @@ export function nearestNodeInRange(
 
 /** Total de itens que um no entrega quando colhido por completo. */
 export function fullYield(node: ResourceNode): number {
-  return node.groups * RESOURCES.itemsPerGroup;
+  return node.groups * node.perGroup;
 }
+
+/**
+ * Quantos itens cabem numa fileira dentro de um grupo.
+ *
+ * Cinco, e nao um numero qualquer. Com a tabuada saindo do 2, um grupo pode ter
+ * ate dez itens, e dez em linha reta viram uma fila que ninguem conta de
+ * relance. Em duas fileiras de cinco eles formam a mesma figura que a criança ja
+ * usa para contar na escola, e o "conferir contando na tela" continua possivel
+ * no caso mais dificil — que e justamente onde ele mais importa.
+ */
+const ITEMS_PER_ROW = 5;
 
 /** Posicao de um item dentro do no, relativa ao centro dele. */
 export interface ItemPlacement {
@@ -139,7 +167,7 @@ export interface ItemPlacement {
 }
 
 /**
- * Distribui os itens visiveis do no: `groups` grupos de `itemsPerGroup` itens.
+ * Distribui os itens visiveis do no: `groups` grupos de `node.perGroup` itens.
  *
  * Esta funcao e o contrato visual do jogo. O desafio da Fatia 3 pergunta
  * "N grupos x 2 itens, quantos ao todo?" e a crianca precisa poder *contar na
@@ -154,6 +182,7 @@ export function itemPlacements(node: ResourceNode): ItemPlacement[] {
   const placements: ItemPlacement[] = [];
   const radius = 0.62;
   const itemSpread = 0.26;
+  const rowSpacing = 0.3;
 
   for (let groupIndex = 0; groupIndex < node.groups; groupIndex += 1) {
     const angle = (groupIndex / node.groups) * Math.PI * 2;
@@ -161,18 +190,23 @@ export function itemPlacements(node: ResourceNode): ItemPlacement[] {
     // e ilegivel quando ha muitos grupos.
     const height = 1.15 + (groupIndex % 2) * 0.42;
     const outward = { x: Math.cos(angle), z: Math.sin(angle) };
-    // Direcao tangente ao circulo: separa os dois itens do grupo.
+    // Direcao tangente ao circulo: separa os itens do grupo.
     const tangent = { x: -Math.sin(angle), z: Math.cos(angle) };
 
-    for (let itemIndex = 0; itemIndex < RESOURCES.itemsPerGroup; itemIndex += 1) {
-      // Com 2 itens por grupo, offset fica em -0.5 e +0.5 do espacamento.
-      const offset = (itemIndex - (RESOURCES.itemsPerGroup - 1) / 2) * itemSpread;
+    for (let itemIndex = 0; itemIndex < node.perGroup; itemIndex += 1) {
+      const row = Math.floor(itemIndex / ITEMS_PER_ROW);
+      const column = itemIndex % ITEMS_PER_ROW;
+      // A ultima fileira pode ser mais curta; centralizar pela largura dela
+      // mantem o grupo simetrico em vez de deixar um rabo de fora.
+      const itemsNaFileira = Math.min(ITEMS_PER_ROW, node.perGroup - row * ITEMS_PER_ROW);
+      const offset = (column - (itemsNaFileira - 1) / 2) * itemSpread;
+
       placements.push({
         groupIndex,
         itemIndex,
         position: {
           x: node.position.x + outward.x * radius + tangent.x * offset,
-          y: node.position.y + height,
+          y: node.position.y + height + row * rowSpacing,
           z: node.position.z + outward.z * radius + tangent.z * offset,
         },
       });

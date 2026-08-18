@@ -7,6 +7,7 @@ import { useGameAction } from '../../shared/input';
 import { palette } from '../../shared/palette';
 import { dayNightClock } from '../daynight/dayNightClock';
 import { playerTransform } from '../player';
+import { DEFAULT_PER_GROUP } from '../resources/resources.logic';
 import {
   BUILDING,
   STRUCTURES,
@@ -252,7 +253,14 @@ export function BuildingView() {
     if (!fogueira) return;
 
     state.startChallenge(
-      { id: fogueira.id, kind: 'madeira', groups: state.rollFuelGroups() },
+      {
+        id: fogueira.id,
+        kind: 'madeira',
+        groups: state.rollFuelGroups(),
+        // A fogueira pergunta a tabuada de onde ela esta. Enquanto nao ha
+        // regioes, e a da Praia.
+        perGroup: DEFAULT_PER_GROUP,
+      },
       'abastecer',
     );
   });

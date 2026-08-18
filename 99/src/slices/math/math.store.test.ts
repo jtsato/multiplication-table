@@ -134,7 +134,7 @@ describe('slice de matematica', () => {
 
   describe('a conta da fogueira', () => {
     const AGORA = 100;
-    const fogueira = { id: 'fogueira-1', kind: 'madeira' as const, groups: 4 };
+    const fogueira = { id: 'fogueira-1', kind: 'madeira' as const, groups: 4, perGroup: 2 };
 
     beforeEach(() => {
       state().resetLantern();
@@ -208,7 +208,10 @@ describe('slice de matematica', () => {
     });
 
     it('a conta da fogueira tambem paga moeda', () => {
-      state().startChallenge({ id: 'fogueira-1', kind: 'madeira', groups: 4 }, 'abastecer');
+      state().startChallenge(
+        { id: 'fogueira-1', kind: 'madeira', groups: 4, perGroup: 2 },
+        'abastecer',
+      );
       state().answerChallenge(state().activeChallenge!.answer);
 
       expect(state().coins).toBeGreaterThan(0);

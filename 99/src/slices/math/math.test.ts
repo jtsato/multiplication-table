@@ -2,39 +2,52 @@ import { describe, expect, it } from 'vitest';
 import {
   CHALLENGE_CONTEXTS,
   OPTION_COUNT,
-  TABLE,
   buildDistractors,
   generateChallenge,
   resolveAnswer,
 } from './math.logic';
-import { RESOURCES, type ResourceKind, type ResourceNode } from '../resources/resources.logic';
+import { type ResourceKind, type ResourceNode } from '../resources/resources.logic';
 import { createRng } from '../../shared/rng';
 import { vec3 } from '../../shared/vec';
 
-const node = (groups: number, kind: ResourceKind = 'madeira'): ResourceNode => ({
-  id: `no-${groups}`,
+const node = (
+  groups: number,
+  kind: ResourceKind = 'madeira',
+  perGroup = 2,
+): ResourceNode => ({
+  id: `no-${groups}x${perGroup}`,
   kind,
   position: vec3(0, 0, 0),
   groups,
+  perGroup,
   depleted: false,
 });
 
-/** Todos os nós possíveis desta POC: 1 a 10 grupos, nos três tipos. */
+/** As dez tabuadas que o jogo passa a cobrir. */
+const TABUADAS = [2, 3, 4, 5, 6, 7, 8, 9, 10];
+
+/** Toda a grade: 1 a 10 grupos, nas dez tabuadas, nos três tipos originais. */
 const todosOsNos = (['madeira', 'fruta', 'pedra'] as const).flatMap((kind) =>
-  Array.from({ length: 10 }, (_, i) => node(i + 1, kind)),
+  TABUADAS.flatMap((perGroup) =>
+    Array.from({ length: 10 }, (_, i) => node(i + 1, kind, perGroup)),
+  ),
 );
 
 describe('generateChallenge', () => {
-  it('usa sempre a tabuada do 2 — escopo da POC', () => {
+  /**
+   * A tabuada vem do no, e nao de uma constante global. E o que faz a regiao
+   * mandar no curriculo — sem isto o jogo inteiro fica preso no 2.
+   */
+  it('tira a tabuada do proprio no', () => {
     for (const alvo of todosOsNos) {
-      expect(generateChallenge(alvo, createRng(1)).perGroup).toBe(TABLE);
+      expect(generateChallenge(alvo, createRng(1)).perGroup).toBe(alvo.perGroup);
     }
   });
 
-  it('calcula a resposta corretamente', () => {
+  it('calcula a resposta corretamente, em qualquer tabuada', () => {
     for (const alvo of todosOsNos) {
       const challenge = generateChallenge(alvo, createRng(2));
-      expect(challenge.answer).toBe(alvo.groups * RESOURCES.itemsPerGroup);
+      expect(challenge.answer).toBe(alvo.groups * alvo.perGroup);
     }
   });
 
@@ -123,51 +136,67 @@ describe('generateChallenge', () => {
 
 describe('buildDistractors', () => {
   it('devolve a quantidade certa de distratores', () => {
-    for (let groups = 1; groups <= 10; groups += 1) {
-      expect(buildDistractors(groups, TABLE, createRng(groups))).toHaveLength(OPTION_COUNT - 1);
+    for (const perGroup of TABUADAS) {
+      for (let groups = 1; groups <= 10; groups += 1) {
+        expect(buildDistractors(groups, perGroup, createRng(groups))).toHaveLength(
+          OPTION_COUNT - 1,
+        );
+      }
     }
   });
 
   it('nunca repete a resposta certa', () => {
-    for (let groups = 1; groups <= 10; groups += 1) {
-      for (let seed = 0; seed < 30; seed += 1) {
-        const answer = groups * TABLE;
-        expect(buildDistractors(groups, TABLE, createRng(seed))).not.toContain(answer);
+    for (const perGroup of TABUADAS) {
+      for (let groups = 1; groups <= 10; groups += 1) {
+        for (let seed = 0; seed < 10; seed += 1) {
+          const answer = groups * perGroup;
+          expect(buildDistractors(groups, perGroup, createRng(seed))).not.toContain(answer);
+        }
       }
     }
   });
 
   it('nunca repete um distrator', () => {
-    for (let groups = 1; groups <= 10; groups += 1) {
-      const distractors = buildDistractors(groups, TABLE, createRng(groups));
-      expect(new Set(distractors).size).toBe(distractors.length);
+    for (const perGroup of TABUADAS) {
+      for (let groups = 1; groups <= 10; groups += 1) {
+        const distractors = buildDistractors(groups, perGroup, createRng(groups));
+        expect(new Set(distractors).size).toBe(distractors.length);
+      }
     }
   });
 
   it('mantem todos os distratores positivos, inclusive no caso minimo', () => {
-    // groups = 1 -> resposta 2; `answer - perGroup` daria 0 e precisa ser descartado.
-    for (let seed = 0; seed < 40; seed += 1) {
-      for (const d of buildDistractors(1, TABLE, createRng(seed))) {
-        expect(d).toBeGreaterThan(0);
+    // groups = 1 -> a resposta e o proprio perGroup; `answer - perGroup` daria 0
+    // e precisa ser descartado, em qualquer tabuada.
+    for (const perGroup of TABUADAS) {
+      for (let seed = 0; seed < 20; seed += 1) {
+        for (const d of buildDistractors(1, perGroup, createRng(seed))) {
+          expect(d).toBeGreaterThan(0);
+        }
       }
     }
   });
 
   it('inclui o erro de somar em vez de multiplicar entre os candidatos', () => {
-    // Para 5 grupos de 2: somar daria 7, multiplicar da 10.
-    const vistos = new Set<number>();
-    const rng = createRng(5);
-    for (let i = 0; i < 80; i += 1) {
-      buildDistractors(5, TABLE, rng).forEach((d) => vistos.add(d));
+    // Para 5 grupos de 7: somar daria 12, multiplicar da 35. E o erro mais comum
+    // nesta idade, e precisa continuar entre as alternativas em toda tabuada.
+    for (const perGroup of TABUADAS) {
+      const vistos = new Set<number>();
+      const rng = createRng(5);
+      for (let i = 0; i < 80; i += 1) {
+        buildDistractors(5, perGroup, rng).forEach((d) => vistos.add(d));
+      }
+      expect(vistos).toContain(5 + perGroup);
     }
-    expect(vistos).toContain(5 + TABLE);
   });
 
   it('mantem os distratores proximos da resposta — nada absurdo', () => {
-    for (let groups = 1; groups <= 10; groups += 1) {
-      const answer = groups * TABLE;
-      for (const d of buildDistractors(groups, TABLE, createRng(groups))) {
-        expect(Math.abs(d - answer)).toBeLessThanOrEqual(answer + TABLE * 2);
+    for (const perGroup of TABUADAS) {
+      for (let groups = 1; groups <= 10; groups += 1) {
+        const answer = groups * perGroup;
+        for (const d of buildDistractors(groups, perGroup, createRng(groups))) {
+          expect(Math.abs(d - answer)).toBeLessThanOrEqual(answer + perGroup * 2);
+        }
       }
     }
   });

@@ -20,8 +20,12 @@ const node = (id: string, x: number, z: number, depleted = false): ResourceNode 
   kind: 'madeira',
   position: vec3(x, 0, z),
   groups: 3,
+  perGroup: 2,
   depleted,
 });
+
+/** As dez tabuadas que o jogo passa a cobrir. */
+const TABUADAS = [2, 3, 4, 5, 6, 7, 8, 9, 10];
 
 describe('createNodes', () => {
   it('gera a quantidade pedida de cada tipo', () => {
@@ -123,17 +127,43 @@ describe('nearestNodeInRange', () => {
 });
 
 describe('itemPlacements — contrato visual do desafio', () => {
-  it('mostra exatamente grupos x 2 itens', () => {
-    for (let groups = 1; groups <= 10; groups += 1) {
-      const placements = itemPlacements({ ...node('a', 0, 0), groups });
-      expect(placements).toHaveLength(groups * RESOURCES.itemsPerGroup);
+  /**
+   * O teste que faltava.
+   *
+   * A versao anterior fixava `perGroup` em 2 e por isso nunca provou nada: o
+   * contrato visual valia por acidente, porque so existia uma tabuada. Com a
+   * tabuada saindo da regiao, ele precisa valer para as dez.
+   */
+  it('mostra exatamente grupos x perGroup itens, em qualquer tabuada', () => {
+    for (const perGroup of TABUADAS) {
+      for (let groups = 1; groups <= 10; groups += 1) {
+        const placements = itemPlacements({ ...node('a', 0, 0), groups, perGroup });
+        expect(placements).toHaveLength(groups * perGroup);
+      }
     }
   });
 
-  it('coloca exatamente 2 itens em cada grupo', () => {
-    const placements = itemPlacements({ ...node('a', 0, 0), groups: 7 });
-    for (let groupIndex = 0; groupIndex < 7; groupIndex += 1) {
-      expect(placements.filter((p) => p.groupIndex === groupIndex)).toHaveLength(2);
+  it('coloca exatamente perGroup itens em cada grupo, em qualquer tabuada', () => {
+    for (const perGroup of TABUADAS) {
+      const placements = itemPlacements({ ...node('a', 0, 0), groups: 7, perGroup });
+      for (let groupIndex = 0; groupIndex < 7; groupIndex += 1) {
+        expect(placements.filter((p) => p.groupIndex === groupIndex)).toHaveLength(perGroup);
+      }
+    }
+  });
+
+  /**
+   * Com dez itens num grupo so, o arranjo antigo — dois itens lado a lado — nao
+   * serve mais. Contar na tela e a regra que sustenta o jogo, entao itens
+   * empilhados invisiveis quebrariam o contrato tanto quanto um numero errado.
+   */
+  it('nunca sobrepoe itens do mesmo grupo, nem com a tabuada do 10', () => {
+    for (const perGroup of TABUADAS) {
+      const placements = itemPlacements({ ...node('a', 0, 0), groups: 10, perGroup });
+      const chaves = placements.map(
+        (p) => `${p.position.x.toFixed(3)}|${p.position.y.toFixed(3)}|${p.position.z.toFixed(3)}`,
+      );
+      expect(new Set(chaves).size).toBe(placements.length);
     }
   });
 
@@ -173,7 +203,9 @@ describe('itemPlacements — contrato visual do desafio', () => {
 
 describe('fullYield', () => {
   it('multiplica os grupos pelos itens por grupo', () => {
-    expect(fullYield({ ...node('a', 0, 0), groups: 4 })).toBe(4 * RESOURCES.itemsPerGroup);
+    for (const perGroup of TABUADAS) {
+      expect(fullYield({ ...node('a', 0, 0), groups: 4, perGroup })).toBe(4 * perGroup);
+    }
   });
 });
 

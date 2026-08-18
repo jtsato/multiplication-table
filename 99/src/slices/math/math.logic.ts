@@ -1,11 +1,5 @@
 import { type Rng, shuffle } from '../../shared/rng';
-import { RESOURCES, type ResourceKind } from '../resources/resources.logic';
-
-/**
- * A POC cobre apenas a tabuada do 2. O multiplicador e fixo; o que varia e o
- * numero de grupos que o objeto exibe.
- */
-export const TABLE = 2;
+import { type ResourceKind } from '../resources/resources.logic';
 
 /** Quantas alternativas o painel oferece. */
 export const OPTION_COUNT = 3;
@@ -66,6 +60,8 @@ export interface ChallengeTarget {
   id: string;
   kind: ResourceKind;
   groups: number;
+  /** Itens por grupo — a tabuada que este alvo pergunta. */
+  perGroup: number;
 }
 
 export interface Challenge {
@@ -74,7 +70,7 @@ export interface Challenge {
   kind: ResourceKind;
   /** Numero de grupos que o objeto exibe — o multiplicando. */
   groups: number;
-  /** Itens por grupo. Sempre `TABLE` nesta POC. */
+  /** Itens por grupo — a tabuada perguntada. */
   perGroup: number;
   answer: number;
   /** Enunciado que descreve o que esta em cena. */
@@ -150,7 +146,7 @@ export function generateChallenge(
   purpose: ChallengePurpose = 'colher',
 ): Challenge {
   const groups = target.groups;
-  const perGroup = RESOURCES.itemsPerGroup;
+  const perGroup = target.perGroup;
   const answer = groups * perGroup;
   const context = CHALLENGE_CONTEXTS[target.kind];
 

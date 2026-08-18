@@ -27,6 +27,7 @@ const structure = (kind: Structure['kind'], x: number, z: number): Structure => 
 const node = (x: number, z: number, depleted = false): ResourceNode => ({
   id: `no-${x}-${z}`,
   kind: 'madeira',
+  perGroup: 2,
   position: vec3(x, 0, z),
   groups: 3,
   depleted,
