@@ -7,7 +7,9 @@ import { useGameStore } from '../../app/store';
 import { renderScene } from '../../test/sceneHarness';
 import { dayNightClock, resetDayNightClock } from '../daynight/dayNightClock';
 import { playerTransform, resetPlayerTransform } from '../player';
+import { HOME } from '../home/home.logic';
 import { LanternView } from './LanternView';
+import { chargeRemaining } from './lantern.logic';
 
 const state = () => useGameStore.getState();
 
@@ -74,6 +76,63 @@ describe('LanternView', () => {
     await renderer.advanceFrames(2, 1 / 60);
 
     expect(luzDa(renderer).intensity).toBe(0);
+
+    await renderer.unmount();
+  });
+});
+
+describe('a lanterna em casa', () => {
+  beforeEach(() => {
+    state().resetLantern();
+    state().resetEconomy();
+    resetDayNightClock();
+    resetPlayerTransform();
+  });
+
+  it('acende de graca ao entrar em casa, sem conta e sem moeda', async () => {
+    const renderer = await renderScene(<LanternView />);
+    playerTransform.x = HOME.position.x;
+    playerTransform.z = HOME.position.z;
+    await renderer.advanceFrames(30, 1 / 60);
+
+    expect(chargeRemaining(state().lantern, dayNightClock.seconds)).toBeGreaterThan(0);
+    expect(state().coins).toBe(0);
+
+    await renderer.unmount();
+  });
+
+  it('a carga nao cai enquanto o jogador esta em casa', async () => {
+    act(() => {
+      state().rechargeLantern(1, dayNightClock.seconds);
+    });
+    const renderer = await renderScene(<LanternView />);
+    playerTransform.x = HOME.position.x;
+    playerTransform.z = HOME.position.z;
+
+    const antes = chargeRemaining(state().lantern, dayNightClock.seconds);
+    for (let i = 0; i < 60; i += 1) {
+      dayNightClock.seconds += 1 / 60;
+      await renderer.advanceFrames(1, 1 / 60);
+    }
+
+    expect(chargeRemaining(state().lantern, dayNightClock.seconds)).toBeGreaterThanOrEqual(antes);
+
+    await renderer.unmount();
+  });
+
+  it('longe de casa a carga volta a cair', async () => {
+    act(() => {
+      state().rechargeLantern(1, dayNightClock.seconds);
+    });
+    const renderer = await renderScene(<LanternView />);
+    playerTransform.x = 0;
+    playerTransform.z = 0;
+
+    const antes = chargeRemaining(state().lantern, dayNightClock.seconds);
+    dayNightClock.seconds += 10;
+    await renderer.advanceFrames(2, 1 / 60);
+
+    expect(chargeRemaining(state().lantern, dayNightClock.seconds)).toBeLessThan(antes);
 
     await renderer.unmount();
   });

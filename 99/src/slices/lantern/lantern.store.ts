@@ -1,7 +1,12 @@
 import type { StateCreator } from 'zustand';
 import type { GameState } from '../../app/store';
 import { dayNightClock } from '../daynight/dayNightClock';
-import { chargeRemaining, rechargeUntil, type Lantern } from './lantern.logic';
+import {
+  chargeRemaining,
+  lanternChargeSeconds,
+  rechargeUntil,
+  type Lantern,
+} from './lantern.logic';
 
 export interface LanternSlice {
   lantern: Lantern;
@@ -21,6 +26,14 @@ export interface LanternSlice {
   rechargeLantern: (ratio: number, now?: number) => void;
   /** Amostra da carga para o HUD, chamada com throttle pela view. */
   publishLanternCharge: (seconds: number) => void;
+  /**
+   * Segura a carga enquanto o jogador esta na luz da casa.
+   *
+   * Empurra o prazo junto com o relogio, e — se a lanterna estiver apagada —
+   * acende de graca. Reacender em casa nao cobra conta nem moeda: e o unico
+   * lugar do jogo onde a luz e simplesmente dada.
+   */
+  keepLanternTopped: (now: number, delta: number) => void;
   resetLantern: () => void;
 }
 
@@ -45,6 +58,18 @@ export const createLanternSlice: StateCreator<GameState, [], [], LanternSlice> =
       // A amostra e atualizada junto: sem isso a barra do HUD so subiria no
       // proximo tick da view, e a recarga pareceria nao ter funcionado.
       return { lantern, lanternCharge: chargeRemaining(lantern, now) };
+    }),
+
+  keepLanternTopped: (now, delta) =>
+    set((state) => {
+      const carga = chargeRemaining(state.lantern, now);
+      const cheia = lanternChargeSeconds(state.owned.includes('lanterna-maior'));
+      if (carga >= cheia) return state;
+
+      // Acende do zero se preciso, e senao empurra o prazo. `delta * 2` para a
+      // lanterna encher rapido em casa: o abrigo nao pode virar sala de espera.
+      const alvo = Math.min(cheia, carga + Math.max(delta, delta * 2));
+      return { lantern: { chargedUntil: now + alvo }, lanternCharge: alvo };
     }),
 
   publishLanternCharge: (seconds) =>

@@ -5,6 +5,7 @@ import { palette } from '../../shared/palette';
 import { useGameStore } from '../../app/store';
 import { dayNightClock } from '../daynight/dayNightClock';
 import { playerTransform } from '../player/playerTransform';
+import { isInHomeLight } from '../home/home.logic';
 import { chargeRemaining, lanternIntensity, lanternRadius } from './lantern.logic';
 
 /**
@@ -49,8 +50,21 @@ export function LanternView() {
     const light = lightRef.current;
     if (!light) return;
 
-    const { lantern, publishLanternCharge } = useGameStore.getState();
+    const { lantern, publishLanternCharge, keepLanternTopped } = useGameStore.getState();
     const now = dayNightClock.seconds;
+
+    /**
+     * Em casa a lanterna nao gasta.
+     *
+     * A carga e um prazo, entao "nao gastar" e **empurrar o prazo junto com o
+     * relogio**. Fica aqui, na view que ja roda por quadro, e nao no store — e
+     * a acao devolve o estado intacto quando nao ha o que empurrar, para nao
+     * notificar assinantes 60 vezes por segundo.
+     *
+     * Vale o raio da luz da casa, e nao so o interior: a varanda tambem abriga.
+     */
+    if (isInHomeLight(playerTransform)) keepLanternTopped(now, delta);
+
     light.intensity = lanternIntensity(lantern, now);
 
     // Mesma convencao de "frente" do resto do jogo: com yaw = 0, a frente e -Z,
