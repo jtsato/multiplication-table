@@ -1,0 +1,381 @@
+{
+  "meta": {
+    "name": "日本語",
+    "flag": "🇯🇵"
+  },
+  "common": {
+    "play": "あそぶ",
+    "back": "もどる",
+    "continue": "つづける",
+    "close": "とじる",
+    "cancel": "やめる",
+    "confirm": "けってい",
+    "next": "つぎへ",
+    "loading": "読みこみ中...",
+    "of": "／"
+  },
+  "splash": {
+    "title": "九九の島",
+    "tagline": "九九をおぼえながら、ブロックの世界をつくろう"
+  },
+  "home": {
+    "greeting": "やあ、探検家さん！",
+    "subtitle": "きみの島じまが待っているよ",
+    "play": "あそぶ",
+    "achievements": "しょうごう",
+    "settings": "せってい",
+    "progress": "{{total}}島中 {{completed}}島クリア",
+    "changeCharacter": "キャラクターを変える",
+    "diploma": "九九マスターの証書",
+    "challenge": "スピードチャレンジ"
+  },
+  "onboarding": {
+    "languageTitle": "ことばをえらぼう",
+    "languageSubtitle": "あとから せっていで 変えられるよ",
+    "characterTitle": "だれが島を探検する？",
+    "characterSubtitle": "キャラクターをえらぼう",
+    "customizeTitle": "すきなすがたにしよう",
+    "customizeSubtitle": "色とアクセサリーをえらぼう",
+    "skinLabel": "はだの色",
+    "hairLabel": "かみがた",
+    "outfitLabel": "ふくの色",
+    "accessoryLabel": "アクセサリー",
+    "surprise": "おまかせ！",
+    "start": "ぼうけんスタート",
+    "base": {
+      "boy": "男の子",
+      "girl": "女の子"
+    },
+    "hair": {
+      "short": "ショート",
+      "long": "ロング",
+      "curly": "カール",
+      "ponytail": "ポニーテール"
+    },
+    "outfit": {
+      "red": "あか",
+      "blue": "あお",
+      "green": "みどり",
+      "purple": "むらさき",
+      "orange": "オレンジ",
+      "pink": "ピンク"
+    },
+    "accessory": {
+      "none": "なし",
+      "cap": "ぼうし",
+      "glasses": "めがね",
+      "crown": "王かん"
+    },
+    "skin": {
+      "skin1": "はだの色 1",
+      "skin2": "はだの色 2",
+      "skin3": "はだの色 3",
+      "skin4": "はだの色 4"
+    },
+    "mascotLabel": "あいぼう",
+    "mascot": {
+      "bloco": "ブロック",
+      "brasa": "ほのお",
+      "folha": "はっぱ",
+      "flor": "おはな",
+      "cristal": "クリスタル"
+    }
+  },
+  "map": {
+    "title": "島じまの地図",
+    "subtitle": "探検する島をえらぼう",
+    "enter": "島に入る",
+    "review": "島をもう一度",
+    "status": {
+      "locked": "まだ入れない",
+      "available": "入れるよ",
+      "inProgress": "とちゅう",
+      "completed": "クリア"
+    },
+    "lockedHint": "{{table}}の段をクリアすると、この島が開くよ",
+    "missions": "{{total}}このうち {{completed}}こクリア",
+    "stars": "星 {{count}}／3",
+    "tableLabel": "{{table}}の段"
+  },
+  "islands": {
+    "2": {
+      "name": "花さく草原",
+      "biome": "みどりの草原とお花"
+    },
+    "3": {
+      "name": "川の森",
+      "biome": "森と小川"
+    },
+    "4": {
+      "name": "水晶の山",
+      "biome": "山いただきと水晶"
+    },
+    "5": {
+      "name": "みなとの浜",
+      "biome": "すなはまと船"
+    },
+    "6": {
+      "name": "まほうの林",
+      "biome": "ふしぎな森"
+    },
+    "7": {
+      "name": "光るどうくつ",
+      "biome": "明るいほらあな"
+    },
+    "8": {
+      "name": "こおりの大地",
+      "biome": "氷と雪"
+    },
+    "9": {
+      "name": "火山の島",
+      "biome": "岩とマグマ"
+    },
+    "10": {
+      "name": "さいごの都",
+      "biome": "大きなブロックの町"
+    }
+  },
+  "missions": {
+    "finalBadge": "さいごの挑戦",
+    "counter": "ミッション {{order}}／{{total}}",
+    "bridge": {
+      "title": "こわれた橋",
+      "brief": "川が道をふさいでる！ブロックを一つずつ積んで橋を直そう。",
+      "done": "橋ができた！これでわたれるね。"
+    },
+    "tower": {
+      "title": "大きなとう",
+      "brief": "正かいするたびに、とうが一だんずつ高くなるよ。",
+      "done": "とうが立った！島じまがぜんぶ見わたせる！"
+    },
+    "lighthouse": {
+      "title": "消えたとうだい",
+      "brief": "とうだいの光が消えちゃった。一つずつ直していこう。",
+      "done": "とうだいがついた！光が海をぐるりと照らしてる。"
+    },
+    "trees": {
+      "title": "林をつくろう",
+      "brief": "この場所はからっぽ。ブロックの木を植えていこう。",
+      "done": "はっぱでいっぱいの林になった！"
+    },
+    "house": {
+      "title": "ブロックのおうち",
+      "brief": "おうちがほしい子がいるよ。カラフルな家を建てよう。",
+      "done": "家ができた！えんとつからけむりが出てるよ。"
+    },
+    "gate": {
+      "title": "しまった門",
+      "brief": "大きな門が道をふさいでる。正かいするたびに少しずつ開くよ。",
+      "done": "門が開いた！道が通れるようになったよ。"
+    },
+    "boat": {
+      "title": "ブロックの船",
+      "brief": "つぎの浜へわたるための船をつくろう。",
+      "done": "船がうかんだ！帆も上がったよ。"
+    },
+    "fence": {
+      "title": "牧場のさく",
+      "brief": "風でさくがたおれちゃった。くいを一本ずつ立て直そう。",
+      "done": "さくがぜんぶ元どおりになった！"
+    },
+    "windmill": {
+      "title": "止まった風車",
+      "brief": "風車をまた回すには、新しいはねがいるよ。",
+      "done": "風車が風で回りだした！"
+    },
+    "crystal": {
+      "title": "水晶のとう",
+      "brief": "大きな水晶があれば島ぜんたいを照らせる。組み立てよう！",
+      "done": "水晶が光って、あたり一面が明るくなった！"
+    }
+  },
+  "game": {
+    "question": "{{a}} × {{b}} は？",
+    "questionCounter": "もんだい {{current}}／{{total}}",
+    "chooseAnswer": "正しい答えをえらぼう",
+    "blocks": "おいたブロック：{{placed}}／{{total}}",
+    "quit": "ミッションをやめる",
+    "quitTitle": "いま やめる？",
+    "quitMessage": "このミッションのとちゅうの記録は消えるけど、クリアした島はそのまま残るよ。",
+    "quitConfirm": "それでもやめる",
+    "quitCancel": "つづけてあそぶ",
+    "showAnswer": "正しい答えは {{answer}} だよ。タッチしてつづけよう！",
+    "hintTitle": "見て！{{size}}のかたまりが {{groups}}つ",
+    "hintCount": "ぜんぶで {{answer}}個のブロックだね",
+    "startMission": "スタート",
+    "study": "九九を見る",
+    "tutorial": {
+      "step1": "正しい答えをタッチしよう。",
+      "step2": "正かいするたびにブロックがおかれるよ。",
+      "step3": "さいごまで組み立ててミッションクリア！"
+    }
+  },
+  "study": {
+    "hint": "答えが {{table}} ずつ大きくなるのに気づいたかな。",
+    "play": "ミッション {{order}} をあそぶ",
+    "mastered": "これはもうバッチリだね",
+    "struggling": "これはまだ にがてかも"
+  },
+  "feedback": {
+    "correct": {
+      "0": "そのとおり！",
+      "1": "よくできました！",
+      "2": "かんぺき！",
+      "3": "やったね！"
+    },
+    "wrong": {
+      "0": "おしい！もう一回やってみよう。",
+      "1": "あとちょっと！もう一度チャレンジ。",
+      "2": "それじゃないよ。ヒントを見てみて！",
+      "3": "もう一回！きみならできる。"
+    }
+  },
+  "result": {
+    "title": "ミッションクリア！",
+    "correct": "一発で正かい",
+    "mistakes": "やり直した回数",
+    "accuracy": "正かい率",
+    "islandProgress": "島のしんちょく",
+    "nextMission": "つぎのミッション",
+    "backToMap": "地図にもどる",
+    "newAchievements": "新しいしょうごう！"
+  },
+  "islandComplete": {
+    "title": "島クリア！",
+    "subtitle": "{{table}}の段をマスターしたね！",
+    "unlocked": "新しい島が開いたよ：{{island}}",
+    "keepPracticing": "れんしゅうのために、いくつかのもんだいはまた出てくるよ。",
+    "backToMap": "地図を見る"
+  },
+  "archipelagoComplete": {
+    "title": "九九マスター！",
+    "subtitle": "{{islands}}つの島をぜんぶ探検して、九九をすべてマスターしたね。",
+    "avatarAlt": "マスターの王かんをかぶったきみのキャラクター",
+    "islandsTitle": "きみの島じま",
+    "diplomaTitle": "わたしの証書",
+    "diplomaHolder": "九九諸島の探検家",
+    "stars": "星",
+    "answers": "答えた数",
+    "accuracy": "正かい",
+    "bestStreak": "さいこう連続記録",
+    "adventures": "ぼうけん",
+    "toughest": "いちばん大変だった一問",
+    "toughestNote": "{{mistakes}}回まちがえて、さいごにマスターしたね。",
+    "share": "この証書を、だいすきな人に見せてあげよう！",
+    "backToMap": "地図を見る",
+    "backToHome": "さいしょにもどる"
+  },
+  "challenge": {
+    "title": "スピードチャレンジ",
+    "subtitle": "ぜんぶの段からごちゃまぜのもんだい",
+    "briefingTitle": "でんせつの島",
+    "briefingText": "ぜんぶの段から {{total}}問えらばれるよ。",
+    "briefingNote": "時間せいげんも、まけもなし。時計はかかった時間をはかるだけ。",
+    "currentRecord": "きみの記録：{{time}}で {{total}}問中 {{score}}問",
+    "start": "チャレンジスタート",
+    "clockLabel": "かかった時間",
+    "progress": "{{total}}問中 {{resolved}}問こたえた",
+    "quit": "チャレンジをやめる",
+    "finished": "チャレンジクリア！",
+    "newRecord": "新記録！",
+    "score": "一発で正かい",
+    "time": "タイム",
+    "best": "きみの記録",
+    "resultNote": "毎回ちがうもんだいが出て、にがてなものほど多く出てくるよ。",
+    "again": "もう一回あそぶ",
+    "back": "さいしょにもどる",
+    "quitTitle": "チャレンジをやめる？",
+    "quitMessage": "いまのチャレンジは記録に残らないよ。",
+    "locked": "ぜんぶの島をクリアすると開くよ"
+  },
+  "achievements": {
+    "title": "しょうごう",
+    "subtitle": "{{total}}このうち {{unlocked}}こ獲得",
+    "statsTitle": "きみの記録",
+    "totalQuestions": "答えた数",
+    "totalCorrect": "正かいした数",
+    "bestStreak": "さいこう連続記録",
+    "playSessions": "あそんだ回数",
+    "toughest": "れんしゅうしたいもんだい",
+    "toughestEmpty": "いまはにがてなもんだいなし。その調子！",
+    "list": {
+      "firstCorrect": {
+        "name": "はじめての正かい",
+        "description": "はじめてのかけ算に正かいした",
+        "goal": "はじめてのかけ算に正かいしよう"
+      },
+      "firstMission": {
+        "name": "はじめての建設",
+        "description": "はじめてのミッションをクリアした",
+        "goal": "はじめてのミッションをクリアしよう"
+      },
+      "tenCorrect": {
+        "name": "10問正かい",
+        "description": "かけ算に10問正かいした",
+        "goal": "かけ算に10問正かいしよう"
+      },
+      "streakFive": {
+        "name": "5問連続",
+        "description": "5問連続で正かいした",
+        "goal": "5問連続で正かいしよう"
+      },
+      "tableTwoDone": {
+        "name": "2の段",
+        "description": "2の段の島をクリアした",
+        "goal": "2の段の島をクリアしよう"
+      },
+      "fiftyCorrect": {
+        "name": "50問正かい",
+        "description": "かけ算に50問正かいした",
+        "goal": "かけ算に50問正かいしよう"
+      },
+      "streakTen": {
+        "name": "10問連続",
+        "description": "10問連続で正かいした",
+        "goal": "10問連続で正かいしよう"
+      },
+      "halfArchipelago": {
+        "name": "半分とうたつ",
+        "description": "島じまの5島をクリアした",
+        "goal": "島じまの5島をクリアしよう"
+      },
+      "allIslands": {
+        "name": "島マスター",
+        "description": "島じまをぜんぶクリアした",
+        "goal": "島じまをぜんぶクリアしよう"
+      },
+      "perfectChallenge": {
+        "name": "島じまのでんせつ",
+        "description": "チャレンジぜんもんを一発で正かいした！",
+        "goal": "スピードチャレンジのぜんもんを一発で正かいしよう"
+      }
+    }
+  },
+  "settings": {
+    "title": "せってい",
+    "language": "ことば",
+    "music": "音楽",
+    "sound": "こうか音",
+    "motion": "アニメーションをへらす",
+    "study": "あそぶ前に九九を見る",
+    "on": "オン",
+    "off": "オフ",
+    "dangerZone": "さいしょからやり直す",
+    "reset": "記録をぜんぶ消す",
+    "resetTitle": "記録をぜんぶ消す？",
+    "resetMessage": "島も、しょうごうも、キャラクターも消えてしまいます。もとにはもどせません。",
+    "resetConfirm": "はい、ぜんぶ消す",
+    "resetCancel": "いいえ、もどる",
+    "storageWarning": "このブラウザでは記録が保存されません。タブを閉じると消えてしまいます。",
+    "mute": "音を消す",
+    "unmute": "音を出す"
+  },
+  "a11y": {
+    "starFilled": "獲得した星",
+    "starEmpty": "まだ獲得していない星",
+    "islandLocked": "まだ入れない島",
+    "answerOption": "せんたくし {{value}}",
+    "buildProgress": "建設 {{percent}}パーセント完了",
+    "heroWave": "タッチで手をふる"
+  }
+}

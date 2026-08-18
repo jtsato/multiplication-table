@@ -1,0 +1,381 @@
+{
+  "meta": {
+    "name": "Deutsch",
+    "flag": "🇩🇪"
+  },
+  "common": {
+    "play": "Spielen",
+    "back": "Zurück",
+    "continue": "Weiter",
+    "close": "Schließen",
+    "cancel": "Abbrechen",
+    "confirm": "Bestätigen",
+    "next": "Weiter",
+    "loading": "Lädt...",
+    "of": "von"
+  },
+  "splash": {
+    "title": "Einmaleins-Inseln",
+    "tagline": "Bau eine Welt aus Blöcken und lerne dabei das Einmaleins"
+  },
+  "home": {
+    "greeting": "Hallo, Entdecker!",
+    "subtitle": "Deine Inselwelt wartet",
+    "play": "Spielen",
+    "achievements": "Erfolge",
+    "settings": "Einstellungen",
+    "progress": "{{completed}} von {{total}} Inseln geschafft",
+    "changeCharacter": "Figur wechseln",
+    "diploma": "Meine Meister-Urkunde",
+    "challenge": "Blitzrunde"
+  },
+  "onboarding": {
+    "languageTitle": "Wähle deine Sprache",
+    "languageSubtitle": "Du kannst sie später in den Einstellungen ändern",
+    "characterTitle": "Wer erkundet die Inseln?",
+    "characterSubtitle": "Wähle deine Figur",
+    "customizeTitle": "Mach sie zu deiner",
+    "customizeSubtitle": "Wähle die Farben und ein Accessoire",
+    "skinLabel": "Hautton",
+    "hairLabel": "Haare",
+    "outfitLabel": "Farbe der Kleidung",
+    "accessoryLabel": "Accessoire",
+    "surprise": "Überrasch mich!",
+    "start": "Abenteuer starten",
+    "base": {
+      "boy": "Junge",
+      "girl": "Mädchen"
+    },
+    "hair": {
+      "short": "Kurz",
+      "long": "Lang",
+      "curly": "Lockig",
+      "ponytail": "Zopf"
+    },
+    "outfit": {
+      "red": "Rot",
+      "blue": "Blau",
+      "green": "Grün",
+      "purple": "Lila",
+      "orange": "Orange",
+      "pink": "Rosa"
+    },
+    "accessory": {
+      "none": "Keins",
+      "cap": "Mütze",
+      "glasses": "Brille",
+      "crown": "Krone"
+    },
+    "skin": {
+      "skin1": "Ton 1",
+      "skin2": "Ton 2",
+      "skin3": "Ton 3",
+      "skin4": "Ton 4"
+    },
+    "mascotLabel": "Begleiter",
+    "mascot": {
+      "bloco": "Klotz",
+      "brasa": "Glut",
+      "folha": "Blatt",
+      "flor": "Blüte",
+      "cristal": "Kristall"
+    }
+  },
+  "map": {
+    "title": "Inselkarte",
+    "subtitle": "Wähle eine Insel zum Erkunden",
+    "enter": "Insel betreten",
+    "review": "Insel wiederholen",
+    "status": {
+      "locked": "Gesperrt",
+      "available": "Frei",
+      "inProgress": "Läuft",
+      "completed": "Geschafft"
+    },
+    "lockedHint": "Schaffe die {{table}}er-Reihe, um diese Insel zu öffnen",
+    "missions": "{{completed}} von {{total}} Aufträgen",
+    "stars": "{{count}} von 3 Sternen",
+    "tableLabel": "{{table}}er-Reihe"
+  },
+  "islands": {
+    "2": {
+      "name": "Blütenwiesen",
+      "biome": "Grüne Wiesen und Blumen"
+    },
+    "3": {
+      "name": "Flusswald",
+      "biome": "Wald und Bäche"
+    },
+    "4": {
+      "name": "Kristallberge",
+      "biome": "Gipfel und Kristalle"
+    },
+    "5": {
+      "name": "Hafenstrand",
+      "biome": "Sand und Boote"
+    },
+    "6": {
+      "name": "Zauberhain",
+      "biome": "Verwunschener Wald"
+    },
+    "7": {
+      "name": "Leuchthöhlen",
+      "biome": "Helle Grotten"
+    },
+    "8": {
+      "name": "Eisland",
+      "biome": "Eis und Schnee"
+    },
+    "9": {
+      "name": "Vulkaninsel",
+      "biome": "Fels und Lava"
+    },
+    "10": {
+      "name": "Endstadt",
+      "biome": "Die große Blockstadt"
+    }
+  },
+  "missions": {
+    "finalBadge": "Endaufgabe",
+    "counter": "Auftrag {{order}} von {{total}}",
+    "bridge": {
+      "title": "Die kaputte Brücke",
+      "brief": "Der Fluss hat den Weg zerschnitten! Wir bauen die Brücke wieder auf, Block für Block.",
+      "done": "Die Brücke ist fertig! Jetzt kommen wir hinüber."
+    },
+    "tower": {
+      "title": "Der große Turm",
+      "brief": "Jede richtige Antwort setzt eine weitere Schicht auf den Turm.",
+      "done": "Der Turm steht und man sieht die ganze Inselwelt!"
+    },
+    "lighthouse": {
+      "title": "Der dunkle Leuchtturm",
+      "brief": "Der Leuchtturm leuchtet nicht mehr. Wir reparieren ihn Stück für Stück.",
+      "done": "Der Leuchtturm brennt! Sein Licht dreht sich über das Meer."
+    },
+    "trees": {
+      "title": "Den Hain pflanzen",
+      "brief": "Diese Ecke der Insel ist leer. Wir pflanzen Bäume aus Blöcken.",
+      "done": "Der Hain ist voller Blätter gewachsen!"
+    },
+    "house": {
+      "title": "Das Blockhäuschen",
+      "brief": "Jemand braucht ein Zuhause. Wir bauen ein richtig buntes Haus.",
+      "done": "Das Haus ist fertig und aus dem Schornstein steigt schon Rauch!"
+    },
+    "gate": {
+      "title": "Das verschlossene Tor",
+      "brief": "Ein riesiges Tor versperrt den Weg. Jede richtige Antwort öffnet ein Stück.",
+      "done": "Das Tor ist aufgegangen! Der Weg ist frei."
+    },
+    "boat": {
+      "title": "Das Blockboot",
+      "brief": "Wir bauen ein Boot, um zum nächsten Strand zu segeln.",
+      "done": "Das Boot schwimmt und das Segel ist oben!"
+    },
+    "fence": {
+      "title": "Der Hofzaun",
+      "brief": "Der Wind hat den Zaun umgeweht. Wir stellen jeden Pfahl wieder auf.",
+      "done": "Der Zaun ist wieder ganz!"
+    },
+    "windmill": {
+      "title": "Die stille Windmühle",
+      "brief": "Die Windmühle braucht neue Flügel, damit sie sich wieder dreht.",
+      "done": "Die Windmühle dreht sich im Wind!"
+    },
+    "crystal": {
+      "title": "Der Kristallturm",
+      "brief": "Ein riesiger Kristall kann die ganze Insel erhellen. Wir bauen ihn!",
+      "done": "Der Kristall leuchtete auf und erhellte alles ringsum!"
+    }
+  },
+  "game": {
+    "question": "Was ist {{a}} × {{b}}?",
+    "questionCounter": "Frage {{current}} von {{total}}",
+    "chooseAnswer": "Wähle die richtige Antwort",
+    "blocks": "Blöcke gesetzt: {{placed}} von {{total}}",
+    "quit": "Auftrag verlassen",
+    "quitTitle": "Jetzt aufhören?",
+    "quitMessage": "Dein Fortschritt in diesem Auftrag wird nicht gespeichert, aber die Inseln, die du schon geschafft hast, bleiben dir.",
+    "quitConfirm": "Trotzdem gehen",
+    "quitCancel": "Weiterspielen",
+    "showAnswer": "Die richtige Antwort ist {{answer}}. Tippe sie an, um weiterzumachen!",
+    "hintTitle": "Schau: {{groups}} Gruppen mit je {{size}}",
+    "hintCount": "Das sind {{answer}} Blöcke insgesamt",
+    "startMission": "Los geht's",
+    "study": "Reihe ansehen",
+    "tutorial": {
+      "step1": "Tippe die richtige Antwort an.",
+      "step2": "Jede richtige Antwort setzt Blöcke in die Szene.",
+      "step3": "Bau alles fertig, um den Auftrag zu schaffen!"
+    }
+  },
+  "study": {
+    "hint": "Sieh mal, wie das Ergebnis immer um {{table}} steigt.",
+    "play": "Auftrag {{order}} spielen",
+    "mastered": "Die kannst du schon",
+    "struggling": "Die rutscht dir noch weg"
+  },
+  "feedback": {
+    "correct": {
+      "0": "Genau!",
+      "1": "Sehr gut!",
+      "2": "Perfekt!",
+      "3": "Du hast es geschafft!"
+    },
+    "wrong": {
+      "0": "Fast! Versuchen wir es nochmal.",
+      "1": "Oh, ganz knapp! Probier es nochmal.",
+      "2": "Die war es nicht. Schau dir den Tipp an!",
+      "3": "Noch ein Versuch, du schaffst das!"
+    }
+  },
+  "result": {
+    "title": "Auftrag geschafft!",
+    "correct": "Auf Anhieb richtig",
+    "mistakes": "Zusätzliche Versuche",
+    "accuracy": "Trefferquote",
+    "islandProgress": "Fortschritt der Insel",
+    "nextMission": "Nächster Auftrag",
+    "backToMap": "Zurück zur Karte",
+    "newAchievements": "Neue Erfolge!"
+  },
+  "islandComplete": {
+    "title": "Insel geschafft!",
+    "subtitle": "Du beherrschst die {{table}}er-Reihe!",
+    "unlocked": "Neue Insel frei: {{island}}",
+    "keepPracticing": "Ein paar Aufgaben kommen wieder, damit du weiter üben kannst.",
+    "backToMap": "Karte ansehen"
+  },
+  "archipelagoComplete": {
+    "title": "Einmaleins-Meister!",
+    "subtitle": "Du hast alle {{islands}} Inseln erkundet und das ganze Einmaleins gemeistert.",
+    "avatarAlt": "Deine Figur mit der Meisterkrone",
+    "islandsTitle": "Deine Inselwelt",
+    "diplomaTitle": "Meine Urkunde",
+    "diplomaHolder": "Entdecker der Einmaleins-Inseln",
+    "stars": "Sterne",
+    "answers": "Antworten",
+    "accuracy": "Treffer",
+    "bestStreak": "Beste Serie",
+    "adventures": "Abenteuer",
+    "toughest": "Dein schwerster Sieg",
+    "toughestNote": "Du hast {{mistakes}} Mal danebengelegen und sie am Ende gemeistert.",
+    "share": "Zeig diese Urkunde jemandem, den du magst!",
+    "backToMap": "Karte ansehen",
+    "backToHome": "Zurück zum Start"
+  },
+  "challenge": {
+    "title": "Blitzrunde",
+    "subtitle": "Aufgaben aus allen Reihen, bunt gemischt",
+    "briefingTitle": "Legendäre Insel",
+    "briefingText": "{{total}} Aufgaben aus allen Reihen gezogen.",
+    "briefingNote": "Kein Zeitlimit und kein Verlieren: die Uhr misst nur, wie lange du gebraucht hast.",
+    "currentRecord": "Dein Rekord: {{score}} von {{total}} in {{time}}",
+    "start": "Blitzrunde starten",
+    "clockLabel": "Zeit des Laufs",
+    "progress": "{{resolved}} von {{total}} Aufgaben beantwortet",
+    "quit": "Blitzrunde verlassen",
+    "finished": "Blitzrunde geschafft!",
+    "newRecord": "Neuer Rekord!",
+    "score": "Auf Anhieb richtig",
+    "time": "Zeit",
+    "best": "Dein Rekord",
+    "resultNote": "Jeder Lauf zieht neue Aufgaben, und die schweren kommen öfter dran.",
+    "again": "Nochmal spielen",
+    "back": "Zurück zum Start",
+    "quitTitle": "Blitzrunde verlassen?",
+    "quitMessage": "Dieser Lauf zählt nicht für den Rekord.",
+    "locked": "Schaffe alle Inseln zum Freischalten"
+  },
+  "achievements": {
+    "title": "Erfolge",
+    "subtitle": "{{unlocked}} von {{total}} freigeschaltet",
+    "statsTitle": "Deine Statistik",
+    "totalQuestions": "Gegebene Antworten",
+    "totalCorrect": "Richtige Antworten",
+    "bestStreak": "Beste Serie",
+    "playSessions": "So oft hast du gespielt",
+    "toughest": "Aufgaben zum Üben",
+    "toughestEmpty": "Gerade keine schweren Aufgaben. Weiter so!",
+    "list": {
+      "firstCorrect": {
+        "name": "Erste Antwort",
+        "description": "Du hast deine erste Multiplikation richtig gelöst",
+        "goal": "Löse deine erste Multiplikation richtig"
+      },
+      "firstMission": {
+        "name": "Erster Bau",
+        "description": "Du hast deinen ersten Auftrag geschafft",
+        "goal": "Schaffe deinen ersten Auftrag"
+      },
+      "tenCorrect": {
+        "name": "Zehn richtig",
+        "description": "Du hast 10 Multiplikationen richtig gelöst",
+        "goal": "Löse 10 Multiplikationen richtig"
+      },
+      "streakFive": {
+        "name": "Serie von 5",
+        "description": "Du hattest 5 Fragen hintereinander richtig",
+        "goal": "Löse 5 Fragen hintereinander richtig"
+      },
+      "tableTwoDone": {
+        "name": "Zweierreihe",
+        "description": "Du hast die Insel der 2er-Reihe geschafft",
+        "goal": "Schaffe die Insel der 2er-Reihe"
+      },
+      "fiftyCorrect": {
+        "name": "Fünfzig richtig",
+        "description": "Du hast 50 Multiplikationen richtig gelöst",
+        "goal": "Löse 50 Multiplikationen richtig"
+      },
+      "streakTen": {
+        "name": "Serie von 10",
+        "description": "Du hattest 10 Fragen hintereinander richtig",
+        "goal": "Löse 10 Fragen hintereinander richtig"
+      },
+      "halfArchipelago": {
+        "name": "Halbe Strecke",
+        "description": "Du hast 5 Inseln der Inselwelt geschafft",
+        "goal": "Schaffe 5 Inseln der Inselwelt"
+      },
+      "allIslands": {
+        "name": "Inselmeister",
+        "description": "Du hast alle Inseln der Inselwelt geschafft",
+        "goal": "Schaffe alle Inseln der Inselwelt"
+      },
+      "perfectChallenge": {
+        "name": "Legende der Inselwelt",
+        "description": "Du hast die ganze Blitzrunde auf Anhieb geschafft!",
+        "goal": "Löse alle Aufgaben der Blitzrunde auf Anhieb richtig"
+      }
+    }
+  },
+  "settings": {
+    "title": "Einstellungen",
+    "language": "Sprache",
+    "music": "Musik",
+    "sound": "Geräusche",
+    "motion": "Animationen reduzieren",
+    "study": "Reihe vor dem Spielen ansehen",
+    "on": "An",
+    "off": "Aus",
+    "dangerZone": "Von vorn beginnen",
+    "reset": "Fortschritt löschen",
+    "resetTitle": "Den ganzen Fortschritt löschen?",
+    "resetMessage": "Deine Inseln, Erfolge und deine Figur werden gelöscht. Das lässt sich nicht rückgängig machen.",
+    "resetConfirm": "Ja, alles löschen",
+    "resetCancel": "Nein, zurück",
+    "storageWarning": "Dieser Browser speichert den Fortschritt nicht. Er geht verloren, wenn du den Tab schließt.",
+    "mute": "Ton ausschalten",
+    "unmute": "Ton einschalten"
+  },
+  "a11y": {
+    "starFilled": "Stern verdient",
+    "starEmpty": "Stern noch nicht verdient",
+    "islandLocked": "Gesperrte Insel",
+    "answerOption": "Antwort {{value}}",
+    "buildProgress": "Bau zu {{percent}} Prozent fertig",
+    "heroWave": "Antippen zum Winken"
+  }
+}

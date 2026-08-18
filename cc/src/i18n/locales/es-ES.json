@@ -1,0 +1,381 @@
+{
+  "meta": {
+    "name": "Español",
+    "flag": "🇪🇸"
+  },
+  "common": {
+    "play": "Jugar",
+    "back": "Volver",
+    "continue": "Continuar",
+    "close": "Cerrar",
+    "cancel": "Cancelar",
+    "confirm": "Confirmar",
+    "next": "Siguiente",
+    "loading": "Cargando...",
+    "of": "de"
+  },
+  "splash": {
+    "title": "Islas de las Tablas",
+    "tagline": "Construye un mundo de bloques mientras aprendes las tablas"
+  },
+  "home": {
+    "greeting": "¡Hola, explorador!",
+    "subtitle": "Tu archipiélago te espera",
+    "play": "Jugar",
+    "achievements": "Logros",
+    "settings": "Ajustes",
+    "progress": "{{completed}} de {{total}} islas completadas",
+    "changeCharacter": "Cambiar personaje",
+    "diploma": "Mi diploma de maestro",
+    "challenge": "Desafío Relámpago"
+  },
+  "onboarding": {
+    "languageTitle": "Elige tu idioma",
+    "languageSubtitle": "Puedes cambiarlo después en los ajustes",
+    "characterTitle": "¿Quién va a explorar las islas?",
+    "characterSubtitle": "Elige tu personaje",
+    "customizeTitle": "Hazlo a tu manera",
+    "customizeSubtitle": "Elige los colores y un accesorio",
+    "skinLabel": "Tono de piel",
+    "hairLabel": "Pelo",
+    "outfitLabel": "Color de la ropa",
+    "accessoryLabel": "Accesorio",
+    "surprise": "¡Sorpréndeme!",
+    "start": "Empezar la aventura",
+    "base": {
+      "boy": "Niño",
+      "girl": "Niña"
+    },
+    "hair": {
+      "short": "Corto",
+      "long": "Largo",
+      "curly": "Rizado",
+      "ponytail": "Coleta"
+    },
+    "outfit": {
+      "red": "Rojo",
+      "blue": "Azul",
+      "green": "Verde",
+      "purple": "Morado",
+      "orange": "Naranja",
+      "pink": "Rosa"
+    },
+    "accessory": {
+      "none": "Ninguno",
+      "cap": "Gorra",
+      "glasses": "Gafas",
+      "crown": "Corona"
+    },
+    "skin": {
+      "skin1": "Tono 1",
+      "skin2": "Tono 2",
+      "skin3": "Tono 3",
+      "skin4": "Tono 4"
+    },
+    "mascotLabel": "Mascota",
+    "mascot": {
+      "bloco": "Bloque",
+      "brasa": "Brasa",
+      "folha": "Hoja",
+      "flor": "Flor",
+      "cristal": "Cristal"
+    }
+  },
+  "map": {
+    "title": "Mapa del Archipiélago",
+    "subtitle": "Elige una isla para explorar",
+    "enter": "Entrar en la isla",
+    "review": "Repasar la isla",
+    "status": {
+      "locked": "Bloqueada",
+      "available": "Desbloqueada",
+      "inProgress": "En curso",
+      "completed": "Completada"
+    },
+    "lockedHint": "Termina la tabla del {{table}} para abrir esta isla",
+    "missions": "{{completed}} de {{total}} misiones",
+    "stars": "{{count}} de 3 estrellas",
+    "tableLabel": "Tabla del {{table}}"
+  },
+  "islands": {
+    "2": {
+      "name": "Campos Floridos",
+      "biome": "Prados verdes y flores"
+    },
+    "3": {
+      "name": "Bosque de los Ríos",
+      "biome": "Bosque y arroyos"
+    },
+    "4": {
+      "name": "Montañas de Cristal",
+      "biome": "Cumbres y cristales"
+    },
+    "5": {
+      "name": "Playa del Puerto",
+      "biome": "Arena y barcos"
+    },
+    "6": {
+      "name": "Arboleda Mágica",
+      "biome": "Bosque encantado"
+    },
+    "7": {
+      "name": "Cuevas Brillantes",
+      "biome": "Cavernas luminosas"
+    },
+    "8": {
+      "name": "Tierras Heladas",
+      "biome": "Hielo y nieve"
+    },
+    "9": {
+      "name": "Isla del Volcán",
+      "biome": "Rocas y lava"
+    },
+    "10": {
+      "name": "Ciudad Final",
+      "biome": "La gran ciudad de bloques"
+    }
+  },
+  "missions": {
+    "finalBadge": "Desafío final",
+    "counter": "Misión {{order}} de {{total}}",
+    "bridge": {
+      "title": "El puente roto",
+      "brief": "¡El río cortó el camino! Vamos a reconstruir el puente, bloque a bloque.",
+      "done": "¡El puente está listo! Ya se puede cruzar."
+    },
+    "tower": {
+      "title": "La gran torre",
+      "brief": "Cada respuesta correcta levanta una capa más de la torre.",
+      "done": "¡La torre está en pie y se ve todo el archipiélago!"
+    },
+    "lighthouse": {
+      "title": "El faro apagado",
+      "brief": "El faro dejó de brillar. Vamos a arreglarlo pieza por pieza.",
+      "done": "¡El faro se encendió! Su luz gira sobre el mar."
+    },
+    "trees": {
+      "title": "Plantar la arboleda",
+      "brief": "Esta parte de la isla está vacía. Vamos a plantar árboles de bloques.",
+      "done": "¡La arboleda creció llena de hojas!"
+    },
+    "house": {
+      "title": "La casita de bloques",
+      "brief": "Alguien necesita un hogar. Vamos a construir una casa muy colorida.",
+      "done": "¡La casa está lista y la chimenea ya echa humo!"
+    },
+    "gate": {
+      "title": "El portón cerrado",
+      "brief": "Un portón gigante bloquea el camino. Cada acierto abre un trozo.",
+      "done": "¡El portón se abrió! El camino está libre."
+    },
+    "boat": {
+      "title": "El barco de bloques",
+      "brief": "Vamos a montar un barco para navegar hasta la próxima playa.",
+      "done": "¡El barco flota y la vela está izada!"
+    },
+    "fence": {
+      "title": "La valla de la granja",
+      "brief": "El viento tiró la valla. Vamos a levantar cada estaca.",
+      "done": "¡La valla está entera otra vez!"
+    },
+    "windmill": {
+      "title": "El molino parado",
+      "brief": "El molino necesita aspas nuevas para volver a girar.",
+      "done": "¡El molino está girando con el viento!"
+    },
+    "crystal": {
+      "title": "La torre de cristal",
+      "brief": "Un cristal gigante puede iluminar toda la isla. ¡Vamos a montarlo!",
+      "done": "¡El cristal brilló e iluminó todo alrededor!"
+    }
+  },
+  "game": {
+    "question": "¿Cuánto es {{a}} × {{b}}?",
+    "questionCounter": "Pregunta {{current}} de {{total}}",
+    "chooseAnswer": "Elige la respuesta correcta",
+    "blocks": "Bloques colocados: {{placed}} de {{total}}",
+    "quit": "Salir de la misión",
+    "quitTitle": "¿Quieres salir ahora?",
+    "quitMessage": "Tu progreso en esta misión no se guardará, pero las islas que ya conquistaste siguen siendo tuyas.",
+    "quitConfirm": "Salir de todos modos",
+    "quitCancel": "Seguir jugando",
+    "showAnswer": "La respuesta correcta es {{answer}}. ¡Tócala para continuar!",
+    "hintTitle": "¡Mira! {{groups}} grupos de {{size}}",
+    "hintCount": "Son {{answer}} bloques en total",
+    "startMission": "Empezar",
+    "study": "Ver la tabla",
+    "tutorial": {
+      "step1": "Toca la respuesta correcta.",
+      "step2": "Cada acierto coloca bloques en el escenario.",
+      "step3": "¡Termina la construcción para completar la misión!"
+    }
+  },
+  "study": {
+    "hint": "Fíjate cómo el resultado sube de {{table}} en {{table}}.",
+    "play": "Jugar la misión {{order}}",
+    "mastered": "Esta ya te la sabes",
+    "struggling": "Esta todavía se te escapa"
+  },
+  "feedback": {
+    "correct": {
+      "0": "¡Eso es!",
+      "1": "¡Muy bien!",
+      "2": "¡Perfecto!",
+      "3": "¡Lo conseguiste!"
+    },
+    "wrong": {
+      "0": "¡Casi! Vamos a intentarlo otra vez.",
+      "1": "¡Uy, por poco! Prueba de nuevo.",
+      "2": "No era esa. ¡Mira la pista!",
+      "3": "¡Inténtalo una vez más, tú puedes!"
+    }
+  },
+  "result": {
+    "title": "¡Misión completada!",
+    "correct": "Aciertos a la primera",
+    "mistakes": "Intentos extra",
+    "accuracy": "Aprovechamiento",
+    "islandProgress": "Progreso de la isla",
+    "nextMission": "Siguiente misión",
+    "backToMap": "Volver al mapa",
+    "newAchievements": "¡Nuevos logros!"
+  },
+  "islandComplete": {
+    "title": "¡Isla completada!",
+    "subtitle": "¡Dominaste la tabla del {{table}}!",
+    "unlocked": "Nueva isla desbloqueada: {{island}}",
+    "keepPracticing": "Algunas cuentas volverán a aparecer para que sigas practicando.",
+    "backToMap": "Ver el mapa"
+  },
+  "archipelagoComplete": {
+    "title": "¡Maestro de las Tablas!",
+    "subtitle": "Exploraste las {{islands}} islas y dominaste todas las tablas.",
+    "avatarAlt": "Tu personaje con la corona de maestro",
+    "islandsTitle": "Tu archipiélago",
+    "diplomaTitle": "Mi diploma",
+    "diplomaHolder": "Explorador del Archipiélago de las Tablas",
+    "stars": "Estrellas",
+    "answers": "Respuestas",
+    "accuracy": "Aciertos",
+    "bestStreak": "Mejor racha",
+    "adventures": "Aventuras",
+    "toughest": "Tu victoria más difícil",
+    "toughestNote": "Fallaste {{mistakes}} veces y al final la dominaste.",
+    "share": "¡Enseña este diploma a alguien que quieras!",
+    "backToMap": "Ver el mapa",
+    "backToHome": "Volver al inicio"
+  },
+  "challenge": {
+    "title": "Desafío Relámpago",
+    "subtitle": "Cuentas de todas las tablas mezcladas",
+    "briefingTitle": "Isla Legendaria",
+    "briefingText": "Son {{total}} cuentas sacadas de todas las tablas.",
+    "briefingNote": "Sin tiempo límite y sin perder: el reloj solo marca cuánto tardaste.",
+    "currentRecord": "Tu récord: {{score}} de {{total}} en {{time}}",
+    "start": "Empezar el desafío",
+    "clockLabel": "Tiempo de la carrera",
+    "progress": "{{resolved}} de {{total}} cuentas respondidas",
+    "quit": "Salir del desafío",
+    "finished": "¡Desafío completado!",
+    "newRecord": "¡Nuevo récord!",
+    "score": "Aciertos a la primera",
+    "time": "Tiempo",
+    "best": "Tu récord",
+    "resultNote": "Cada carrera saca cuentas nuevas, y las más difíciles aparecen más veces.",
+    "again": "Jugar otra vez",
+    "back": "Volver al inicio",
+    "quitTitle": "¿Salir del desafío?",
+    "quitMessage": "Esta carrera no contará para el récord.",
+    "locked": "Completa todas las islas para desbloquear"
+  },
+  "achievements": {
+    "title": "Logros",
+    "subtitle": "{{unlocked}} de {{total}} desbloqueados",
+    "statsTitle": "Tus estadísticas",
+    "totalQuestions": "Respuestas dadas",
+    "totalCorrect": "Aciertos",
+    "bestStreak": "Mejor racha",
+    "playSessions": "Veces que jugaste",
+    "toughest": "Cuentas para practicar",
+    "toughestEmpty": "Ninguna cuenta difícil por ahora. ¡Sigue así!",
+    "list": {
+      "firstCorrect": {
+        "name": "Primer acierto",
+        "description": "Acertaste tu primera multiplicación",
+        "goal": "Acierta tu primera multiplicación"
+      },
+      "firstMission": {
+        "name": "Primera construcción",
+        "description": "Completaste tu primera misión",
+        "goal": "Completa tu primera misión"
+      },
+      "tenCorrect": {
+        "name": "Diez aciertos",
+        "description": "Acertaste 10 multiplicaciones",
+        "goal": "Acierta 10 multiplicaciones"
+      },
+      "streakFive": {
+        "name": "Racha de 5",
+        "description": "Acertaste 5 preguntas seguidas",
+        "goal": "Acierta 5 preguntas seguidas"
+      },
+      "tableTwoDone": {
+        "name": "Tabla del 2",
+        "description": "Completaste la isla de la tabla del 2",
+        "goal": "Completa la isla de la tabla del 2"
+      },
+      "fiftyCorrect": {
+        "name": "Cincuenta aciertos",
+        "description": "Acertaste 50 multiplicaciones",
+        "goal": "Acierta 50 multiplicaciones"
+      },
+      "streakTen": {
+        "name": "Racha de 10",
+        "description": "Acertaste 10 preguntas seguidas",
+        "goal": "Acierta 10 preguntas seguidas"
+      },
+      "halfArchipelago": {
+        "name": "A mitad de camino",
+        "description": "Completaste 5 islas del archipiélago",
+        "goal": "Completa 5 islas del archipiélago"
+      },
+      "allIslands": {
+        "name": "Maestro de las islas",
+        "description": "Completaste todas las islas del archipiélago",
+        "goal": "Completa todas las islas del archipiélago"
+      },
+      "perfectChallenge": {
+        "name": "Leyenda del Archipiélago",
+        "description": "¡Acertaste el desafío entero a la primera!",
+        "goal": "Acierta todas las cuentas del Desafío Relámpago a la primera"
+      }
+    }
+  },
+  "settings": {
+    "title": "Ajustes",
+    "language": "Idioma",
+    "music": "Música",
+    "sound": "Efectos de sonido",
+    "motion": "Reducir animaciones",
+    "study": "Ver la tabla antes de jugar",
+    "on": "Activado",
+    "off": "Desactivado",
+    "dangerZone": "Empezar de cero",
+    "reset": "Borrar mi progreso",
+    "resetTitle": "¿Borrar todo el progreso?",
+    "resetMessage": "Tus islas, logros y personaje se borrarán. Esto no se puede deshacer.",
+    "resetConfirm": "Sí, borrarlo todo",
+    "resetCancel": "No, volver",
+    "storageWarning": "Este navegador no está guardando el progreso. Se perderá al cerrar la pestaña.",
+    "mute": "Quitar el sonido",
+    "unmute": "Poner el sonido"
+  },
+  "a11y": {
+    "starFilled": "Estrella conseguida",
+    "starEmpty": "Estrella no conseguida",
+    "islandLocked": "Isla bloqueada",
+    "answerOption": "Opción {{value}}",
+    "buildProgress": "Construcción {{percent}} por ciento lista",
+    "heroWave": "Toca para saludar"
+  }
+}

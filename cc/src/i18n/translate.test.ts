@@ -128,13 +128,24 @@ describe('detectLocale', () => {
     expect(detectLocale(['en-GB'])).toBe('en-US');
   });
 
+  it('reconhece o idioma base de cada traducao', () => {
+    expect(detectLocale(['es-MX'])).toBe('es-ES');
+    expect(detectLocale(['fr-CA'])).toBe('fr-FR');
+    expect(detectLocale(['de-AT'])).toBe('de-DE');
+    expect(detectLocale(['ja'])).toBe('ja-JP');
+    expect(detectLocale(['ko'])).toBe('ko-KR');
+    expect(detectLocale(['zh-Hans'])).toBe('zh-CN');
+  });
+
   it('cai no fallback para idiomas sem traducao', () => {
-    expect(detectLocale(['ja-JP'])).toBe('en-US');
+    expect(detectLocale(['it-IT'])).toBe('en-US');
+    expect(detectLocale(['ru-RU'])).toBe('en-US');
     expect(detectLocale([])).toBe('en-US');
   });
 
   it('respeita a ordem de preferencia do navegador', () => {
-    expect(detectLocale(['ja-JP', 'pt-BR', 'en-US'])).toBe('pt-BR');
+    expect(detectLocale(['it-IT', 'pt-BR', 'en-US'])).toBe('pt-BR');
+    expect(detectLocale(['ko-KR', 'pt-BR'])).toBe('ko-KR');
   });
 });
 
@@ -142,6 +153,8 @@ describe('isSupportedLocale', () => {
   it('aceita apenas os idiomas registrados', () => {
     expect(isSupportedLocale('pt-BR')).toBe(true);
     expect(isSupportedLocale('en-US')).toBe(true);
-    expect(isSupportedLocale('es-ES')).toBe(false);
+    expect(isSupportedLocale('zh-CN')).toBe(true);
+    expect(isSupportedLocale('it-IT')).toBe(false);
+    expect(isSupportedLocale('zh-TW')).toBe(false);
   });
 });

@@ -1,6 +1,12 @@
 import type { Locale } from '../domain/types';
 import ptBR from './locales/pt-BR.json';
 import enUS from './locales/en-US.json';
+import esES from './locales/es-ES.json';
+import frFR from './locales/fr-FR.json';
+import deDE from './locales/de-DE.json';
+import jaJP from './locales/ja-JP.json';
+import koKR from './locales/ko-KR.json';
+import zhCN from './locales/zh-CN.json';
 import { SUPPORTED_LOCALES } from '../domain/types';
 
 /**
@@ -25,6 +31,12 @@ export const FALLBACK_LOCALE: Locale = 'en-US';
 export const DICTIONARIES: Record<Locale, TranslationTree> = {
   'pt-BR': ptBR as TranslationTree,
   'en-US': enUS as TranslationTree,
+  'es-ES': esES as TranslationTree,
+  'fr-FR': frFR as TranslationTree,
+  'de-DE': deDE as TranslationTree,
+  'ja-JP': jaJP as TranslationTree,
+  'ko-KR': koKR as TranslationTree,
+  'zh-CN': zhCN as TranslationTree,
 };
 
 /** Percorre "a.b.c" na arvore de traducoes. */
@@ -83,8 +95,28 @@ export function isSupportedLocale(value: string): value is Locale {
 }
 
 /**
- * Descobre o idioma do navegador. `pt` de qualquer regiao vira pt-BR;
- * qualquer outra coisa cai no ingles.
+ * Idioma base (`pt`, `ja`, ...) -> a variante que o jogo tem. `pt-PT` recebe
+ * pt-BR, `en-GB` recebe en-US, e assim por diante: e melhor entregar a variante
+ * proxima do que cair no ingles.
+ *
+ * Limitacao conhecida: `zh-TW` e `zh-HK` leem chines tradicional e recebem aqui
+ * o simplificado. Corrigir isso exige um dicionario zh-TW proprio, nao um
+ * mapeamento.
+ */
+const LOCALE_BY_BASE_LANGUAGE: Record<string, Locale> = {
+  pt: 'pt-BR',
+  en: 'en-US',
+  es: 'es-ES',
+  fr: 'fr-FR',
+  de: 'de-DE',
+  ja: 'ja-JP',
+  ko: 'ko-KR',
+  zh: 'zh-CN',
+};
+
+/**
+ * Descobre o idioma do navegador. Tenta a tag exata, depois o idioma base;
+ * qualquer coisa fora da lista cai no ingles.
  */
 export function detectLocale(languages?: readonly string[]): Locale {
   const candidates =
@@ -101,11 +133,9 @@ export function detectLocale(languages?: readonly string[]): Locale {
       return candidate;
     }
     const base = candidate.split('-')[0]?.toLowerCase();
-    if (base === 'pt') {
-      return 'pt-BR';
-    }
-    if (base === 'en') {
-      return 'en-US';
+    const mapped = base ? LOCALE_BY_BASE_LANGUAGE[base] : undefined;
+    if (mapped) {
+      return mapped;
     }
   }
 

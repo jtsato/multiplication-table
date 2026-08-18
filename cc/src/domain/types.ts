@@ -6,9 +6,23 @@
  */
 
 /** Idiomas suportados. Adicionar um idioma novo comeca por aqui. */
-export type Locale = 'pt-BR' | 'en-US';
+export type Locale = 'pt-BR' | 'en-US' | 'es-ES' | 'fr-FR' | 'de-DE' | 'ja-JP' | 'ko-KR' | 'zh-CN';
 
-export const SUPPORTED_LOCALES: readonly Locale[] = ['pt-BR', 'en-US'] as const;
+/**
+ * A ordem aqui e a ordem da lista de escolha de idioma. pt-BR e en-US vem
+ * primeiro por serem os idiomas de origem do jogo; o resto segue a ordem em
+ * que foi adicionado.
+ */
+export const SUPPORTED_LOCALES: readonly Locale[] = [
+  'pt-BR',
+  'en-US',
+  'es-ES',
+  'fr-FR',
+  'de-DE',
+  'ja-JP',
+  'ko-KR',
+  'zh-CN',
+] as const;
 
 /** Chave canonica de uma multiplicacao, sempre no formato `axb`, ex: "7x3". */
 export type FactKey = string;

@@ -1,0 +1,381 @@
+{
+  "meta": {
+    "name": "简体中文",
+    "flag": "🇨🇳"
+  },
+  "common": {
+    "play": "开始玩",
+    "back": "返回",
+    "continue": "继续",
+    "close": "关闭",
+    "cancel": "取消",
+    "confirm": "确定",
+    "next": "下一步",
+    "loading": "加载中...",
+    "of": "/"
+  },
+  "splash": {
+    "title": "乘法口诀岛",
+    "tagline": "一边学乘法口诀，一边搭出一个方块世界"
+  },
+  "home": {
+    "greeting": "你好，小探险家！",
+    "subtitle": "你的群岛正在等你",
+    "play": "开始玩",
+    "achievements": "成就",
+    "settings": "设置",
+    "progress": "已完成 {{completed}}/{{total}} 座岛屿",
+    "changeCharacter": "换个角色",
+    "diploma": "我的大师证书",
+    "challenge": "闪电挑战"
+  },
+  "onboarding": {
+    "languageTitle": "选择你的语言",
+    "languageSubtitle": "以后可以在设置里改",
+    "characterTitle": "谁来探险这些岛屿？",
+    "characterSubtitle": "选一个角色",
+    "customizeTitle": "打扮成你喜欢的样子",
+    "customizeSubtitle": "选颜色和一个小配件",
+    "skinLabel": "肤色",
+    "hairLabel": "头发",
+    "outfitLabel": "衣服颜色",
+    "accessoryLabel": "配件",
+    "surprise": "随便帮我选！",
+    "start": "开始冒险",
+    "base": {
+      "boy": "男孩",
+      "girl": "女孩"
+    },
+    "hair": {
+      "short": "短发",
+      "long": "长发",
+      "curly": "卷发",
+      "ponytail": "马尾"
+    },
+    "outfit": {
+      "red": "红色",
+      "blue": "蓝色",
+      "green": "绿色",
+      "purple": "紫色",
+      "orange": "橙色",
+      "pink": "粉色"
+    },
+    "accessory": {
+      "none": "不要",
+      "cap": "帽子",
+      "glasses": "眼镜",
+      "crown": "王冠"
+    },
+    "skin": {
+      "skin1": "肤色 1",
+      "skin2": "肤色 2",
+      "skin3": "肤色 3",
+      "skin4": "肤色 4"
+    },
+    "mascotLabel": "小伙伴",
+    "mascot": {
+      "bloco": "方块",
+      "brasa": "火苗",
+      "folha": "树叶",
+      "flor": "花朵",
+      "cristal": "水晶"
+    }
+  },
+  "map": {
+    "title": "群岛地图",
+    "subtitle": "选一座岛去探险",
+    "enter": "进入岛屿",
+    "review": "再玩一次",
+    "status": {
+      "locked": "未解锁",
+      "available": "已解锁",
+      "inProgress": "进行中",
+      "completed": "已完成"
+    },
+    "lockedHint": "学完 {{table}} 的乘法表就能打开这座岛",
+    "missions": "已完成 {{completed}}/{{total}} 个任务",
+    "stars": "{{count}}/3 颗星",
+    "tableLabel": "{{table}} 的乘法表"
+  },
+  "islands": {
+    "2": {
+      "name": "花田岛",
+      "biome": "绿色草地和鲜花"
+    },
+    "3": {
+      "name": "河林岛",
+      "biome": "树林和小溪"
+    },
+    "4": {
+      "name": "水晶山",
+      "biome": "山峰和水晶"
+    },
+    "5": {
+      "name": "港湾沙滩",
+      "biome": "沙滩和小船"
+    },
+    "6": {
+      "name": "魔法林",
+      "biome": "被施了魔法的森林"
+    },
+    "7": {
+      "name": "发光洞窟",
+      "biome": "明亮的岩洞"
+    },
+    "8": {
+      "name": "冰封之地",
+      "biome": "冰和雪"
+    },
+    "9": {
+      "name": "火山岛",
+      "biome": "岩石和熔岩"
+    },
+    "10": {
+      "name": "终点之城",
+      "biome": "巨大的方块之城"
+    }
+  },
+  "missions": {
+    "finalBadge": "最终挑战",
+    "counter": "任务 {{order}}/{{total}}",
+    "bridge": {
+      "title": "断掉的桥",
+      "brief": "河水把路截断了！我们一块一块把桥重新搭好。",
+      "done": "桥修好了！现在可以过去了。"
+    },
+    "tower": {
+      "title": "高高的塔",
+      "brief": "每答对一题，塔就会长高一层。",
+      "done": "塔立起来了，整片群岛都看得见！"
+    },
+    "lighthouse": {
+      "title": "熄灭的灯塔",
+      "brief": "灯塔不亮了。我们一块一块把它修好。",
+      "done": "灯塔亮了！光柱在海面上转啊转。"
+    },
+    "trees": {
+      "title": "种一片小树林",
+      "brief": "岛上这块地空空的。我们来种方块树吧。",
+      "done": "小树林长满了叶子！"
+    },
+    "house": {
+      "title": "方块小屋",
+      "brief": "有人需要一个家。我们盖一座五颜六色的房子。",
+      "done": "房子盖好了，烟囱已经冒烟啦！"
+    },
+    "gate": {
+      "title": "锁住的大门",
+      "brief": "一扇巨大的门挡住了去路。每答对一题就打开一部分。",
+      "done": "大门打开了！路通了。"
+    },
+    "boat": {
+      "title": "方块小船",
+      "brief": "我们造一条船，开到下一片沙滩去。",
+      "done": "船浮起来了，帆也升上去了！"
+    },
+    "fence": {
+      "title": "农场的栅栏",
+      "brief": "大风把栅栏吹倒了。我们把每根木桩重新立起来。",
+      "done": "栅栏又完好如初了！"
+    },
+    "windmill": {
+      "title": "停下的风车",
+      "brief": "风车需要新叶片才能重新转起来。",
+      "done": "风车在风里转起来了！"
+    },
+    "crystal": {
+      "title": "水晶塔",
+      "brief": "一块巨大的水晶能照亮整座岛。我们来搭吧！",
+      "done": "水晶发光了，把四周照得亮堂堂！"
+    }
+  },
+  "game": {
+    "question": "{{a}} × {{b}} 等于多少？",
+    "questionCounter": "第 {{current}}/{{total}} 题",
+    "chooseAnswer": "选出正确答案",
+    "blocks": "已放置方块：{{placed}}/{{total}}",
+    "quit": "离开任务",
+    "quitTitle": "现在就走吗？",
+    "quitMessage": "这个任务的进度不会保存，但你已经通关的岛屿还是你的。",
+    "quitConfirm": "还是要走",
+    "quitCancel": "继续玩",
+    "showAnswer": "正确答案是 {{answer}}，点它继续吧！",
+    "hintTitle": "看：{{groups}} 组，每组 {{size}} 个",
+    "hintCount": "一共是 {{answer}} 个方块",
+    "startMission": "开始",
+    "study": "看乘法表",
+    "tutorial": {
+      "step1": "点一下正确答案。",
+      "step2": "每答对一题就会放下方块。",
+      "step3": "把建筑搭完就能完成任务！"
+    }
+  },
+  "study": {
+    "hint": "注意看，答案每次都增加 {{table}}。",
+    "play": "玩任务 {{order}}",
+    "mastered": "这一题你已经会了",
+    "struggling": "这一题还有点难"
+  },
+  "feedback": {
+    "correct": {
+      "0": "就是这样！",
+      "1": "很棒！",
+      "2": "完美！",
+      "3": "你做到了！"
+    },
+    "wrong": {
+      "0": "差一点！我们再试一次。",
+      "1": "哎呀，就快对了！再试试。",
+      "2": "不是这个，看看提示！",
+      "3": "再来一次，你可以的！"
+    }
+  },
+  "result": {
+    "title": "任务完成！",
+    "correct": "一次就答对",
+    "mistakes": "多试的次数",
+    "accuracy": "正确率",
+    "islandProgress": "岛屿进度",
+    "nextMission": "下一个任务",
+    "backToMap": "回到地图",
+    "newAchievements": "新成就！"
+  },
+  "islandComplete": {
+    "title": "岛屿完成！",
+    "subtitle": "你学会 {{table}} 的乘法表了！",
+    "unlocked": "解锁新岛屿：{{island}}",
+    "keepPracticing": "有几道题还会再出现，让你多练一练。",
+    "backToMap": "看地图"
+  },
+  "archipelagoComplete": {
+    "title": "乘法口诀大师！",
+    "subtitle": "你探险了全部 {{islands}} 座岛屿，学会了整套乘法口诀。",
+    "avatarAlt": "戴着大师王冠的你的角色",
+    "islandsTitle": "你的群岛",
+    "diplomaTitle": "我的证书",
+    "diplomaHolder": "乘法口诀群岛探险家",
+    "stars": "星星",
+    "answers": "答题数",
+    "accuracy": "答对",
+    "bestStreak": "最长连对",
+    "adventures": "冒险次数",
+    "toughest": "你最难赢的一题",
+    "toughestNote": "你错了 {{mistakes}} 次，最后还是学会了。",
+    "share": "把这张证书给你喜欢的人看看吧！",
+    "backToMap": "看地图",
+    "backToHome": "回到开始"
+  },
+  "challenge": {
+    "title": "闪电挑战",
+    "subtitle": "所有乘法表的题目混在一起",
+    "briefingTitle": "传说之岛",
+    "briefingText": "从所有乘法表里抽出 {{total}} 道题。",
+    "briefingNote": "没有时间限制，也不会输：时钟只记录你用了多久。",
+    "currentRecord": "你的纪录：{{time}} 内答对 {{score}}/{{total}}",
+    "start": "开始挑战",
+    "clockLabel": "本轮用时",
+    "progress": "已答 {{resolved}}/{{total}} 题",
+    "quit": "离开挑战",
+    "finished": "挑战完成！",
+    "newRecord": "新纪录！",
+    "score": "一次就答对",
+    "time": "用时",
+    "best": "你的纪录",
+    "resultNote": "每一轮都会抽新题，越难的题出现得越多。",
+    "again": "再玩一次",
+    "back": "回到开始",
+    "quitTitle": "要离开挑战吗？",
+    "quitMessage": "这一轮不会计入纪录。",
+    "locked": "完成所有岛屿即可解锁"
+  },
+  "achievements": {
+    "title": "成就",
+    "subtitle": "已解锁 {{unlocked}}/{{total}}",
+    "statsTitle": "你的数据",
+    "totalQuestions": "答过的题",
+    "totalCorrect": "答对的题",
+    "bestStreak": "最长连对",
+    "playSessions": "玩过的次数",
+    "toughest": "需要多练的题",
+    "toughestEmpty": "现在没有难题啦，继续保持！",
+    "list": {
+      "firstCorrect": {
+        "name": "第一次答对",
+        "description": "答对了第一道乘法题",
+        "goal": "答对你的第一道乘法题"
+      },
+      "firstMission": {
+        "name": "第一次建造",
+        "description": "完成了第一个任务",
+        "goal": "完成你的第一个任务"
+      },
+      "tenCorrect": {
+        "name": "答对十题",
+        "description": "答对了 10 道乘法题",
+        "goal": "答对 10 道乘法题"
+      },
+      "streakFive": {
+        "name": "连对 5 题",
+        "description": "连续答对了 5 道题",
+        "goal": "连续答对 5 道题"
+      },
+      "tableTwoDone": {
+        "name": "2 的乘法表",
+        "description": "完成了 2 的乘法表岛屿",
+        "goal": "完成 2 的乘法表岛屿"
+      },
+      "fiftyCorrect": {
+        "name": "答对五十题",
+        "description": "答对了 50 道乘法题",
+        "goal": "答对 50 道乘法题"
+      },
+      "streakTen": {
+        "name": "连对 10 题",
+        "description": "连续答对了 10 道题",
+        "goal": "连续答对 10 道题"
+      },
+      "halfArchipelago": {
+        "name": "走到一半",
+        "description": "完成了群岛中的 5 座岛屿",
+        "goal": "完成群岛中的 5 座岛屿"
+      },
+      "allIslands": {
+        "name": "岛屿大师",
+        "description": "完成了群岛的所有岛屿",
+        "goal": "完成群岛的所有岛屿"
+      },
+      "perfectChallenge": {
+        "name": "群岛传说",
+        "description": "整场挑战你一次就全答对了！",
+        "goal": "闪电挑战的每道题都一次答对"
+      }
+    }
+  },
+  "settings": {
+    "title": "设置",
+    "language": "语言",
+    "music": "音乐",
+    "sound": "音效",
+    "motion": "减少动画",
+    "study": "开始前先看乘法表",
+    "on": "开",
+    "off": "关",
+    "dangerZone": "从头开始",
+    "reset": "清除我的进度",
+    "resetTitle": "要清除全部进度吗？",
+    "resetMessage": "你的岛屿、成就和角色都会被清除，而且无法恢复。",
+    "resetConfirm": "是的，全部清除",
+    "resetCancel": "不要，返回",
+    "storageWarning": "这个浏览器没有保存进度。关闭标签页后进度会丢失。",
+    "mute": "关闭声音",
+    "unmute": "打开声音"
+  },
+  "a11y": {
+    "starFilled": "已获得的星星",
+    "starEmpty": "尚未获得的星星",
+    "islandLocked": "未解锁的岛屿",
+    "answerOption": "选项 {{value}}",
+    "buildProgress": "建造完成 {{percent}}%",
+    "heroWave": "点一下打招呼"
+  }
+}
