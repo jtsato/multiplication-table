@@ -26,12 +26,29 @@ function renderProbe() {
   );
 }
 
+/** Finge o idioma do navegador; sem isto o jsdom sempre responde en-US. */
+function setBrowserLanguages(languages: string[]) {
+  Object.defineProperty(window.navigator, "languages", {
+    value: languages,
+    configurable: true,
+  });
+}
+
 describe("I18nProvider", () => {
   beforeEach(() => {
     window.localStorage.clear();
+    setBrowserLanguages(["pt-BR"]);
   });
 
-  it("inicia em pt-BR por padrão", () => {
+  it("sem escolha salva, inicia no idioma do navegador", () => {
+    setBrowserLanguages(["ja-JP"]);
+    renderProbe();
+    expect(screen.getByTestId("locale")).toHaveTextContent("ja-JP");
+    expect(screen.getByTestId("title")).toHaveTextContent("九九バトル");
+  });
+
+  it("cai em pt-BR quando o navegador pede um idioma sem tradução", () => {
+    setBrowserLanguages(["it-IT"]);
     renderProbe();
     expect(screen.getByTestId("locale")).toHaveTextContent("pt-BR");
     expect(screen.getByTestId("title")).toHaveTextContent("Batalha da Tabuada");

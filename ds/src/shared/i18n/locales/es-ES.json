@@ -1,0 +1,92 @@
+{
+  "app": {
+    "title": "Batalla de las Tablas",
+    "skipToContent": "Saltar al contenido",
+    "languageGroup": "Idioma",
+    "welcome": "¡Te damos la bienvenida a la Batalla de las Tablas!"
+  },
+  "avatar": {
+    "title": "Elige tu héroe",
+    "subtitle": "Selecciona una clase y personaliza el color de la armadura. Cada héroe tiene una mascota que lo acompaña.",
+    "classGroup": "Clase",
+    "colorGroup": "Color de la armadura",
+    "mascotLabel": "Mascota: {{name}}",
+    "class": {
+      "fighter": "Guerrero",
+      "fighterDescription": "Tiene mucha fuerza y un gran alcance con su espada.",
+      "elf": "Elfa",
+      "elfDescription": "Ágil, combina el combate cuerpo a cuerpo con hechizos de ataque.",
+      "cleric": "Clérigo",
+      "clericDescription": "Esencial para el apoyo, se centra en la curación y la magia defensiva.",
+      "dwarf": "Enano",
+      "dwarfDescription": "Resistente y excelente causando mucho daño a corta distancia."
+    },
+    "mascot": {
+      "wolf": "Lobo",
+      "owl": "Búho",
+      "phoenix": "Fénix",
+      "badger": "Tejón"
+    },
+    "color": {
+      "crimson": "Rojo",
+      "royal": "Azul",
+      "forest": "Verde",
+      "gold": "Dorado",
+      "violet": "Violeta",
+      "steel": "Acero"
+    },
+    "start": "Empezar la aventura"
+  },
+  "map": {
+    "title": "Mapas",
+    "currentMap": "Mapa actual",
+    "meadow": "Pradera de las Flores",
+    "desert": "Desierto de los Cactus",
+    "forest": "Bosque Encantado",
+    "cave": "Cueva de Cristal",
+    "ice": "Montaña Helada",
+    "volcano": "Volcán Rubí",
+    "sky": "Cielos Tormentosos",
+    "castle": "Castillo de los Dragones",
+    "void": "Reino del Vacío"
+  },
+  "battle": {
+    "title": "Batalla",
+    "start": "Empezar la batalla",
+    "intro": "¡Apareció {{monster}}!",
+    "hero": "Héroe",
+    "hp": "{{hp}} / {{maxHp}}",
+    "correct": "¡Correcto! +{{xp}} XP (×{{multiplier}}) — {{monster}} sufrió {{damage}} de daño.",
+    "almost": "¡Casi! {{a}} × {{b}} = {{answer}} — {{monster}} te golpeó con {{damage}} de daño.",
+    "combo": "Combo ×{{combo}}",
+    "xp": "XP de la batalla: {{xp}}",
+    "totalXp": "XP total: {{xp}}",
+    "victory": "¡Victoria!",
+    "victoryMessage": "¡Derrotaste a {{monster}}!",
+    "defeat": "¡Derrota!",
+    "defeatMessage": "Esta vez ganó {{monster}}. ¡Inténtalo otra vez!",
+    "playAgain": "Jugar otra vez",
+    "victoryAll": "¡Derrotaste a todos los jefes y completaste el viaje!",
+    "mapInfo": "Mapa {{current}} de {{total}} — Tabla del {{table}}",
+    "mapName": "{{name}}",
+    "boss": "Jefe",
+    "bossIntro": "¡Apareció el jefe {{monster}}!",
+    "minionIntro": "¡Apareció {{monster}}!"
+  },
+  "math": {
+    "question": "{{a}} × {{b}} = ?",
+    "alternatives": "Alternativas"
+  },
+  "monster": {
+    "avenger": "Gruñón",
+    "tiamat": "Tita la Dragoncita",
+    "shadowDemon": "Sombra Humo",
+    "decay": "Mohoso",
+    "keleog": "Risitas",
+    "darkling": "Nebulín",
+    "lizardmen": "Lagartijo",
+    "bullywugs": "Sapo Saltarín",
+    "warduke": "Duque Refunfuñón",
+    "beholder": "Ojotes"
+  }
+}

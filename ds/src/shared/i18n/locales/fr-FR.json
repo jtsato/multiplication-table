@@ -1,0 +1,92 @@
+{
+  "app": {
+    "title": "La Bataille des Tables",
+    "skipToContent": "Aller au contenu",
+    "languageGroup": "Langue",
+    "welcome": "Bienvenue dans la Bataille des Tables !"
+  },
+  "avatar": {
+    "title": "Choisis ton héros",
+    "subtitle": "Sélectionne une classe et personnalise la couleur de l'armure. Chaque héros a une mascotte qui l'accompagne.",
+    "classGroup": "Classe",
+    "colorGroup": "Couleur de l'armure",
+    "mascotLabel": "Mascotte : {{name}}",
+    "class": {
+      "fighter": "Guerrier",
+      "fighterDescription": "Possède une grande force et une longue allonge avec son épée.",
+      "elf": "Elfe",
+      "elfDescription": "Agile, elle mêle le combat rapproché aux sorts d'attaque.",
+      "cleric": "Clerc",
+      "clericDescription": "Indispensable en soutien, tourné vers les soins et la magie défensive.",
+      "dwarf": "Nain",
+      "dwarfDescription": "Robuste et excellent pour infliger de gros dégâts au corps à corps."
+    },
+    "mascot": {
+      "wolf": "Loup",
+      "owl": "Hibou",
+      "phoenix": "Phénix",
+      "badger": "Blaireau"
+    },
+    "color": {
+      "crimson": "Rouge",
+      "royal": "Bleu",
+      "forest": "Vert",
+      "gold": "Doré",
+      "violet": "Violet",
+      "steel": "Acier"
+    },
+    "start": "Commencer l'aventure"
+  },
+  "map": {
+    "title": "Cartes",
+    "currentMap": "Carte actuelle",
+    "meadow": "Prairie Fleurie",
+    "desert": "Désert des Cactus",
+    "forest": "Forêt Enchantée",
+    "cave": "Grotte de Cristal",
+    "ice": "Montagne Glacée",
+    "volcano": "Volcan Rubis",
+    "sky": "Cieux Orageux",
+    "castle": "Château des Dragons",
+    "void": "Royaume du Vide"
+  },
+  "battle": {
+    "title": "Bataille",
+    "start": "Commencer la bataille",
+    "intro": "Voici {{monster}} !",
+    "hero": "Héros",
+    "hp": "{{hp}} / {{maxHp}}",
+    "correct": "Bravo ! +{{xp}} XP (×{{multiplier}}) — {{monster}} a subi {{damage}} de dégâts.",
+    "almost": "Presque ! {{a}} × {{b}} = {{answer}} — {{monster}} t'a infligé {{damage}} de dégâts.",
+    "combo": "Combo ×{{combo}}",
+    "xp": "XP du combat : {{xp}}",
+    "totalXp": "XP total : {{xp}}",
+    "victory": "Victoire !",
+    "victoryMessage": "Tu as vaincu {{monster}} !",
+    "defeat": "Défaite !",
+    "defeatMessage": "{{monster}} l'emporte cette fois. Réessaie !",
+    "playAgain": "Rejouer",
+    "victoryAll": "Tu as vaincu tous les boss et terminé le voyage !",
+    "mapInfo": "Carte {{current}} sur {{total}} — Table de {{table}}",
+    "mapName": "{{name}}",
+    "boss": "Boss",
+    "bossIntro": "Voici le boss {{monster}} !",
+    "minionIntro": "Voici {{monster}} !"
+  },
+  "math": {
+    "question": "{{a}} × {{b}} = ?",
+    "alternatives": "Réponses possibles"
+  },
+  "monster": {
+    "avenger": "Ronchon",
+    "tiamat": "Tita la Petite Dragonne",
+    "shadowDemon": "Ombre Fumée",
+    "decay": "Moisi",
+    "keleog": "Rigolote",
+    "darkling": "Brumeux",
+    "lizardmen": "Lézardo",
+    "bullywugs": "Crapaud Sauteur",
+    "warduke": "Duc Grognon",
+    "beholder": "Gros Œil"
+  }
+}

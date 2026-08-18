@@ -1,18 +1,13 @@
 import { useState } from "react";
 import { SkipLink } from "../shared/accessibility/SkipLink";
 import { useI18n } from "../shared/i18n/I18nContext";
-import type { LocaleCode } from "../shared/i18n/locale.types";
+import { LOCALE_ENDONYMS, SUPPORTED_LOCALES } from "../shared/i18n/i18n";
 import { BattleScreen } from "../slices/battle/BattleScreen";
 import { saveRepository } from "../slices/save-game/local-storage.repository";
 import { SAVE_VERSION } from "../slices/save-game/repository";
 import { initialProgress, type Progress } from "../slices/progression/progression";
 import { DEFAULT_AVATAR_SELECTION, type AvatarSelection } from "../slices/avatar/avatar";
 import { MenuScreen } from "./MenuScreen";
-
-const LOCALES: { code: LocaleCode; label: string }[] = [
-  { code: "pt-BR", label: "Português" },
-  { code: "en-US", label: "English" },
-];
 
 type Screen = "menu" | "battle";
 
@@ -58,14 +53,17 @@ export function App() {
       <header className="app-header">
         <h1>{t("app.title")}</h1>
         <div role="group" aria-label={t("app.languageGroup")} className="language-switcher">
-          {LOCALES.map((l) => (
+          {SUPPORTED_LOCALES.map((code) => (
             <button
-              key={l.code}
+              key={code}
               type="button"
-              aria-pressed={locale === l.code}
-              onClick={() => setLocale(l.code)}
+              // `lang` faz o leitor de tela pronunciar cada nome no idioma dele
+              // e deixa o navegador escolher a fonte certa para o script.
+              lang={code}
+              aria-pressed={locale === code}
+              onClick={() => setLocale(code)}
             >
-              {l.label}
+              {LOCALE_ENDONYMS[code]}
             </button>
           ))}
         </div>

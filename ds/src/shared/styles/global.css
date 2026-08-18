@@ -124,8 +124,11 @@ button:hover {
   font-size: 1.5rem;
 }
 
+/* `wrap` porque são oito idiomas: numa linha só, a fileira estoura a largura
+   do cabeçalho no celular. */
 .language-switcher {
   display: flex;
+  flex-wrap: wrap;
   gap: 0.5rem;
 }
 

@@ -36,8 +36,7 @@ describe("App", () => {
   });
 
   it("mostra o idioma persistido ao renderizar novamente", () => {
-    window.localStorage.setItem(LOCALE_STORAGE_KEY, "en-US");
-    renderWithI18n(<App />);
+    renderWithI18n(<App />, { locale: "en-US" });
     expect(
       screen.getByRole("heading", { level: 1, name: "Times Table Battle" }),
     ).toBeInTheDocument();

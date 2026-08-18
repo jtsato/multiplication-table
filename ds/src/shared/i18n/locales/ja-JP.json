@@ -1,0 +1,92 @@
+{
+  "app": {
+    "title": "九九バトル",
+    "skipToContent": "本文へスキップ",
+    "languageGroup": "ことば",
+    "welcome": "九九バトルへようこそ！"
+  },
+  "avatar": {
+    "title": "ヒーローをえらぼう",
+    "subtitle": "クラスをえらんで、よろいの色を決めよう。ヒーローにはそれぞれ相棒のマスコットがいるよ。",
+    "classGroup": "クラス",
+    "colorGroup": "よろいの色",
+    "mascotLabel": "マスコット：{{name}}",
+    "class": {
+      "fighter": "戦士",
+      "fighterDescription": "力がとても強く、剣のとどく範囲が広い。",
+      "elf": "エルフ",
+      "elfDescription": "すばやくて、近接戦闘と攻撃魔法を組み合わせて戦う。",
+      "cleric": "僧侶",
+      "clericDescription": "回復と防御の魔法がとくい。仲間を支える役わり。",
+      "dwarf": "ドワーフ",
+      "dwarfDescription": "打たれ強く、近くの敵に大きなダメージをあたえられる。"
+    },
+    "mascot": {
+      "wolf": "オオカミ",
+      "owl": "フクロウ",
+      "phoenix": "フェニックス",
+      "badger": "アナグマ"
+    },
+    "color": {
+      "crimson": "あか",
+      "royal": "あお",
+      "forest": "みどり",
+      "gold": "こがね",
+      "violet": "むらさき",
+      "steel": "はがね"
+    },
+    "start": "ぼうけんスタート"
+  },
+  "map": {
+    "title": "マップ",
+    "currentMap": "いまのマップ",
+    "meadow": "花のそうげん",
+    "desert": "サボテンさばく",
+    "forest": "まほうの森",
+    "cave": "水晶のどうくつ",
+    "ice": "氷の山",
+    "volcano": "ルビー火山",
+    "sky": "あらしの空",
+    "castle": "ドラゴンの城",
+    "void": "虚無の国"
+  },
+  "battle": {
+    "title": "バトル",
+    "start": "バトルかいし",
+    "intro": "{{monster}} があらわれた！",
+    "hero": "ヒーロー",
+    "hp": "{{hp}} / {{maxHp}}",
+    "correct": "せいかい！ +{{xp}} XP（×{{multiplier}}）— {{monster}} に {{damage}} のダメージ！",
+    "almost": "おしい！ {{a}} × {{b}} = {{answer}} — {{monster}} から {{damage}} のダメージを受けた。",
+    "combo": "コンボ ×{{combo}}",
+    "xp": "このバトルのXP：{{xp}}",
+    "totalXp": "合計XP：{{xp}}",
+    "victory": "しょうり！",
+    "victoryMessage": "{{monster}} をたおした！",
+    "defeat": "はいぼく…",
+    "defeatMessage": "今回は {{monster}} の勝ち。もう一度チャレンジしよう！",
+    "playAgain": "もう一回あそぶ",
+    "victoryAll": "ボスをぜんぶたおして、旅をやりとげた！",
+    "mapInfo": "マップ {{current}}／{{total}} — {{table}}の段",
+    "mapName": "{{name}}",
+    "boss": "ボス",
+    "bossIntro": "ボスの {{monster}} があらわれた！",
+    "minionIntro": "{{monster}} があらわれた！"
+  },
+  "math": {
+    "question": "{{a}} × {{b}} = ?",
+    "alternatives": "せんたくし"
+  },
+  "monster": {
+    "avenger": "おこりんぼ",
+    "tiamat": "ちびドラゴンのティタ",
+    "shadowDemon": "けむりのかげ",
+    "decay": "カビちゃん",
+    "keleog": "わらいっこ",
+    "darkling": "もやもや",
+    "lizardmen": "トカゲくん",
+    "bullywugs": "ぴょんガエル",
+    "warduke": "がんこ公爵",
+    "beholder": "おおめだま"
+  }
+}

@@ -1,13 +1,40 @@
 import ptBR from "./locales/pt-BR.json";
 import enUS from "./locales/en-US.json";
+import esES from "./locales/es-ES.json";
+import frFR from "./locales/fr-FR.json";
+import deDE from "./locales/de-DE.json";
+import jaJP from "./locales/ja-JP.json";
+import koKR from "./locales/ko-KR.json";
+import zhCN from "./locales/zh-CN.json";
 import type { LocaleCode, Messages } from "./locale.types";
 
-// Paridade em tempo de compilação: en-US precisa ter a mesma forma de pt-BR
-// (fonte da verdade). Chaves extras são capturadas pelo teste de paridade.
+// Paridade em tempo de compilação: cada idioma precisa ter a mesma forma de
+// pt-BR (fonte da verdade). Chaves extras são capturadas pelo teste de paridade.
 const messagesByLocale = {
   "pt-BR": ptBR,
   "en-US": enUS satisfies typeof ptBR,
+  "es-ES": esES satisfies typeof ptBR,
+  "fr-FR": frFR satisfies typeof ptBR,
+  "de-DE": deDE satisfies typeof ptBR,
+  "ja-JP": jaJP satisfies typeof ptBR,
+  "ko-KR": koKR satisfies typeof ptBR,
+  "zh-CN": zhCN satisfies typeof ptBR,
 } satisfies Record<LocaleCode, Messages>;
+
+/** Idiomas oferecidos, na ordem em que aparecem no seletor. */
+export const SUPPORTED_LOCALES = Object.keys(messagesByLocale) as LocaleCode[];
+
+/** Nome de cada idioma escrito nele mesmo, para quem não lê o idioma atual. */
+export const LOCALE_ENDONYMS: Record<LocaleCode, string> = {
+  "pt-BR": "Português",
+  "en-US": "English",
+  "es-ES": "Español",
+  "fr-FR": "Français",
+  "de-DE": "Deutsch",
+  "ja-JP": "日本語",
+  "ko-KR": "한국어",
+  "zh-CN": "简体中文",
+};
 
 export const LOCALE_STORAGE_KEY = "batalha-da-tabuada.locale";
 
@@ -69,13 +96,68 @@ export function flattenKeys(messages: Messages, prefix = ""): string[] {
   });
 }
 
-export function getStoredLocale(storage: Pick<Storage, "getItem">): LocaleCode {
+export function isSupportedLocale(value: string): value is LocaleCode {
+  return (SUPPORTED_LOCALES as string[]).includes(value);
+}
+
+/**
+ * Idioma base (`pt`, `ja`, ...) -> a variante que o jogo tem. `pt-PT` recebe
+ * pt-BR, `en-GB` recebe en-US: melhor a variante próxima do que o padrão.
+ *
+ * Limitação conhecida: `zh-TW` e `zh-HK` leem chinês tradicional e recebem aqui
+ * o simplificado. Resolver isso exige um dicionário zh-TW próprio.
+ */
+const LOCALE_BY_BASE_LANGUAGE: Record<string, LocaleCode> = {
+  pt: "pt-BR",
+  en: "en-US",
+  es: "es-ES",
+  fr: "fr-FR",
+  de: "de-DE",
+  ja: "ja-JP",
+  ko: "ko-KR",
+  zh: "zh-CN",
+};
+
+/**
+ * Idioma preferido do navegador. Sem isto, um jogador japonês abriria o jogo em
+ * português só porque pt-BR é o padrão.
+ */
+export function detectLocale(languages?: readonly string[]): LocaleCode {
+  const candidates =
+    languages ??
+    (typeof navigator !== "undefined"
+      ? (navigator.languages ?? [navigator.language])
+      : ([] as readonly string[]));
+
+  for (const candidate of candidates) {
+    if (!candidate) continue;
+    if (isSupportedLocale(candidate)) return candidate;
+    const base = candidate.split("-")[0]?.toLowerCase();
+    const mapped = base ? LOCALE_BY_BASE_LANGUAGE[base] : undefined;
+    if (mapped) return mapped;
+  }
+
+  return DEFAULT_LOCALE;
+}
+
+/**
+ * Escolha salva; na primeira visita, o idioma do navegador. `DEFAULT_LOCALE` só
+ * entra quando nada mais serve.
+ *
+ * `languages` existe pelo mesmo motivo que `storage` é injetado: deixar o teste
+ * descrever o ambiente em vez de depender do `navigator` do jsdom.
+ */
+export function getStoredLocale(
+  storage: Pick<Storage, "getItem">,
+  languages?: readonly string[],
+): LocaleCode {
   try {
     const raw = storage.getItem(LOCALE_STORAGE_KEY);
-    return raw === "pt-BR" || raw === "en-US" ? raw : DEFAULT_LOCALE;
+    if (raw !== null && isSupportedLocale(raw)) return raw;
   } catch {
-    return DEFAULT_LOCALE;
+    // Armazenamento indisponível: cai na detecção pelo navegador.
   }
+  return detectLocale(languages);
 }
 
 export function storeLocale(storage: Pick<Storage, "setItem">, locale: LocaleCode): void {

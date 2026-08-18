@@ -88,29 +88,37 @@ describe("i18n", () => {
   });
 
   describe("getStoredLocale", () => {
-    it("retorna o padrão quando não há nada armazenado", () => {
-      expect(getStoredLocale({ getItem: () => null })).toBe(DEFAULT_LOCALE);
+    it("sem nada armazenado, segue o idioma do navegador", () => {
+      expect(getStoredLocale({ getItem: () => null }, ["ja-JP"])).toBe("ja-JP");
+      expect(getStoredLocale({ getItem: () => null }, ["de-AT"])).toBe("de-DE");
     });
 
-    it("retorna o locale pt-BR armazenado explicitamente", () => {
-      expect(getStoredLocale({ getItem: () => "pt-BR" })).toBe("pt-BR");
+    it("cai no padrão quando o navegador pede um idioma sem tradução", () => {
+      expect(getStoredLocale({ getItem: () => null }, ["it-IT"])).toBe(DEFAULT_LOCALE);
+      expect(getStoredLocale({ getItem: () => null }, [])).toBe(DEFAULT_LOCALE);
     });
 
-    it("retorna o locale válido armazenado", () => {
-      expect(getStoredLocale({ getItem: () => "en-US" })).toBe("en-US");
+    it("a escolha salva tem prioridade sobre o navegador", () => {
+      expect(getStoredLocale({ getItem: () => "pt-BR" }, ["ja-JP"])).toBe("pt-BR");
+      expect(getStoredLocale({ getItem: () => "en-US" }, ["ja-JP"])).toBe("en-US");
+      expect(getStoredLocale({ getItem: () => "zh-CN" }, ["ja-JP"])).toBe("zh-CN");
     });
 
     it("ignora valor armazenado inválido", () => {
-      expect(getStoredLocale({ getItem: () => "fr-FR" })).toBe(DEFAULT_LOCALE);
+      expect(getStoredLocale({ getItem: () => "it-IT" }, [])).toBe(DEFAULT_LOCALE);
+      expect(getStoredLocale({ getItem: () => "zh-TW" }, [])).toBe(DEFAULT_LOCALE);
     });
 
     it("não quebra quando o armazenamento falha", () => {
       expect(
-        getStoredLocale({
-          getItem: () => {
-            throw new Error("storage indisponível");
+        getStoredLocale(
+          {
+            getItem: () => {
+              throw new Error("storage indisponível");
+            },
           },
-        }),
+          [],
+        ),
       ).toBe(DEFAULT_LOCALE);
     });
   });

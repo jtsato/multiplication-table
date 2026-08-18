@@ -1,0 +1,92 @@
+{
+  "app": {
+    "title": "乘法口诀大作战",
+    "skipToContent": "跳到正文",
+    "languageGroup": "语言",
+    "welcome": "欢迎来到乘法口诀大作战！"
+  },
+  "avatar": {
+    "title": "选择你的英雄",
+    "subtitle": "挑一个职业，再定下盔甲的颜色。每个英雄都有一只随行的伙伴。",
+    "classGroup": "职业",
+    "colorGroup": "盔甲颜色",
+    "mascotLabel": "伙伴：{{name}}",
+    "class": {
+      "fighter": "战士",
+      "fighterDescription": "力气很大，长剑挥出去够得很远。",
+      "elf": "精灵",
+      "elfDescription": "身手敏捷，近身格斗和攻击魔法一起用。",
+      "cleric": "牧师",
+      "clericDescription": "擅长治疗和防御魔法，是队伍里的支援。",
+      "dwarf": "矮人",
+      "dwarfDescription": "十分耐打，能对近处的敌人打出很高的伤害。"
+    },
+    "mascot": {
+      "wolf": "狼",
+      "owl": "猫头鹰",
+      "phoenix": "凤凰",
+      "badger": "獾"
+    },
+    "color": {
+      "crimson": "红色",
+      "royal": "蓝色",
+      "forest": "绿色",
+      "gold": "金色",
+      "violet": "紫色",
+      "steel": "钢灰色"
+    },
+    "start": "开始冒险"
+  },
+  "map": {
+    "title": "地图",
+    "currentMap": "当前地图",
+    "meadow": "花之草原",
+    "desert": "仙人掌沙漠",
+    "forest": "魔法森林",
+    "cave": "水晶洞窟",
+    "ice": "冰雪山",
+    "volcano": "红宝石火山",
+    "sky": "风暴天空",
+    "castle": "巨龙城堡",
+    "void": "虚空之境"
+  },
+  "battle": {
+    "title": "战斗",
+    "start": "开始战斗",
+    "intro": "野生的 {{monster}} 出现了！",
+    "hero": "英雄",
+    "hp": "{{hp}} / {{maxHp}}",
+    "correct": "答对了！+{{xp}} XP（×{{multiplier}}）—— {{monster}} 受到 {{damage}} 点伤害。",
+    "almost": "差一点！{{a}} × {{b}} = {{answer}} —— {{monster}} 对你造成了 {{damage}} 点伤害。",
+    "combo": "连击 ×{{combo}}",
+    "xp": "本场战斗 XP：{{xp}}",
+    "totalXp": "总 XP：{{xp}}",
+    "victory": "胜利！",
+    "victoryMessage": "你打败了 {{monster}}！",
+    "defeat": "失败！",
+    "defeatMessage": "这次是 {{monster}} 赢了。再来一次吧！",
+    "playAgain": "再玩一次",
+    "victoryAll": "你打败了所有首领，完成了整段旅程！",
+    "mapInfo": "地图 {{current}}/{{total}} —— {{table}} 的乘法表",
+    "mapName": "{{name}}",
+    "boss": "首领",
+    "bossIntro": "首领 {{monster}} 出现了！",
+    "minionIntro": "野生的 {{monster}} 出现了！"
+  },
+  "math": {
+    "question": "{{a}} × {{b}} = ?",
+    "alternatives": "选项"
+  },
+  "monster": {
+    "avenger": "气鼓鼓",
+    "tiamat": "小龙蒂塔",
+    "shadowDemon": "烟影",
+    "decay": "小霉霉",
+    "keleog": "咯咯笑",
+    "darkling": "雾雾",
+    "lizardmen": "小蜥蜴",
+    "bullywugs": "蹦蹦蟾",
+    "warduke": "板脸公爵",
+    "beholder": "大眼怪"
+  }
+}

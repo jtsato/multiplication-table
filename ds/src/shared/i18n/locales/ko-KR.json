@@ -1,0 +1,92 @@
+{
+  "app": {
+    "title": "구구단 배틀",
+    "skipToContent": "본문으로 건너뛰기",
+    "languageGroup": "언어",
+    "welcome": "구구단 배틀에 온 걸 환영해요!"
+  },
+  "avatar": {
+    "title": "영웅을 골라요",
+    "subtitle": "직업을 고르고 갑옷 색깔을 정해요. 영웅마다 함께 다니는 마스코트가 있어요.",
+    "classGroup": "직업",
+    "colorGroup": "갑옷 색깔",
+    "mascotLabel": "마스코트: {{name}}",
+    "class": {
+      "fighter": "전사",
+      "fighterDescription": "힘이 아주 세고 검이 닿는 범위가 넓어요.",
+      "elf": "엘프",
+      "elfDescription": "날쌔고, 근접 전투와 공격 마법을 함께 써요.",
+      "cleric": "성직자",
+      "clericDescription": "치유와 방어 마법이 특기예요. 동료를 돕는 역할이에요.",
+      "dwarf": "드워프",
+      "dwarfDescription": "튼튼하고, 가까이 있는 적에게 큰 피해를 줘요."
+    },
+    "mascot": {
+      "wolf": "늑대",
+      "owl": "올빼미",
+      "phoenix": "불사조",
+      "badger": "오소리"
+    },
+    "color": {
+      "crimson": "빨강",
+      "royal": "파랑",
+      "forest": "초록",
+      "gold": "황금",
+      "violet": "보라",
+      "steel": "강철"
+    },
+    "start": "모험 시작"
+  },
+  "map": {
+    "title": "지도",
+    "currentMap": "지금 맵",
+    "meadow": "꽃 초원",
+    "desert": "선인장 사막",
+    "forest": "마법의 숲",
+    "cave": "수정 동굴",
+    "ice": "얼음 산",
+    "volcano": "루비 화산",
+    "sky": "폭풍의 하늘",
+    "castle": "용의 성",
+    "void": "공허의 왕국"
+  },
+  "battle": {
+    "title": "배틀",
+    "start": "배틀 시작",
+    "intro": "야생의 {{monster}} 등장!",
+    "hero": "영웅",
+    "hp": "{{hp}} / {{maxHp}}",
+    "correct": "정답! +{{xp}} XP (×{{multiplier}}) — {{monster}}에게 {{damage}}의 피해를 입혔어요.",
+    "almost": "아깝다! {{a}} × {{b}} = {{answer}} — {{monster}}에게 {{damage}}의 피해를 입었어요.",
+    "combo": "콤보 ×{{combo}}",
+    "xp": "이번 배틀 XP: {{xp}}",
+    "totalXp": "전체 XP: {{xp}}",
+    "victory": "승리!",
+    "victoryMessage": "{{monster}} 격파!",
+    "defeat": "패배!",
+    "defeatMessage": "이번엔 {{monster}}의 승리예요. 다시 도전해요!",
+    "playAgain": "다시 하기",
+    "victoryAll": "모든 보스를 물리치고 여정을 끝냈어요!",
+    "mapInfo": "맵 {{current}}/{{total}} — {{table}}단",
+    "mapName": "{{name}}",
+    "boss": "보스",
+    "bossIntro": "보스 {{monster}} 등장!",
+    "minionIntro": "야생의 {{monster}} 등장!"
+  },
+  "math": {
+    "question": "{{a}} × {{b}} = ?",
+    "alternatives": "보기"
+  },
+  "monster": {
+    "avenger": "심통이",
+    "tiamat": "꼬마 용 티타",
+    "shadowDemon": "연기 그림자",
+    "decay": "곰팡이",
+    "keleog": "깔깔이",
+    "darkling": "안개돌이",
+    "lizardmen": "도마뱀이",
+    "bullywugs": "폴짝 두꺼비",
+    "warduke": "심술 공작",
+    "beholder": "왕눈이"
+  }
+}

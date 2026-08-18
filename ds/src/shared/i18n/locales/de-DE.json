@@ -1,0 +1,92 @@
+{
+  "app": {
+    "title": "Einmaleins-Schlacht",
+    "skipToContent": "Zum Inhalt springen",
+    "languageGroup": "Sprache",
+    "welcome": "Willkommen bei der Einmaleins-Schlacht!"
+  },
+  "avatar": {
+    "title": "Wähle deinen Helden",
+    "subtitle": "Such dir eine Klasse aus und stell die Farbe der Rüstung ein. Jeder Held hat ein Maskottchen an seiner Seite.",
+    "classGroup": "Klasse",
+    "colorGroup": "Farbe der Rüstung",
+    "mascotLabel": "Maskottchen: {{name}}",
+    "class": {
+      "fighter": "Krieger",
+      "fighterDescription": "Hat große Kraft und mit dem Schwert eine weite Reichweite.",
+      "elf": "Elfe",
+      "elfDescription": "Flink, sie verbindet den Nahkampf mit Angriffszaubern.",
+      "cleric": "Kleriker",
+      "clericDescription": "Unverzichtbar als Unterstützung, stark in Heilung und Schutzmagie.",
+      "dwarf": "Zwerg",
+      "dwarfDescription": "Zäh und hervorragend darin, aus der Nähe großen Schaden auszuteilen."
+    },
+    "mascot": {
+      "wolf": "Wolf",
+      "owl": "Eule",
+      "phoenix": "Phönix",
+      "badger": "Dachs"
+    },
+    "color": {
+      "crimson": "Rot",
+      "royal": "Blau",
+      "forest": "Grün",
+      "gold": "Gold",
+      "violet": "Violett",
+      "steel": "Stahl"
+    },
+    "start": "Abenteuer starten"
+  },
+  "map": {
+    "title": "Karten",
+    "currentMap": "Aktuelle Karte",
+    "meadow": "Blumenwiese",
+    "desert": "Kakteenwüste",
+    "forest": "Zauberwald",
+    "cave": "Kristallhöhle",
+    "ice": "Eisgebirge",
+    "volcano": "Rubinvulkan",
+    "sky": "Sturmhimmel",
+    "castle": "Drachenburg",
+    "void": "Reich der Leere"
+  },
+  "battle": {
+    "title": "Kampf",
+    "start": "Kampf starten",
+    "intro": "{{monster}} ist aufgetaucht!",
+    "hero": "Held",
+    "hp": "{{hp}} / {{maxHp}}",
+    "correct": "Richtig! +{{xp}} XP (×{{multiplier}}) — {{monster}} hat {{damage}} Schaden genommen.",
+    "almost": "Fast! {{a}} × {{b}} = {{answer}} — {{monster}} hat dich mit {{damage}} Schaden getroffen.",
+    "combo": "Combo ×{{combo}}",
+    "xp": "XP aus dem Kampf: {{xp}}",
+    "totalXp": "XP gesamt: {{xp}}",
+    "victory": "Sieg!",
+    "victoryMessage": "Du hast {{monster}} besiegt!",
+    "defeat": "Niederlage!",
+    "defeatMessage": "Diesmal hat {{monster}} gewonnen. Versuch es nochmal!",
+    "playAgain": "Nochmal spielen",
+    "victoryAll": "Du hast alle Bosse besiegt und die Reise abgeschlossen!",
+    "mapInfo": "Karte {{current}} von {{total}} — {{table}}er-Reihe",
+    "mapName": "{{name}}",
+    "boss": "Boss",
+    "bossIntro": "Boss {{monster}} ist aufgetaucht!",
+    "minionIntro": "{{monster}} ist aufgetaucht!"
+  },
+  "math": {
+    "question": "{{a}} × {{b}} = ?",
+    "alternatives": "Antwortmöglichkeiten"
+  },
+  "monster": {
+    "avenger": "Brummbär",
+    "tiamat": "Tita das Drachenkind",
+    "shadowDemon": "Rauchschatten",
+    "decay": "Schimmelchen",
+    "keleog": "Kicherer",
+    "darkling": "Nebelchen",
+    "lizardmen": "Echsling",
+    "bullywugs": "Hüpfkröte",
+    "warduke": "Griesgram-Herzog",
+    "beholder": "Glotzauge"
+  }
+}
