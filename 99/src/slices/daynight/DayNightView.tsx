@@ -2,7 +2,7 @@ import { useRef } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import { Color, type DirectionalLight, type HemisphereLight } from 'three';
 import { useGameStore } from '../../app/store';
-import { ISLAND } from '../world/world.logic';
+import { WORLD_SHADOW_EXTENT } from '../regions/regions.logic';
 import { dayNightClock } from './dayNightClock';
 import {
   advanceClock,
@@ -101,12 +101,12 @@ export function DayNightView({ isTouch = false }: { isTouch?: boolean } = {}) {
         shadow-mapSize={isTouch ? [512, 512] : [1024, 1024]}
         // Frustum apertado em volta da ilha: mapa de sombra pequeno rende mais
         // resolucao por metro e mantem o custo baixo.
-        shadow-camera-left={-ISLAND.radius - 6}
-        shadow-camera-right={ISLAND.radius + 6}
-        shadow-camera-top={ISLAND.radius + 6}
-        shadow-camera-bottom={-ISLAND.radius - 6}
+        shadow-camera-left={-WORLD_SHADOW_EXTENT - 6}
+        shadow-camera-right={WORLD_SHADOW_EXTENT + 6}
+        shadow-camera-top={WORLD_SHADOW_EXTENT + 6}
+        shadow-camera-bottom={-WORLD_SHADOW_EXTENT - 6}
         shadow-camera-near={1}
-        shadow-camera-far={110}
+        shadow-camera-far={260}
         shadow-bias={-0.0008}
       />
     </>

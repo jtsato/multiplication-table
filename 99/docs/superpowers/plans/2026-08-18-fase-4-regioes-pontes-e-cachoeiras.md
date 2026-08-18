@@ -23,6 +23,30 @@ sozinha: se a fase inteira empacar no meio, o valor pedagógico maior já está 
 A geografia vem depois, e a arte por último. Um mundo bonito com a tabuada do 2 não vale
 nada; a tabuada do 9 num mundo feio vale muito.
 
+### Reordenação, decidida ao terminar a Task 3
+
+Terminada a Task 3, medi quanto do arquipélago cai fora do terreno que existe de fato —
+o disco de raio 30 que a Task 7 só iria substituir lá na frente:
+
+| Região | Área fora do chão físico |
+| --- | --- |
+| Praia | 0% |
+| Porto | 86% |
+| Bosque, Cachoeira, Pomar, Pico | 100% |
+| **Total** | **81%** |
+
+Ou seja: os nós passaram a nascer nas seis regiões, mas quatro delas e meia ficam sobre
+o nada, atrás de uma parede invisível em raio 30. A criança continua presa na tabuada do
+2, agora com 30 dos 36 nós inalcançáveis.
+
+E os 25 testes ponta a ponta passam assim mesmo, porque todos jogam perto do spawn —
+dentro da Praia, a única região inteiramente em terra. Foi preciso medir para ver.
+
+A spec exige que **cada fase termine jogável**. Um mundo cujos dados dizem uma coisa e
+cujo chão diz outra não termina jogável. Por isso o terreno (antiga Task 7) e as pontes
+(antiga Task 6) sobem para logo depois da Task 3: sem os dois, nada do que vier depois
+pode ser exercitado de verdade. Colheitas regionais, destinos e arte descem na fila.
+
 ## Global Constraints
 
 - **O contrato visual não pode quebrar.** `itemPlacements` desenha `groups × perGroup`

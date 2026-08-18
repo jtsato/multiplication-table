@@ -160,6 +160,17 @@ export function isOnLand(position: Vec3): boolean {
 }
 
 /**
+ * Cabe em terra firme um objeto deste tamanho, centrado aqui?
+ *
+ * Substitui `isWithinIsland(position, margin)`. A margem e a metade da pegada da
+ * construcao: exigir que o centro esteja em terra deixaria meia fogueira
+ * pendurada sobre a agua.
+ */
+export function fitsOnLand(position: Vec3, margin: number): boolean {
+  return REGIONS.some((regiao) => dentroDe(regiao, position, margin));
+}
+
+/**
  * Sorteia um ponto util dentro da regiao: fora da area de spawn dela e dentro da
  * margem da borda.
  *
@@ -179,3 +190,40 @@ export function randomGroundPositionIn(regiao: Region, rng: Rng): Vec3 {
     regiao.center.z + Math.sin(angle) * radius,
   );
 }
+
+/**
+ * Circulo que envolve o arquipelago inteiro.
+ *
+ * Derivado das regioes, e nao escrito a mao: quem enquadra o mundo — a camera de
+ * sombra do sol, o plano do mar — precisa de um numero que acompanhe a
+ * geografia. Um valor fixo ficaria defasado no dia em que uma regiao se mexer, e
+ * o sintoma seria sombra sumindo numa ponta do mapa, que ninguem liga a causa.
+ */
+export const WORLD_BOUNDS = (() => {
+  const xs = REGIONS.flatMap((r) => [r.center.x - r.radius, r.center.x + r.radius]);
+  const zs = REGIONS.flatMap((r) => [r.center.z - r.radius, r.center.z + r.radius]);
+  const center = vec3(
+    (Math.min(...xs) + Math.max(...xs)) / 2,
+    0,
+    (Math.min(...zs) + Math.max(...zs)) / 2,
+  );
+  const radius = Math.max(
+    ...REGIONS.map(
+      (r) => Math.hypot(r.center.x - center.x, r.center.z - center.z) + r.radius,
+    ),
+  );
+  return { center, radius };
+})();
+
+/**
+ * Meia-extensao que enquadra o arquipelago **visto da origem**.
+ *
+ * Diferente do raio de `WORLD_BOUNDS`, e de proposito: a luz do sol aponta para
+ * a origem, entao a caixa ortografica da sombra tambem e centrada la. Usar o
+ * raio do arquipelago deixaria o Pomar e o Bosque fora do enquadramento, e o
+ * sintoma seria uma regiao inteira sem sombra nenhuma — coisa que so aparece
+ * indo ate la olhar.
+ */
+export const WORLD_SHADOW_EXTENT = Math.max(
+  ...REGIONS.map((r) => Math.hypot(r.center.x, r.center.z) + r.radius),
+);

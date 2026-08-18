@@ -4,6 +4,7 @@ import {
   REGION_ORDER,
   isOnLand,
   neighbours,
+  WORLD_BOUNDS,
   randomGroundPositionIn,
   regionAt,
   regionById,
@@ -183,5 +184,20 @@ describe('randomGroundPositionIn', () => {
     const a = randomGroundPositionIn(praia, createRng(3));
     const b = randomGroundPositionIn(praia, createRng(3));
     expect(a).toEqual(b);
+  });
+});
+
+describe('WORLD_BOUNDS', () => {
+  it('envolve todas as regioes, com folga nenhuma a mais que o necessario', () => {
+    for (const regiao of REGIONS) {
+      const ateABorda = distanciaXZ(regiao.center, WORLD_BOUNDS.center) + regiao.radius;
+      expect(ateABorda).toBeLessThanOrEqual(WORLD_BOUNDS.radius + 1e-9);
+    }
+    // Encostado em pelo menos uma: senao o circulo esta maior do que precisa e a
+    // camera de sombra desperdicia resolucao no vazio.
+    const maisLonge = Math.max(
+      ...REGIONS.map((r) => distanciaXZ(r.center, WORLD_BOUNDS.center) + r.radius),
+    );
+    expect(maisLonge).toBeCloseTo(WORLD_BOUNDS.radius);
   });
 });

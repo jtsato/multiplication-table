@@ -10,7 +10,7 @@ import {
   snapFencePlacement,
   type Structure,
 } from './building.logic';
-import { ISLAND } from '../world/world.logic';
+import { regionById } from '../regions/regions.logic';
 import { emptyInventory, type Inventory, type ResourceNode } from '../resources/resources.logic';
 import { vec3 } from '../../shared/vec';
 
@@ -139,20 +139,32 @@ describe('checkPlacement', () => {
     expect(resultado).toEqual({ ok: false, reason: 'sem-recursos' });
   });
 
-  it('recusa fora da ilha', () => {
-    const resultado = checkPlacement(
-      STRUCTURES.fogueira,
-      vec3(ISLAND.radius + 5, 0, 0),
-      rico,
-      [],
-      [],
-    );
+  it('recusa na agua', () => {
+    const resultado = checkPlacement(STRUCTURES.fogueira, vec3(500, 0, 500), rico, [], []);
     expect(resultado).toEqual({ ok: false, reason: 'fora-da-ilha' });
+  });
+
+  /**
+   * A validacao acompanhou o mundo virar arquipelago. Enquanto ela olhava o
+   * disco antigo de raio 30, a crianca nao conseguia acender uma fogueira em
+   * cinco das seis regioes — e o motivo na tela seria "fora da ilha", estando
+   * ela em terra firme.
+   */
+  it('aceita construir em qualquer regiao, e nao so na praia', () => {
+    for (const id of ['praia', 'porto', 'bosque', 'cachoeira', 'pomar', 'pico'] as const) {
+      const centro = regionById(id).center;
+      expect(checkPlacement(STRUCTURES.fogueira, centro, rico, [], [])).toEqual({ ok: true });
+    }
   });
 
   it('exige que a construcao inteira caiba, nao so o centro', () => {
     // Centro dentro do raio, mas o footprint atravessaria a borda.
-    const quaseNaBorda = vec3(ISLAND.radius - STRUCTURES.fogueira.footprint / 2, 0, 0);
+    const porto = regionById('porto');
+    const quaseNaBorda = vec3(
+      porto.center.x + porto.radius - STRUCTURES.fogueira.footprint / 2,
+      0,
+      porto.center.z,
+    );
     expect(checkPlacement(STRUCTURES.fogueira, quaseNaBorda, rico, [], [])).toEqual({
       ok: false,
       reason: 'fora-da-ilha',

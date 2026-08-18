@@ -1,5 +1,5 @@
 import { distanceSqXZ, type Vec3, vec3 } from '../../shared/vec';
-import { isWithinIsland } from '../world/world.logic';
+import { fitsOnLand } from '../regions/regions.logic';
 import {
   RESOURCE_LABELS,
   type Inventory,
@@ -173,7 +173,7 @@ export function checkPlacement(
 
   // Margem igual ao proprio footprint: a construcao inteira precisa caber na
   // ilha, nao so o centro dela.
-  if (!isWithinIsland(position, spec.footprint)) {
+  if (!fitsOnLand(position, spec.footprint)) {
     return { ok: false, reason: 'fora-da-ilha' };
   }
 
