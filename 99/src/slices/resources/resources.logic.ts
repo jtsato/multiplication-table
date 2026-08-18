@@ -1,6 +1,7 @@
 import { type Rng } from '../../shared/rng';
 import { distanceSqXZ, type Vec3 } from '../../shared/vec';
 import { blocksHome } from '../home/home.logic';
+import { REGIONS, randomGroundPositionIn } from '../regions/regions.logic';
 import { scatterPositions } from '../world/world.logic';
 
 export type ResourceKind = 'madeira' | 'fruta' | 'pedra';
@@ -56,17 +57,17 @@ export const RESOURCES = {
   cancelRange: 5.2,
   /** Tempo ate um no esgotado voltar, em segundos. */
   respawnSeconds: 12,
-  /** Quantidade de nos gerados por tipo. */
-  nodesPerKind: 7,
+  /** Quantidade de nos gerados em cada regiao. */
+  nodesPerRegion: 6,
   /** Distancia minima entre nos, para nao nascerem sobrepostos. */
   minSpacing: 4.5,
 } as const;
 
 /**
- * Tabuada usada por quem ainda nao tem regiao.
+ * Tabuada de quem nao nasce de uma regiao.
  *
- * Provisorio, e de proposito visivel: na Task 3 a regiao passa a decidir e esta
- * constante sai. Um numero solto no meio de `createNodes` esconderia isso.
+ * Sobrou so para a fogueira, que a crianca ergue onde quiser. Quando ela passar
+ * a perguntar a tabuada do lugar onde foi construida, esta constante sai junto.
  */
 export const DEFAULT_PER_GROUP = 2;
 
@@ -89,22 +90,37 @@ export function emptyInventory(): Inventory {
  * dentro de uma pedra.
  */
 export function createNodes(rng: Rng): ResourceNode[] {
-  const total = RESOURCES.nodesPerKind * RESOURCE_KINDS.length;
-  const positions = scatterPositions(rng, total, RESOURCES.minSpacing, blocksHome);
+  const nodes: ResourceNode[] = [];
 
-  return positions.map((position, index) => {
-    const kind = RESOURCE_KINDS[index % RESOURCE_KINDS.length];
-    return {
-      id: `${kind}-${index}`,
-      kind,
-      position,
-      // 1 a 10 grupos: cobre a tabuada inteira, qualquer que seja ela.
-      groups: 1 + Math.floor(rng() * 10),
-      // A regiao passa a mandar nisto na Task 3; ate la, a tabuada do 2.
-      perGroup: DEFAULT_PER_GROUP,
-      depleted: false,
-    };
-  });
+  for (const regiao of REGIONS) {
+    const positions = scatterPositions(
+      rng,
+      RESOURCES.nodesPerRegion,
+      RESOURCES.minSpacing,
+      blocksHome,
+      (semente) => randomGroundPositionIn(regiao, semente),
+    );
+
+    positions.forEach((position, index) => {
+      nodes.push({
+        id: `${regiao.id}-${index}`,
+        kind: RESOURCE_KINDS[nodes.length % RESOURCE_KINDS.length],
+        position,
+        // 1 a 10 grupos: cobre a tabuada inteira, qualquer que seja ela.
+        groups: 1 + Math.floor(rng() * 10),
+        // Rodizio, e nao sorteio, entre as tabuadas da regiao.
+        //
+        // Sorteando, uma regiao de duas tabuadas poderia sair so com uma — e uma
+        // tabuada sem nenhum no no mundo e um acessorio inalcancavel de novo,
+        // que e o defeito exato que esta fase existe para consertar. O rodizio
+        // garante a cobertura em qualquer semente, de graca.
+        perGroup: regiao.tables[index % regiao.tables.length],
+        depleted: false,
+      });
+    });
+  }
+
+  return nodes;
 }
 
 /** O no esta disponivel para coleta? */

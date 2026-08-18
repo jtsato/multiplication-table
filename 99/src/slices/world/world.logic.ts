@@ -59,13 +59,22 @@ export function scatterPositions(
    * existe uma casa — quem sabe onde ela esta e a propria slice dela.
    */
   isBlocked: (position: Vec3) => boolean = () => false,
+  /**
+   * De onde sai cada candidato.
+   *
+   * Parametro em vez de a funcao sortear sozinha: com o arquipelago, cada regiao
+   * espalha dentro dos proprios limites, e a regra de espacamento minimo e a
+   * mesma em todas. Sem isto, ou `world/` passaria a conhecer as regioes, ou a
+   * regra de espacamento seria copiada.
+   */
+  sample: (rng: Rng) => Vec3 = randomGroundPosition,
 ): Vec3[] {
   const placed: Vec3[] = [];
   const minSpacingSq = minSpacing * minSpacing;
   const maxAttempts = count * 30;
 
   for (let attempt = 0; attempt < maxAttempts && placed.length < count; attempt += 1) {
-    const candidate = randomGroundPosition(rng);
+    const candidate = sample(rng);
     if (isBlocked(candidate)) continue;
     const tooClose = placed.some((other) => {
       const dx = candidate.x - other.x;

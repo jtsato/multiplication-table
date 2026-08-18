@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
   RESOURCES,
-  RESOURCE_KINDS,
   addToInventory,
   createNodes,
   emptyInventory,
@@ -12,7 +11,8 @@ import {
   type ResourceNode,
 } from './resources.logic';
 import { createRng } from '../../shared/rng';
-import { isWithinIsland } from '../world/world.logic';
+import { REGIONS, regionAt, regionById } from '../regions/regions.logic';
+import { blocksHome } from '../home/home.logic';
 import { vec3 } from '../../shared/vec';
 
 const node = (id: string, x: number, z: number, depleted = false): ResourceNode => ({
@@ -28,16 +28,60 @@ const node = (id: string, x: number, z: number, depleted = false): ResourceNode 
 const TABUADAS = [2, 3, 4, 5, 6, 7, 8, 9, 10];
 
 describe('createNodes', () => {
-  it('gera a quantidade pedida de cada tipo', () => {
+  it('gera a quantidade pedida por regiao', () => {
     const nodes = createNodes(createRng(2026));
-    for (const kind of RESOURCE_KINDS) {
-      expect(nodes.filter((n) => n.kind === kind)).toHaveLength(RESOURCES.nodesPerKind);
+    for (const regiao of REGIONS) {
+      const daRegiao = nodes.filter((n) => regionAt(n.position)?.id === regiao.id);
+      expect(daRegiao).toHaveLength(RESOURCES.nodesPerRegion);
     }
   });
 
-  it('mantem todos os nos dentro da ilha', () => {
+  it('mantem todos os nos em terra firme — nenhum na agua', () => {
     for (const n of createNodes(createRng(5))) {
-      expect(isWithinIsland(n.position)).toBe(true);
+      expect(regionAt(n.position)).not.toBeNull();
+    }
+  });
+
+  /**
+   * O coracao da fase: a tabuada de um no e a da regiao onde ele esta. Sem isto
+   * o jogo inteiro continua preso no 2, por mais mundo que exista.
+   */
+  it('tira a tabuada do no da regiao onde ele nasceu', () => {
+    for (const n of createNodes(createRng(31))) {
+      const regiao = regionAt(n.position)!;
+      expect(regiao.tables).toContain(n.perGroup);
+    }
+  });
+
+  /**
+   * Uma tabuada sem nenhum no no mundo e um acessorio inalcancavel de novo — o
+   * defeito exato que esta fase existe para consertar. Vale para toda semente,
+   * e nao so para uma de sorte.
+   */
+  it('nenhuma tabuada de 2 a 10 fica sem no, em nenhuma semente', () => {
+    for (let seed = 0; seed < 25; seed += 1) {
+      const vistas = new Set(createNodes(createRng(seed)).map((n) => n.perGroup));
+      expect([...vistas].sort((a, b) => a - b)).toEqual([2, 3, 4, 5, 6, 7, 8, 9, 10]);
+    }
+  });
+
+  it('toda regiao com duas tabuadas oferece as duas', () => {
+    const nodes = createNodes(createRng(44));
+    for (const regiao of REGIONS.filter((r) => r.tables.length > 1)) {
+      const oferecidas = new Set(
+        nodes.filter((n) => regionAt(n.position)?.id === regiao.id).map((n) => n.perGroup),
+      );
+      expect([...oferecidas].sort((a, b) => a - b)).toEqual(
+        [...regiao.tables].sort((a, b) => a - b),
+      );
+    }
+  });
+
+  it('nenhum no nasce dentro da casa', () => {
+    const praia = regionById('praia');
+    expect(praia.id).toBe('praia');
+    for (const n of createNodes(createRng(9))) {
+      expect(blocksHome(n.position)).toBe(false);
     }
   });
 
@@ -57,7 +101,7 @@ describe('createNodes', () => {
     expect(new Set(nodes.map((n) => n.id)).size).toBe(nodes.length);
   });
 
-  it('mantem os grupos entre 1 e 10 — a tabuada do 2 inteira', () => {
+  it('mantem os grupos entre 1 e 10 — a tabuada inteira, seja qual for', () => {
     for (const n of createNodes(createRng(21))) {
       expect(n.groups).toBeGreaterThanOrEqual(1);
       expect(n.groups).toBeLessThanOrEqual(10);

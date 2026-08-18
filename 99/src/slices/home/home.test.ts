@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { REGIONS } from '../regions/regions.logic';
 import { createRng } from '../../shared/rng';
 import { vec3 } from '../../shared/vec';
 import { RESOURCES, createNodes } from '../resources/resources.logic';
@@ -123,7 +124,7 @@ describe('geracao de recursos com a casa de pe', () => {
 
   it('a casa nao engole tantos pontos a ponto de faltar recurso', () => {
     const nodes = createNodes(createRng(20260816));
-    expect(nodes.length).toBeGreaterThanOrEqual(RESOURCES.nodesPerKind * 3 - 2);
+    expect(nodes.length).toBeGreaterThanOrEqual(RESOURCES.nodesPerRegion * REGIONS.length - 2);
   });
 });
 
