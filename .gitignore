@@ -10,6 +10,12 @@
 # Caches, cobertura e arquivos temporários de ferramentas
 **/.vite/
 **/.cache/
+# Sobras do Stryker. A pasta temporaria dele contem uma copia do projeto, com
+# tsconfig e tudo — deixada para tras, o ESLint passa a enxergar duas raizes
+# candidatas e para de rodar. Agora que a matriz semanal cobre ds, cc e st, a
+# regra vale para os quatro apps.
+**/.stryker-tmp/
+**/reports/
 **/coverage/
 **/*.tsbuildinfo
 *.eslintcache
