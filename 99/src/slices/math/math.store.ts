@@ -66,8 +66,18 @@ export const createMathSlice: StateCreator<GameState, [], [], MathSlice> = (set,
         // somar no inventario. A slice de matematica so decide *quanto*.
         get().collectNode(challenge.targetId, outcome.reward);
       } else {
-        // Abastecer rende tempo de fogo proporcional ao acerto.
-        get().refuelStructure(challenge.targetId, outcome.correct ? 1 : WRONG_ANSWER_RATIO);
+        /**
+         * Uma conta, dois efeitos: o fogo do acampamento e a luz que a crianca
+         * leva com ela.
+         *
+         * A proporcao e calculada uma vez so e aplicada aos dois destinos, para
+         * que fogueira e lanterna nunca contem historias diferentes sobre a
+         * mesma resposta. A divisao de responsabilidade continua a mesma: aqui
+         * se decide *quanto* o acerto vale, e cada slice de destino sabe aplicar.
+         */
+        const ratio = outcome.correct ? 1 : WRONG_ANSWER_RATIO;
+        get().refuelStructure(challenge.targetId, ratio);
+        get().rechargeLantern(ratio);
       }
 
       set({

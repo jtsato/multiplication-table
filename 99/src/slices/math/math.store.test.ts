@@ -1,5 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import { useGameStore } from '../../app/store';
+import { dayNightClock } from '../daynight/dayNightClock';
+import { LANTERN, chargeRemaining } from '../lantern';
 import { resolveAnswer } from './math.logic';
 
 const state = () => useGameStore.getState();
@@ -127,5 +129,39 @@ describe('slice de matematica', () => {
 
     state().startChallenge(segundo);
     expect(state().feedback).toBeNull();
+  });
+
+  describe('a conta da fogueira', () => {
+    const AGORA = 100;
+    const fogueira = { id: 'fogueira-1', kind: 'madeira' as const, groups: 4 };
+
+    beforeEach(() => {
+      state().resetLantern();
+      dayNightClock.seconds = AGORA;
+    });
+
+    it('tambem acende a lanterna', () => {
+      state().startChallenge(fogueira, 'abastecer');
+      state().answerChallenge(state().activeChallenge!.answer);
+
+      expect(chargeRemaining(state().lantern, AGORA)).toBe(LANTERN.chargeSeconds);
+    });
+
+    it('errar acende menos, e nunca deixa a lanterna apagada', () => {
+      state().startChallenge(fogueira, 'abastecer');
+      const desafio = state().activeChallenge!;
+      state().answerChallenge(desafio.options.find((option) => option !== desafio.answer)!);
+
+      const carga = chargeRemaining(state().lantern, AGORA);
+      expect(carga).toBeGreaterThan(0);
+      expect(carga).toBeLessThan(LANTERN.chargeSeconds);
+    });
+
+    it('nao mexe na lanterna quando a conta e de colheita', () => {
+      state().startChallenge(alvo());
+      state().answerChallenge(state().activeChallenge!.answer);
+
+      expect(chargeRemaining(state().lantern, AGORA)).toBe(0);
+    });
   });
 });
