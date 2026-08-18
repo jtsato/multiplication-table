@@ -58,6 +58,9 @@ export const palette = {
 
   // Lanterna: quente, para contrastar com o azul do luar.
   lanternLight: '#ffd98a',
+  // Vaga-lume: verde-limao quente, para nao se confundir com a lanterna nem com
+  // as janelas da casa — a crianca precisa reconhecer socorro de longe.
+  firefly: '#c8f77a',
 
   // A casa. Madeira clara e telhado quente: tem que ler como abrigo de longe.
   homeWall: '#d9b48a',

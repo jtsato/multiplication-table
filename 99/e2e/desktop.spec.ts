@@ -1,4 +1,7 @@
 import { expect, test } from '@playwright/test';
+import { createSwarms, swarmSeed } from '../src/slices/lantern/fireflies.logic';
+import { createRng } from '../src/shared/rng';
+import { DEFAULT_WORLD_SEED } from '../src/slices/world/world.store';
 import {
   esperarJogoPronto,
   esperarPainelCentralizado,
@@ -240,6 +243,41 @@ test.describe('partida no computador', () => {
     await expect(resumo).toHaveCount(0);
     // As moedas atravessam o dia; so os contadores do dia zeram.
     expect((await lerEstado(page)).moedas).toBeGreaterThan(0);
+  });
+
+  /**
+   * Os vaga-lumes, e o motivo de este teste existir.
+   *
+   * A regra tem teste de unidade, mas ele chama a recarga direto e escolhe o
+   * `delta`. No navegador, com WebGL por software, o quadro dura mais que os
+   * `1 / 60` que a versao anterior tinha cravado — a lanterna expirava antes do
+   * quadro seguinte e a carga ficava presa em 0,03 s para sempre. Só o navegador
+   * lento mostrou.
+   */
+  test('encostar num enxame de vaga-lumes enche a lanterna, sem conta nenhuma', async ({
+    page,
+  }) => {
+    await page.goto('/');
+    await esperarJogoPronto(page);
+    await irParaOMeioDe(page, 'noite');
+
+    const enxame = createSwarms(createRng(swarmSeed(DEFAULT_WORLD_SEED)))[0];
+    await page.evaluate((p) => window.__tabuada!.teleportar?.(p.x, p.z), {
+      x: enxame.position.x + 2,
+      z: enxame.position.z + 2,
+    });
+
+    await page.waitForTimeout(500);
+    const inicio = (await lerEstado(page)).cargaLanterna;
+    await page.waitForTimeout(2000);
+    const depois = await lerEstado(page);
+
+    // Cresce de verdade ao longo do tempo, e nao trava num valor de um quadro.
+    expect(depois.cargaLanterna).toBeGreaterThan(inicio + 1);
+    // E o socorro e de graca: nenhum desafio foi aberto.
+    expect(depois.desafio).toBeNull();
+
+    await page.screenshot({ path: 'e2e/telas/24-vagalumes.png' });
   });
 
   test('errar rende menos, revela a resposta e nao deixa de maos vazias', async ({ page }) => {

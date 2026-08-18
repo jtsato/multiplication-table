@@ -255,12 +255,18 @@ Cachoeiras nos desníveis, em laço. E os enxames de vaga-lumes, que a spec atri
 fase: recarregam a lanterna no campo e são visíveis no escuro por definição, então não
 criam dependência circular.
 
-- [ ] **Step 1: Testes**
+- [x] **Step 1: Testes**
 
 Casos: o laço da cachoeira não acumula deriva ao longo do tempo; o vaga-lume só recarrega
 de noite; encostar recarrega sem pedir conta; a recarga respeita o teto de carga.
 
-- [ ] **Step 2 a 5:** falha, implementação, verificação, commit.
+- [x] **Step 2 a 5:** falha, implementação, verificação, commit.
+
+**Dois defeitos que só o navegador mostrou.** A cachoeira instanciada punha cinco malhas na
+cena em vez de cinquenta e seis — lia como duas lajotas boiando. E o vaga-lume recarregava
+com `1 / 60` cravado no lugar do delta do quadro: com WebGL por software o quadro dura mais
+que isso, a lanterna expirava antes do quadro seguinte e a carga travava em 0,03 s. Os dois
+agora têm teste — de cena e ponta a ponta.
 
 ---
 
