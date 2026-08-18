@@ -73,7 +73,7 @@ decisão de criar um é do autor.
 **Interfaces:** `ResourceNode` ganha `perGroup: number`. `RESOURCES.itemsPerGroup` morre.
 `itemPlacements(node)` e `generateChallenge(target, …)` leem `target.perGroup`.
 
-- [ ] **Step 1: Testes que provam o contrato para todo `perGroup`**
+- [x] **Step 1: Testes que provam o contrato para todo `perGroup`**
 
 Casos: para cada `perGroup` de 2 a 10, `itemPlacements` devolve `groups × perGroup`
 posições; o enunciado gerado pergunta exatamente `groups × perGroup`; dois itens do
@@ -83,7 +83,7 @@ nenhum (varredura por `itemsPerGroup`).
 O teste de hoje fixa `perGroup` em 2 e por isso nunca provou nada — é o buraco que
 deixou o defeito passar.
 
-- [ ] **Step 2 a 5:** falha, implementação, verificação, commit.
+- [x] **Step 2 a 5:** falha, implementação, verificação, commit.
 
 `ChallengeTarget` já é estrutural, então a fogueira continua satisfazendo a forma sem
 saber o que é região. `TABLE` é apagada: hoje ela só é consumida pelos testes, porque
@@ -96,9 +96,16 @@ e essa duplicação é o que esta task elimina.
 
 **Files:** `src/slices/regions/regions.logic.ts`, `regions.test.ts`, `index.ts`
 
-**Interfaces:** `REGIONS: Region[]` com `id`, `nome`, `center`, `radius`, `tables:
-number[]`, `harvest: ResourceKind[]`; `regionAt(position): Region | null`;
-`isOnLand(position)`; `randomGroundPositionIn(region, rng)`.
+**Interfaces:** `REGIONS: Region[]` com `id`, `nome`, `center`, `radius`, `groundY` e
+`tables: number[]`; `regionAt(position): Region | null`; `isOnLand(position)`;
+`randomGroundPositionIn(region, rng)`.
+
+**Correção de ordem, feita ao executar:** a versão original desta task também dava
+`harvest: ResourceKind[]` à região, e a Task 3 fazia o nó herdar tabuada **e** tipo de
+recurso. Isso é circular: as colheitas regionais só existem como tipo na Task 4, e criá-las
+antes da Task 5 quebraria a regra de não entrar recurso sem destino. A colheita passa para
+a Task 4, junto com os tipos. A Task 3 fica só com a tabuada — que é a parte que destrava
+o conteúdo trancado, e agora não depende de mais nada.
 
 Seis discos numa curva aberta, na ordem didática — Praia (2), Porto (5 e 10), Bosque
 (3 e 4), Cachoeira (6), Pomar (7 e 8), Pico (9). Vizinhas se tocam só onde vai a ponte;
@@ -108,8 +115,9 @@ o resto é água.
 
 Casos: a Praia contém a casa e a origem, porque é onde o jogo começa; `regionAt` devolve
 `null` na água; nenhuma região se sobrepõe a outra; toda região tem pelo menos uma
-tabuada e uma colheita; as tabuadas cobrem 2 a 10 sem repetir e sem buraco; a ordem das
-regiões é a ordem didática, não a numérica.
+tabuada; as tabuadas cobrem 2 a 10 sem repetir e sem buraco; a ordem das regiões é a
+ordem didática, não a numérica; regiões vizinhas ficam perto o bastante para uma ponte
+e as não vizinhas, longe demais para atravessar sem uma.
 
 - [ ] **Step 2 a 5:** falha, implementação, verificação, commit.
 
@@ -119,14 +127,16 @@ regiões é a ordem didática, não a numérica.
 
 **Files:** `src/slices/resources/resources.logic.ts`, `resources.test.ts`
 
-`createNodes` passa a espalhar por região: cada nó nasce dentro de uma região, recebe
-`perGroup` sorteado entre as tabuadas dela e `kind` sorteado entre as colheitas dela.
+`createNodes` passa a espalhar por região: cada nó nasce dentro de uma região e recebe
+`perGroup` sorteado entre as tabuadas dela. O `kind` continua como está até a Task 4,
+que é quando as colheitas regionais passam a existir.
 
 - [ ] **Step 1: Testes**
 
 Casos: todo nó cai dentro de alguma região e nenhum na água; o `perGroup` de um nó é uma
-das tabuadas da região onde ele está; o `kind` é uma das colheitas dela; toda região
-recebe pelo menos um nó de cada colheita própria; a casa continua sem nó dentro.
+das tabuadas da região onde ele está; toda região recebe pelo menos um nó; nenhuma
+tabuada fica sem nó no mundo inteiro — senão um acessório vira inalcançável de novo, que
+é o defeito que esta fase existe para consertar; a casa continua sem nó dentro.
 
 - [ ] **Step 2 a 5:** falha, implementação, verificação, commit.
 
@@ -141,8 +151,9 @@ passar de 19, e a moeda escala com a dificuldade sem nenhuma regra nova.
 **Files:** `src/slices/resources/resources.logic.ts`; `src/slices/math/math.logic.ts`,
 `math.test.ts`
 
-Entram conchas, peixes, cogumelos, cristais, mel e gelo. Madeira, fruta e pedra
-sobrevivem, com região definida.
+Entram conchas, peixes, cogumelos, cristais, mel e gelo, e a região ganha `harvest`.
+Madeira, fruta e pedra sobrevivem, com região definida. O nó passa a sortear o `kind`
+entre as colheitas da região onde nasceu.
 
 - [ ] **Step 1: Testes**
 
