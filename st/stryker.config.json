@@ -1,0 +1,25 @@
+{
+  "$schema": "./node_modules/@stryker-mutator/core/schema/stryker-schema.json",
+  "testRunner": "vitest",
+  "checkers": ["typescript"],
+  "tsconfigFile": "tsconfig.app.json",
+  "coverageAnalysis": "perTest",
+  "mutate": [
+    "src/domain/math/facts.ts",
+    "src/domain/math/distractors.ts",
+    "src/domain/math/mastery.ts",
+    "src/domain/math/scheduler.ts",
+    "src/domain/math/hints.ts",
+    "src/domain/game/session.ts",
+    "src/domain/game/progression.ts",
+    "src/domain/game/achievements.ts",
+    "src/domain/game/objectives.ts",
+    "src/domain/economy/economy.ts"
+  ],
+  "thresholds": {
+    "high": 80,
+    "low": 60,
+    "break": 80
+  },
+  "reporters": ["clear-text", "progress"]
+}

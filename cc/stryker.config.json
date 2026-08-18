@@ -1,0 +1,23 @@
+{
+  "$schema": "./node_modules/@stryker-mutator/core/schema/stryker-schema.json",
+  "testRunner": "vitest",
+  "checkers": ["typescript"],
+  "tsconfigFile": "tsconfig.app.json",
+  "coverageAnalysis": "perTest",
+  "mutate": [
+    "src/domain/questions.ts",
+    "src/domain/review.ts",
+    "src/domain/mastery.ts",
+    "src/domain/progression.ts",
+    "src/domain/challenge.ts",
+    "src/game/levelSession.ts",
+    "src/persistence/migrations.ts",
+    "src/persistence/schema.ts"
+  ],
+  "thresholds": {
+    "high": 80,
+    "low": 60,
+    "break": 80
+  },
+  "reporters": ["clear-text", "progress"]
+}
