@@ -21,6 +21,7 @@ describe('Hud', () => {
     state().resetBuilding();
     state().resetClock();
     state().resetLantern();
+    state().resetEconomy();
   });
 
   it('mostra a barra de carga da lanterna', () => {
@@ -75,5 +76,34 @@ describe('Hud', () => {
     render(<Hud />);
 
     expect(screen.queryByText(/lanterna está fraca/i)).not.toBeInTheDocument();
+  });
+  it('mostra o total de moedas', () => {
+    act(() => {
+      state().rewardCorrect(2, 4);
+    });
+    render(<Hud />);
+
+    expect(screen.getByLabelText(/moedas/i)).toHaveTextContent(String(state().coins));
+  });
+
+  it('mostra as moedas decompostas em dezenas', () => {
+    act(() => {
+      // 3 dezenas e 7 unidades.
+      useGameStore.setState({ coins: 37 });
+    });
+    render(<Hud />);
+
+    const moedas = screen.getByLabelText(/moedas/i);
+    expect(moedas).toHaveTextContent('3');
+    expect(moedas).toHaveTextContent('7');
+  });
+
+  it('nao mostra dezenas abaixo de dez', () => {
+    act(() => {
+      useGameStore.setState({ coins: 7 });
+    });
+    render(<Hud />);
+
+    expect(screen.queryByTestId('hud-dezenas')).not.toBeInTheDocument();
   });
 });

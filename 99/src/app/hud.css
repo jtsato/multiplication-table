@@ -109,6 +109,34 @@
   flex: none;
 }
 
+.hud__coins {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.hud__coins strong {
+  margin-left: auto;
+  font-size: 16px;
+  color: #ffd166;
+}
+
+/* Decomposição em dezenas: a tabuada do 10 aparecendo sozinha, o dia inteiro. */
+.hud__dezenas {
+  flex-basis: 100%;
+  text-align: right;
+  font-style: normal;
+  font-size: 12px;
+  opacity: 0.65;
+}
+
+.hud__dot--moeda {
+  background: #ffd166;
+  border-radius: 999px;
+}
+
 .hud__dot--madeira {
   background: #c98d4f;
 }
@@ -234,6 +262,11 @@
 
   .hud__resource strong {
     font-size: 14px;
+  }
+
+  /* Tela estreita: fica só o número, sem a decomposição. */
+  .hud__dezenas {
+    display: none;
   }
 
   .hud__recipes {

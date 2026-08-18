@@ -84,6 +84,12 @@ export function ChallengePanel() {
                   : 'Um pouco de lenha e de luz'
                 : `+${feedback.reward}`}
             </p>
+            {/* A moeda aparece separada do recurso porque são coisas diferentes:
+                o recurso é o resultado da conta, a moeda é o prêmio por ter
+                acertado. Juntá-las num número só apagaria essa distinção. */}
+            <p className="challenge__coins">
+              {feedback.coins > 0 ? `+${feedback.coins} moedas` : ' '}
+            </p>
           </div>
         )
       )}

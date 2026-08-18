@@ -130,3 +130,12 @@
   font-weight: 700;
   color: #ffe66d;
 }
+
+/* Moedas do acerto: separadas do recurso, porque significam coisas diferentes. */
+.challenge__coins {
+  margin: 2px 0 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: #ffd166;
+  min-height: 1.2em;
+}

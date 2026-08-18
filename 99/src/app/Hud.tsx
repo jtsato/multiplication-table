@@ -19,6 +19,18 @@ export function Hud({ isTouch = false }: { isTouch?: boolean } = {}) {
   const buildError = useGameStore((state) => state.buildError);
   const clock = useGameStore((state) => state.clock);
   const lanternCharge = useGameStore((state) => state.lanternCharge);
+  const coins = useGameStore((state) => state.coins);
+
+  /**
+   * Moedas em dezenas e unidades.
+   *
+   * A criança vê "37" e, ao lado, três pilhas e sete soltas. É o reforço
+   * passivo da tabuada do 10 descrito na spec: ela conta dezenas a sessão
+   * inteira sem que nenhuma pergunta seja feita. Abaixo de dez não há o que
+   * decompor, e a linha some.
+   */
+  const dezenas = Math.floor(coins / 10);
+  const unidades = coins % 10;
 
   const cargaCheia = LANTERN.chargeSeconds * LANTERN.maxCharges;
   const cargaFraca = lanternCharge < LANTERN.lowChargeSeconds;
@@ -41,6 +53,16 @@ export function Hud({ isTouch = false }: { isTouch?: boolean } = {}) {
           aria-valuemax={cargaCheia}
         >
           <i style={{ width: `${Math.min(100, (lanternCharge / cargaCheia) * 100)}%` }} />
+        </span>
+
+        <span className="hud__coins" aria-label={`Moedas: ${coins}`}>
+          <i className="hud__dot hud__dot--moeda" aria-hidden="true" />
+          moedas <strong>{coins}</strong>
+          {dezenas > 0 && (
+            <em className="hud__dezenas" data-testid="hud-dezenas" aria-hidden="true">
+              {dezenas}×10 + {unidades}
+            </em>
+          )}
         </span>
 
         {RESOURCE_KINDS.map((kind) => (
