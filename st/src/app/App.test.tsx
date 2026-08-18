@@ -8,9 +8,17 @@ import { createProfile } from "../domain/profile/profile";
 let repository: ProfileRepository | undefined;
 const originalLanguage = window.navigator.language;
 
-/** The app reads navigator.language once per mount, so set it before rendering. */
+/**
+ * The app reads the browser languages once per mount, so set them before
+ * rendering. Both fields are set because detection prefers `languages` (the
+ * ordered preference list) and only falls back to `language`.
+ */
 function setLocale(language: string): void {
   Object.defineProperty(window.navigator, "language", { configurable: true, value: language });
+  Object.defineProperty(window.navigator, "languages", {
+    configurable: true,
+    value: [language],
+  });
 }
 
 afterEach(async () => {

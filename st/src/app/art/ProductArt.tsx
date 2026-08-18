@@ -101,9 +101,24 @@ const SHAPES: Record<string, ReactNode> = {
   ),
   "drawing-block": (
     <>
-      <rect x="14" y="12" width="36" height="40" rx="3" fill={C.paper} stroke={C.gray} strokeWidth="2" />
+      <rect
+        x="14"
+        y="12"
+        width="36"
+        height="40"
+        rx="3"
+        fill={C.paper}
+        stroke={C.gray}
+        strokeWidth="2"
+      />
       <rect x="25" y="8" width="14" height="7" rx="3" fill={C.gray} />
-      <path d="M21 42q6-16 11-2t11-8" stroke={C.pink} strokeWidth="3" fill="none" strokeLinecap="round" />
+      <path
+        d="M21 42q6-16 11-2t11-8"
+        stroke={C.pink}
+        strokeWidth="3"
+        fill="none"
+        strokeLinecap="round"
+      />
     </>
   ),
   "pencil-case": (
@@ -115,7 +130,16 @@ const SHAPES: Record<string, ReactNode> = {
   ),
   "small-canvas": (
     <>
-      <rect x="14" y="10" width="36" height="30" rx="2" fill={C.paper} stroke={C.brown} strokeWidth="3" />
+      <rect
+        x="14"
+        y="10"
+        width="36"
+        height="30"
+        rx="2"
+        fill={C.paper}
+        stroke={C.brown}
+        strokeWidth="3"
+      />
       <polygon points="19,36 28,22 37,36" fill={C.leaf} />
       <circle cx="41" cy="20" r="4" fill={C.yellow} />
       <rect x="30" y="40" width="4" height="14" fill={C.brown} />
@@ -132,7 +156,13 @@ const SHAPES: Record<string, ReactNode> = {
   ),
   rope: (
     <>
-      <path d="M16 40q16-30 32 0" stroke={C.pink} strokeWidth="5" fill="none" strokeLinecap="round" />
+      <path
+        d="M16 40q16-30 32 0"
+        stroke={C.pink}
+        strokeWidth="5"
+        fill="none"
+        strokeLinecap="round"
+      />
       <rect x="10" y="36" width="9" height="16" rx="4" fill={C.brown} />
       <rect x="45" y="36" width="9" height="16" rx="4" fill={C.brown} />
     </>
@@ -177,7 +207,13 @@ const SHAPES: Record<string, ReactNode> = {
   ),
   "connection-cable": (
     <>
-      <path d="M14 24C22 52 42 52 50 24" stroke={C.purple} strokeWidth="5" fill="none" strokeLinecap="round" />
+      <path
+        d="M14 24C22 52 42 52 50 24"
+        stroke={C.purple}
+        strokeWidth="5"
+        fill="none"
+        strokeLinecap="round"
+      />
       <rect x="9" y="14" width="11" height="11" rx="2" fill={C.gray} />
       <rect x="44" y="14" width="11" height="11" rx="2" fill={C.gray} />
     </>
@@ -263,11 +299,23 @@ const SIZES: Record<NonNullable<ProductArtProps["size"]>, number> = {
   medium: 96,
 };
 
-export function ProductArt({ id, size = "small", platform = false, platformColor = C.sky }: ProductArtProps) {
+export function ProductArt({
+  id,
+  size = "small",
+  platform = false,
+  platformColor = C.sky,
+}: ProductArtProps) {
   const px = SIZES[size];
   return (
     // Decorativa: o nome do produto sempre aparece como texto ao lado.
-    <svg className="product-art" width={px} height={px} viewBox="0 0 64 64" aria-hidden="true" focusable="false">
+    <svg
+      className="product-art"
+      width={px}
+      height={px}
+      viewBox="0 0 64 64"
+      aria-hidden="true"
+      focusable="false"
+    >
       {platform && (
         <>
           <rect x="5" y="50" width="54" height="10" rx="5" fill={platformColor} />

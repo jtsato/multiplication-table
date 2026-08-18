@@ -19,11 +19,11 @@ O alvo é WCAG 2.2 AA como baseline, preservando a fantasia de blocos sem tornar
 ## Verificação
 
 - testes de componente com Testing Library;
-- scan automatizado axe na tela de seleção de perfil via Playwright;
+- scan automatizado axe via Playwright nas telas principais (criação, loja, catálogo, conquistas, configurações, gameplay e resumo);
 - E2E de criação, início do dia, pistas, compra, refresh e carregamento offline;
 - typecheck e lint em cada verificação local.
 
 ## Limitações atuais
 
 - a avaliação manual com leitor de tela, zoom de 200% e diferentes tablets ainda deve ser feita antes de uma declaração formal de conformidade;
-- o scan axe automatizado ainda cobre apenas a tela inicial; as demais telas precisam ser incluídas na matriz E2E.
+- o scan axe automatizado cobre as telas principais; cenários extremos (quota/storage, combinações de texto grande em telas estreitas) ainda dependem de revisão manual.

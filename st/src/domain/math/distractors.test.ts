@@ -14,7 +14,9 @@ describe("pedagogical distractors", () => {
 
   it("uses meaningful neighboring facts for a common multiplication", () => {
     const alternatives = generateAlternatives(createFact(6, 7), 42);
-    const wrongValues = alternatives.filter((alternative) => !alternative.isCorrect).map((alternative) => alternative.value);
+    const wrongValues = alternatives
+      .filter((alternative) => !alternative.isCorrect)
+      .map((alternative) => alternative.value);
 
     expect(wrongValues).toEqual(expect.arrayContaining([36, 49]));
   });

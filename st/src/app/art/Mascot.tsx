@@ -41,7 +41,15 @@ function Topper({ kind, palette }: { kind: MascotKind; palette: MascotPalette })
       return (
         <g>
           <rect x="30" y="4" width="4" height="10" fill={palette.blockDark} />
-          <rect x="20" y="0" width="16" height="8" rx="4" fill={palette.accentSoft} transform="rotate(-20 28 4)" />
+          <rect
+            x="20"
+            y="0"
+            width="16"
+            height="8"
+            rx="4"
+            fill={palette.accentSoft}
+            transform="rotate(-20 28 4)"
+          />
         </g>
       );
     case "antenna":
@@ -64,7 +72,14 @@ export type MascotProps = {
   className?: string;
 };
 
-export function Mascot({ kind, color, size = 72, mood = "idle", reducedMotion = false, className }: MascotProps) {
+export function Mascot({
+  kind,
+  color,
+  size = 72,
+  mood = "idle",
+  reducedMotion = false,
+  className,
+}: MascotProps) {
   const palette = getMascotPalette(color);
   const cheering = mood === "celebrate";
   const classes = ["mascot", reducedMotion ? "mascot--still" : `mascot--${mood}`, className ?? ""]
@@ -73,12 +88,32 @@ export function Mascot({ kind, color, size = 72, mood = "idle", reducedMotion = 
 
   return (
     // Decorativo: o apelido do jogador aparece como texto onde importa.
-    <svg className={classes} viewBox="0 0 64 64" width={size} height={size} shapeRendering="crispEdges" aria-hidden="true" focusable="false">
+    <svg
+      className={classes}
+      viewBox="0 0 64 64"
+      width={size}
+      height={size}
+      shapeRendering="crispEdges"
+      aria-hidden="true"
+      focusable="false"
+    >
       <Topper kind={kind} palette={palette} />
 
       <g className="mascot__arms">
-        <rect x={cheering ? 3 : 4} y={cheering ? 19 : 29} width="7" height="17" fill={palette.accent} />
-        <rect x={cheering ? 54 : 53} y={cheering ? 18 : 29} width="7" height="18" fill={palette.accent} />
+        <rect
+          x={cheering ? 3 : 4}
+          y={cheering ? 19 : 29}
+          width="7"
+          height="17"
+          fill={palette.accent}
+        />
+        <rect
+          x={cheering ? 54 : 53}
+          y={cheering ? 18 : 29}
+          width="7"
+          height="18"
+          fill={palette.accent}
+        />
       </g>
 
       <rect x="10" y="12" width="44" height="40" rx="4" fill={palette.accent} />

@@ -1,6 +1,6 @@
 # Estado atual — Lojinha Maluca
 
-**Data da verificação:** 16/08/2026  
+**Data da verificação:** 18/08/2026 (2ª revalidação)  
 **Escopo da verificação:** diretório `st`  
 **Fonte funcional:** `specification.md`
 
@@ -12,20 +12,20 @@ Os primeiros oito milestones têm uma implementação funcional ou uma baseline 
 
 ## Evidências encontradas
 
-| Área | Estado | Evidência em `st` |
-| --- | --- | --- |
-| Especificação | Presente | `specification.md` contém visão, requisitos, milestones e aceite. |
-| Aplicação web | Implementada | `src/main.tsx`, `src/app/App.tsx`, `index.html`. |
-| Package manager | Implementado | `package.json` e `package-lock.json` com scripts de dev, build e verificação. |
-| Interface | Implementada | Telas de perfil, criação, loja, atendimento, produtos e configurações; visual de blocos em CSS. |
-| Domínio matemático | Implementado | Fatos, RNG seedado, distratores, pistas, domínio, comutatividade e scheduler em `src/domain/math`. |
-| Estado do jogo | Implementado | `DaySession` explícita em `src/domain/game/session.ts`. |
-| Perfis | Implementado | Criação e seleção de múltiplos perfis locais, avatar, loja e preferências. |
-| Economia e progressão | Implementado como baseline | Faturamento, caixa, compras, capítulos, objetivos, conquistas, catálogo visual, estilos, decorações e blocos de expansão têm apresentação persistida. |
-| Persistência | Implementada | IndexedDB com `schemaVersion`, migração, listagem, atualização, autosave e `close()`. |
-| Offline | Implementada no fluxo principal | `public/sw.js`, registro em produção, aviso de atualização e teste E2E offline após refresh cobrem o caminho principal. |
-| Testes | Implementados | 18 arquivos Vitest/37 testes, 7 testes E2E Chromium e scan axe na seleção de perfil. |
-| Documentação | Implementada | `README.md`, `docs/ARCHITECTURE.md`, `docs/ACCESSIBILITY.md` e `docs/ADAPTIVE-MATH.md`. |
+| Área                  | Estado                          | Evidência em `st`                                                                                                                                     |
+| --------------------- | ------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Especificação         | Presente                        | `specification.md` contém visão, requisitos, milestones e aceite.                                                                                     |
+| Aplicação web         | Implementada                    | `src/main.tsx`, `src/app/App.tsx`, `index.html`.                                                                                                      |
+| Package manager       | Implementado                    | `package.json` e `package-lock.json` com scripts de dev, build e verificação.                                                                         |
+| Interface             | Implementada                    | Telas de perfil, criação, loja, atendimento, produtos e configurações; visual de blocos em CSS.                                                       |
+| Domínio matemático    | Implementado                    | Fatos, RNG seedado, distratores, pistas, domínio, comutatividade e scheduler em `src/domain/math`.                                                    |
+| Estado do jogo        | Implementado                    | `DaySession` explícita em `src/domain/game/session.ts`.                                                                                               |
+| Perfis                | Implementado                    | Criação e seleção de múltiplos perfis locais, avatar, loja e preferências.                                                                            |
+| Economia e progressão | Implementado como baseline      | Faturamento, caixa, compras, capítulos, objetivos, conquistas, catálogo visual, estilos, decorações e blocos de expansão têm apresentação persistida. |
+| Persistência          | Implementada                    | IndexedDB com `schemaVersion`, migração, listagem, atualização, autosave e `close()`.                                                                 |
+| Offline               | Implementada no fluxo principal | `public/sw.js`, registro em produção, aviso de atualização e teste E2E offline após refresh cobrem o caminho principal.                               |
+| Testes                | Implementados                   | 18 arquivos Vitest/78 testes, 16 testes E2E Chromium e scan axe nas telas principais.                                                                 |
+| Documentação          | Implementada                    | `README.md`, `docs/ARCHITECTURE.md`, `docs/ACCESSIBILITY.md` e `docs/ADAPTIVE-MATH.md`.                                                               |
 
 ## Funcionalidades jogáveis atuais
 
@@ -48,14 +48,14 @@ Os primeiros oito milestones têm uma implementação funcional ou uma baseline 
 
 ## Estado de execução e verificação
 
-Executado em 16/08/2026:
+Executado em 18/08/2026 (2ª revalidação):
 
 ```text
 npm run lint       PASS
 npm run typecheck  PASS
-npm test           PASS — 18 arquivos, 37 testes
+npm test           PASS — 18 arquivos, 78 testes
 npm run build      PASS — Vite produziu dist/
-npm run test:e2e   PASS — 7 testes Chromium, incluindo axe, pistas, compra, conquistas, refresh e offline
+npm run test:e2e   PASS — 16 testes Chromium, incluindo axe nas telas principais, pistas, compra, conquistas, refresh e offline
 ```
 
 O navegador integrado da sessão não estava disponível; a validação E2E foi feita pelo Chromium do Playwright contra o build de produção servido pelo preview.
@@ -69,13 +69,13 @@ Os arquivos de `st` continuam como alterações não commitadas do trabalho em a
 ## Lacunas conhecidas
 
 - o aviso de atualização do service worker existe, mas a avaliação manual da troca segura e cenários extremos de storage ainda falta;
-- o scan axe automatizado cobre a seleção de perfil; as demais telas precisam entrar na matriz E2E;
+- o scan axe automatizado já cobre as telas principais (criação, loja, catálogo, conquistas, configurações, gameplay e resumo);
 - falta revisão manual com leitor de tela, zoom de 200% e diferentes larguras/tablets;
 - falta uma revisão final de performance, quota excedida e dados persistidos inválidos.
 
 ## Próximo passo recomendado
 
-Continuar pelo **Milestone 9/10**, ampliando axe para as telas principais e revisando performance/storage no hardening final.
+Continuar pelo **Milestone 9/10**, concluindo a revisão manual de acessibilidade e o hardening de performance/storage.
 
 ## Definição de estado atualizado
 

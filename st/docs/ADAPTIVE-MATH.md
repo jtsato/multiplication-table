@@ -25,13 +25,13 @@ As bandas internas são A (`1, 2`), B (`3, 4`), C (`6`), D (`7, 8, 9`) e E (`10`
 
 ## Pistas
 
-| Nível | Comportamento |
-| --- | --- |
-| 0 | nenhuma ajuda extra |
-| 1 | lembra quantidade e preço |
-| 2 | mostra produtos e preço unitário |
-| 3 | mostra soma repetida |
-| 4 | mostra a relação completa e permite concluir |
+| Nível | Comportamento                                |
+| ----- | -------------------------------------------- |
+| 0     | nenhuma ajuda extra                          |
+| 1     | lembra quantidade e preço                    |
+| 2     | mostra produtos e preço unitário             |
+| 3     | mostra soma repetida                         |
+| 4     | mostra a relação completa e permite concluir |
 
 Erros não retiram dinheiro, XP ou progresso. O sistema registra o distrator selecionado e a profundidade da pista para adaptar exposições futuras.
 

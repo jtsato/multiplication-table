@@ -41,7 +41,9 @@ describe("profile repository", () => {
 
   it("turns a v1 avatar into a mascot without losing the shop", async () => {
     const repository = createRepository();
-    const base: Record<string, unknown> = { ...createProfile({ nickname: "Iara", storeId: "sports", id: "player-4" }) };
+    const base: Record<string, unknown> = {
+      ...createProfile({ nickname: "Iara", storeId: "sports", id: "player-4" }),
+    };
     delete base.mascot;
     const v1Profile = {
       ...base,

@@ -12,7 +12,8 @@ export type PurchaseResult = {
 
 export function calculateSale(quantity: number, unitPrice: number): Sale {
   if (!Number.isInteger(quantity) || quantity < 1) throw new RangeError("Quantidade inválida");
-  if (!Number.isInteger(unitPrice) || unitPrice < 1 || unitPrice > 10) throw new RangeError("Preço inválido");
+  if (!Number.isInteger(unitPrice) || unitPrice < 1 || unitPrice > 10)
+    throw new RangeError("Preço inválido");
   return { quantity, unitPrice, total: quantity * unitPrice };
 }
 

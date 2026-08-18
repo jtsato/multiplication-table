@@ -17,6 +17,8 @@ npm run typecheck
 npm run test
 npm run build
 npm run test:e2e
+npm run format
+npm run format:check
 npm run verify
 ```
 
@@ -47,5 +49,5 @@ Perfis ficam somente no IndexedDB local `lojinha-maluca`. Nenhum login, servidor
 
 ## Limitações conhecidas
 
-- o scan axe automatizado ainda precisa cobrir catálogo, atendimento, configurações, conquistas e fechamento do dia;
+- o scan axe automatizado cobre as telas principais (criação, loja, catálogo, conquistas, configurações, gameplay e resumo);
 - avaliação manual com leitor de tela, zoom de 200%, tablets e cenários extremos de quota/storage continua pendente.

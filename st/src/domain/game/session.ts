@@ -49,13 +49,26 @@ export function createDaySession(
   const count = seededRandom(seed + day) > 0.45 ? 6 : 5;
   const customers = seededShuffle(CUSTOMERS, seed + day).slice(0, count);
   const visits = customers.map((customer, index) => {
-    const scheduledFact = progress?.length ? chooseNextFact(progress, day, 10, seed + index) : undefined;
-    const contextualProduct = scheduledFact ? findProductForFact(availableProducts, scheduledFact, seed + index * 19) : undefined;
-    const product = contextualProduct?.product ?? seededShuffle(availableProducts, seed + index * 19)[0];
-    const quantity = contextualProduct?.quantity ?? (1 + Math.floor(seededRandom(seed + index * 29 + day) * 10));
+    const scheduledFact = progress?.length
+      ? chooseNextFact(progress, day, 10, seed + index)
+      : undefined;
+    const contextualProduct = scheduledFact
+      ? findProductForFact(availableProducts, scheduledFact, seed + index * 19)
+      : undefined;
+    const product =
+      contextualProduct?.product ?? seededShuffle(availableProducts, seed + index * 19)[0];
+    const quantity =
+      contextualProduct?.quantity ?? 1 + Math.floor(seededRandom(seed + index * 29 + day) * 10);
     const mode: ServiceMode = seededRandom(seed + index * 31) > 0.5 ? "product-select" : "direct";
     const fact = contextualProduct?.fact ?? createFact(quantity, product.price);
-    return { customer, product, quantity, mode, fact, sale: calculateSale(quantity, product.price) };
+    return {
+      customer,
+      product,
+      quantity,
+      mode,
+      fact,
+      sale: calculateSale(quantity, product.price),
+    };
   });
 
   return {
@@ -71,9 +84,20 @@ export function createDaySession(
   };
 }
 
-function findProductForFact(products: Product[], fact: MultiplicationFact, seed: number): { product: Product; quantity: number; fact: MultiplicationFact } | undefined {
-  const product = seededShuffle(products.filter((candidate) => candidate.price === fact.b), seed)[0]
-    ?? seededShuffle(products.filter((candidate) => candidate.price === fact.a), seed)[0];
+function findProductForFact(
+  products: Product[],
+  fact: MultiplicationFact,
+  seed: number,
+): { product: Product; quantity: number; fact: MultiplicationFact } | undefined {
+  const product =
+    seededShuffle(
+      products.filter((candidate) => candidate.price === fact.b),
+      seed,
+    )[0] ??
+    seededShuffle(
+      products.filter((candidate) => candidate.price === fact.a),
+      seed,
+    )[0];
   if (!product) return undefined;
 
   const quantity = product.price === fact.b ? fact.a : fact.b;
@@ -89,7 +113,11 @@ export function getCurrentVisit(session: DaySession): CustomerVisit {
 export function selectQuantity(session: DaySession, quantity: number): DaySession {
   const visit = getCurrentVisit(session);
   const boundedQuantity = Math.max(0, Math.min(visit.quantity, Math.floor(quantity)));
-  return { ...session, selectedQuantity: boundedQuantity, phase: boundedQuantity === visit.quantity ? "question" : "product-select" };
+  return {
+    ...session,
+    selectedQuantity: boundedQuantity,
+    phase: boundedQuantity === visit.quantity ? "question" : "product-select",
+  };
 }
 
 export function submitAnswer(session: DaySession, value: number): DaySession {
@@ -125,7 +153,11 @@ export function continueAfterFeedback(session: DaySession): DaySession {
   return {
     ...session,
     currentIndex: nextIndex,
-    phase: nextVisit ? (nextVisit.mode === "product-select" ? "product-select" : "customer") : "summary",
+    phase: nextVisit
+      ? nextVisit.mode === "product-select"
+        ? "product-select"
+        : "customer"
+      : "summary",
     selectedQuantity: 0,
     errorsForCurrent: 0,
     feedback: undefined,

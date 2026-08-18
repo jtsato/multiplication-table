@@ -6,7 +6,10 @@ describe("progressive hints", () => {
   const fact = createFact(6, 7);
 
   it("starts with a contextual reminder", () => {
-    expect(getHint(fact, 1)).toEqual({ level: 1, text: "Confira a quantidade e o preço de cada item." });
+    expect(getHint(fact, 1)).toEqual({
+      level: 1,
+      text: "Confira a quantidade e o preço de cada item.",
+    });
   });
 
   it("shows concrete items after the second mistake", () => {

@@ -23,7 +23,11 @@ async function openQuestion(page: Page): Promise<void> {
     await startQuestion.click();
   } else {
     const addProduct = page.getByRole("button", { name: "Adicionar produto" });
-    for (let attempt = 0; attempt < 10 && !(await page.getByRole("heading", { name: "Quanto devo cobrar?" }).count()); attempt += 1) {
+    for (
+      let attempt = 0;
+      attempt < 10 && !(await page.getByRole("heading", { name: "Quanto devo cobrar?" }).count());
+      attempt += 1
+    ) {
       await addProduct.click();
     }
   }
@@ -36,7 +40,9 @@ async function serveCurrentCustomer(page: Page): Promise<void> {
   const equation = (await page.locator(".equation-context").textContent()) ?? "";
   const [quantity, price] = equation.match(/\d+/g)!.map(Number);
   const labels = await page.locator(".answer-button").allTextContents();
-  const correctIndex = labels.findIndex((label) => Number(label.replace(/\D/g, "")) === quantity * price);
+  const correctIndex = labels.findIndex(
+    (label) => Number(label.replace(/\D/g, "")) === quantity * price,
+  );
   expect(correctIndex, `no correct answer offered for ${equation}`).toBeGreaterThanOrEqual(0);
   await page.locator(".answer-button").nth(correctIndex).click();
   await expect(page.locator(".success-box")).toBeVisible();
@@ -87,7 +93,9 @@ test("plays a full day through to the closing summary", async ({ page }) => {
 
   // The summary screen is only reachable by finishing a day, so nothing had covered it.
   await expect(page.getByRole("heading", { name: "Fechamento da loja" })).toBeVisible();
-  const revenue = Number(((await page.locator(".summary-total").textContent()) ?? "").replace(/\D/g, ""));
+  const revenue = Number(
+    ((await page.locator(".summary-total").textContent()) ?? "").replace(/\D/g, ""),
+  );
   expect(revenue).toBeGreaterThan(0);
   await expectNoViolations(page, "day summary");
 
@@ -101,7 +109,10 @@ const WCAG_TAGS = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"];
 
 async function expectNoViolations(page: Page, screen: string): Promise<void> {
   const results = await new AxeBuilder({ page }).withTags(WCAG_TAGS).analyze();
-  expect(results.violations, `${screen}: ${results.violations.map((violation) => violation.id).join(", ")}`).toEqual([]);
+  expect(
+    results.violations,
+    `${screen}: ${results.violations.map((violation) => violation.id).join(", ")}`,
+  ).toEqual([]);
 }
 
 test("the first screen has no automated axe violations", async ({ page }) => {
@@ -142,7 +153,9 @@ test("every screen passes the automated WCAG 2.2 AA checks", async ({ page }) =>
  * through their wrapping label, which is the actual clickable target.
  */
 async function expectTargetSizes(page: Page, screen: string): Promise<void> {
-  const targets = page.locator("button:visible, a:visible, select:visible, label.check-row:visible");
+  const targets = page.locator(
+    "button:visible, a:visible, select:visible, label.check-row:visible",
+  );
   const boxes = await targets.evaluateAll((elements) =>
     elements.map((element) => {
       const { width, height } = element.getBoundingClientRect();
@@ -198,10 +211,14 @@ test("shows progressive hints after an incorrect answer", async ({ page }) => {
   await page.getByRole("button", { name: "Começar dia" }).click();
   await openQuestion(page);
 
-  const [quantity, price] = (await page.locator(".equation-context").textContent() ?? "").match(/\d+/g)!.map(Number);
+  const [quantity, price] = ((await page.locator(".equation-context").textContent()) ?? "")
+    .match(/\d+/g)!
+    .map(Number);
   const correctAnswer = quantity * price;
   const labels = await page.locator(".answer-button").allTextContents();
-  const wrongIndex = labels.findIndex((label) => Number(label.replace(/\D/g, "")) !== correctAnswer);
+  const wrongIndex = labels.findIndex(
+    (label) => Number(label.replace(/\D/g, "")) !== correctAnswer,
+  );
   await page.locator(".answer-button").nth(wrongIndex).click();
   await expect(page.getByRole("status")).toContainText("Ainda não fechou");
   const firstHint = await page.locator(".hint-box p").textContent();
@@ -232,10 +249,14 @@ test("scrolls the answer feedback into view after selecting an option", async ({
   const feedback = page.locator(".success-box, .hint-box");
   await expect(feedback).toBeVisible();
   await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(0);
-  await expect.poll(() => feedback.evaluate((element) => {
-    const rect = element.getBoundingClientRect();
-    return rect.top >= 0 && rect.bottom <= window.innerHeight;
-  })).toBe(true);
+  await expect
+    .poll(() =>
+      feedback.evaluate((element) => {
+        const rect = element.getBoundingClientRect();
+        return rect.top >= 0 && rect.bottom <= window.innerHeight;
+      }),
+    )
+    .toBe(true);
 });
 
 test("keeps money and navigation labels readable on a narrow screen", async ({ page }) => {
@@ -263,7 +284,9 @@ test("signals which shop purchases fit the available cash", async ({ page }) => 
   await expect(page.getByRole("heading", { name: "Novos produtos para a loja" })).toBeVisible();
 
   await expect(page.locator(".purchase-state")).toHaveCount(0);
-  const unavailableCard = page.locator(".product-card").filter({ has: page.locator(".purchase-button--unavailable") });
+  const unavailableCard = page
+    .locator(".product-card")
+    .filter({ has: page.locator(".purchase-button--unavailable") });
   await expect(unavailableCard).toHaveCount(1);
   const unavailableButton = unavailableCard.getByRole("button");
   await expect(unavailableButton).toHaveAttribute("aria-disabled", "true");

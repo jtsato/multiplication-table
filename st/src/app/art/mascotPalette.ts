@@ -15,4 +15,3 @@ const PALETTES: Record<MascotColor, MascotPalette> = {
 export function getMascotPalette(color: MascotColor): MascotPalette {
   return PALETTES[color] ?? PALETTES.orange;
 }
-

@@ -94,12 +94,48 @@ export const STORES: StoreDefinition[] = [
 ];
 
 export const CUSTOMERS: Customer[] = [
-  { id: "lia", name: "Lia", color: "#f5b971", phrase: "Quero alguns itens para o meu projeto.", preferredStores: ["bookstore", "art"] },
-  { id: "caio", name: "Caio", color: "#72b7a1", phrase: "Preciso de materiais para uma atividade.", preferredStores: ["sports", "bookstore"] },
-  { id: "bia", name: "Bia", color: "#8b83d4", phrase: "Quero montar uma ideia nova.", preferredStores: ["technology", "art"] },
-  { id: "theo", name: "Theo", color: "#e9967a", phrase: "Você pode separar estes produtos para mim?", preferredStores: ["sports", "technology"] },
-  { id: "nina", name: "Nina", color: "#6eb5d1", phrase: "Hoje vou preparar uma surpresa.", preferredStores: ["bookstore", "technology"] },
-  { id: "davi", name: "Davi", color: "#d48aaf", phrase: "Estou procurando algo para criar.", preferredStores: ["art", "sports"] },
+  {
+    id: "lia",
+    name: "Lia",
+    color: "#f5b971",
+    phrase: "Quero alguns itens para o meu projeto.",
+    preferredStores: ["bookstore", "art"],
+  },
+  {
+    id: "caio",
+    name: "Caio",
+    color: "#72b7a1",
+    phrase: "Preciso de materiais para uma atividade.",
+    preferredStores: ["sports", "bookstore"],
+  },
+  {
+    id: "bia",
+    name: "Bia",
+    color: "#8b83d4",
+    phrase: "Quero montar uma ideia nova.",
+    preferredStores: ["technology", "art"],
+  },
+  {
+    id: "theo",
+    name: "Theo",
+    color: "#e9967a",
+    phrase: "Você pode separar estes produtos para mim?",
+    preferredStores: ["sports", "technology"],
+  },
+  {
+    id: "nina",
+    name: "Nina",
+    color: "#6eb5d1",
+    phrase: "Hoje vou preparar uma surpresa.",
+    preferredStores: ["bookstore", "technology"],
+  },
+  {
+    id: "davi",
+    name: "Davi",
+    color: "#d48aaf",
+    phrase: "Estou procurando algo para criar.",
+    preferredStores: ["art", "sports"],
+  },
 ];
 
 export function getStore(storeId: StoreId): StoreDefinition {

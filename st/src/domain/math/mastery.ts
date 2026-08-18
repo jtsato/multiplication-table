@@ -38,14 +38,16 @@ export function createFactProgress(fact: MultiplicationFact): FactProgress {
 export function applyAttempt(progress: FactProgress, attempt: Attempt): FactProgress {
   const independent = attempt.outcome === "correct" && attempt.hintLevel === 0;
   const supported = attempt.outcome === "correct" && attempt.hintLevel > 0;
-  const change = attempt.outcome === "incorrect"
-    ? -0.03
-    : attempt.hintLevel === 0
-      ? INDEPENDENT_REWARD
-      : SUPPORTED_REWARDS[attempt.hintLevel] ?? 0;
-  const independentDays = independent && !progress.independentDays.includes(attempt.day)
-    ? [...progress.independentDays, attempt.day]
-    : progress.independentDays;
+  const change =
+    attempt.outcome === "incorrect"
+      ? -0.03
+      : attempt.hintLevel === 0
+        ? INDEPENDENT_REWARD
+        : (SUPPORTED_REWARDS[attempt.hintLevel] ?? 0);
+  const independentDays =
+    independent && !progress.independentDays.includes(attempt.day)
+      ? [...progress.independentDays, attempt.day]
+      : progress.independentDays;
   const nextMastery = Math.max(0, Math.min(1, progress.mastery + change));
 
   return {
@@ -57,11 +59,19 @@ export function applyAttempt(progress: FactProgress, attempt: Attempt): FactProg
     lastSeenDay: attempt.day,
     lastHintDepth: attempt.hintLevel,
     independentDays,
-    state: deriveState(nextMastery, progress.independentCorrect + (independent ? 1 : 0), independentDays),
+    state: deriveState(
+      nextMastery,
+      progress.independentCorrect + (independent ? 1 : 0),
+      independentDays,
+    ),
   };
 }
 
-function deriveState(mastery: number, independentCorrect: number, independentDays: number[]): FactState {
+function deriveState(
+  mastery: number,
+  independentCorrect: number,
+  independentDays: number[],
+): FactState {
   if (mastery >= 0.75 && independentCorrect >= 3 && independentDays.length >= 2) return "mastered";
   if (mastery >= 0.45) return "consolidating";
   if (mastery > 0) return "learning";

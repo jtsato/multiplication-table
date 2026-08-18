@@ -44,7 +44,10 @@ export function generateAlternatives(fact: MultiplicationFact, seed: number): Al
   }
 
   return seededShuffle(
-    [{ value: fact.answer, isCorrect: true, strategy: "fallback" as const }, ...selected.map((candidate) => ({ ...candidate, isCorrect: false }))],
+    [
+      { value: fact.answer, isCorrect: true, strategy: "fallback" as const },
+      ...selected.map((candidate) => ({ ...candidate, isCorrect: false })),
+    ],
     seed,
   );
 }

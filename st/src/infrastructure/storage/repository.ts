@@ -1,5 +1,10 @@
 import { DBSchema, IDBPDatabase, openDB } from "idb";
-import { DEFAULT_MASCOT, PROFILE_SCHEMA_VERSION, type MascotConfig, type PlayerProfile } from "../../domain/profile/profile";
+import {
+  DEFAULT_MASCOT,
+  PROFILE_SCHEMA_VERSION,
+  type MascotConfig,
+  type PlayerProfile,
+} from "../../domain/profile/profile";
 
 /** Formato antigo (v1): boneco com pele/cabelo/roupa/acessório. */
 type LegacyAvatar = { accessory?: string };
@@ -93,6 +98,9 @@ export function migrateProfile(profile: PersistedProfile): PlayerProfile {
     audio: profile.audio ?? { effects: true, narration: false },
     // v1 -> v2: o boneco virou mascote. Só o boné tinha equivalente direto,
     // então ele é preservado e o resto cai no padrão.
-    mascot: profile.mascot ?? { ...DEFAULT_MASCOT, kind: avatar?.accessory === "cap" ? "cap" : DEFAULT_MASCOT.kind },
+    mascot: profile.mascot ?? {
+      ...DEFAULT_MASCOT,
+      kind: avatar?.accessory === "cap" ? "cap" : DEFAULT_MASCOT.kind,
+    },
   };
 }

@@ -22,8 +22,11 @@
         --secondary: #263d5b;
       }
 
-      * { box-sizing: border-box; }
-      html, body {
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
         margin: 0;
         min-height: 100%;
         background: linear-gradient(180deg, #fffaf8 0%, #f9f3f5 100%);
@@ -95,7 +98,7 @@
 
       .layout {
         display: grid;
-        grid-template-columns: 1.38fr .82fr;
+        grid-template-columns: 1.38fr 0.82fr;
         gap: 18px;
       }
 
@@ -116,7 +119,7 @@
         height: 24%;
         border: 3px solid var(--ink);
         border-radius: 18px;
-        background: rgba(255,255,255,0.72);
+        background: rgba(255, 255, 255, 0.72);
       }
 
       .shelf::before,
@@ -131,8 +134,12 @@
         border-radius: 999px;
       }
 
-      .shelf::before { top: 23%; }
-      .shelf::after { top: 60%; }
+      .shelf::before {
+        top: 23%;
+      }
+      .shelf::after {
+        top: 60%;
+      }
 
       .counter {
         position: absolute;
@@ -243,14 +250,20 @@
         background: #fff;
       }
 
-      .ans:nth-child(1) { background: #e9f7df; }
-      .ans:nth-child(2) { background: #fff5cc; }
-      .ans:nth-child(3) { background: #e9ecff; }
+      .ans:nth-child(1) {
+        background: #e9f7df;
+      }
+      .ans:nth-child(2) {
+        background: #fff5cc;
+      }
+      .ans:nth-child(3) {
+        background: #e9ecff;
+      }
 
       .bottom {
         margin-top: 20px;
         display: grid;
-        grid-template-columns: 1.3fr .7fr;
+        grid-template-columns: 1.3fr 0.7fr;
         gap: 18px;
       }
 
@@ -299,9 +312,17 @@
       }
 
       @media (max-width: 760px) {
-        .layout, .bottom { grid-template-columns: 1fr; }
-        .items { grid-template-columns: 1fr; }
-        .topbar { align-items: flex-start; flex-direction: column; }
+        .layout,
+        .bottom {
+          grid-template-columns: 1fr;
+        }
+        .items {
+          grid-template-columns: 1fr;
+        }
+        .topbar {
+          align-items: flex-start;
+          flex-direction: column;
+        }
       }
     </style>
   </head>
@@ -332,7 +353,7 @@
         <div class="side">
           <div class="panel">
             <p class="eyebrow">meta do dia</p>
-            <h2 style="margin: 10px 0 12px; font-size: 2rem; line-height: 1.1;">3 clientes</h2>
+            <h2 style="margin: 10px 0 12px; font-size: 2rem; line-height: 1.1">3 clientes</h2>
             <div class="meta">
               <div>🎯 8/10</div>
               <div>⭐ 5</div>
@@ -343,7 +364,9 @@
 
           <div class="panel">
             <p class="eyebrow">pergunta</p>
-            <div class="question"><span>3</span><span>×</span><span>4</span><span>=</span><span>?</span></div>
+            <div class="question">
+              <span>3</span><span>×</span><span>4</span><span>=</span><span>?</span>
+            </div>
             <div class="answers">
               <div class="ans">11</div>
               <div class="ans">12</div>
@@ -355,29 +378,29 @@
 
       <div class="bottom">
         <div>
-          <p class="eyebrow" style="margin-bottom: 10px;">loja</p>
+          <p class="eyebrow" style="margin-bottom: 10px">loja</p>
           <div class="items">
             <div class="item">
               <div class="icon">📚</div>
-              <h3 style="margin: 0 0 8px;">Prateleira</h3>
+              <h3 style="margin: 0 0 8px">Prateleira</h3>
               <div class="price">R$ 32</div>
             </div>
             <div class="item">
               <div class="icon">🎨</div>
-              <h3 style="margin: 0 0 8px;">Quadro</h3>
+              <h3 style="margin: 0 0 8px">Quadro</h3>
               <div class="price">R$ 50</div>
             </div>
             <div class="item">
               <div class="icon">🌼</div>
-              <h3 style="margin: 0 0 8px;">Jardim</h3>
+              <h3 style="margin: 0 0 8px">Jardim</h3>
               <div class="price">R$ 76</div>
             </div>
           </div>
         </div>
 
-        <div class="panel" style="align-self: start;">
+        <div class="panel" style="align-self: start">
           <p class="eyebrow">próximo</p>
-          <h2 style="margin: 10px 0 12px; font-size: 1.8rem;">Nova loja</h2>
+          <h2 style="margin: 10px 0 12px; font-size: 1.8rem">Nova loja</h2>
           <div class="button">Começar</div>
           <div class="button alt">Explorar</div>
         </div>

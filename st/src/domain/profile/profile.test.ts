@@ -20,7 +20,12 @@ describe("local player profiles", () => {
   });
 
   it("persists the chosen store style as cosmetic state", () => {
-    const profile = createProfile({ nickname: "Bento", storeId: "technology", style: "ocean", id: "player-style" });
+    const profile = createProfile({
+      nickname: "Bento",
+      storeId: "technology",
+      style: "ocean",
+      id: "player-style",
+    });
 
     expect(profile.store.style).toBe("ocean");
   });

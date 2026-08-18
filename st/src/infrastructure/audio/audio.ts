@@ -22,11 +22,23 @@ export type ToneDriver = {
   play: (request: ToneRequest) => void;
 };
 
-export function narrate(text: string, enabled: boolean, driver = createBrowserNarrationDriver()): void {
+/**
+ * Lê o texto em voz alta no idioma em que ele foi escrito.
+ *
+ * `lang` precisa acompanhar o idioma da interface: com a etiqueta errada o
+ * sintetizador lê japonês com fonemas portugueses, o que soa pior do que não
+ * narrar. O padrão pt-BR só vale para quem chama sem informar o idioma.
+ */
+export function narrate(
+  text: string,
+  enabled: boolean,
+  lang = "pt-BR",
+  driver = createBrowserNarrationDriver(),
+): void {
   if (!enabled || !driver || !text.trim()) return;
 
   const utterance = driver.createUtterance(text);
-  utterance.lang = "pt-BR";
+  utterance.lang = lang;
   utterance.rate = 0.95;
   utterance.pitch = 1.05;
   driver.cancel();
@@ -39,27 +51,33 @@ export function playFeedbackTone(
   driver = createBrowserToneDriver(),
 ): void {
   if (!enabled || !driver) return;
-  driver.play(tone === "success"
-    ? { frequency: 660, durationMs: 120 }
-    : { frequency: 220, durationMs: 160 });
+  driver.play(
+    tone === "success" ? { frequency: 660, durationMs: 120 } : { frequency: 220, durationMs: 160 },
+  );
 }
 
 function createBrowserNarrationDriver(): NarrationDriver | undefined {
-  if (typeof window === "undefined" || !("speechSynthesis" in window) || !("SpeechSynthesisUtterance" in window)) {
+  if (
+    typeof window === "undefined" ||
+    !("speechSynthesis" in window) ||
+    !("SpeechSynthesisUtterance" in window)
+  ) {
     return undefined;
   }
 
   return {
     cancel: () => window.speechSynthesis.cancel(),
     createUtterance: (text) => new SpeechSynthesisUtterance(text),
-    speak: (utterance) => window.speechSynthesis.speak(utterance as unknown as SpeechSynthesisUtterance),
+    speak: (utterance) =>
+      window.speechSynthesis.speak(utterance as unknown as SpeechSynthesisUtterance),
   };
 }
 
 function createBrowserToneDriver(): ToneDriver | undefined {
   if (typeof window === "undefined") return undefined;
-  const AudioContextConstructor = window.AudioContext
-    ?? (window as Window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+  const AudioContextConstructor =
+    window.AudioContext ??
+    (window as Window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
   if (!AudioContextConstructor) return undefined;
 
   return {

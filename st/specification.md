@@ -29,14 +29,14 @@ Não deixe `TODO`, mocks vazios, telas falsas ou fluxos interrompidos sem necess
 
 Quando houver uma escolha técnica não especificada, prefira:
 
-* simplicidade;
-* baixo acoplamento;
-* código testável;
-* acessibilidade;
-* desempenho;
-* manutenção;
-* poucas dependências;
-* soluções determinísticas.
+- simplicidade;
+- baixo acoplamento;
+- código testável;
+- acessibilidade;
+- desempenho;
+- manutenção;
+- poucas dependências;
+- soluções determinísticas.
 
 Não transforme o MVP em uma arquitetura enterprise desnecessária.
 
@@ -114,14 +114,14 @@ Conforme demonstra domínio, o sistema remove gradualmente as pistas.
 
 Nunca:
 
-* retirar dinheiro porque houve erro matemático;
-* diminuir XP;
-* humilhar;
-* tocar buzina agressiva;
-* mostrar personagem decepcionado;
-* usar mensagens como “Você é ruim nisso”;
-* exigir sequência perfeita;
-* reiniciar progresso.
+- retirar dinheiro porque houve erro matemático;
+- diminuir XP;
+- humilhar;
+- tocar buzina agressiva;
+- mostrar personagem decepcionado;
+- usar mensagens como “Você é ruim nisso”;
+- exigir sequência perfeita;
+- reiniciar progresso.
 
 Erro deve provocar **ajuda progressiva**.
 
@@ -166,37 +166,37 @@ Não use recompensas puramente abstratas quando puder existir uma recompensa vis
 
 Implementar:
 
-* SPA web responsiva;
-* desktop e tablet como plataformas principais;
-* suporte razoável a telas menores;
-* funcionamento offline depois do primeiro carregamento completo;
-* sem backend;
-* sem login;
-* múltiplos perfis locais;
-* IndexedDB;
-* quatro lojas temáticas;
-* avatar personalizável;
-* visual voxel/blocos;
-* clientes recorrentes;
-* 5–6 clientes por dia;
-* multiplicações entre `1 × 1` e `10 × 10`;
-* sistema matemático adaptativo;
-* múltipla escolha;
-* três alternativas;
-* distratores pedagógicos;
-* ajuda progressiva;
-* capítulos;
-* economia simples;
-* melhorias funcionais;
-* melhorias cosméticas;
-* objetivos opcionais;
-* conquistas;
-* narração opcional;
-* áudio configurável;
-* acessibilidade WCAG 2.2 AA como baseline;
-* redução de movimento;
-* persistência completa;
-* testes automatizados.
+- SPA web responsiva;
+- desktop e tablet como plataformas principais;
+- suporte razoável a telas menores;
+- funcionamento offline depois do primeiro carregamento completo;
+- sem backend;
+- sem login;
+- múltiplos perfis locais;
+- IndexedDB;
+- quatro lojas temáticas;
+- avatar personalizável;
+- visual voxel/blocos;
+- clientes recorrentes;
+- 5–6 clientes por dia;
+- multiplicações entre `1 × 1` e `10 × 10`;
+- sistema matemático adaptativo;
+- múltipla escolha;
+- três alternativas;
+- distratores pedagógicos;
+- ajuda progressiva;
+- capítulos;
+- economia simples;
+- melhorias funcionais;
+- melhorias cosméticas;
+- objetivos opcionais;
+- conquistas;
+- narração opcional;
+- áudio configurável;
+- acessibilidade WCAG 2.2 AA como baseline;
+- redução de movimento;
+- persistência completa;
+- testes automatizados.
 
 ---
 
@@ -204,44 +204,44 @@ Implementar:
 
 NÃO implementar no MVP:
 
-* backend;
-* cadastro online;
-* e-mail;
-* senha;
-* autenticação;
-* sincronização em nuvem;
-* multiplayer;
-* ranking;
-* leaderboard;
-* chat;
-* anúncios;
-* compras reais;
-* microtransações;
-* loot boxes;
-* moedas premium;
-* servidor;
-* banco de dados remoto;
-* analytics externo;
-* tracking publicitário;
-* coleta de dados pessoais;
-* data de nascimento;
-* nome real obrigatório;
-* estoque limitado;
-* gestão manual de estoque;
-* pedidos com mais de um tipo de produto;
-* divisão;
-* porcentagem;
-* troco;
-* contas com centavos;
-* preços decimais;
-* movimentação manual do avatar;
-* mundo 3D livre;
-* WebGL complexo;
-* cronômetros obrigatórios;
-* streaks de desempenho;
-* conquistas por perfeição;
-* instalação PWA obrigatória;
-* qualquer asset, textura, personagem, nome, logotipo ou elemento protegido do Minecraft.
+- backend;
+- cadastro online;
+- e-mail;
+- senha;
+- autenticação;
+- sincronização em nuvem;
+- multiplayer;
+- ranking;
+- leaderboard;
+- chat;
+- anúncios;
+- compras reais;
+- microtransações;
+- loot boxes;
+- moedas premium;
+- servidor;
+- banco de dados remoto;
+- analytics externo;
+- tracking publicitário;
+- coleta de dados pessoais;
+- data de nascimento;
+- nome real obrigatório;
+- estoque limitado;
+- gestão manual de estoque;
+- pedidos com mais de um tipo de produto;
+- divisão;
+- porcentagem;
+- troco;
+- contas com centavos;
+- preços decimais;
+- movimentação manual do avatar;
+- mundo 3D livre;
+- WebGL complexo;
+- cronômetros obrigatórios;
+- streaks de desempenho;
+- conquistas por perfeição;
+- instalação PWA obrigatória;
+- qualquer asset, textura, personagem, nome, logotipo ou elemento protegido do Minecraft.
 
 A estética pode lembrar **voxel/block games**, mas deve possuir identidade própria.
 
@@ -251,20 +251,20 @@ A estética pode lembrar **voxel/block games**, mas deve possuir identidade pró
 
 Se o repositório ainda não tiver stack definida, utilize:
 
-* React;
-* TypeScript;
-* Vite;
-* HTML semântico;
-* CSS moderno;
-* CSS Modules ou organização equivalente;
-* IndexedDB;
-* Service Worker;
-* Vitest;
-* React Testing Library;
-* Playwright;
-* axe para verificações automatizadas de acessibilidade;
-* ESLint;
-* formatter consistente.
+- React;
+- TypeScript;
+- Vite;
+- HTML semântico;
+- CSS moderno;
+- CSS Modules ou organização equivalente;
+- IndexedDB;
+- Service Worker;
+- Vitest;
+- React Testing Library;
+- Playwright;
+- axe para verificações automatizadas de acessibilidade;
+- ESLint;
+- formatter consistente.
 
 Evite adicionar framework de UI pesado.
 
@@ -272,11 +272,11 @@ Não use uma game engine 3D para este MVP.
 
 Prefira:
 
-* DOM;
-* CSS;
-* SVG;
-* CSS transforms;
-* pequenas animações CSS.
+- DOM;
+- CSS;
+- SVG;
+- CSS transforms;
+- pequenas animações CSS.
 
 A cena voxel/isométrica pode ser construída visualmente com SVG/CSS.
 
@@ -369,24 +369,24 @@ Tela inicial:
 
 Mostrar cards com:
 
-* avatar;
-* apelido;
-* tipo de loja;
-* capítulo;
-* botão para entrar.
+- avatar;
+- apelido;
+- tipo de loja;
+- capítulo;
+- botão para entrar.
 
 Também:
 
-> * Criar novo jogador
+> - Criar novo jogador
 
 Não solicitar:
 
-* e-mail;
-* nome real;
-* idade;
-* telefone;
-* endereço;
-* localização.
+- e-mail;
+- nome real;
+- idade;
+- telefone;
+- endereço;
+- localização.
 
 ---
 
@@ -424,11 +424,11 @@ Permitir texto livre.
 
 Adicionar sugestões como:
 
-* Lojista Pixel
-* Mestre dos Blocos
-* Capitão da Loja
-* Construtor Pixel
-* Gerente Voxel
+- Lojista Pixel
+- Mestre dos Blocos
+- Capitão da Loja
+- Construtor Pixel
+- Gerente Voxel
 
 Adicionar:
 
@@ -444,11 +444,11 @@ Avatar simples em estilo voxel/blocos.
 
 A criança pode escolher:
 
-* aparência;
-* cabelo;
-* roupa;
-* acessório;
-* avental/uniforme.
+- aparência;
+- cabelo;
+- roupa;
+- acessório;
+- avental/uniforme.
 
 As opções são puramente cosméticas.
 
@@ -456,10 +456,10 @@ Nenhum avatar possui vantagem.
 
 O avatar aparece:
 
-* na loja;
-* atrás do balcão;
-* em transições;
-* em pequenas animações automáticas.
+- na loja;
+- atrás do balcão;
+- em transições;
+- em pequenas animações automáticas.
 
 A criança **não movimenta manualmente o avatar**.
 
@@ -469,19 +469,19 @@ A criança **não movimenta manualmente o avatar**.
 
 Quando uma ação ocorre:
 
-* cliente chega;
-* produtos são separados;
-* compra é concluída;
-* produto novo é adquirido;
+- cliente chega;
+- produtos são separados;
+- compra é concluída;
+- produto novo é adquirido;
 
 o avatar pode executar animações automáticas curtas.
 
 Essas animações nunca podem:
 
-* bloquear a interface;
-* impedir continuar;
-* esconder informação;
-* ser obrigatórias para compreender o resultado.
+- bloquear a interface;
+- impedir continuar;
+- esconder informação;
+- ser obrigatórias para compreender o resultado.
 
 ---
 
@@ -495,27 +495,27 @@ Não copiar Minecraft.
 
 Não usar:
 
-* texturas de Minecraft;
-* Creeper;
-* Steve;
-* fontes imitadas;
-* logotipos;
-* sons;
-* assets;
-* nomes protegidos.
+- texturas de Minecraft;
+- Creeper;
+- Steve;
+- fontes imitadas;
+- logotipos;
+- sons;
+- assets;
+- nomes protegidos.
 
 Criar identidade própria.
 
 Características:
 
-* formas cúbicas;
-* volumes simples;
-* sombras;
-* perspectiva isométrica;
-* personagens blocados;
-* objetos legíveis;
-* cores amigáveis;
-* interface limpa.
+- formas cúbicas;
+- volumes simples;
+- sombras;
+- perspectiva isométrica;
+- personagens blocados;
+- objetos legíveis;
+- cores amigáveis;
+- interface limpa.
 
 ---
 
@@ -527,22 +527,22 @@ Loja em perspectiva isométrica.
 
 Mostrar:
 
-* avatar;
-* balcão;
-* clientes;
-* prateleiras;
-* produtos;
-* decoração;
-* expansões.
+- avatar;
+- balcão;
+- clientes;
+- prateleiras;
+- produtos;
+- decoração;
+- expansões.
 
 ## Atendimento
 
 Ao iniciar a atividade matemática:
 
-* reduzir distrações;
-* aproximar visualmente o balcão;
-* apresentar uma interface frontal;
-* deixar quantidade, preço e alternativas extremamente legíveis.
+- reduzir distrações;
+- aproximar visualmente o balcão;
+- apresentar uma interface frontal;
+- deixar quantidade, preço e alternativas extremamente legíveis.
 
 A estética voxel continua presente, mas não deve competir com a matemática.
 
@@ -560,15 +560,15 @@ Produtos:
 
 ### iniciais
 
-* Marcador — R$ 2
-* Revista — R$ 4
-* Livro — R$ 7
+- Marcador — R$ 2
+- Revista — R$ 4
+- Livro — R$ 7
 
 ### disponíveis posteriormente
 
-* Quadrinho — R$ 5
-* Caderno — R$ 6
-* Atlas — R$ 9
+- Quadrinho — R$ 5
+- Caderno — R$ 6
+- Atlas — R$ 9
 
 ---
 
@@ -576,15 +576,15 @@ Produtos:
 
 ### iniciais
 
-* Lápis — R$ 1
-* Pincel — R$ 3
-* Régua — R$ 5
+- Lápis — R$ 1
+- Pincel — R$ 3
+- Régua — R$ 5
 
 ### posteriormente
 
-* Bloco de desenho — R$ 6
-* Estojo — R$ 8
-* Tela pequena — R$ 10
+- Bloco de desenho — R$ 6
+- Estojo — R$ 8
+- Tela pequena — R$ 10
 
 ---
 
@@ -592,15 +592,15 @@ Produtos:
 
 ### iniciais
 
-* Cone — R$ 2
-* Corda — R$ 3
-* Garrafa esportiva — R$ 5
+- Cone — R$ 2
+- Corda — R$ 3
+- Garrafa esportiva — R$ 5
 
 ### posteriormente
 
-* Peteca — R$ 6
-* Bola — R$ 8
-* Raquete — R$ 10
+- Peteca — R$ 6
+- Bola — R$ 8
+- Raquete — R$ 10
 
 ---
 
@@ -610,15 +610,15 @@ Evitar produtos inadequados ou perigosos.
 
 ### iniciais
 
-* LED para projeto — R$ 1
-* Cabo de conexão — R$ 2
-* Botão eletrônico — R$ 4
+- LED para projeto — R$ 1
+- Cabo de conexão — R$ 2
+- Botão eletrônico — R$ 4
 
 ### posteriormente
 
-* Sensor — R$ 6
-* Mini motor — R$ 8
-* Kit maker — R$ 10
+- Sensor — R$ 6
+- Mini motor — R$ 8
+- Kit maker — R$ 10
 
 ---
 
@@ -626,10 +626,10 @@ Evitar produtos inadequados ou perigosos.
 
 Os preços são:
 
-* inteiros;
-* de R$ 1 a R$ 10;
-* estáveis;
-* associados permanentemente ao produto.
+- inteiros;
+- de R$ 1 a R$ 10;
+- estáveis;
+- associados permanentemente ao produto.
 
 Não alterar o preço de um produto entre dias.
 
@@ -653,9 +653,9 @@ Não afirmar que representam preços reais de mercado.
 
 Cada loja possui:
 
-* 6 produtos;
-* 3 disponíveis inicialmente;
-* 3 adquiríveis posteriormente.
+- 6 produtos;
+- 3 disponíveis inicialmente;
+- 3 adquiríveis posteriormente.
 
 Produtos antigos nunca desaparecem.
 
@@ -709,18 +709,18 @@ grande impacto             R$ 150
 
 Produto mais caro pode gerar:
 
-* expositor maior;
-* nova seção;
-* iluminação;
-* alteração visual maior.
+- expositor maior;
+- nova seção;
+- iluminação;
+- alteração visual maior.
 
 Nunca pode gerar:
 
-* multiplicador de dinheiro;
-* vantagem matemática;
-* respostas mais fáceis;
-* maior domínio;
-* bônus por acerto.
+- multiplicador de dinheiro;
+- vantagem matemática;
+- respostas mais fáceis;
+- maior domínio;
+- bônus por acerto.
 
 ---
 
@@ -825,9 +825,9 @@ Não exigir drag-and-drop.
 
 Pode existir arrastar como melhoria opcional, mas todas as ações devem funcionar por:
 
-* clique;
-* toque;
-* teclado.
+- clique;
+- toque;
+- teclado.
 
 ---
 
@@ -896,13 +896,13 @@ fallback
 
 Regras:
 
-* nenhuma alternativa duplicada;
-* somente uma correta;
-* valores coerentes;
-* não criar respostas absurdas;
-* evitar pegadinhas;
-* guardar qual distrator foi selecionado pela criança;
-* usar essa informação somente para adaptação pedagógica.
+- nenhuma alternativa duplicada;
+- somente uma correta;
+- valores coerentes;
+- não criar respostas absurdas;
+- evitar pegadinhas;
+- guardar qual distrator foi selecionado pela criança;
+- usar essa informação somente para adaptação pedagógica.
 
 ---
 
@@ -986,16 +986,16 @@ Resposta comum:
 
 e:
 
-> * R$ 42 em vendas
+> - R$ 42 em vendas
 
 Feedback:
 
-* curto;
-* positivo;
-* não exagerado;
-* som discreto;
-* animação breve;
-* cliente satisfeito.
+- curto;
+- positivo;
+- não exagerado;
+- som discreto;
+- animação breve;
+- cliente satisfeito.
 
 Não usar uma celebração enorme a cada conta.
 
@@ -1005,12 +1005,12 @@ Não usar uma celebração enorme a cada conta.
 
 Reservar para:
 
-* novo produto;
-* nova área;
-* expansão;
-* capítulo;
-* conquista;
-* catálogo completo.
+- novo produto;
+- nova área;
+- expansão;
+- capítulo;
+- conquista;
+- catálogo completo.
 
 Respeitar redução de movimento.
 
@@ -1022,29 +1022,29 @@ Criar um pequeno elenco fixo.
 
 Sugestão:
 
-* Lia
-* Caio
-* Bia
-* Theo
-* Nina
-* Davi
+- Lia
+- Caio
+- Bia
+- Theo
+- Nina
+- Davi
 
 Cada um possui:
 
-* nome;
-* aparência voxel própria;
-* personalidade leve;
-* frases características;
-* preferências temáticas.
+- nome;
+- aparência voxel própria;
+- personalidade leve;
+- frases características;
+- preferências temáticas.
 
 Evitar estereótipos.
 
 Nenhuma característica física representa:
 
-* inteligência;
-* capacidade;
-* dificuldade;
-* comportamento.
+- inteligência;
+- capacidade;
+- dificuldade;
+- comportamento.
 
 Exemplos:
 
@@ -1124,10 +1124,10 @@ não conseguem representar todas as combinações possíveis de `1×1` até `10�
 
 NÃO resolva isso:
 
-* mudando preços;
-* criando preços aleatórios;
-* aumentando silenciosamente para 10 produtos;
-* quebrando a regra de preço fixo.
+- mudando preços;
+- criando preços aleatórios;
+- aumentando silenciosamente para 10 produtos;
+- quebrando a regra de preço fixo.
 
 Quando um fato necessário não puder ser contextualizado naturalmente através de uma venda, utilize uma **atividade concreta curta da própria loja**.
 
@@ -1145,13 +1145,13 @@ ou:
 
 Essas atividades devem:
 
-* continuar contextualizadas;
-* usar multiplicação;
-* utilizar as mesmas 3 alternativas;
-* utilizar o mesmo sistema de pistas;
-* alimentar o mesmo modelo de domínio;
-* ser raras;
-* não transformar o jogo em outra modalidade.
+- continuar contextualizadas;
+- usar multiplicação;
+- utilizar as mesmas 3 alternativas;
+- utilizar o mesmo sistema de pistas;
+- alimentar o mesmo modelo de domínio;
+- ser raras;
+- não transformar o jogo em outra modalidade.
 
 No máximo uma atividade desse tipo em um dia quando pedagogicamente necessária.
 
@@ -1234,11 +1234,7 @@ type MultiplicationFact = {
   lastSeenDay?: number;
   lastHintDepth?: number;
 
-  state:
-    | "new"
-    | "learning"
-    | "consolidating"
-    | "mastered";
+  state: "new" | "learning" | "consolidating" | "mastered";
 };
 ```
 
@@ -1306,8 +1302,8 @@ mastery ≥ 0.75
 
 Para `MASTERED`, exigir também:
 
-* pelo menos 3 acertos independentes;
-* distribuídos em pelo menos 2 dias.
+- pelo menos 3 acertos independentes;
+- distribuídos em pelo menos 2 dias.
 
 Não dominar um fato apenas porque foi acertado uma vez.
 
@@ -1329,9 +1325,9 @@ Sugestão:
 
 Limites:
 
-* nunca auto-dominar o par;
-* confiança transferida não deve ultrapassar aproximadamente 0.65;
-* ainda exigir exposição direta.
+- nunca auto-dominar o par;
+- confiança transferida não deve ultrapassar aproximadamente 0.65;
+- ainda exigir exposição direta.
 
 ---
 
@@ -1343,13 +1339,13 @@ Criar um componente de domínio independente, por exemplo:
 
 Priorizar fatos considerando:
 
-* conteúdo já introduzido;
-* domínio baixo;
-* necessidade de revisão;
-* tempo desde última exposição;
-* variedade;
-* fatos relacionados;
-* progressão do capítulo.
+- conteúdo já introduzido;
+- domínio baixo;
+- necessidade de revisão;
+- tempo desde última exposição;
+- variedade;
+- fatos relacionados;
+- progressão do capítulo.
 
 Não usar tempo de resposta.
 
@@ -1368,12 +1364,12 @@ Evitar:
 
 Regras desejadas:
 
-* não repetir imediatamente o mesmo fato;
-* deixar pelo menos algumas atividades entre repetições;
-* limitar exposição excessiva por dia;
-* trabalhar o par comutativo posteriormente;
-* fatos difíceis reaparecem em dias futuros;
-* fatos dominados ainda recebem revisão ocasional.
+- não repetir imediatamente o mesmo fato;
+- deixar pelo menos algumas atividades entre repetições;
+- limitar exposição excessiva por dia;
+- trabalhar o par comutativo posteriormente;
+- fatos difíceis reaparecem em dias futuros;
+- fatos dominados ainda recebem revisão ocasional.
 
 ---
 
@@ -1474,10 +1470,10 @@ Implementar cinco capítulos.
 
 **Primeiros Clientes**
 
-* loja pequena;
-* mais suporte visual;
-* tutorial;
-* calibração.
+- loja pequena;
+- mais suporte visual;
+- tutorial;
+- calibração.
 
 Mínimo aproximado:
 
@@ -1489,9 +1485,9 @@ Mínimo aproximado:
 
 **Loja Conhecida**
 
-* loja cresce;
-* produtos adicionais ficam disponíveis para aquisição;
-* mais combinações matemáticas.
+- loja cresce;
+- produtos adicionais ficam disponíveis para aquisição;
+- mais combinações matemáticas.
 
 Mínimo aproximado:
 
@@ -1503,9 +1499,9 @@ Mínimo aproximado:
 
 **Loja Popular**
 
-* nova expansão visual;
-* maior variedade;
-* mais autonomia.
+- nova expansão visual;
+- maior variedade;
+- mais autonomia.
 
 Mínimo aproximado:
 
@@ -1517,9 +1513,9 @@ Mínimo aproximado:
 
 **Loja de Sucesso**
 
-* loja maior;
-* conteúdos mais complexos dentro de `1–10`;
-* menos pistas para fatos dominados.
+- loja maior;
+- conteúdos mais complexos dentro de `1–10`;
+- menos pistas para fatos dominados.
 
 Mínimo aproximado:
 
@@ -1531,10 +1527,10 @@ Mínimo aproximado:
 
 **Loja Incrível**
 
-* versão visual mais completa;
-* consolidação;
-* revisão adaptativa;
-* progressão sem pressão para “terminar”.
+- versão visual mais completa;
+- consolidação;
+- revisão adaptativa;
+- progressão sem pressão para “terminar”.
 
 ---
 
@@ -1553,9 +1549,9 @@ Nenhum único fato pode bloquear sozinho a progressão.
 
 Pode-se utilizar:
 
-* média ponderada dos fatos-alvo;
-* cobertura mínima;
-* quantidade de fatos consolidados.
+- média ponderada dos fatos-alvo;
+- cobertura mínima;
+- quantidade de fatos consolidados.
 
 Centralize a política em configuração.
 
@@ -1707,23 +1703,23 @@ Dois grupos:
 
 ## funcionais
 
-* novo produto;
-* expositor;
-* nova seção visual;
-* prateleira;
-* balcão visualmente melhor.
+- novo produto;
+- expositor;
+- nova seção visual;
+- prateleira;
+- balcão visualmente melhor.
 
 ## cosméticas
 
-* parede;
-* piso;
-* luminária;
-* planta;
-* tapete;
-* placa;
-* fachada;
-* balcão;
-* objetos decorativos.
+- parede;
+- piso;
+- luminária;
+- planta;
+- tapete;
+- placa;
+- fachada;
+- balcão;
+- objetos decorativos.
 
 ---
 
@@ -1733,11 +1729,11 @@ A criança escolhe primeiro um estilo-base gratuito.
 
 Sugestões:
 
-* Pixel Natural
-* Tech Block
-* Colorido Criativo
-* Urbano Moderno
-* Clássico
+- Pixel Natural
+- Tech Block
+- Colorido Criativo
+- Urbano Moderno
+- Clássico
 
 Depois pode misturar itens individuais.
 
@@ -1749,11 +1745,11 @@ Nenhuma escolha é permanente.
 
 Nunca permitir que uma decoração:
 
-* deixe texto ilegível;
-* reduza contraste da interface;
-* esconda controles;
-* altere a cor semântica de foco;
-* transforme fundo e texto em combinação inadequada.
+- deixe texto ilegível;
+- reduza contraste da interface;
+- esconda controles;
+- altere a cor semântica de foco;
+- transforme fundo e texto em combinação inadequada.
 
 Interface funcional e decoração devem usar camadas visuais independentes.
 
@@ -1765,18 +1761,18 @@ Cada dia pode possuir um objetivo pequeno e opcional.
 
 Exemplos:
 
-* vender 3 tipos de produto;
-* atender todos os clientes;
-* realizar uma venda com produto recém-adquirido;
-* atender determinados personagens;
-* vender determinada quantidade total de itens.
+- vender 3 tipos de produto;
+- atender todos os clientes;
+- realizar uma venda com produto recém-adquirido;
+- atender determinados personagens;
+- vender determinada quantidade total de itens.
 
 Não usar:
 
-* “acerte tudo”;
-* “não erre”;
-* “responda rápido”;
-* “faça 10 acertos seguidos”.
+- “acerte tudo”;
+- “não erre”;
+- “responda rápido”;
+- “faça 10 acertos seguidos”.
 
 Falhar no objetivo não traz penalidade.
 
@@ -1786,10 +1782,10 @@ Falhar no objetivo não traz penalidade.
 
 Preferencialmente:
 
-* item cosmético;
-* nova placa;
-* moldura;
-* decoração.
+- item cosmético;
+- nova placa;
+- moldura;
+- decoração.
 
 Evitar grandes recompensas econômicas.
 
@@ -1839,11 +1835,11 @@ Chegar ao capítulo final.
 
 Não criar:
 
-* 10 acertos seguidos;
-* 100% de acerto;
-* responda em menos de X segundos;
-* nunca use pista;
-* termine sem errar.
+- 10 acertos seguidos;
+- 100% de acerto;
+- responda em menos de X segundos;
+- nunca use pista;
+- termine sem errar.
 
 Não transformar aprendizagem em pressão.
 
@@ -1907,9 +1903,9 @@ A experiência não pode depender do TTS.
 
 Caso nenhuma voz adequada esteja disponível:
 
-* jogo continua funcionando;
-* texto permanece;
-* controle pode indicar indisponibilidade de maneira discreta.
+- jogo continua funcionando;
+- texto permanece;
+- controle pode indicar indisponibilidade de maneira discreta.
 
 Não afirmar que TTS offline funciona em todos os navegadores.
 
@@ -1919,14 +1915,14 @@ Não afirmar que TTS offline funciona em todos os navegadores.
 
 Separar:
 
-* narração;
-* efeitos;
-* música.
+- narração;
+- efeitos;
+- música.
 
 Cada um possui:
 
-* ligado/desligado;
-* volume próprio.
+- ligado/desligado;
+- volume próprio.
 
 Persistir configurações no perfil.
 
@@ -1948,9 +1944,9 @@ Não declare formalmente “100% WCAG compliant” apenas porque testes automati
 
 Documente:
 
-* critérios tratados;
-* testes automatizados;
-* verificações manuais ainda necessárias.
+- critérios tratados;
+- testes automatizados;
+- verificações manuais ainda necessárias.
 
 ---
 
@@ -1959,21 +1955,13 @@ Documente:
 Preferir elementos nativos:
 
 ```html
-button
-input
-fieldset
-legend
-dialog
-nav
-main
-header
-section
+button input fieldset legend dialog nav main header section
 ```
 
 Evitar:
 
 ```html
-<div onclick="...">
+<div onclick="..."></div>
 ```
 
 Não recriar botões manualmente quando `<button>` resolve.
@@ -1986,12 +1974,12 @@ Todo o jogo funcional deve ser utilizável por teclado.
 
 Garantir:
 
-* Tab;
-* Shift+Tab;
-* Enter;
-* Space;
-* Escape quando apropriado;
-* setas somente quando padrão do componente justificar.
+- Tab;
+- Shift+Tab;
+- Enter;
+- Space;
+- Escape quando apropriado;
+- setas somente quando padrão do componente justificar.
 
 Nenhuma armadilha de teclado.
 
@@ -2003,20 +1991,20 @@ Criar foco altamente visível.
 
 Produto alvo:
 
-* aproximadamente 3 px ou mais;
-* contraste forte;
-* offset suficiente;
-* não depender somente de mudança sutil de cor.
+- aproximadamente 3 px ou mais;
+- contraste forte;
+- offset suficiente;
+- não depender somente de mudança sutil de cor.
 
 Nunca esconder `outline` sem substituto adequado.
 
 O foco não pode ficar coberto por:
 
-* HUD;
-* modal;
-* rodapé;
-* tooltip;
-* animação.
+- HUD;
+- modal;
+- rodapé;
+- tooltip;
+- animação.
 
 ---
 
@@ -2028,12 +2016,12 @@ Embora o WCAG permita situações menores, o produto deve adotar como regra:
 
 Especialmente para:
 
-* respostas;
-* produtos;
-* botões;
-* navegação;
-* volume;
-* configurações.
+- respostas;
+- produtos;
+- botões;
+- navegação;
+- volume;
+- configurações.
 
 Manter espaço suficiente entre controles.
 
@@ -2075,10 +2063,10 @@ Não apenas vermelho.
 
 Para seleção:
 
-* borda;
-* ícone;
-* texto;
-* estado programático.
+- borda;
+- ícone;
+- texto;
+- estado programático.
 
 ---
 
@@ -2125,7 +2113,7 @@ Nunca gerar rolagem horizontal para controles essenciais.
 Respeitar:
 
 ```css
-@media (prefers-reduced-motion: reduce)
+@media (prefers-reduced-motion: reduce);
 ```
 
 Também oferecer preferência no perfil:
@@ -2134,11 +2122,11 @@ Também oferecer preferência no perfil:
 
 Quando ativado:
 
-* remover movimentos de câmera;
-* reduzir transições;
-* substituir deslocamentos por fade simples ou mudança instantânea;
-* desativar partículas;
-* simplificar avatar.
+- remover movimentos de câmera;
+- reduzir transições;
+- substituir deslocamentos por fade simples ou mudança instantânea;
+- desativar partículas;
+- simplificar avatar.
 
 Nenhuma funcionalidade pode depender da animação.
 
@@ -2152,10 +2140,10 @@ Se drag-and-drop for implementado visualmente:
 
 a mesma ação deve funcionar via:
 
-* toque simples;
-* clique;
-* teclado;
-* controles adicionar/remover.
+- toque simples;
+- clique;
+- teclado;
+- controles adicionar/remover.
 
 ---
 
@@ -2169,17 +2157,17 @@ Não fazer leitor de tela anunciar centenas de blocos visuais.
 
 A camada semântica deve anunciar:
 
-* cliente;
-* pedido;
-* quantidade;
-* preço;
-* pergunta;
-* alternativas;
-* seleção;
-* pista;
-* resultado;
-* saldo;
-* mudanças relevantes.
+- cliente;
+- pedido;
+- quantidade;
+- preço;
+- pergunta;
+- alternativas;
+- seleção;
+- pista;
+- resultado;
+- saldo;
+- mudanças relevantes.
 
 ---
 
@@ -2191,10 +2179,10 @@ Preferir semântica nativa.
 
 Componentes customizados devem possuir corretamente:
 
-* name;
-* role;
-* state;
-* value.
+- name;
+- role;
+- state;
+- value.
 
 ---
 
@@ -2202,11 +2190,11 @@ Componentes customizados devem possuir corretamente:
 
 Utilizar região `aria-live="polite"` cuidadosamente para:
 
-* resultado;
-* pista;
-* produto adicionado;
-* desbloqueio;
-* alteração importante.
+- resultado;
+- pista;
+- produto adicionado;
+- desbloqueio;
+- alteração importante.
 
 Não anunciar animações decorativas.
 
@@ -2236,11 +2224,11 @@ Use nome acessível:
 
 Linguagem:
 
-* clara;
-* curta;
-* apropriada para 9–10 anos;
-* respeitosa;
-* sem infantilização excessiva.
+- clara;
+- curta;
+- apropriada para 9–10 anos;
+- respeitosa;
+- sem infantilização excessiva.
 
 Evitar frases longas.
 
@@ -2250,15 +2238,15 @@ Evitar frases longas.
 
 Não incluir como produtos ou recompensas:
 
-* doces;
-* álcool;
-* cigarros;
-* drogas;
-* armas;
-* apostas;
-* loot boxes;
-* produtos adultos;
-* itens inadequados.
+- doces;
+- álcool;
+- cigarros;
+- drogas;
+- armas;
+- apostas;
+- loot boxes;
+- produtos adultos;
+- itens inadequados.
 
 ---
 
@@ -2330,13 +2318,13 @@ Não assumir que saves futuros sempre terão a mesma estrutura.
 
 Salvar após eventos significativos:
 
-* finalizar atendimento;
-* finalizar dia;
-* comprar produto;
-* comprar cosmético;
-* trocar configuração;
-* mudar capítulo;
-* editar avatar.
+- finalizar atendimento;
+- finalizar dia;
+- comprar produto;
+- comprar cosmético;
+- trocar configuração;
+- mudar capítulo;
+- editar avatar.
 
 Não depender de salvar apenas ao fechar navegador.
 
@@ -2346,10 +2334,10 @@ Não depender de salvar apenas ao fechar navegador.
 
 Lidar graciosamente com:
 
-* IndexedDB indisponível;
-* quota;
-* dado inválido;
-* migration failure.
+- IndexedDB indisponível;
+- quota;
+- dado inválido;
+- migration failure.
 
 Nunca apagar silenciosamente o perfil.
 
@@ -2365,13 +2353,13 @@ o jogo deve continuar funcional sem internet.
 
 Cachear:
 
-* HTML;
-* JS;
-* CSS;
-* SVG;
-* fontes locais se existirem;
-* assets necessários;
-* conteúdo.
+- HTML;
+- JS;
+- CSS;
+- SVG;
+- fontes locais se existirem;
+- assets necessários;
+- conteúdo.
 
 Nenhuma chamada de API é necessária durante gameplay.
 
@@ -2506,11 +2494,11 @@ SETTINGS
 Evitar boolean soup como:
 
 ```ts
-isQuestion
-isHint
-isCustomer
-isSummary
-isTransition
+isQuestion;
+isHint;
+isCustomer;
+isSummary;
+isTransition;
 ```
 
 se isso produzir combinações inválidas.
@@ -2523,11 +2511,11 @@ Randomizações devem ser controláveis por seed nos testes.
 
 Isso vale para:
 
-* clientes;
-* pergunta;
-* posição da alternativa correta;
-* objetivo diário;
-* pequenos detalhes de cenário.
+- clientes;
+- pergunta;
+- posição da alternativa correta;
+- objetivo diário;
+- pequenos detalhes de cenário.
 
 O gameplay não precisa mostrar a seed.
 
@@ -2537,13 +2525,13 @@ O gameplay não precisa mostrar a seed.
 
 Meta:
 
-* carregamento rápido;
-* bundle razoável;
-* interação fluida;
-* nenhuma engine 3D pesada;
-* animações via transform/opacity quando possível;
-* evitar renderizações React desnecessárias;
-* lazy loading somente onde realmente útil.
+- carregamento rápido;
+- bundle razoável;
+- interação fluida;
+- nenhuma engine 3D pesada;
+- animações via transform/opacity quando possível;
+- evitar renderizações React desnecessárias;
+- lazy loading somente onde realmente útil.
 
 ---
 
@@ -2551,10 +2539,10 @@ Meta:
 
 Crie assets simples internamente usando:
 
-* SVG;
-* CSS;
-* formas geométricas;
-* ícones próprios.
+- SVG;
+- CSS;
+- formas geométricas;
+- ícones próprios.
 
 Não buscar assets protegidos da internet.
 
@@ -2580,51 +2568,51 @@ Cobrir especialmente:
 
 ## Matemática
 
-* resposta correta;
-* geração de fatos;
-* limites 1–10;
-* comutatividade;
-* score;
-* estados;
-* mastery clamp;
-* spacing;
-* scheduler.
+- resposta correta;
+- geração de fatos;
+- limites 1–10;
+- comutatividade;
+- score;
+- estados;
+- mastery clamp;
+- spacing;
+- scheduler.
 
 ## Distratores
 
-* exatamente 3 alternativas;
-* única resposta correta;
-* sem duplicação;
-* distratores válidos.
+- exatamente 3 alternativas;
+- única resposta correta;
+- sem duplicação;
+- distratores válidos.
 
 ## Pistas
 
-* sequência correta;
-* solução final;
-* reset ao próximo atendimento.
+- sequência correta;
+- solução final;
+- reset ao próximo atendimento.
 
 ## Economia
 
-* faturamento;
-* despesas;
-* saldo;
-* caixa;
-* compra;
-* impossibilidade de comprar sem saldo.
+- faturamento;
+- despesas;
+- saldo;
+- caixa;
+- compra;
+- impossibilidade de comprar sem saldo.
 
 ## Progressão
 
-* mínimo de dias;
-* domínio;
-* mudança de capítulo;
-* nenhum fato individual bloqueia sozinho.
+- mínimo de dias;
+- domínio;
+- mudança de capítulo;
+- nenhum fato individual bloqueia sozinho.
 
 ## Persistência
 
-* create;
-* update;
-* load;
-* migration.
+- create;
+- update;
+- load;
+- migration.
 
 ---
 
@@ -2632,14 +2620,14 @@ Cobrir especialmente:
 
 Cobrir:
 
-* alternativas;
-* escolha de produto;
-* modal de compra;
-* configurações;
-* perfil;
-* tutorial;
-* feedback;
-* pistas.
+- alternativas;
+- escolha de produto;
+- modal de compra;
+- configurações;
+- perfil;
+- tutorial;
+- feedback;
+- pistas.
 
 Testar teclado.
 
@@ -2714,15 +2702,15 @@ Integrar axe nas principais telas.
 
 Testar manualmente também:
 
-* teclado;
-* foco;
-* leitor de tela estrutural;
-* zoom 200%;
-* texto grande;
-* movimento reduzido;
-* contraste;
-* layout em tablet;
-* alternativas por toque.
+- teclado;
+- foco;
+- leitor de tela estrutural;
+- zoom 200%;
+- texto grande;
+- movimento reduzido;
+- contraste;
+- layout em tablet;
+- alternativas por toque.
 
 Nenhum teste automatizado substitui avaliação manual.
 
@@ -2753,17 +2741,17 @@ Criar ou atualizar `README.md`.
 
 Incluir:
 
-* objetivo;
-* stack;
-* como instalar;
-* como rodar;
-* como testar;
-* como buildar;
-* como funciona persistência;
-* como funciona offline;
-* arquitetura resumida;
-* acessibilidade;
-* limitações conhecidas.
+- objetivo;
+- stack;
+- como instalar;
+- como rodar;
+- como testar;
+- como buildar;
+- como funciona persistência;
+- como funciona offline;
+- arquitetura resumida;
+- acessibilidade;
+- limitações conhecidas.
 
 Criar também, se fizer sentido:
 
@@ -2783,19 +2771,19 @@ Não duplicar documentação inutilmente.
 
 `ACCESSIBILITY.md` deve descrever no mínimo:
 
-* WCAG 2.2 AA como alvo;
-* teclado;
-* foco;
-* contraste;
-* target sizes;
-* movimento reduzido;
-* zoom;
-* screen readers;
-* audio alternatives;
-* drag alternative;
-* aria-live;
-* testes realizados;
-* limitações.
+- WCAG 2.2 AA como alvo;
+- teclado;
+- foco;
+- contraste;
+- target sizes;
+- movimento reduzido;
+- zoom;
+- screen readers;
+- audio alternatives;
+- drag alternative;
+- aria-live;
+- testes realizados;
+- limitações.
 
 ---
 
@@ -2831,51 +2819,51 @@ Documentar valores de configuração.
 
 O projeto só está pronto quando:
 
-* abre no navegador;
-* não exige backend;
-* permite criar múltiplos perfis;
-* salva IndexedDB;
-* permite escolher qualquer uma das 4 lojas;
-* avatar pode ser personalizado;
-* loja possui estética voxel original;
-* primeiro dia pode ser jogado do começo ao fim;
-* existem 5–6 clientes;
-* pedidos contextualizam multiplicação;
-* há seleção de produtos;
-* há cálculo direto;
-* existem 3 alternativas;
-* distratores são pedagógicos;
-* há pistas progressivas;
-* erros não retiram dinheiro;
-* faturamento é calculado;
-* fechamento é automático;
-* saldo entra no caixa;
-* melhorias podem ser compradas;
-* alteração aparece visualmente;
-* capítulos existem;
-* progressão híbrida existe;
-* produtos são desbloqueáveis;
-* cosméticos existem;
-* conquistas existem;
-* objetivo opcional existe;
-* matemática adaptativa funciona;
-* propriedade comutativa é relacionada;
-* repetição não é agressiva;
-* suporte diminui conforme domínio;
-* narração opcional existe;
-* áudio é configurável;
-* teclado funciona;
-* foco é visível;
-* movimento reduzido funciona;
-* texto grande funciona;
-* layout desktop funciona;
-* layout tablet funciona;
-* jogo funciona offline depois do cache;
-* refresh não perde progresso;
-* build passa;
-* testes passam;
-* lint passa;
-* typecheck passa.
+- abre no navegador;
+- não exige backend;
+- permite criar múltiplos perfis;
+- salva IndexedDB;
+- permite escolher qualquer uma das 4 lojas;
+- avatar pode ser personalizado;
+- loja possui estética voxel original;
+- primeiro dia pode ser jogado do começo ao fim;
+- existem 5–6 clientes;
+- pedidos contextualizam multiplicação;
+- há seleção de produtos;
+- há cálculo direto;
+- existem 3 alternativas;
+- distratores são pedagógicos;
+- há pistas progressivas;
+- erros não retiram dinheiro;
+- faturamento é calculado;
+- fechamento é automático;
+- saldo entra no caixa;
+- melhorias podem ser compradas;
+- alteração aparece visualmente;
+- capítulos existem;
+- progressão híbrida existe;
+- produtos são desbloqueáveis;
+- cosméticos existem;
+- conquistas existem;
+- objetivo opcional existe;
+- matemática adaptativa funciona;
+- propriedade comutativa é relacionada;
+- repetição não é agressiva;
+- suporte diminui conforme domínio;
+- narração opcional existe;
+- áudio é configurável;
+- teclado funciona;
+- foco é visível;
+- movimento reduzido funciona;
+- texto grande funciona;
+- layout desktop funciona;
+- layout tablet funciona;
+- jogo funciona offline depois do cache;
+- refresh não perde progresso;
+- build passa;
+- testes passam;
+- lint passa;
+- typecheck passa.
 
 ---
 
@@ -2883,20 +2871,20 @@ O projeto só está pronto quando:
 
 Não usar:
 
-* dark patterns;
-* countdown;
-* energia limitada;
-* “volte amanhã”;
-* streak diário;
-* FOMO;
-* recompensa aleatória monetizada;
-* perdas arbitrárias;
-* ranking;
-* comparações entre crianças;
-* “você é melhor que…”;
-* pontuação de inteligência;
-* mensagens de fracasso;
-* punição por pista.
+- dark patterns;
+- countdown;
+- energia limitada;
+- “volte amanhã”;
+- streak diário;
+- FOMO;
+- recompensa aleatória monetizada;
+- perdas arbitrárias;
+- ranking;
+- comparações entre crianças;
+- “você é melhor que…”;
+- pontuação de inteligência;
+- mensagens de fracasso;
+- punição por pista.
 
 ---
 
@@ -2973,86 +2961,86 @@ Implemente verticalmente.
 
 ## Milestone 1 — Fundação
 
-* Vite/React/TypeScript;
-* design tokens;
-* shell;
-* persistência;
-* domínio base;
-* testes.
+- Vite/React/TypeScript;
+- design tokens;
+- shell;
+- persistência;
+- domínio base;
+- testes.
 
 ## Milestone 2 — Perfil
 
-* seleção;
-* criação;
-* avatar;
-* loja;
-* acessibilidade.
+- seleção;
+- criação;
+- avatar;
+- loja;
+- acessibilidade.
 
 ## Milestone 3 — Primeiro atendimento completo
 
-* cliente;
-* pedido;
-* produto;
-* pergunta;
-* alternativas;
-* resposta;
-* feedback.
+- cliente;
+- pedido;
+- produto;
+- pergunta;
+- alternativas;
+- resposta;
+- feedback.
 
 Esse milestone já deve ser jogável.
 
 ## Milestone 4 — Sistema pedagógico
 
-* distratores;
-* pistas;
-* domínio;
-* scheduler;
-* comutatividade;
-* revisão espaçada.
+- distratores;
+- pistas;
+- domínio;
+- scheduler;
+- comutatividade;
+- revisão espaçada.
 
 ## Milestone 5 — Dia completo
 
-* 5–6 clientes;
-* faturamento;
-* fechamento;
-* caixa.
+- 5–6 clientes;
+- faturamento;
+- fechamento;
+- caixa.
 
 ## Milestone 6 — Progressão
 
-* capítulos;
-* produtos;
-* upgrades;
-* expansão visual.
+- capítulos;
+- produtos;
+- upgrades;
+- expansão visual.
 
 ## Milestone 7 — Personalização
 
-* estilos;
-* cosméticos;
-* avatar melhorado.
+- estilos;
+- cosméticos;
+- avatar melhorado.
 
 ## Milestone 8 — Metagame
 
-* objetivos;
-* conquistas.
+- objetivos;
+- conquistas.
 
 ## Milestone 9 — Acessibilidade completa
 
-* keyboard pass;
-* focus pass;
-* axe;
-* zoom;
-* screen reader semantics;
-* reduced motion;
-* narration.
+- keyboard pass;
+- focus pass;
+- axe;
+- zoom;
+- screen reader semantics;
+- reduced motion;
+- narration.
 
 A acessibilidade deve ser considerada desde o início; este milestone é uma revisão, não o momento de começar a implementá-la.
 
 ## Milestone 10 — Offline e hardening
 
-* service worker;
-* offline tests;
-* storage migration;
-* error handling;
-* performance.
+- service worker;
+- offline tests;
+- storage migration;
+- error handling;
+- performance.
 
 ---
 
@@ -3095,9 +3083,9 @@ Não diga que algo passou sem executar.
 
 Se algo não puder ser executado no ambiente, informe exatamente:
 
-* o que;
-* por quê;
-* como verificar localmente.
+- o que;
+- por quê;
+- como verificar localmente.
 
 ---
 
@@ -3149,33 +3137,33 @@ O resultado deve parecer um **pequeno jogo de verdade**, e não um formulário d
 
 A criança precisa perceber:
 
-* personagens;
-* loja;
-* produtos;
-* dinheiro;
-* escolhas;
-* crescimento;
-* personalização;
-* contexto.
+- personagens;
+- loja;
+- produtos;
+- dinheiro;
+- escolhas;
+- crescimento;
+- personalização;
+- contexto.
 
 O adulto precisa perceber:
 
-* objetivo pedagógico;
-* progressão;
-* adaptação;
-* ausência de punição;
-* acessibilidade;
-* privacidade;
-* qualidade técnica.
+- objetivo pedagógico;
+- progressão;
+- adaptação;
+- ausência de punição;
+- acessibilidade;
+- privacidade;
+- qualidade técnica.
 
 E o código precisa demonstrar:
 
-* separação de responsabilidades;
-* domínio testável;
-* estado previsível;
-* persistência robusta;
-* acessibilidade desde a arquitetura;
-* baixo acoplamento;
-* ausência de complexidade acidental.
+- separação de responsabilidades;
+- domínio testável;
+- estado previsível;
+- persistência robusta;
+- acessibilidade desde a arquitetura;
+- baixo acoplamento;
+- ausência de complexidade acidental.
 
 **Construa agora o MVP completo da Lojinha Maluca conforme esta especificação.**
