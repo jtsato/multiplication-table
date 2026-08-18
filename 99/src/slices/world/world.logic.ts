@@ -48,13 +48,25 @@ export function randomGroundPosition(rng: Rng): Vec3 {
  * desta POC e evita a complexidade de um Poisson disc completo. Se o teto for
  * atingido, devolve menos posicoes do que o pedido em vez de travar.
  */
-export function scatterPositions(rng: Rng, count: number, minSpacing: number): Vec3[] {
+export function scatterPositions(
+  rng: Rng,
+  count: number,
+  minSpacing: number,
+  /**
+   * Areas proibidas, como a planta da casa.
+   *
+   * Predicado em vez de a geracao conhecer a casa: o mundo nao precisa saber que
+   * existe uma casa — quem sabe onde ela esta e a propria slice dela.
+   */
+  isBlocked: (position: Vec3) => boolean = () => false,
+): Vec3[] {
   const placed: Vec3[] = [];
   const minSpacingSq = minSpacing * minSpacing;
   const maxAttempts = count * 30;
 
   for (let attempt = 0; attempt < maxAttempts && placed.length < count; attempt += 1) {
     const candidate = randomGroundPosition(rng);
+    if (isBlocked(candidate)) continue;
     const tooClose = placed.some((other) => {
       const dx = candidate.x - other.x;
       const dz = candidate.z - other.z;

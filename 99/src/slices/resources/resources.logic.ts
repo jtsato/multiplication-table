@@ -1,5 +1,6 @@
 import { type Rng } from '../../shared/rng';
 import { distanceSqXZ, type Vec3 } from '../../shared/vec';
+import { blocksHome } from '../home/home.logic';
 import { scatterPositions } from '../world/world.logic';
 
 export type ResourceKind = 'madeira' | 'fruta' | 'pedra';
@@ -74,7 +75,7 @@ export function emptyInventory(): Inventory {
  */
 export function createNodes(rng: Rng): ResourceNode[] {
   const total = RESOURCES.nodesPerKind * RESOURCE_KINDS.length;
-  const positions = scatterPositions(rng, total, RESOURCES.minSpacing);
+  const positions = scatterPositions(rng, total, RESOURCES.minSpacing, blocksHome);
 
   return positions.map((position, index) => {
     const kind = RESOURCE_KINDS[index % RESOURCE_KINDS.length];

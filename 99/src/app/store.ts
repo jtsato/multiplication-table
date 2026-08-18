@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { createBuildingSlice, type BuildingSlice } from '../slices/building/building.store';
 import { createDayNightSlice, type DayNightSlice } from '../slices/daynight/daynight.store';
 import { createEconomySlice, type EconomySlice } from '../slices/economy/economy.store';
+import { createHomeSlice, type HomeSlice } from '../slices/home/home.store';
 import { dayNightClock } from '../slices/daynight/dayNightClock';
 import { createLanternSlice, type LanternSlice } from '../slices/lantern/lantern.store';
 import { playerTransform } from '../slices/player/playerTransform';
@@ -22,7 +23,8 @@ export type GameState = WorldSlice &
   BuildingSlice &
   DayNightSlice &
   LanternSlice &
-  EconomySlice;
+  EconomySlice &
+  HomeSlice;
 
 export const useGameStore = create<GameState>()((...args) => ({
   ...createWorldSlice(...args),
@@ -32,6 +34,7 @@ export const useGameStore = create<GameState>()((...args) => ({
   ...createDayNightSlice(...args),
   ...createLanternSlice(...args),
   ...createEconomySlice(...args),
+  ...createHomeSlice(...args),
 }));
 
 /**
