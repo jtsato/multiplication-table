@@ -902,16 +902,23 @@ html[data-reduced-motion='on'] *::after {
 /* Escolha de idioma                                                       */
 /* ---------------------------------------------------------------------- */
 
-/* Escolha, nao acao: sem o verde do botao primario e sem a sombra chapada
-   que convida ao "apertar para avancar". A opcao marcada se diferencia pela
-   marca de radio, pela borda e pelo peso do texto â€” nunca so pela cor. */
+/* Seletor recolhido: o verde indica que o controle esta aberto/ativo; o codigo
+   regional e uma pista visual secundaria e o nome nativo e a informacao
+   principal. */
 .language-choice {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
 }
 
-.language-option {
+.language-choice__label {
+  color: var(--fg);
+  font-size: var(--text-base);
+  font-weight: 700;
+}
+
+.language-trigger {
   display: flex;
   align-items: center;
   gap: var(--space-3);
@@ -926,7 +933,102 @@ html[data-reduced-motion='on'] *::after {
   font-weight: 600;
   text-align: left;
   cursor: pointer;
-  transition: border-color var(--motion-fast) var(--ease-standard);
+  transition:
+    border-color var(--motion-fast) var(--ease-standard),
+    background-color var(--motion-fast) var(--ease-standard);
+}
+
+.language-trigger--open {
+  border-color: var(--accent);
+  background: var(--accent-pale);
+  font-weight: 800;
+}
+
+.language-trigger__code,
+.language-option__code {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 48px;
+  min-height: 28px;
+  padding: 0 var(--space-2);
+  border-radius: var(--space-2);
+  background: var(--surface);
+  color: var(--fg);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+.language-trigger--open .language-trigger__code {
+  background: var(--bg);
+}
+
+.language-trigger__name,
+.language-option__name {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.language-trigger__name {
+  flex: 1;
+}
+
+.language-trigger__chevron {
+  flex: none;
+  width: 12px;
+  height: 12px;
+  margin-left: auto;
+  border-right: 3px solid var(--fg);
+  border-bottom: 3px solid var(--fg);
+  transform: rotate(45deg) translateY(-3px);
+  transition: transform var(--motion-fast) var(--ease-standard);
+}
+
+.language-trigger--open .language-trigger__chevron {
+  transform: rotate(225deg) translate(-2px, -2px);
+}
+
+.language-listbox {
+  position: absolute;
+  top: calc(100% + var(--space-2));
+  left: 0;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  width: 100%;
+  max-height: min(360px, 60vh);
+  overflow-y: auto;
+  padding: var(--space-2);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--bg);
+  box-shadow: var(--elev-raised);
+}
+
+.language-option {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  min-height: var(--touch-target);
+  padding: var(--space-2) var(--space-3);
+  border: 2px solid transparent;
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  color: var(--fg);
+  font-size: var(--text-base);
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+}
+
+.language-option--active {
+  border-color: var(--info-ink);
+  background: var(--surface);
 }
 
 .language-option--selected {
@@ -935,34 +1037,20 @@ html[data-reduced-motion='on'] *::after {
   font-weight: 800;
 }
 
-/* Circulo vazio -> circulo com miolo: a mesma gramatica do radio de
-   formulario, que a crianca ja viu em prova de escola. */
-.language-option__mark {
-  flex: none;
+.language-option__name {
+  flex: 1;
+}
+
+.language-option__check {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  flex: none;
   width: 24px;
   height: 24px;
-  border: 2px solid var(--edge-underside);
-  border-radius: 50%;
-  background: var(--bg);
-}
-
-.language-option--selected .language-option__mark {
-  border-color: var(--accent-active);
-}
-
-.language-option--selected .language-option__mark::after {
-  content: '';
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background: var(--accent-active);
-}
-
-.language-option__flag {
+  color: var(--success-ink);
   font-size: var(--text-xl);
+  font-weight: 800;
   line-height: 1;
 }
 

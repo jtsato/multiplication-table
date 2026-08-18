@@ -81,12 +81,12 @@ export function createTranslator(locale: Locale): TranslateFn {
   };
 }
 
-/** Nome e bandeira de um idioma, escritos no proprio idioma. */
-export function localeMeta(locale: Locale): { name: string; flag: string } {
+/** Nome e codigo regional de um idioma; o nome e escrito no proprio idioma. */
+export function localeMeta(locale: Locale): { name: string; regionCode: string } {
   const tree = DICTIONARIES[locale] ?? DICTIONARIES[FALLBACK_LOCALE];
   return {
     name: lookup(tree, 'meta.name') ?? locale,
-    flag: lookup(tree, 'meta.flag') ?? '🌐',
+    regionCode: locale.split('-')[1]?.toUpperCase() ?? 'UN',
   };
 }
 

@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="900" viewBox="0 0 1440 900" role="img" aria-labelledby="title desc">
+  <title id="title">Mockup do seletor de idioma</title>
+  <desc id="desc">Comparação entre o seletor de idioma recolhido e aberto, usando códigos de região e nomes nativos, sem bandeiras ou busca.</desc>
+
+  <rect width="1440" height="900" fill="#f7f7f7"/>
+
+  <text x="100" y="74" fill="#3c3c3c" font-family="Arial, sans-serif" font-size="34" font-weight="800">Seleção de idioma</text>
+  <text x="100" y="108" fill="#777777" font-family="Arial, sans-serif" font-size="17">Seletor compacto para muitos idiomas</text>
+
+  <!-- Closed state -->
+  <rect x="100" y="150" width="560" height="620" rx="20" fill="#ffffff" stroke="#e5e5e5" stroke-width="2"/>
+  <text x="140" y="204" fill="#3c3c3c" font-family="Arial, sans-serif" font-size="22" font-weight="800">Estado recolhido</text>
+  <text x="140" y="260" fill="#777777" font-family="Arial, sans-serif" font-size="16" font-weight="700">Idioma</text>
+
+  <rect x="140" y="280" width="480" height="76" rx="16" fill="#ffffff" stroke="#58cc02" stroke-width="3"/>
+  <rect x="162" y="300" width="52" height="36" rx="10" fill="#f0f8e9"/>
+  <text x="188" y="325" text-anchor="middle" fill="#3c3c3c" font-family="Arial, sans-serif" font-size="16" font-weight="800">BR</text>
+  <text x="234" y="327" fill="#3c3c3c" font-family="Arial, sans-serif" font-size="21" font-weight="800">Português (Brasil)</text>
+  <path d="M578 310 l12 12 l12 -12" fill="none" stroke="#3c3c3c" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <text x="140" y="405" fill="#777777" font-family="Arial, sans-serif" font-size="16">Toque para escolher outro idioma</text>
+  <line x1="140" y1="465" x2="620" y2="465" stroke="#e5e5e5" stroke-width="2"/>
+  <text x="140" y="515" fill="#3c3c3c" font-family="Arial, sans-serif" font-size="18" font-weight="800">Por que funciona</text>
+  <text x="140" y="552" fill="#777777" font-family="Arial, sans-serif" font-size="16">• ocupa pouco espaço</text>
+  <text x="140" y="584" fill="#777777" font-family="Arial, sans-serif" font-size="16">• mostra claramente a seleção atual</text>
+  <text x="140" y="616" fill="#777777" font-family="Arial, sans-serif" font-size="16">• não depende de bandeiras</text>
+
+  <!-- Open state -->
+  <rect x="780" y="150" width="560" height="620" rx="20" fill="#ffffff" stroke="#e5e5e5" stroke-width="2"/>
+  <text x="820" y="204" fill="#3c3c3c" font-family="Arial, sans-serif" font-size="22" font-weight="800">Estado aberto</text>
+  <text x="820" y="260" fill="#777777" font-family="Arial, sans-serif" font-size="16" font-weight="700">Idioma</text>
+
+  <rect x="820" y="280" width="480" height="76" rx="16" fill="#f0f8e9" stroke="#58cc02" stroke-width="3"/>
+  <rect x="842" y="300" width="52" height="36" rx="10" fill="#ffffff"/>
+  <text x="868" y="325" text-anchor="middle" fill="#3c3c3c" font-family="Arial, sans-serif" font-size="16" font-weight="800">BR</text>
+  <text x="914" y="327" fill="#3c3c3c" font-family="Arial, sans-serif" font-size="21" font-weight="800">Português (Brasil)</text>
+  <path d="M1238 322 l12 -12 l12 12" fill="none" stroke="#3c3c3c" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <rect x="820" y="368" width="480" height="380" rx="16" fill="#ffffff" stroke="#e5e5e5" stroke-width="2"/>
+
+  <!-- Option rows -->
+  <rect x="836" y="384" width="448" height="40" rx="10" fill="#f0f8e9"/>
+  <rect x="852" y="390" width="48" height="28" rx="8" fill="#ffffff"/>
+  <text x="876" y="410" text-anchor="middle" fill="#3c3c3c" font-family="Arial, sans-serif" font-size="14" font-weight="800">BR</text>
+  <text x="918" y="410" fill="#3c3c3c" font-family="Arial, sans-serif" font-size="17" font-weight="700">Português (Brasil)</text>
+  <path d="M1242 398 l7 8 l14 -16" fill="none" stroke="#58a700" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <rect x="852" y="434" width="48" height="28" rx="8" fill="#f7f7f7"/>
+  <text x="876" y="454" text-anchor="middle" fill="#3c3c3c" font-family="Arial, sans-serif" font-size="14" font-weight="800">US</text>
+  <text x="918" y="454" fill="#3c3c3c" font-family="Arial, sans-serif" font-size="17">English (US)</text>
+
+  <rect x="852" y="478" width="48" height="28" rx="8" fill="#f7f7f7"/>
+  <text x="876" y="498" text-anchor="middle" fill="#3c3c3c" font-family="Arial, sans-serif" font-size="14" font-weight="800">ES</text>
+  <text x="918" y="498" fill="#3c3c3c" font-family="Arial, sans-serif" font-size="17">Español (España)</text>
+
+  <rect x="852" y="522" width="48" height="28" rx="8" fill="#f7f7f7"/>
+  <text x="876" y="542" text-anchor="middle" fill="#3c3c3c" font-family="Arial, sans-serif" font-size="14" font-weight="800">FR</text>
+  <text x="918" y="542" fill="#3c3c3c" font-family="Arial, sans-serif" font-size="17">Français (France)</text>
+
+  <rect x="852" y="566" width="48" height="28" rx="8" fill="#f7f7f7"/>
+  <text x="876" y="586" text-anchor="middle" fill="#3c3c3c" font-family="Arial, sans-serif" font-size="14" font-weight="800">DE</text>
+  <text x="918" y="586" fill="#3c3c3c" font-family="Arial, sans-serif" font-size="17">Deutsch (Deutschland)</text>
+
+  <rect x="852" y="610" width="48" height="28" rx="8" fill="#f7f7f7"/>
+  <text x="876" y="630" text-anchor="middle" fill="#3c3c3c" font-family="Arial, sans-serif" font-size="14" font-weight="800">JP</text>
+  <text x="918" y="630" fill="#3c3c3c" font-family="Arial, sans-serif" font-size="17">日本語 (日本)</text>
+
+  <rect x="852" y="654" width="48" height="28" rx="8" fill="#f7f7f7"/>
+  <text x="876" y="674" text-anchor="middle" fill="#3c3c3c" font-family="Arial, sans-serif" font-size="14" font-weight="800">KR</text>
+  <text x="918" y="674" fill="#3c3c3c" font-family="Arial, sans-serif" font-size="17">한국어 (대한민국)</text>
+
+  <rect x="852" y="698" width="48" height="28" rx="8" fill="#f7f7f7"/>
+  <text x="876" y="718" text-anchor="middle" fill="#3c3c3c" font-family="Arial, sans-serif" font-size="14" font-weight="800">CN</text>
+  <text x="918" y="718" fill="#3c3c3c" font-family="Arial, sans-serif" font-size="17">中文 (中国)</text>
+
+  <text x="100" y="840" fill="#777777" font-family="Arial, sans-serif" font-size="15">Mockup conceitual — o componente real ainda não foi alterado.</text>
+</svg>
