@@ -1,3 +1,4 @@
+export { ShopPanel } from './ShopPanel';
 export { createEconomySlice, type EconomySlice } from './economy.store';
 export {
   ECONOMY,

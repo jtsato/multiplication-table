@@ -81,7 +81,7 @@ export function Hud({ isTouch = false }: { isTouch?: boolean } = {}) {
           <span>WASD — andar</span>
           <span>← → ou arrastar o mouse — girar a câmera</span>
           <span>E — resolver e colher · 1 2 3 — responder</span>
-          <span>B — fogueira · C — cerca</span>
+          <span>B — fogueira · C — cerca · L — loja</span>
           <span>Espaço — construir · Esc — cancelar</span>
         </div>
       )}

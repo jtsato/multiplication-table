@@ -17,7 +17,8 @@ export type GameAction =
   | 'cancelar'
   | 'responder-1'
   | 'responder-2'
-  | 'responder-3';
+  | 'responder-3'
+  | 'loja';
 
 type Handler = () => void;
 
@@ -68,6 +69,7 @@ export const KEY_BINDINGS: Record<string, GameAction> = {
   KeyE: 'interagir',
   KeyB: 'construir-fogueira',
   KeyC: 'construir-cerca',
+  KeyL: 'loja',
   Space: 'confirmar',
   Escape: 'cancelar',
   Digit1: 'responder-1',

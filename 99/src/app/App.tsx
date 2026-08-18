@@ -2,6 +2,7 @@ import { Suspense, lazy } from 'react';
 import { Hud } from './Hud';
 import { TouchControls } from './TouchControls';
 import { useIsTouchDevice, useKeyboardBindings } from '../shared/input';
+import { ShopPanel } from '../slices/economy';
 import { ChallengePanel } from '../slices/math';
 import './loading.css';
 
@@ -51,6 +52,7 @@ export function App() {
       </Suspense>
       <Hud isTouch={isTouch} />
       <ChallengePanel />
+      <ShopPanel />
       {isTouch && <TouchControls />}
     </>
   );

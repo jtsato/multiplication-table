@@ -171,6 +171,9 @@ export function TouchControls() {
               hint="6 mad"
               disabled={!canAfford(inventory, STRUCTURES.cerca.recipe)}
             />
+            {/* A loja fica por último: é a ação menos frequente das quatro, e o
+                polegar alcança melhor as de cima. */}
+            {!activeChallenge && <ActionButton action="loja" label="Loja" />}
           </>
         )}
       </div>
