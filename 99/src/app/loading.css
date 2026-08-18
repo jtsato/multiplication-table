@@ -40,6 +40,13 @@
   font-weight: 800;
 }
 
+/* Tagline: a única linha desta tela que vai ser traduzida. */
+.loading__tagline {
+  margin: 0;
+  font-size: 15px;
+  opacity: 0.9;
+}
+
 .loading__text {
   margin: 0;
   opacity: 0.75;

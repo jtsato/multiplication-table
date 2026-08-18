@@ -1,4 +1,6 @@
-# Sobrevivência da Tabuada
+# Numi 99
+
+**A ilha da tabuada.**
 
 POC 3D de um jogo educacional que roda no navegador. A criança explora uma ilha
 low poly, resolve multiplicações **contextualizadas no objeto que está colhendo**

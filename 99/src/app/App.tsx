@@ -22,7 +22,10 @@ function LoadingScreen() {
   return (
     <div className="loading" role="status">
       <div className="loading__sun" aria-hidden="true" />
-      <p className="loading__title">Sobrevivência da Tabuada</p>
+      {/* O nome não traduz; a tagline sim. Quando entrar o i18n, só a
+          segunda linha vira chave de locale. */}
+      <p className="loading__title">Numi 99</p>
+      <p className="loading__tagline">A ilha da tabuada</p>
       <p className="loading__text">Preparando a ilha…</p>
     </div>
   );
