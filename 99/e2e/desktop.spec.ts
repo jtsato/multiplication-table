@@ -2,6 +2,7 @@ import { expect, test } from '@playwright/test';
 import { createSwarms, swarmSeed } from '../src/slices/lantern/fireflies.logic';
 import { createRng } from '../src/shared/rng';
 import { DEFAULT_WORLD_SEED } from '../src/slices/world/world.store';
+import { REGIONS } from '../src/slices/regions/regions.logic';
 import {
   esperarJogoPronto,
   esperarPainelCentralizado,
@@ -317,6 +318,36 @@ test.describe('partida no computador', () => {
    * invisivel realmente abre, se o tabuleiro sustenta o jogador e se a fisica
    * deixa atravessar. Isso so o navegador responde.
    */
+  /**
+   * O álbum das seis regiões.
+   *
+   * Vale como documentação e como teste: percorrer o arquipélago inteiro prova
+   * que `regionAt` concorda com o mundo físico em todo lugar — que o chão existe
+   * onde os dados dizem que existe, e que o jogador pousa nele em vez de cair.
+   * Um erro de coordenada numa região distante só apareceria quando a criança
+   * chegasse lá.
+   */
+  test('o arquipelago inteiro: uma captura de cada regiao', async ({ page }) => {
+    await page.goto('/');
+    await esperarJogoPronto(page);
+
+    for (const regiao of REGIONS) {
+      await page.evaluate((p) => window.__tabuada!.teleportar?.(p.x, p.z), {
+        x: regiao.center.x,
+        z: regiao.center.z,
+      });
+      // Tempo para o corpo assentar no chão da região e a câmera acompanhar.
+      await page.waitForTimeout(900);
+
+      const estado = await lerEstado(page);
+      expect(estado.regiao, `${regiao.id}: o jogador nao esta na regiao`).toBe(regiao.id);
+      // Não caiu na água nem atravessou o terreno.
+      expect(estado.jogador.y, `${regiao.id}: caiu`).toBeGreaterThan(regiao.groundY - 1);
+
+      await page.screenshot({ path: `e2e/telas/regiao-${regiao.id}.png` });
+    }
+  });
+
   test('a ponte fechada barra a travessia, e a comprada deixa passar', async ({ page }) => {
     await page.goto('/');
     await esperarJogoPronto(page);

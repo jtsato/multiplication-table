@@ -100,3 +100,23 @@ export const palette = {
 } as const;
 
 export type PaletteColor = keyof typeof palette;
+
+/**
+ * A cor de cada regiao.
+ *
+ * Sem isto o Pico a sete metros de altura tinha exatamente a mesma grama da
+ * Praia, e as seis regioes eram o mesmo lugar com colheitas diferentes. O que a
+ * crianca precisa reconhecer de longe e **onde ela esta** — e o lugar carrega a
+ * tabuada junto.
+ *
+ * `tuft` e a cor dos tufos do chao; na neve do Pico, tufo verde nao existe.
+ */
+export const REGION_PALETTE = {
+  praia: { ground: '#5cb85c', shore: '#e6c88a', tuft: '#3f8f45' },
+  porto: { ground: '#63b06a', shore: '#d9c39a', tuft: '#40894a' },
+  bosque: { ground: '#3f8f45', shore: '#cbb98a', tuft: '#2c6b34' },
+  cachoeira: { ground: '#4fae86', shore: '#bfd4c8', tuft: '#357f61' },
+  pomar: { ground: '#7cc45a', shore: '#e0cf95', tuft: '#5a9d3d' },
+  // Neve: o Pico e o unico lugar do jogo sem verde nenhum.
+  pico: { ground: '#e8f1f7', shore: '#c9d8e2', tuft: '#b8cddb' },
+} as const;

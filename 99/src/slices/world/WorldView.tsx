@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { Instance, Instances } from '@react-three/drei';
 import { CuboidCollider, CylinderCollider, RigidBody } from '@react-three/rapier';
 import { useGameStore } from '../../app/store';
-import { palette } from '../../shared/palette';
+import { REGION_PALETTE, palette } from '../../shared/palette';
 import { createRng, randomRange } from '../../shared/rng';
 import { openingsFor } from '../regions/bridges.logic';
 import {
@@ -98,6 +98,7 @@ function RegionWalls({ regiao }: { regiao: Region }) {
 function RegionGround({ regiao }: { regiao: Region }) {
   const altura = espessura(regiao);
   const { x, z } = regiao.center;
+  const cores = REGION_PALETTE[regiao.id];
 
   return (
     <>
@@ -111,13 +112,13 @@ function RegionGround({ regiao }: { regiao: Region }) {
       */}
       <mesh position={[x, regiao.groundY - 0.6, z]} receiveShadow>
         <cylinderGeometry args={[regiao.radius + 2.2, regiao.radius + 1.2, 1, 24]} />
-        <meshLambertMaterial color={palette.sand} flatShading />
+        <meshLambertMaterial color={cores.shore} flatShading />
       </mesh>
 
       <RigidBody type="fixed" colliders={false}>
         <mesh position={[x, regiao.groundY - altura / 2, z]} receiveShadow>
           <cylinderGeometry args={[regiao.radius, regiao.radius - 1.5, altura, 24]} />
-          <meshLambertMaterial color={palette.grass} flatShading />
+          <meshLambertMaterial color={cores.ground} flatShading />
         </mesh>
         <CylinderCollider
           args={[altura / 2, regiao.radius]}
@@ -148,15 +149,20 @@ function Scenery({ seed }: { seed: number }) {
       REGIONS.flatMap((regiao) =>
         scatterPositions(rng, porRegiao, spacing, undefined, (semente) =>
           randomGroundPositionIn(regiao, semente),
-        ).map((position) => ({ position, groundY: regiao.groundY })),
+        ).map((position) => ({
+          position,
+          groundY: regiao.groundY,
+          tuft: REGION_PALETTE[regiao.id].tuft,
+        })),
       );
 
     const tuftPositions = espalharPorTodas(24, 1.6);
     const pebblePositions = espalharPorTodas(10, 2.2);
 
     return {
-      tufts: tuftPositions.map(({ position, groundY }, index) => ({
+      tufts: tuftPositions.map(({ position, groundY, tuft }, index) => ({
         key: index,
+        color: tuft,
         position: [position.x, groundY + 0.18, position.z] as const,
         rotation: [0, randomRange(rng, 0, Math.PI * 2), 0] as const,
         scale: randomRange(rng, 0.7, 1.4),
@@ -176,12 +182,15 @@ function Scenery({ seed }: { seed: number }) {
 
   return (
     <>
+      {/* Cor por instancia: o tufo do Bosque e escuro, o do Pico e gelo. Uma
+          malha instanciada so continua custando uma chamada de desenho. */}
       <Instances limit={tufts.length} castShadow>
         <coneGeometry args={[0.22, 0.55, 4]} />
-        <meshLambertMaterial color={palette.grassDark} flatShading />
+        <meshLambertMaterial flatShading />
         {tufts.map((tuft) => (
           <Instance
             key={tuft.key}
+            color={tuft.color}
             position={tuft.position}
             rotation={tuft.rotation}
             scale={tuft.scale}
