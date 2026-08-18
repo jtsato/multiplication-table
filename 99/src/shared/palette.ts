@@ -41,8 +41,17 @@ export const palette = {
   // Luz do sol por fase
   sunDay: '#fff6e0',
   sunDusk: '#ff9a5c',
-  sunNight: '#4a6ba8',
+  sunNight: '#8fa8de',
   sunDawn: '#ffd0a8',
+
+  /**
+   * Cor da luz ambiente da noite, separada da cor do ceu.
+   *
+   * A luz hemisferica usava a propria cor do ceu, e a noite isso a tornava
+   * inutil: `#1b2a52` e quase preto, entao qualquer intensidade multiplicada
+   * por ele continuava dando preto. O ceu pode ser fundo, a luz precisa ser luz.
+   */
+  moonAmbient: '#7d93c9',
 
   // Feedback do desafio
   correct: '#3fbf6f',

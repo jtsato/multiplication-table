@@ -48,8 +48,14 @@ describe('LanternView', () => {
 
     const luz = luzDa(renderer);
     expect(luz.intensity).toBeGreaterThan(0);
-    expect(luz.position.x).toBeCloseTo(7);
-    expect(luz.position.z).toBeCloseTo(-3);
+    // Acompanha o jogador de perto, mas nao no centro dele: dentro da capsula a
+    // luz deixaria o personagem preto no meio do proprio facho.
+    expect(Math.hypot(luz.position.x - 7, luz.position.z - -3)).toBeLessThan(1);
+    // Acima da cabeca.
+    expect(luz.position.y).toBeGreaterThan(1.5);
+    // Atras do jogador, do lado da camera: com yaw = 0, atras e +Z. Na frente
+    // ele ficaria em contraluz e viraria silhueta.
+    expect(luz.position.z).toBeGreaterThan(-3);
 
     await renderer.unmount();
   });

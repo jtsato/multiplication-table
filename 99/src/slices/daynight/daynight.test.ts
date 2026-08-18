@@ -90,7 +90,7 @@ describe('phaseFor', () => {
     expect(duracao('dia') * CICLO).toBeGreaterThanOrEqual(150);
   });
 
-  it('o entardecer avisa com folga antes do perigo', () => {
+  it('o entardecer da tempo de chegar na fogueira e acender a lanterna', () => {
     const aviso = (PHASE_BOUNDS.entardecer.end - PHASE_BOUNDS.entardecer.start) * CICLO;
     expect(aviso).toBeGreaterThanOrEqual(20);
   });
@@ -234,8 +234,7 @@ describe('skyConfigFor', () => {
 });
 
 describe('proporcao das fases', () => {
-  const duracao = (fase: DayPhase) =>
-    (PHASE_BOUNDS[fase].end - PHASE_BOUNDS[fase].start) * CICLO;
+  const duracao = (fase: DayPhase) => (PHASE_BOUNDS[fase].end - PHASE_BOUNDS[fase].start) * CICLO;
 
   it('a noite dura menos de um quarto do dia', () => {
     expect(duracao('noite')).toBeLessThan(duracao('dia') / 4);
@@ -250,11 +249,42 @@ describe('proporcao das fases', () => {
   });
 });
 
+/** Brilho medio de uma cor hex, de 0 a 1. */
+const brilho = (hex: string) => {
+  const valor = parseInt(hex.slice(1), 16);
+  return (((valor >> 16) & 0xff) + ((valor >> 8) & 0xff) + (valor & 0xff)) / (3 * 255);
+};
+
 describe('luar', () => {
   it('e claro o bastante para andar sem lanterna', () => {
     const noite = skyConfigFor(PHASE_BOUNDS.noite.end - 0.001);
     expect(noite.ambientIntensity).toBeGreaterThanOrEqual(0.6);
     expect(noite.sunIntensity).toBeGreaterThanOrEqual(0.75);
+  });
+
+  /**
+   * Esta e a asserçao que faltava, e ela nasceu de um bug real: a versao
+   * anterior so exigia intensidade alta, passava, e a tela continuava preta. A
+   * luz hemisferica usava a cor do ceu, e intensidade vezes `#1b2a52` da preto
+   * por mais que se suba a intensidade. Intensidade sozinha nao e brilho.
+   */
+  it('a luz ambiente da noite e clara, mesmo com o ceu escuro', () => {
+    const noite = skyConfigFor(PHASE_BOUNDS.noite.end - 0.001);
+    expect(brilho(noite.ambientColor)).toBeGreaterThan(0.4);
+    expect(brilho(noite.ambientColor)).toBeGreaterThan(brilho(noite.skyColor) * 2);
+  });
+
+  /**
+   * A luz direcional rente ao horizonte passa raspando pelo chao e nao ilumina
+   * nada, por mais forte que seja. A lua precisa estar no ceu.
+   */
+  it('a lua fica alta o bastante para a luz alcancar o chao', () => {
+    expect(skyConfigFor(PHASE_BOUNDS.noite.end - 0.001).elevation).toBeGreaterThan(0.3);
+  });
+
+  it('de dia a luz ambiente e a cor do ceu', () => {
+    const dia = skyConfigFor(PHASE_BOUNDS.dia.start + 0.1);
+    expect(dia.ambientColor).toBe(dia.skyColor);
   });
 
   it('ainda e nitidamente mais escuro que o dia', () => {

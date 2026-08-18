@@ -61,7 +61,9 @@ export function DayNightView({ isTouch = false }: { isTouch?: boolean } = {}) {
 
     if (ambientRef.current) {
       ambientRef.current.intensity = sky.ambientIntensity;
-      ambientRef.current.color.set(scratchColor.set(sky.skyColor));
+      // `ambientColor`, e nao `skyColor`: a noite tem um ceu escuro e uma luz
+      // clara. Usando a cor do ceu, a hemisferica nao iluminava nada.
+      ambientRef.current.color.set(scratchColor.set(sky.ambientColor));
     }
 
     // Publica com throttle, mas imediatamente na virada de fase: o HUD nao pode

@@ -1,12 +1,16 @@
 # Sobrevivência da Tabuada
 
-POC 3D de um jogo de sobrevivência educacional que roda no navegador. A criança
-explora uma ilha low poly durante o dia, resolve multiplicações **contextualizadas
-no objeto que está colhendo** para obter recursos, constrói fogueira e cerca, e usa
-essas construções para atravessar a noite até o amanhecer.
+POC 3D de um jogo educacional que roda no navegador. A criança explora uma ilha
+low poly, resolve multiplicações **contextualizadas no objeto que está colhendo**
+para obter recursos, monta o acampamento e acende uma lanterna para aproveitar a
+noite curta.
 
 A matemática é a ferramenta de progresso, não uma prova: sem responder, não há
-madeira; sem madeira, não há fogo; sem fogo, a noite vence.
+madeira; sem madeira, não há fogueira; sem a conta na fogueira, não há luz para
+levar consigo.
+
+**Não há como perder.** Não existem inimigos, dano nem tela de derrota — o jogo é
+um lugar para voltar, não uma prova para vencer.
 
 ## O que separa isto de um quiz com enfeite 3D
 
@@ -17,8 +21,8 @@ Três decisões, todas cobertas por teste:
    gravetos ao todo?". A criança pode **contar na tela** e conferir a resposta.
    `itemPlacements` e `generateChallenge` derivam ambos do mesmo `node.groups`.
 2. **O jogo não pausa.** O painel do desafio fica ancorado no próprio recurso, em
-   3D, e o mundo continua rodando. Errar uma conta com um inimigo se aproximando
-   tem consequência real.
+   3D, e o mundo continua rodando. A âncora nunca foi sobre tensão: é o que
+   permite à criança conferir a resposta contando os objetos na tela.
 3. **Errar nunca zera a recompensa.** 25% da colheita, no mínimo 1, e a resposta
    certa é sempre revelada. Um erro que zera ensina a evitar o desafio; um erro
    que rende menos ensina a tentar de novo.
@@ -33,35 +37,39 @@ em aparelhos com apontador grosso (`pointer: coarse`).
 
 ### No computador
 
-| Tecla | Ação |
-| --- | --- |
-| `W` `A` `S` `D` | Andar |
-| `←` `→` ou arrastar o mouse | Girar a câmera |
-| `E` | Colher um recurso ou abastecer a fogueira (abre o desafio) |
-| `1` `2` `3` | Responder o desafio |
-| `B` | Modo construção — fogueira (8 madeira + 4 pedra) |
-| `C` | Modo construção — cerca (6 madeira) |
-| `Espaço` | Confirmar construção |
-| `Esc` | Cancelar construção |
+| Tecla                       | Ação                                                       |
+| --------------------------- | ---------------------------------------------------------- |
+| `W` `A` `S` `D`             | Andar                                                      |
+| `←` `→` ou arrastar o mouse | Girar a câmera                                             |
+| `E`                         | Colher um recurso ou abastecer a fogueira (abre o desafio) |
+| `1` `2` `3`                 | Responder o desafio                                        |
+| `B`                         | Modo construção — fogueira (8 madeira + 4 pedra)           |
+| `C`                         | Modo construção — cerca (6 madeira)                        |
+| `Espaço`                    | Confirmar construção                                       |
+| `Esc`                       | Cancelar construção                                        |
 
 ### No celular
 
-| Gesto | Ação |
-| --- | --- |
-| Joystick (canto inferior esquerdo) | Andar — analógico, encostar de leve anda devagar |
-| Arrastar em qualquer outro ponto da tela | Girar a câmera |
-| Botão **Colher** / **Lenha** | Abre o desafio (só aparece com algo ao alcance) |
-| Botões do painel | Responder |
-| Botões **Fogueira** / **Cerca** | Entrar no modo construção (apagados sem recurso) |
-| Botões **Construir** / **Cancelar** | Confirmar ou desistir |
+| Gesto                                    | Ação                                             |
+| ---------------------------------------- | ------------------------------------------------ |
+| Joystick (canto inferior esquerdo)       | Andar — analógico, encostar de leve anda devagar |
+| Arrastar em qualquer outro ponto da tela | Girar a câmera                                   |
+| Botão **Colher** / **Acender**           | Abre o desafio (só aparece com algo ao alcance)  |
+| Botões do painel                         | Responder                                        |
+| Botões **Fogueira** / **Cerca**          | Entrar no modo construção (apagados sem recurso) |
+| Botões **Construir** / **Cancelar**      | Confirmar ou desistir                            |
 
 Os botões mostrados dependem do contexto: numa tela de celular não cabem oito
 comandos ao mesmo tempo, então só aparece o que faz sentido naquele momento.
 
-O ciclo dura 3 minutos. Colha e construa de dia; à noite surgem cinco vultos que
-perseguem o jogador. A fogueira os afugenta dentro do seu raio e a cerca bloqueia
-o caminho — mas a fogueira queima e, para reabastecê-la, é preciso resolver mais
-uma multiplicação. Sobreviver até o amanhecer com vida é a vitória.
+O ciclo dura 5 minutos, repartidos em **dia 204 s · entardecer 24 s · noite 48 s ·
+amanhecer 24 s**. O dia é longo porque é nele que se resolvem contas; a noite é
+curta porque é uma janela, não uma prova.
+
+À noite a criança pode resolver mais uma multiplicação na fogueira para **acender a
+lanterna**, que a acompanha por onde ela for. Uma carga dura 60 s e cobre a noite
+inteira com folga. Ficar sem carga não tira nada além do que só aparece no escuro:
+o luar continua claro o bastante para andar e voltar para o acampamento.
 
 ## Stack
 
@@ -96,7 +104,7 @@ src/
 │   ├── math/       # desafio contextualizado (o núcleo)
 │   ├── building/   # fogueira, cerca, combustível
 │   ├── daynight/   # relógio, fases, céu e luzes
-│   └── enemies/    # spawn, perseguição, dano, desfecho
+│   └── lantern/    # carga como prazo, luz que acompanha o jogador
 └── shared/         # sem regra de negócio: paleta, PRNG, vetor, teclado
 ```
 
@@ -107,19 +115,20 @@ Dentro de cada slice: `<nome>.logic.ts` (funções puras), `<nome>.store.ts`
 ### As duas regras que sustentam os 60 FPS
 
 **1. Nada que mude por quadro passa pelo React.** Posição do jogador
-(`playerTransform`), relógio do jogo (`dayNightClock`) e posições dos inimigos
-vivem em objetos mutáveis fora do React. Dentro de `useFrame`, o estado é lido
+(`playerTransform`), relógio do jogo (`dayNightClock`) e a carga da lanterna
+vivem fora do React — a carga é um prazo, então ela "queima" sozinha, sem nenhuma
+escrita por quadro. Dentro de `useFrame`, o estado é lido
 com `useGameStore.getState()`, nunca com hook seletor.
 
 **2. O store só recebe o que muda raramente.** Inventário, fase do dia, vida,
-desfecho. Valores contínuos que o HUD precisa são publicados com *throttle* a
+desfecho. Valores contínuos que o HUD precisa são publicados com _throttle_ a
 4 Hz, e as ações do store devolvem o estado inalterado quando o valor não mudou —
 sem isso, o realce do recurso (recalculado a cada quadro) notificaria os
 assinantes 60 vezes por segundo.
 
 ## Testes
 
-Duas camadas: **282 testes** de unidade/integração no Vitest e **16 testes ponta a
+Duas camadas: **280 testes** de unidade/integração no Vitest e **18 testes ponta a
 ponta** em navegador de verdade com Playwright.
 
 ### Ponta a ponta (Playwright)
@@ -132,7 +141,7 @@ npm run e2e:ui       # modo interativo
 Rodam contra o **build de produção** servido pelo `vite preview` — o mesmo
 artefato que vai para o Pages. Cobrem o que só o navegador prova: WebGL
 inicializa, o WASM do Rapier carrega, a física move o jogador de verdade, e o
-loop matemática → recurso → construção → noite → vitória funciona inteiro. O
+loop matemática → recurso → construção → noite → lanterna funciona inteiro. O
 projeto `celular` emula um Pixel 5 e emite eventos de toque nativos via CDP, de
 modo que o joystick é arrastado por um dedo real, não por eventos sintéticos.
 

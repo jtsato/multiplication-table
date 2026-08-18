@@ -33,11 +33,12 @@ test.describe('partida no computador', () => {
   test('carrega a ilha e mostra o HUD', async ({ page }) => {
     await expect(page.locator('canvas')).toBeVisible();
     await expect(page.getByText('Controles')).toBeVisible();
-    await expect(page.getByRole('meter', { name: 'Vida' })).toBeVisible();
+    await expect(page.getByRole('meter', { name: 'Lanterna' })).toBeVisible();
 
     const estado = await lerEstado(page);
     expect(estado.fase).toBe('dia');
-    expect(estado.vida).toBe(100);
+    // A lanterna comeca apagada: acende-la e o gesto que ensina a mecanica.
+    expect(estado.cargaLanterna).toBe(0);
     expect(estado.inventario).toEqual({ madeira: 0, fruta: 0, pedra: 0 });
 
     await page.screenshot({ path: 'e2e/telas/01-inicio.png' });
@@ -155,78 +156,100 @@ test.describe('partida no computador', () => {
     await page.screenshot({ path: 'e2e/telas/09-fogueira.png' });
   });
 
-  test('o entardecer avisa antes de a noite chegar', async ({ page }) => {
+  test('o entardecer convida a acender a lanterna', async ({ page }) => {
     await irParaOMeioDe(page, 'entardecer');
 
     const estado = await lerEstado(page);
     expect(estado.fase).toBe('entardecer');
-    // Ainda nao ha perigo: o entardecer e o aviso, nao a ameaca.
-    expect(estado.inimigos).toBe(0);
-    await expect(page.getByText(/A noite está chegando/)).toBeVisible();
+    await expect(page.getByText(/Anoitecendo/)).toBeVisible();
 
     await page.screenshot({ path: 'e2e/telas/09b-entardecer.png' });
   });
 
-  test('a noite chega, os inimigos surgem e o amanhecer traz a vitoria', async ({ page }) => {
+  /**
+   * O fluxo inteiro da noite, na ordem em que a crianca vive.
+   *
+   * Este teste substitui o antigo "sobreviver ate o amanhecer". Nao ha mais o
+   * que sobreviver: o que se prova agora e que a noite chega, que a conta na
+   * fogueira acende a lanterna e que o amanhecer devolve o dia.
+   */
+  test('a noite chega, a conta na fogueira acende a lanterna', async ({ page }) => {
+    // Fogueira de pe ao lado do jogador — construi-la ja tem teste proprio.
+    await page.evaluate(() => {
+      const ponte = window.__tabuada!;
+      ponte.store.setState({
+        inventory: { madeira: 40, fruta: 10, pedra: 20 },
+        structures: [
+          {
+            id: 'fogueira-e2e',
+            kind: 'fogueira' as const,
+            position: { x: 0, y: 0, z: -2.5 },
+            rotation: 0,
+            fuelUntil: ponte.clock.seconds + 50,
+          },
+        ],
+      });
+    });
+
     // Adianta o relogio em vez de esperar o ciclo inteiro em tempo real.
     await irParaOMeioDe(page, 'noite');
 
     const noite = await lerEstado(page);
     expect(noite.fase).toBe('noite');
-    expect(noite.inimigos).toBeGreaterThan(0);
-    await page.screenshot({ path: 'e2e/telas/10-noite.png' });
+    expect(noite.cargaLanterna).toBe(0);
+    await page.screenshot({ path: 'e2e/telas/10-noite-sem-lanterna.png' });
 
-    await irParaOMeioDe(page, 'amanhecer');
-
-    const amanhecer = await lerEstado(page);
-    expect(amanhecer.fase).toBe('amanhecer');
-    expect(amanhecer.desfecho).toBe('venceu');
-
-    await expect(page.getByText('Amanheceu!')).toBeVisible();
-    await page.screenshot({ path: 'e2e/telas/11-vitoria.png' });
-
-    // Reiniciar sem recarregar a pagina devolve o jogo jogavel.
-    await page.getByRole('button', { name: 'Jogar de novo' }).click();
+    // A mesma tecla da colheita, agora sem recurso ao alcance: abre a conta da
+    // fogueira.
+    await page.keyboard.press('KeyE');
     await page.waitForTimeout(400);
 
-    const reiniciado = await lerEstado(page);
-    expect(reiniciado.desfecho).toBe('jogando');
-    expect(reiniciado.vida).toBe(100);
-    expect(reiniciado.fase).toBe('dia');
-    await page.screenshot({ path: 'e2e/telas/12-reiniciado.png' });
+    const comDesafio = await lerEstado(page);
+    expect(comDesafio.desafio?.proposito).toBe('abastecer');
+
+    await responderPeloEnunciado(page, true);
+    await page.waitForTimeout(400);
+
+    const acesa = await lerEstado(page);
+    expect(acesa.cargaLanterna).toBeGreaterThan(noite.cargaLanterna);
+    // Uma carga inteira cobre a noite (48 s) com folga.
+    expect(acesa.cargaLanterna).toBeGreaterThan(48);
+
+    // A tela com a lanterna acesa e o que prova o clima da fase — nenhum teste
+    // unitario diz se a noite ficou acolhedora.
+    await page.screenshot({ path: 'e2e/telas/11-noite-com-lanterna.png' });
+
+    await irParaOMeioDe(page, 'amanhecer');
+    expect((await lerEstado(page)).fase).toBe('amanhecer');
+    await page.screenshot({ path: 'e2e/telas/12-amanhecer.png' });
   });
 
-  test('a cerca barra os monstros — eles nao passam por dentro', async ({ page }) => {
-    // Cerca o jogador com um anel de cercas construidas de verdade.
+  test('errar na fogueira acende menos, mas nunca deixa no escuro', async ({ page }) => {
     await page.evaluate(() => {
       const ponte = window.__tabuada!;
       ponte.store.setState({
-        inventory: { madeira: 999, fruta: 999, pedra: 999 },
-        structures: Array.from({ length: 12 }, (_, i) => {
-          const angulo = (i / 12) * Math.PI * 2;
-          const raio = 2.6;
-          return {
-            id: `cerca-${i}`,
-            kind: 'cerca' as const,
-            position: { x: Math.cos(angulo) * raio, y: 0, z: Math.sin(angulo) * raio },
-            rotation: -angulo + Math.PI / 2,
-            fuelUntil: 0,
-          };
-        }),
+        structures: [
+          {
+            id: 'fogueira-e2e',
+            kind: 'fogueira' as const,
+            position: { x: 0, y: 0, z: -2.5 },
+            rotation: 0,
+            fuelUntil: ponte.clock.seconds + 50,
+          },
+        ],
       });
     });
 
     await irParaOMeioDe(page, 'noite');
-    expect((await lerEstado(page)).inimigos).toBeGreaterThan(0);
+    await page.keyboard.press('KeyE');
+    await page.waitForTimeout(400);
 
-    // Tempo de sobra para atravessarem a ilha inteira, se conseguissem.
-    await page.waitForTimeout(9000);
-    await page.screenshot({ path: 'e2e/telas/13-cerca-segurando.png' });
+    await responderPeloEnunciado(page, false);
+    await page.waitForTimeout(400);
 
-    const depois = await lerEstado(page);
-    // Nenhum monstro entrou no cercado, entao ninguem encostou.
-    expect(depois.vida).toBe(100);
-    expect(depois.desfecho).toBe('jogando');
+    const carga = (await lerEstado(page)).cargaLanterna;
+    expect(carga).toBeGreaterThan(0);
+    expect(carga).toBeLessThan(48);
   });
 
   test('nenhum erro no console durante a partida', async ({ page }) => {

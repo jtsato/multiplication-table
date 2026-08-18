@@ -15,6 +15,8 @@ export interface EstadoJogo {
   fase: string;
   construcoes: number;
   jogador: { x: number; z: number };
+  /** Segundos de carga que restam na lanterna, no instante da leitura. */
+  cargaLanterna: number;
 }
 
 /** Le o estado do jogo pela ponte de depuracao. */
@@ -36,6 +38,9 @@ export async function lerEstado(page: Page): Promise<EstadoJogo> {
       fase: s.clock.phase,
       construcoes: s.structures.length,
       jogador: { x: ponte.transform.x, z: ponte.transform.z },
+      // Calculado aqui, e nao lido de `lanternCharge`: a amostra do HUD vem com
+      // throttle, e o teste precisa do valor do instante.
+      cargaLanterna: Math.max(0, s.lantern.chargedUntil - ponte.clock.seconds),
     };
   });
 }

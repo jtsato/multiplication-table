@@ -75,10 +75,13 @@ export function ChallengePanel() {
               <p className="challenge__answer">A resposta era {feedback.answer}</p>
             )}
             <p className="challenge__reward">
+              {/* A conta na fogueira rende duas coisas, e o feedback diz as
+                  duas: sem isso a criança não liga a resposta certa à luz que
+                  passou a carregar. */}
               {feedback.purpose === 'abastecer'
                 ? feedback.correct
-                  ? 'Fogueira cheia!'
-                  : 'Um pouco de lenha'
+                  ? 'Fogueira cheia e lanterna acesa!'
+                  : 'Um pouco de lenha e de luz'
                 : `+${feedback.reward}`}
             </p>
           </div>

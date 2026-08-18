@@ -6,6 +6,7 @@ import {
   ficarAoLadoDeUmRecurso,
   irParaOMeioDe,
   lerEstado,
+  responderPeloEnunciado,
   usarDedo,
 } from './jogo';
 
@@ -29,7 +30,7 @@ test.describe('partida no celular', () => {
     await expect(page.getByText('WASD — andar')).toHaveCount(0);
 
     // O HUD essencial continua de pe.
-    await expect(page.getByRole('meter', { name: 'Vida' })).toBeVisible();
+    await expect(page.getByRole('meter', { name: 'Lanterna' })).toBeVisible();
     await expect(page.locator('.hud__panel--inventory')).toBeVisible();
     // A barra de receitas sai da tela pequena: o espaco do rodape e do joystick
     // e dos botoes, e as receitas ja aparecem nos proprios botoes.
@@ -137,15 +138,35 @@ test.describe('partida no celular', () => {
     await expect(fogueira).toBeDisabled();
   });
 
-  test('a tela de vitoria funciona no toque', async ({ page }) => {
+  test('a noite no celular tem lanterna, e o amanhecer devolve o dia', async ({ page }) => {
+    await page.evaluate(() => {
+      const ponte = window.__tabuada!;
+      ponte.store.setState({
+        structures: [
+          {
+            id: 'fogueira-e2e',
+            kind: 'fogueira' as const,
+            position: { x: 0, y: 0, z: -2.5 },
+            rotation: 0,
+            fuelUntil: ponte.clock.seconds + 50,
+          },
+        ],
+      });
+    });
+
     await irParaOMeioDe(page, 'noite');
-    await irParaOMeioDe(page, 'amanhecer');
+    expect((await lerEstado(page)).fase).toBe('noite');
 
-    await expect(page.getByText('Amanheceu!')).toBeVisible();
-    await page.screenshot({ path: 'e2e/telas/celular-08-vitoria.png' });
-
-    await page.getByRole('button', { name: 'Jogar de novo' }).tap();
+    // Sem recurso ao alcance, o botao de interagir vira "Acender".
+    await page.getByRole('button', { name: /Acender/ }).tap();
     await page.waitForTimeout(400);
-    expect((await lerEstado(page)).desfecho).toBe('jogando');
+    await responderPeloEnunciado(page, true);
+    await page.waitForTimeout(400);
+
+    expect((await lerEstado(page)).cargaLanterna).toBeGreaterThan(48);
+    await page.screenshot({ path: 'e2e/telas/celular-08-noite-com-lanterna.png' });
+
+    await irParaOMeioDe(page, 'amanhecer');
+    expect((await lerEstado(page)).fase).toBe('amanhecer');
   });
 });

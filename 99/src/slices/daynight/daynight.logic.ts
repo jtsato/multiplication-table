@@ -125,6 +125,16 @@ export function mixHex(from: string, to: string, t: number): string {
 export interface SkyConfig {
   skyColor: string;
   sunColor: string;
+  /**
+   * Cor da luz hemisferica.
+   *
+   * Separada de `skyColor` porque as duas tem trabalhos diferentes. O ceu e
+   * fundo e pode ser escuro; a luz ambiente precisa iluminar. Enquanto a
+   * hemisferica usava a cor do ceu, a noite ficava preta por construcao —
+   * qualquer intensidade multiplicada por `#1b2a52` continua dando preto, e
+   * subir a intensidade nao resolvia nada. De dia as duas coincidem.
+   */
+  ambientColor: string;
   /** Intensidade da luz direcional. */
   sunIntensity: number;
   /** Intensidade da luz hemisferica. */
@@ -139,6 +149,7 @@ const PHASE_LIGHTING: Record<DayPhase, { from: SkyConfig; to: SkyConfig }> = {
     from: {
       skyColor: palette.skyDay,
       sunColor: palette.sunDay,
+      ambientColor: palette.skyDay,
       sunIntensity: 2.1,
       ambientIntensity: 1.1,
       elevation: 0.75,
@@ -146,6 +157,7 @@ const PHASE_LIGHTING: Record<DayPhase, { from: SkyConfig; to: SkyConfig }> = {
     to: {
       skyColor: palette.skyDay,
       sunColor: palette.sunDay,
+      ambientColor: palette.skyDay,
       sunIntensity: 2.1,
       ambientIntensity: 1.1,
       elevation: 1,
@@ -155,6 +167,7 @@ const PHASE_LIGHTING: Record<DayPhase, { from: SkyConfig; to: SkyConfig }> = {
     from: {
       skyColor: palette.skyDay,
       sunColor: palette.sunDay,
+      ambientColor: palette.skyDay,
       sunIntensity: 2.1,
       ambientIntensity: 1.1,
       elevation: 0.75,
@@ -162,6 +175,7 @@ const PHASE_LIGHTING: Record<DayPhase, { from: SkyConfig; to: SkyConfig }> = {
     to: {
       skyColor: palette.skyDusk,
       sunColor: palette.sunDusk,
+      ambientColor: palette.skyDusk,
       sunIntensity: 0.9,
       ambientIntensity: 0.55,
       elevation: 0.12,
@@ -171,6 +185,7 @@ const PHASE_LIGHTING: Record<DayPhase, { from: SkyConfig; to: SkyConfig }> = {
     from: {
       skyColor: palette.skyDusk,
       sunColor: palette.sunDusk,
+      ambientColor: palette.skyDusk,
       sunIntensity: 0.9,
       ambientIntensity: 0.55,
       elevation: 0.12,
@@ -178,6 +193,7 @@ const PHASE_LIGHTING: Record<DayPhase, { from: SkyConfig; to: SkyConfig }> = {
     to: {
       skyColor: palette.skyNight,
       sunColor: palette.sunNight,
+      ambientColor: palette.moonAmbient,
       /**
        * Luar: escuro o bastante para a lanterna valer a pena, claro o bastante
        * para nunca atrapalhar.
@@ -194,22 +210,24 @@ const PHASE_LIGHTING: Record<DayPhase, { from: SkyConfig; to: SkyConfig }> = {
        * detalhe e o que so aparece no escuro, nao a possibilidade de andar.
        */
       sunIntensity: 0.78,
-      ambientIntensity: 0.62,
-      elevation: 0.05,
+      ambientIntensity: 0.7,
+      elevation: 0.4,
     },
   },
   amanhecer: {
     from: {
       skyColor: palette.skyNight,
       sunColor: palette.sunNight,
+      ambientColor: palette.moonAmbient,
       // Mesmos valores do fim da noite: as fases tem que emendar sem salto.
       sunIntensity: 0.78,
-      ambientIntensity: 0.62,
-      elevation: 0.05,
+      ambientIntensity: 0.7,
+      elevation: 0.4,
     },
     to: {
       skyColor: palette.skyDay,
       sunColor: palette.sunDay,
+      ambientColor: palette.skyDay,
       sunIntensity: 2.1,
       ambientIntensity: 1.1,
       elevation: 0.75,
@@ -238,6 +256,7 @@ export function skyConfigFor(position: number): SkyConfig {
   return {
     skyColor: mixHex(from.skyColor, to.skyColor, eased),
     sunColor: mixHex(from.sunColor, to.sunColor, eased),
+    ambientColor: mixHex(from.ambientColor, to.ambientColor, eased),
     sunIntensity: lerp(from.sunIntensity, to.sunIntensity, eased),
     ambientIntensity: lerp(from.ambientIntensity, to.ambientIntensity, eased),
     elevation: lerp(from.elevation, to.elevation, eased),

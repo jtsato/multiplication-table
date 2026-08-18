@@ -7,8 +7,24 @@ import { dayNightClock } from '../daynight/dayNightClock';
 import { playerTransform } from '../player/playerTransform';
 import { LANTERN, chargeRemaining, lanternIntensity } from './lantern.logic';
 
-/** Altura da lanterna em relacao ao chao, na mao do personagem. */
-const HEIGHT = 1.1;
+/**
+ * Onde a luz fica em relacao ao jogador.
+ *
+ * Custou duas telas gravadas para acertar, e nenhum teste unitario teria dito
+ * qualquer coisa sobre isso:
+ *
+ * 1. Com `HEIGHT = 1.1` a luz nascia *dentro* da capsula do personagem. O chao
+ *    em volta acendia e ele ficava preto — as normais apontam para fora, e a luz
+ *    vinha de dentro.
+ * 2. Subir e jogar a luz **a frente** piorou: a camera segue atras do jogador,
+ *    entao uma lanterna na frente dele o poe em contraluz. Ele continuou preto,
+ *    agora com o chao ainda mais claro em volta.
+ *
+ * A luz fica atras e acima — do lado da camera. Le-se como um lampiao pendurado
+ * na mochila, e e o que deixa o personagem visivel dentro da propria luz.
+ */
+const HEIGHT = 1.8;
+const BACKWARD = 0.7;
 
 /** Mesmo ritmo do relogio: 4 Hz e o suficiente para uma barra no HUD. */
 const PUBLISH_INTERVAL = 0.25;
@@ -35,9 +51,13 @@ export function LanternView() {
     const now = dayNightClock.seconds;
     light.intensity = lanternIntensity(lantern, now);
 
-    // Acima da cabeca em vez de na altura do peito: com a luz baixa demais o
-    // proprio personagem vira silhueta contra o facho.
-    light.position.set(playerTransform.x, playerTransform.y + HEIGHT, playerTransform.z);
+    // Mesma convencao de "frente" do resto do jogo: com yaw = 0, a frente e -Z,
+    // entao atras e +Z.
+    light.position.set(
+      playerTransform.x + Math.sin(playerTransform.yaw) * BACKWARD,
+      playerTransform.y + HEIGHT,
+      playerTransform.z + Math.cos(playerTransform.yaw) * BACKWARD,
+    );
 
     // A barra do HUD precisa esvaziar, mas nao 60 vezes por segundo.
     publishTimerRef.current += delta;
