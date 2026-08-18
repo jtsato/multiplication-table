@@ -247,8 +247,17 @@ test.describe('partida no computador', () => {
 
     await responderPeloEnunciado(page, false);
 
-    await expect(page.getByText('Quase!')).toBeVisible();
-    await expect(page.getByText(`A resposta era ${certa}`)).toBeVisible();
+    // Uma assercao so, de proposito.
+    //
+    // O painel de feedback vive `FEEDBACK_MS` (1,6 s) e some sozinho. Duas
+    // esperas sequenciais contra ele passam nesta maquina e falham no CI, onde
+    // o WebGL e por software e cada ida e volta ao navegador custa quase um
+    // segundo: a primeira encontra a mensagem, a segunda chega depois de ela
+    // ter sumido. Verificar as duas coisas numa unica espera acaba com a
+    // corrida — nao separar de novo.
+    await expect(page.locator('.challenge--feedback')).toContainText(
+      new RegExp(`Quase!.*A resposta era ${certa}`, 's'),
+    );
     await page.screenshot({ path: 'e2e/telas/07-errou.png' });
 
     const depois = await lerEstado(page);
