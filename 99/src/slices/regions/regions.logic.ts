@@ -208,9 +208,7 @@ export const WORLD_BOUNDS = (() => {
     (Math.min(...zs) + Math.max(...zs)) / 2,
   );
   const radius = Math.max(
-    ...REGIONS.map(
-      (r) => Math.hypot(r.center.x - center.x, r.center.z - center.z) + r.radius,
-    ),
+    ...REGIONS.map((r) => Math.hypot(r.center.x - center.x, r.center.z - center.z) + r.radius),
   );
   return { center, radius };
 })();
