@@ -79,6 +79,20 @@ function coerceNumber(
   return value;
 }
 
+/**
+ * Campo que passou a existir numa versao posterior do jogo.
+ *
+ * Ausente NAO e dano: e so um save gravado por uma build anterior. Marcar
+ * reparo aqui faria todo save antigo abrir como "recuperado", escondendo os
+ * casos em que algo realmente quebrou. Valor presente e invalido, sim, marca.
+ */
+function coerceAddedBoolean(value: unknown, fallback: boolean, mark: Mark): boolean {
+  if (value === undefined) {
+    return fallback;
+  }
+  return coerceBoolean(value, fallback, mark);
+}
+
 function coerceString(value: unknown, fallback: string, mark: Mark): string {
   if (typeof value === 'string') {
     return value;
@@ -171,6 +185,13 @@ function normalizeSettings(raw: unknown, fallback: GameSettings, mark: Mark): Ga
       mark,
     ),
     reducedMotion: coerceBoolean(record.reducedMotion, fallback.reducedMotion, mark),
+    // Campo novo: saves anteriores nao o tem e caem no padrao (ligado). Nao
+    // muda a forma do save, entao nao pede migracao de schema.
+    studyBeforeMission: coerceAddedBoolean(
+      record.studyBeforeMission,
+      fallback.studyBeforeMission,
+      mark,
+    ),
   };
 }
 

@@ -13,6 +13,7 @@ import { ArchipelagoCompleteScreen } from './screens/ArchipelagoCompleteScreen';
 import { ChallengeScreen } from './screens/ChallengeScreen';
 import { HomeScreen } from './screens/HomeScreen';
 import { IslandCompleteScreen } from './screens/IslandCompleteScreen';
+import { IslandStudyScreen } from './screens/IslandStudyScreen';
 import { LevelResultScreen } from './screens/LevelResultScreen';
 import { LevelScreen } from './screens/LevelScreen';
 import { OnboardingScreen } from './screens/OnboardingScreen';
@@ -28,6 +29,7 @@ type Screen =
   | 'editCharacter'
   | 'home'
   | 'map'
+  | 'islandStudy'
   | 'level'
   | 'result'
   | 'islandComplete'
@@ -54,6 +56,8 @@ function Game() {
 
   const [screen, setScreen] = useState<Screen>('splash');
   const [activeMissionId, setActiveMissionId] = useState<string | null>(null);
+  /** Ilha cuja tabuada esta aberta para estudo. */
+  const [studyTable, setStudyTable] = useState<number | null>(null);
   const [finished, setFinished] = useState<FinishedMission | null>(null);
   // O final pode ser visto duas vezes: ao conquista-lo e ao reabrir o diploma
   // pela Home. So muda para onde a saida leva de volta.
@@ -95,9 +99,8 @@ function Game() {
     setScreen(state.player.onboardingCompleted ? 'home' : 'onboarding');
   }, [state.player.onboardingCompleted]);
 
-  const startIsland = useCallback(
+  const enterMission = useCallback(
     (table: number) => {
-      game.selectTable(table);
       const mission = nextMissionForTable(state.progress, table) ?? missionsForTable(table)[0];
       if (!mission) {
         return;
@@ -105,7 +108,23 @@ function Game() {
       setActiveMissionId(mission.id);
       setScreen('level');
     },
-    [game, state.progress],
+    [state.progress],
+  );
+
+  const startIsland = useCallback(
+    (table: number) => {
+      game.selectTable(table);
+      setStudyTable(table);
+      // Entrar na ilha pelo mapa passa pela tabuada, se a configuracao pedir.
+      // "Proxima missao", vindo do resultado, nunca passa: ali a crianca ja
+      // esta no meio da sessao e escolheu continuar.
+      if (state.settings.studyBeforeMission) {
+        setScreen('islandStudy');
+        return;
+      }
+      enterMission(table);
+    },
+    [game, enterMission, state.settings.studyBeforeMission],
   );
 
   const handleFinishMission = useCallback(
@@ -219,6 +238,17 @@ function Game() {
       return map;
     }
 
+    if (screen === 'islandStudy' && studyTable !== null) {
+      return (
+        <IslandStudyScreen
+          state={state}
+          table={studyTable}
+          onPlay={() => enterMission(studyTable)}
+          onBack={() => setScreen('map')}
+        />
+      );
+    }
+
     if (screen === 'level') {
       const mission = activeMissionId ? getMission(activeMissionId) : undefined;
       if (!mission) {
@@ -233,6 +263,10 @@ function Game() {
           onAnswer={game.recordAnswer}
           onFinish={handleFinishMission}
           onExit={() => setScreen('map')}
+          onStudy={() => {
+            setStudyTable(mission.table);
+            setScreen('islandStudy');
+          }}
           onTutorialSeen={game.markTutorialSeen}
         />
       );
@@ -307,6 +341,7 @@ function Game() {
           onMusicChange={game.setMusicEnabled}
           onSoundChange={game.setSoundEffectsEnabled}
           onMotionChange={game.setReducedMotion}
+          onStudyChange={game.setStudyBeforeMission}
           onReset={() => {
             game.resetProgress();
             setFinished(null);

@@ -80,6 +80,11 @@ export interface GameSettings {
   soundEffectsEnabled: boolean;
   /** Reduz animacoes para criancas sensiveis a movimento. */
   reducedMotion: boolean;
+  /**
+   * Abre a tabuada da ilha ao entrar nela pelo mapa. Ligado por padrao: o
+   * primeiro contato com uma tabuada nova nao deveria ser uma pergunta.
+   */
+  studyBeforeMission: boolean;
 }
 
 // ---------------------------------------------------------------------------

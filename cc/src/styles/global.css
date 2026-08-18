@@ -784,6 +784,141 @@ html[data-reduced-motion='on'] *::after {
 }
 
 /* ---------------------------------------------------------------------- */
+/* Tabuada da ilha (tela de estudo)                                        */
+/* ---------------------------------------------------------------------- */
+
+.study__island {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+
+.study__island-name {
+  font-family: var(--font-display-stack);
+  font-weight: 800;
+  font-size: var(--text-lg);
+}
+
+.study__hint {
+  color: var(--muted);
+}
+
+/* A escada e uma coluna de linhas curtas: esticada na tela larga, o resultado
+   fica longe demais dos blocos que ele conta. */
+.study__card {
+  max-width: 720px;
+  border: 2px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--bg);
+  box-shadow: 0 4px 0 var(--edge-underside);
+  padding: var(--space-3) var(--space-4);
+}
+
+/* A escada: uma linha por conta, do 1 ao 10.
+
+   `--ladder-block` encolhe conforme a tabuada cresce (a do 10 tem 100 blocos
+   na ultima linha) e `--ladder-cols` quebra cada grupo em fileiras de ate 5,
+   para uma dezena virar um retangulo 5x2 em vez de uma fita que nao cabe. */
+.ladder {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ladder__row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-sm);
+}
+
+/* Conta que ainda escorrega: fundo Bee Yellow claro. Nunca so a cor - a
+   linha tambem ganha o icone de "olho" na ponta. */
+.ladder__row--weak {
+  background: #fff4d1;
+}
+
+.ladder__fact {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  min-width: 62px;
+}
+
+.ladder__blocks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  flex: 1;
+}
+
+.ladder__group {
+  display: grid;
+  grid-template-columns: repeat(var(--ladder-cols), var(--ladder-block));
+  gap: 2px;
+  padding: 2px;
+  border: 2px solid var(--border);
+  border-radius: 5px;
+  background: var(--bg);
+}
+
+.ladder__block {
+  width: var(--ladder-block);
+  height: var(--ladder-block);
+  border-radius: 2px;
+  background: var(--ladder-color);
+}
+
+.ladder__result {
+  font-family: var(--font-display-stack);
+  font-weight: 800;
+  font-size: var(--text-lg);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  min-width: 42px;
+}
+
+.ladder__mark {
+  min-width: 24px;
+  text-align: center;
+}
+
+@media (max-width: 480px) {
+  .study__card {
+    padding: var(--space-2);
+  }
+
+  .ladder__row {
+    gap: var(--space-2);
+    padding: 2px;
+  }
+
+  .ladder__fact {
+    min-width: 52px;
+    font-size: var(--text-sm);
+  }
+
+  /* No telefone os grupos da tabuada do 10 nao cabem em uma linha so:
+     quebram em duas fileiras dentro da propria linha. */
+  .ladder__blocks {
+    gap: 3px;
+  }
+
+  .ladder__result {
+    min-width: 32px;
+    font-size: var(--text-base);
+  }
+
+  .ladder__mark {
+    min-width: 18px;
+    font-size: var(--text-sm);
+  }
+}
+
+/* ---------------------------------------------------------------------- */
 /* Escolha de idioma                                                       */
 /* ---------------------------------------------------------------------- */
 
@@ -1433,6 +1568,13 @@ html[data-reduced-motion='on'] *::after {
   max-width: 420px;
 }
 
+.level__brief-actions {
+  display: flex;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
 .level__tutorial {
   margin-top: var(--space-4);
   text-align: left;
@@ -1590,7 +1732,7 @@ html[data-reduced-motion='on'] *::after {
 
 .hint__group {
   display: grid;
-  grid-template-columns: repeat(auto-fit, 12px);
+  grid-template-columns: repeat(var(--hint-cols, 5), 12px);
   gap: 3px;
   background: var(--bg);
   border: 2px solid var(--border);

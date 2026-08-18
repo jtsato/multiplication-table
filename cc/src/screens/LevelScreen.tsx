@@ -31,6 +31,8 @@ interface LevelScreenProps {
   onAnswer: (factKey: string, wasCorrect: boolean) => void;
   onFinish: (level: LevelState) => void;
   onExit: () => void;
+  /** Abre a tabuada da ilha; a fase e remontada ao voltar. */
+  onStudy: () => void;
   onTutorialSeen: () => void;
 }
 
@@ -59,6 +61,7 @@ export function LevelScreen({
   onAnswer,
   onFinish,
   onExit,
+  onStudy,
   onTutorialSeen,
 }: LevelScreenProps) {
   const { t, tVariant } = useTranslation();
@@ -245,9 +248,16 @@ export function LevelScreen({
               </ol>
             )}
           </div>
-          <Button size="lg" onClick={begin}>
-            {t('game.startMission')}
-          </Button>
+          {/* Duas saidas do briefing: estudar a tabuada da ilha ou comecar.
+              O verde continua sendo so o que avanca. */}
+          <div className="level__brief-actions">
+            <Button variant="secondary" size="lg" icon="📖" onClick={onStudy}>
+              {t('game.study')}
+            </Button>
+            <Button size="lg" onClick={begin}>
+              {t('game.startMission')}
+            </Button>
+          </div>
         </div>
       )}
 

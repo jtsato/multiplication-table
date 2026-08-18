@@ -200,14 +200,21 @@
     "quitConfirm": "Leave anyway",
     "quitCancel": "Keep playing",
     "showAnswer": "The right answer is {{answer}}. Tap it to keep going!",
-    "hintTitle": "Look: {{a}} groups of {{b}}",
+    "hintTitle": "Look: {{groups}} groups of {{size}}",
     "hintCount": "That is {{answer}} blocks in total",
     "startMission": "Start",
+    "study": "See the table",
     "tutorial": {
       "step1": "Tap the right answer.",
       "step2": "Every correct answer places blocks in the scene.",
       "step3": "Finish the build to complete the mission!"
     }
+  },
+  "study": {
+    "hint": "Each step of the ladder adds {{table}} more blocks.",
+    "play": "Play mission {{order}}",
+    "mastered": "You already know this one",
+    "struggling": "This one still trips you up"
   },
   "feedback": {
     "correct": {
@@ -350,6 +357,7 @@
     "music": "Music",
     "sound": "Sound effects",
     "motion": "Reduce animations",
+    "study": "See the table before playing",
     "on": "On",
     "off": "Off",
     "dangerZone": "Start over",

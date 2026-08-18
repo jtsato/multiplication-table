@@ -213,6 +213,43 @@ test("persists a purchased expansion in the store", async ({ page }) => {
   await expect(page.locator(".expansion-blocks .product-art")).toHaveCount(1);
 });
 
+test("scrolls the answer feedback into view after selecting an option", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 500 });
+  await createPlayer(page);
+  await page.getByRole("button", { name: "Começar dia" }).click();
+  await openQuestion(page);
+  await page.evaluate(() => window.scrollTo({ top: 0, behavior: "auto" }));
+
+  await page.locator(".answer-button").first().click();
+  const feedback = page.locator(".success-box, .hint-box");
+  await expect(feedback).toBeVisible();
+  await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(0);
+  await expect.poll(() => feedback.evaluate((element) => {
+    const rect = element.getBoundingClientRect();
+    return rect.top >= 0 && rect.bottom <= window.innerHeight;
+  })).toBe(true);
+});
+
+test("signals which shop purchases fit the available cash", async ({ page }) => {
+  await createPlayer(page);
+  await page.getByRole("button", { name: "Novos produtos" }).click();
+  await expect(page.getByRole("heading", { name: "Novos produtos para a loja" })).toBeVisible();
+
+  await expect(page.getByText("Pode comprar", { exact: true })).toHaveCount(5);
+  const unavailableCard = page.locator(".product-card").filter({ hasText: "Falta R$ 30" });
+  await expect(unavailableCard).toHaveCount(1);
+  await expect(unavailableCard.getByRole("button")).toBeDisabled();
+});
+
+test("uses a visual child-friendly button for returning to the shop", async ({ page }) => {
+  await createPlayer(page);
+  await page.getByRole("button", { name: "Novos produtos" }).click();
+  const backButton = page.locator("button.back-button");
+
+  await expect(backButton).toContainText("Loja");
+  await expect(backButton).toHaveAttribute("aria-label", "Voltar para a loja");
+});
+
 test("reopens the saved shop after a refresh", async ({ page }) => {
   await createPlayer(page);
   await page.getByRole("button", { name: "Novos produtos" }).click();

@@ -200,14 +200,21 @@
     "quitConfirm": "Sair mesmo assim",
     "quitCancel": "Continuar jogando",
     "showAnswer": "A resposta certa é {{answer}}. Toque nela para continuar!",
-    "hintTitle": "Olha só: {{a}} grupos de {{b}}",
+    "hintTitle": "Olha só: {{groups}} grupos de {{size}}",
     "hintCount": "São {{answer}} blocos no total",
     "startMission": "Começar",
+    "study": "Ver a tabuada",
     "tutorial": {
       "step1": "Toque na resposta certa.",
       "step2": "Cada acerto coloca blocos no cenário.",
       "step3": "Termine a construção para concluir a missão!"
     }
+  },
+  "study": {
+    "hint": "Cada degrau da escada ganha mais {{table}} blocos.",
+    "play": "Jogar a missão {{order}}",
+    "mastered": "Você já domina esta conta",
+    "struggling": "Esta conta ainda escorrega"
   },
   "feedback": {
     "correct": {
@@ -350,6 +357,7 @@
     "music": "Música",
     "sound": "Efeitos sonoros",
     "motion": "Reduzir animações",
+    "study": "Ver a tabuada antes de jogar",
     "on": "Ligado",
     "off": "Desligado",
     "dangerZone": "Recomeçar do zero",

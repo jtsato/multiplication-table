@@ -46,9 +46,17 @@ export async function irParaHome(page: Page): Promise<void> {
   await expect(page.getByRole('button', { name: 'Jogar' })).toBeVisible();
 }
 
-/** Entra na primeira ilha liberada e passa do briefing para as perguntas. */
+/**
+ * Entra na primeira ilha liberada e vai ate as perguntas.
+ *
+ * O caminho passa pela tabuada da ilha, que abre sozinha enquanto
+ * `studyBeforeMission` estiver ligada - o padrao de quem nunca mexeu nas
+ * configuracoes.
+ */
 export async function entrarNaPrimeiraIlha(page: Page): Promise<void> {
   await page.locator('button.island:not([disabled])').first().click();
+  await expect(page.getByRole('heading', { name: 'Tabuada do 2' })).toBeVisible();
+  await page.getByRole('button', { name: /Jogar a missão/ }).click();
   await expect(page.getByRole('button', { name: 'Começar' })).toBeVisible();
   await page.getByRole('button', { name: 'Começar' }).click();
   await expect(page.locator('.level__question')).toBeVisible();

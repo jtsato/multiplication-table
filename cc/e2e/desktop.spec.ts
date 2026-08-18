@@ -42,6 +42,37 @@ test.describe('partida no computador', () => {
     await expect(page.getByText('0 de 9 ilhas concluídas')).toBeVisible();
   });
 
+  test('a tabuada da ilha abre antes da missao e cabe sem rolagem lateral', async ({ page }) => {
+    await concluirOnboarding(page);
+    await page.locator('button.island:not([disabled])').first().click();
+
+    // Entrar na ilha passa pela tabuada enquanto a configuracao estiver ligada.
+    await expect(page.getByRole('heading', { name: 'Tabuada do 2' })).toBeVisible();
+    await expect(page.locator('.ladder__row')).toHaveCount(10);
+
+    // A ultima linha e a mais larga: se ela vazar, a escada nao serve.
+    const escada = page.locator('.ladder').first();
+    const vazamento = await escada.evaluate(
+      (node) =>
+        node.scrollWidth > node.clientWidth + 1 ||
+        document.documentElement.scrollWidth > window.innerWidth + 1,
+    );
+    expect(vazamento).toBe(false);
+
+    // A estrela e o desenho contam a mesma coisa que o numero: 2 x 10 = 20.
+    const ultima = page.locator('.ladder__row').last();
+    await expect(ultima).toContainText('2 × 10');
+    await expect(ultima).toContainText('20');
+    await expect(ultima.locator('.ladder__block')).toHaveCount(20);
+
+    await page.getByRole('button', { name: /Jogar a missão/ }).click();
+    await expect(page.getByRole('button', { name: 'Começar' })).toBeVisible();
+
+    // E ela continua a um toque de distancia, ja dentro da missao.
+    await page.getByRole('button', { name: 'Ver a tabuada' }).click();
+    await expect(page.getByRole('heading', { name: 'Tabuada do 2' })).toBeVisible();
+  });
+
   test('acertar coloca blocos e avanca a pergunta', async ({ page }) => {
     await concluirOnboarding(page);
     await entrarNaPrimeiraIlha(page);

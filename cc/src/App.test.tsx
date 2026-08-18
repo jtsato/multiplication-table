@@ -82,6 +82,11 @@ async function enterFirstIsland(user: ReturnType<typeof userEvent.setup>) {
     throw new Error('ilha da tabuada do 2 nao encontrada no mapa');
   }
   await user.click(islandButton);
+
+  // A tabuada da ilha abre sozinha (padrao de `studyBeforeMission`).
+  await screen.findByRole('heading', { name: '2 times table' });
+  await user.click(screen.getByRole('button', { name: /Play mission/ }));
+
   await screen.findByRole('heading', { level: 2, name: 'The broken bridge' });
   await user.click(screen.getByRole('button', { name: 'Start' }));
 }
@@ -129,6 +134,34 @@ describe('jogo completo (integracao)', () => {
     await screen.findByText('Archipelago Map');
     expect(screen.getByText('1 of 4 missions')).toBeInTheDocument();
     expect(screen.getByText('In progress')).toBeInTheDocument();
+  }, 20000);
+
+  it('desligar "ver a tabuada" nas configuracoes leva direto para a missao', async () => {
+    const user = userEvent.setup();
+    render(<App repository={makeTestRepository()} />);
+
+    await completeOnboarding(user);
+
+    await user.click(screen.getByRole('button', { name: /Back/ }));
+    await screen.findByText('Hello, explorer!');
+    await user.click(screen.getByRole('button', { name: 'Settings' }));
+    await user.click(await screen.findByRole('checkbox', { name: /See the table before playing/ }));
+    await user.click(screen.getByRole('button', { name: /Back/ }));
+
+    await user.click(screen.getByRole('button', { name: /Play/ }));
+    await screen.findByText('Archipelago Map');
+    const island = screen
+      .getAllByRole('button')
+      .find((button) => button.textContent?.includes('Blooming Fields'));
+    await user.click(island!);
+
+    // Sem escala pela tabuada: o briefing da missao abre direto.
+    await screen.findByRole('heading', { level: 2, name: 'The broken bridge' });
+    expect(screen.queryByRole('heading', { name: '2 times table' })).not.toBeInTheDocument();
+
+    // E ela continua a um toque: o botao do briefing abre a mesma tela.
+    await user.click(screen.getByRole('button', { name: /See the table/ }));
+    expect(await screen.findByRole('heading', { name: '2 times table' })).toBeVisible();
   }, 20000);
 
   it('erro nao derruba o progresso e mostra a dica visual antes de liberar nova tentativa', async () => {

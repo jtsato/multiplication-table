@@ -67,6 +67,7 @@ interface GameContextValue {
   setMusicEnabled: (enabled: boolean) => void;
   setSoundEffectsEnabled: (enabled: boolean) => void;
   setReducedMotion: (enabled: boolean) => void;
+  setStudyBeforeMission: (enabled: boolean) => void;
   completeOnboarding: (avatar: AvatarConfig, mascotId: MascotId) => void;
   updateAvatar: (avatar: AvatarConfig, mascotId: MascotId) => void;
   markTutorialSeen: () => void;
@@ -169,6 +170,13 @@ export function GameProvider({ children, repository }: GameProviderProps) {
   const setReducedMotion = useCallback(
     (reducedMotion: boolean) => {
       update((current) => ({ ...current, settings: { ...current.settings, reducedMotion } }));
+    },
+    [update],
+  );
+
+  const setStudyBeforeMission = useCallback(
+    (studyBeforeMission: boolean) => {
+      update((current) => ({ ...current, settings: { ...current.settings, studyBeforeMission } }));
     },
     [update],
   );
@@ -278,6 +286,7 @@ export function GameProvider({ children, repository }: GameProviderProps) {
       setMusicEnabled,
       setSoundEffectsEnabled,
       setReducedMotion,
+      setStudyBeforeMission,
       completeOnboarding,
       updateAvatar,
       markTutorialSeen,
@@ -295,6 +304,7 @@ export function GameProvider({ children, repository }: GameProviderProps) {
       setMusicEnabled,
       setSoundEffectsEnabled,
       setReducedMotion,
+      setStudyBeforeMission,
       completeOnboarding,
       updateAvatar,
       markTutorialSeen,

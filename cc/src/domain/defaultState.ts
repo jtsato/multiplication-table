@@ -33,6 +33,7 @@ export function createDefaultSettings(locale: Locale): GameSettings {
     musicEnabled: false,
     soundEffectsEnabled: true,
     reducedMotion: false,
+    studyBeforeMission: true,
   };
 }
 

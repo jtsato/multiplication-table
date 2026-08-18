@@ -15,6 +15,7 @@ interface SettingsScreenProps {
   onMusicChange: (enabled: boolean) => void;
   onSoundChange: (enabled: boolean) => void;
   onMotionChange: (enabled: boolean) => void;
+  onStudyChange: (enabled: boolean) => void;
   onReset: () => void;
 }
 
@@ -27,6 +28,7 @@ export function SettingsScreen({
   onMusicChange,
   onSoundChange,
   onMotionChange,
+  onStudyChange,
   onReset,
 }: SettingsScreenProps) {
   const { t } = useTranslation();
@@ -72,6 +74,16 @@ export function SettingsScreen({
           icon="🍃"
           checked={state.settings.reducedMotion}
           onChange={onMotionChange}
+          onLabel={t('settings.on')}
+          offLabel={t('settings.off')}
+        />
+        {/* Desligado, a ilha vai direto para a missao; a tabuada continua a um
+            toque de distancia, pelo botao do briefing. */}
+        <ToggleRow
+          label={t('settings.study')}
+          icon="📖"
+          checked={state.settings.studyBeforeMission}
+          onChange={onStudyChange}
           onLabel={t('settings.on')}
           offLabel={t('settings.off')}
         />
