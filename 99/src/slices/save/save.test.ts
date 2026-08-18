@@ -170,7 +170,7 @@ describe('snapshot e applySave', () => {
   });
 
   it('loadGame devolve false quando nao ha save', () => {
-    const spy = vi.spyOn(Storage.prototype, 'getItem').mockReturnValue(null);
+    const spy = vi.spyOn(saveRepository, 'load').mockReturnValue(null);
     expect(loadGame()).toBe(false);
     spy.mockRestore();
   });
