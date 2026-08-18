@@ -3,6 +3,7 @@ import { Physics } from '@react-three/rapier';
 import { palette } from '../shared/palette';
 import { BuildingView } from '../slices/building';
 import { DayNightView } from '../slices/daynight';
+import { HomeView } from '../slices/home';
 import { LanternView } from '../slices/lantern';
 import { PlayerView } from '../slices/player';
 import { ResourcesView } from '../slices/resources';
@@ -60,6 +61,7 @@ export function GameCanvas({ isTouch = false }: { isTouch?: boolean }) {
         <LanternView />
 
         <WorldView seed={worldSeed} />
+        <HomeView />
         <ResourcesView />
         <BuildingView />
       </Physics>

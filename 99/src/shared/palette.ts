@@ -32,6 +32,16 @@ export const palette = {
   // Lanterna: quente, para contrastar com o azul do luar.
   lanternLight: '#ffd98a',
 
+  // A casa. Madeira clara e telhado quente: tem que ler como abrigo de longe.
+  homeWall: '#d9b48a',
+  homeFloor: '#8a6a4a',
+  homeRoof: '#c2593f',
+  homeGlow: '#ffdc9e',
+  homeMirror: '#bcd9e8',
+  homeChart: '#f4ead6',
+  homeBed: '#5f8fbf',
+  homePillow: '#f2f0e6',
+
   // Ceu por fase do ciclo
   skyDay: '#8fd4ff',
   skyDusk: '#f2925c',

@@ -1,3 +1,4 @@
+export { HomeView } from './HomeView';
 export { createHomeSlice, type HomeSlice } from './home.store';
 export {
   HOME,
