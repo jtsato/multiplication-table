@@ -17,6 +17,10 @@ export interface EstadoJogo {
   jogador: { x: number; z: number };
   /** Segundos de carga que restam na lanterna, no instante da leitura. */
   cargaLanterna: number;
+  moedas: number;
+  lojaAberta: boolean;
+  comprados: string[];
+  dicas: number;
 }
 
 /** Le o estado do jogo pela ponte de depuracao. */
@@ -41,6 +45,10 @@ export async function lerEstado(page: Page): Promise<EstadoJogo> {
       // Calculado aqui, e nao lido de `lanternCharge`: a amostra do HUD vem com
       // throttle, e o teste precisa do valor do instante.
       cargaLanterna: Math.max(0, s.lantern.chargedUntil - ponte.clock.seconds),
+      moedas: s.coins,
+      lojaAberta: s.shopOpen,
+      comprados: s.owned,
+      dicas: s.hints,
     };
   });
 }

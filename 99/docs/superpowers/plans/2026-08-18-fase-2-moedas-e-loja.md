@@ -61,7 +61,7 @@ certa é uma troca honesta**, e é o que tira o medo de errar sem tornar o erro 
 - Produces `EconomySlice = { coins, streak, knownFacts, correctToday, coinsToday,
   rewardCorrect(perGroup, fact), breakStreak(), resetDaily(), resetEconomy() }`.
 
-- [ ] **Step 1: Escrever os testes da lógica pura**
+- [x] **Step 1: Escrever os testes da lógica pura**
 
 ```ts
 describe('factKey', () => {
@@ -96,13 +96,13 @@ describe('coinsFor', () => {
 está aprendendo — contar duas vezes o mesmo bônus de "primeira vez" seria pagar duas
 vezes pela mesma descoberta.
 
-- [ ] **Step 2: Rodar e confirmar a falha**
+- [x] **Step 2: Rodar e confirmar a falha**
 
 Run: `npm test -- --run src/slices/economy`
 
 Expected: FAIL — o módulo não existe.
 
-- [ ] **Step 3: Implementar lógica e store**
+- [x] **Step 3: Implementar lógica e store**
 
 `ECONOMY = { streakBonus: 5, newFactBonus: 10, streakEvery: 3 }`.
 
@@ -114,13 +114,13 @@ fato como conhecido e soma nos contadores do dia. `breakStreak()` zera a sequên
 erro. `resetDaily()` zera só `correctToday` e `coinsToday` — é o que o resumo do dia
 consome; `knownFacts` e `coins` atravessam os dias.
 
-- [ ] **Step 4: Rodar os testes**
+- [x] **Step 4: Rodar os testes**
 
 Run: `npm test -- --run src/slices/economy`
 
 Expected: PASS.
 
-- [ ] **Step 5: Commitar**
+- [x] **Step 5: Commitar**
 
 ```powershell
 git add src/slices/economy src/app/store.ts
@@ -139,7 +139,7 @@ git commit -m "feat: add coins, streak and known facts"
 - `answerChallenge` chama `rewardCorrect` no acerto e `breakStreak` no erro, para os
   dois propósitos (`colher` e `abastecer`).
 
-- [ ] **Step 1: Escrever os testes**
+- [x] **Step 1: Escrever os testes**
 
 ```ts
 it('o acerto paga moedas e o erro nao paga', () => { ... });
@@ -149,11 +149,11 @@ it('o mesmo fato so paga bonus de novidade uma vez', () => { ... });
 it('a conta da fogueira tambem paga moeda', () => { ... });
 ```
 
-- [ ] **Step 2: Rodar e confirmar a falha**
+- [x] **Step 2: Rodar e confirmar a falha**
 
 Run: `npm test -- --run src/slices/math/math.store.test.ts`
 
-- [ ] **Step 3: Ligar a recompensa**
+- [x] **Step 3: Ligar a recompensa**
 
 Em `answerChallenge`, depois de resolver o resultado e antes de publicar o feedback:
 
@@ -167,7 +167,7 @@ if (outcome.correct) {
 
 O `ChallengeFeedback` ganha `coins: number`, para o painel poder mostrar o ganho.
 
-- [ ] **Step 4 e 5: Rodar e commitar**
+- [x] **Step 4 e 5: Rodar e commitar**
 
 Run: `npm test -- --run src/slices/math src/slices/economy`
 
@@ -183,16 +183,16 @@ git commit -m "feat: pay coins for correct answers"
 - Modify: `src/app/Hud.tsx`, `src/app/hud.css`, `src/app/Hud.test.tsx`
 - Modify: `src/slices/math/ChallengePanel.tsx`, `challenge.css`
 
-- [ ] **Step 1: Escrever as asserções**
+- [x] **Step 1: Escrever as asserções**
 
 ```ts
 it('mostra o total de moedas', () => { ... });
 it('mostra as moedas em pilhas de dez', () => { ... });
 ```
 
-- [ ] **Step 2: Rodar e confirmar a falha**
+- [x] **Step 2: Rodar e confirmar a falha**
 
-- [ ] **Step 3: Implementar**
+- [x] **Step 3: Implementar**
 
 O contador mostra o total **e** a decomposição em dezenas: `37` aparece como
 `37` com `3 pilhas + 7`. Esse é o reforço passivo da tabuada do 10 descrito na spec — a
@@ -202,7 +202,7 @@ só o número.
 No painel de feedback, o acerto passa a mostrar `+8 · +2 moedas`, e a sequência
 aparece quando o bônus cai.
 
-- [ ] **Step 4 e 5: Rodar e commitar**
+- [x] **Step 4 e 5: Rodar e commitar**
 
 ---
 
@@ -216,7 +216,7 @@ aparece quando o bônus cai.
   kind, repeatable }`.
 - Produces `canBuy(item, coins, inventory)` e a ação `buy(kind)`.
 
-- [ ] **Step 1: Escrever os testes**
+- [x] **Step 1: Escrever os testes**
 
 ```ts
 it('recusa sem moeda suficiente', () => { ... });
@@ -236,7 +236,7 @@ it('todo tipo de recurso do jogo e consumido por algum item', () => {
 A última asserção é a rede contra o defeito da fruta: acrescentar um recurso sem
 destino passa a quebrar a suíte.
 
-- [ ] **Step 2 a 5: falha, implementação, verificação, commit**
+- [x] **Step 2 a 5: falha, implementação, verificação, commit**
 
 `payCost` de `building.logic.ts` já faz o débito de recursos e recusa pagamento parcial
 — **reusar**, não reescrever. A slice de economia importa a função pura, não a de
@@ -253,7 +253,7 @@ construção inteira.
 **Interfaces:**
 - Nova `GameAction: 'loja'`, ligada a `KeyL` e a um botão de toque.
 
-- [ ] **Step 1: Escrever as asserções**
+- [x] **Step 1: Escrever as asserções**
 
 ```ts
 it('abre e fecha pela acao do jogo', () => { ... });
@@ -265,7 +265,7 @@ it('nao abre com um desafio na tela', () => { ... });
 A última importa: dois painéis modais ao mesmo tempo confundiriam a criança, e o
 desafio tem prioridade.
 
-- [ ] **Step 2 a 5: falha, implementação, verificação, commit**
+- [x] **Step 2 a 5: falha, implementação, verificação, commit**
 
 O painel segue a camada centralizada do `ChallengePanel` (`position: fixed`,
 `pointer-events: none` na camada, `auto` no cartão). Cada item mostra rótulo, custo em
@@ -282,7 +282,7 @@ leitura fluente.
 - Modify: `src/slices/math/ChallengePanel.tsx`
 - Testes correspondentes
 
-- [ ] **Step 1: Escrever os testes**
+- [x] **Step 1: Escrever os testes**
 
 ```ts
 it('a lanterna maior ilumina mais longe e dura mais', () => { ... });
@@ -291,7 +291,7 @@ it('a dica apaga uma alternativa errada e some do estoque', () => { ... });
 it('a dica nunca apaga a resposta certa', () => { ... });
 ```
 
-- [ ] **Step 2 a 5: falha, implementação, verificação, commit**
+- [x] **Step 2 a 5: falha, implementação, verificação, commit**
 
 `LANTERN.radius` e `chargeSeconds` passam a ser lidos por funções que recebem os
 upgrades comprados, em vez de constantes usadas direto. A velocidade do jogador segue o
@@ -305,7 +305,7 @@ mesmo caminho.
 - Create: `src/app/DaySummary.tsx`, `summary.css`, `DaySummary.test.tsx`
 - Modify: `src/app/App.tsx`, `src/slices/daynight/DayNightView.tsx`
 
-- [ ] **Step 1: Escrever as asserções**
+- [x] **Step 1: Escrever as asserções**
 
 ```ts
 it('aparece na virada para o amanhecer', () => { ... });
@@ -314,7 +314,7 @@ it('nao aparece duas vezes no mesmo amanhecer', () => { ... });
 it('fechar zera os contadores do dia, mas nao as moedas', () => { ... });
 ```
 
-- [ ] **Step 2 a 5: falha, implementação, verificação, commit**
+- [x] **Step 2 a 5: falha, implementação, verificação, commit**
 
 O texto é elogio concreto, não pontuação: **"Dia 3 — 14 contas certas, 42 moedas, e
 você aprendeu 2×7"**. É também o relatório que o adulto quer ver, sem nunca ter sido
@@ -331,20 +331,20 @@ tem botão de "jogar de novo", porque não acabou nada. Só um "Continuar".
 - Modify: `e2e/jogo.ts`, `e2e/desktop.spec.ts`, `e2e/celular.spec.ts`
 - Modify: `README.md`
 
-- [ ] **Step 1: Expor moedas e loja à ponte de depuração**
+- [x] **Step 1: Expor moedas e loja à ponte de depuração**
 
-- [ ] **Step 2: O fluxo econômico completo no navegador**
+- [x] **Step 2: O fluxo econômico completo no navegador**
 
 Colher acertando → conferir que a moeda subiu → abrir a loja → comprar → conferir o
 débito e o efeito. Gravar tela da loja aberta, no desktop e no celular.
 
-- [ ] **Step 3: Rodar o projeto inteiro**
+- [x] **Step 3: Rodar o projeto inteiro**
 
 Run: `npm test`, `npm run typecheck`, `npm run lint`, `npm run build`, `npm run e2e`
 
-- [ ] **Step 4: Olhar as telas**
+- [x] **Step 4: Olhar as telas**
 
 A loja tem que caber na tela do celular sem rolagem e sem cortar o custo dos itens. Foi
 uma tela gravada que revelou a noite preta na Fase 1.
 
-- [ ] **Step 5: Atualizar o README e commitar**
+- [x] **Step 5: Atualizar o README e commitar**

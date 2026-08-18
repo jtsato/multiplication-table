@@ -68,6 +68,26 @@ O ciclo dura 5 minutos, repartidos em **dia 204 s · entardecer 24 s · noite 48
 amanhecer 24 s**. O dia é longo porque é nele que se resolvem contas; a noite é
 curta porque é uma janela, não uma prova.
 
+### Moedas e loja
+
+Cada resposta certa paga **moedas** — o número da tabuada, mais um bônus a cada três
+acertos seguidos e um bônus grande na primeira vez que um fato novo é resolvido. Errar
+nunca tira nada: continua rendendo recurso, só não paga moeda.
+
+A distinção que sustenta a economia:
+
+> **O recurso é o resultado da conta. A moeda é o prêmio por ter acertado.**
+
+Na loja (`L`) tudo custa **moedas e recursos** — é o que dá destino ao que se colhe.
+São três itens: lanterna maior, botas e a dica, que apaga uma alternativa errada.
+Comprar ajuda com moeda ganha em conta certa é uma troca honesta, e é o que tira o
+medo de errar sem tornar o erro gratuito.
+
+No amanhecer vem o **resumo do dia**: contas certas, moedas e o que foi aprendido.
+Não é pontuação — é elogio concreto, e de quebra o relatório que o adulto quer ver.
+
+### A noite
+
 À noite a criança pode resolver mais uma multiplicação na fogueira para **acender a
 lanterna**, que a acompanha por onde ela for. Uma carga dura 60 s e cobre a noite
 inteira com folga. Ficar sem carga não tira nada além do que só aparece no escuro:
@@ -106,7 +126,8 @@ src/
 │   ├── math/       # desafio contextualizado (o núcleo)
 │   ├── building/   # fogueira, cerca, combustível
 │   ├── daynight/   # relógio, fases, céu e luzes
-│   └── lantern/    # carga como prazo, luz que acompanha o jogador
+│   ├── lantern/    # carga como prazo, luz que acompanha o jogador
+│   └── economy/    # moedas, sequência, fatos dominados e a loja
 └── shared/         # sem regra de negócio: paleta, PRNG, vetor, teclado
 ```
 
@@ -130,7 +151,7 @@ assinantes 60 vezes por segundo.
 
 ## Testes
 
-Duas camadas: **280 testes** de unidade/integração no Vitest e **18 testes ponta a
+Duas camadas: **333 testes** de unidade/integração no Vitest e **22 testes ponta a
 ponta** em navegador de verdade com Playwright.
 
 ### Ponta a ponta (Playwright)
@@ -143,7 +164,7 @@ npm run e2e:ui       # modo interativo
 Rodam contra o **build de produção** servido pelo `vite preview` — o mesmo
 artefato que vai para o Pages. Cobrem o que só o navegador prova: WebGL
 inicializa, o WASM do Rapier carrega, a física move o jogador de verdade, e o
-loop matemática → recurso → construção → noite → lanterna funciona inteiro. O
+loop matemática → recurso → moeda → loja → noite → lanterna funciona inteiro. O
 projeto `celular` emula um Pixel 5 e emite eventos de toque nativos via CDP, de
 modo que o joystick é arrastado por um dedo real, não por eventos sintéticos.
 

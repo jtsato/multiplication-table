@@ -255,6 +255,18 @@ describe('snapFencePlacement', () => {
 describe('formatRecipe', () => {
   it('descreve o custo de forma legivel', () => {
     expect(formatRecipe(STRUCTURES.cerca.recipe)).toBe('6 madeira');
-    expect(formatRecipe(STRUCTURES.fogueira.recipe)).toBe('8 madeira · 4 pedra');
+    expect(formatRecipe(STRUCTURES.fogueira.recipe)).toBe('8 madeira · 4 pedras');
+  });
+
+  it('concorda em numero — "1 pedra", "4 pedras"', () => {
+    expect(formatRecipe({ pedra: 1 })).toBe('1 pedra');
+    expect(formatRecipe({ pedra: 4 })).toBe('4 pedras');
+    expect(formatRecipe({ fruta: 1 })).toBe('1 fruta');
+    expect(formatRecipe({ fruta: 4 })).toBe('4 frutas');
+  });
+
+  it('madeira e invariavel', () => {
+    expect(formatRecipe({ madeira: 1 })).toBe('1 madeira');
+    expect(formatRecipe({ madeira: 8 })).toBe('8 madeira');
   });
 });

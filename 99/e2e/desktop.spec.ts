@@ -110,6 +110,69 @@ test.describe('partida no computador', () => {
     const depois = await lerEstado(page);
     const total = depois.inventario.madeira + depois.inventario.fruta + depois.inventario.pedra;
     expect(total).toBe(esperado);
+    // O acerto tambem paga moeda: o recurso e o resultado da conta, a moeda e o
+    // premio por ter acertado.
+    expect(depois.moedas).toBeGreaterThan(0);
+  });
+
+  test('o loop economico completo: acertar, abrir a loja e comprar', async ({ page }) => {
+    // Moedas e recursos suficientes sem colher meia ilha; a colheita ja tem
+    // teste proprio logo acima, inclusive provando que ela paga moeda.
+    await page.evaluate(() => {
+      window.__tabuada!.store.setState({
+        coins: 120,
+        inventory: { madeira: 40, fruta: 20, pedra: 20 },
+      });
+    });
+
+    await page.keyboard.press('KeyL');
+    await expect(page.getByRole('dialog', { name: 'Loja' })).toBeVisible();
+    await page.screenshot({ path: 'e2e/telas/13-loja.png' });
+
+    const antes = await lerEstado(page);
+    expect(antes.lojaAberta).toBe(true);
+
+    await page.getByRole('button', { name: /Lanterna maior/ }).click();
+
+    const depois = await lerEstado(page);
+    expect(depois.comprados).toContain('lanterna-maior');
+    expect(depois.moedas).toBeLessThan(antes.moedas);
+    expect(depois.inventario.madeira).toBeLessThan(antes.inventario.madeira);
+
+    // O item comprado nao pode ser comprado de novo.
+    await expect(page.getByRole('button', { name: /Lanterna maior/ })).toBeDisabled();
+    await page.screenshot({ path: 'e2e/telas/14-loja-comprada.png' });
+
+    await page.getByRole('button', { name: 'Fechar' }).click();
+    expect((await lerEstado(page)).lojaAberta).toBe(false);
+  });
+
+  test('a loja nao abre com um desafio na tela', async ({ page }) => {
+    await ficarAoLadoDeUmRecurso(page);
+    await page.keyboard.press('KeyE');
+    await expect(page.locator('.challenge')).toBeVisible();
+
+    await page.keyboard.press('KeyL');
+
+    await expect(page.getByRole('dialog', { name: 'Loja' })).toHaveCount(0);
+  });
+
+  test('o amanhecer fecha o dia com o resumo', async ({ page }) => {
+    await ficarAoLadoDeUmRecurso(page);
+    await page.keyboard.press('KeyE');
+    await responderPeloEnunciado(page, true);
+
+    await irParaOMeioDe(page, 'amanhecer');
+
+    const resumo = page.getByRole('dialog', { name: 'Resumo do dia' });
+    await expect(resumo).toBeVisible();
+    await expect(resumo).toContainText('Amanheceu');
+    await page.screenshot({ path: 'e2e/telas/15-resumo-do-dia.png' });
+
+    await page.getByRole('button', { name: 'Continuar' }).click();
+    await expect(resumo).toHaveCount(0);
+    // As moedas atravessam o dia; so os contadores do dia zeram.
+    expect((await lerEstado(page)).moedas).toBeGreaterThan(0);
   });
 
   test('errar rende menos, revela a resposta e nao deixa de maos vazias', async ({ page }) => {

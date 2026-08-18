@@ -1,6 +1,11 @@
 import { distanceSqXZ, type Vec3, vec3 } from '../../shared/vec';
 import { isWithinIsland } from '../world/world.logic';
-import type { Inventory, ResourceKind, ResourceNode } from '../resources/resources.logic';
+import {
+  RESOURCE_LABELS,
+  type Inventory,
+  type ResourceKind,
+  type ResourceNode,
+} from '../resources/resources.logic';
 
 export type StructureKind = 'fogueira' | 'cerca';
 
@@ -335,9 +340,19 @@ export const REJECTION_MESSAGES: Record<PlacementRejection, string> = {
   'sem-recursos': 'Recursos insuficientes',
 };
 
-/** Texto do custo, para o HUD: "8 madeira · 4 pedra". */
+/**
+ * Texto do custo: "8 madeira · 4 pedras".
+ *
+ * Usa `RESOURCE_LABELS` em vez da chave do tipo. A chave e sempre singular, e
+ * escrever "4 pedra" e "4 fruta" esta errado em portugues — o mesmo cuidado que
+ * o enunciado do desafio ja toma com o genero dos substantivos. Ficou visivel
+ * quando a loja passou a mostrar custos em letras grandes.
+ */
 export function formatRecipe(recipe: Recipe): string {
   return Object.entries(recipe)
-    .map(([kind, cost]) => `${cost} ${kind}`)
+    .map(([kind, cost]) => {
+      const label = RESOURCE_LABELS[kind as ResourceKind];
+      return `${cost} ${cost === 1 ? label.one : label.many}`;
+    })
     .join(' · ');
 }

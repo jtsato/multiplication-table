@@ -138,6 +138,30 @@ test.describe('partida no celular', () => {
     await expect(fogueira).toBeDisabled();
   });
 
+  test('a loja cabe na tela do celular e compra pelo toque', async ({ page }) => {
+    await page.evaluate(() => {
+      window.__tabuada!.store.setState({
+        coins: 120,
+        inventory: { madeira: 40, fruta: 20, pedra: 20 },
+      });
+    });
+
+    await page.getByRole('button', { name: 'Loja' }).tap();
+    const loja = page.getByRole('dialog', { name: 'Loja' });
+    await expect(loja).toBeVisible();
+    await page.screenshot({ path: 'e2e/telas/celular-09-loja.png' });
+
+    // O cartao inteiro precisa caber: custo cortado deixaria a crianca sem saber
+    // o que ir buscar.
+    const caixa = await loja.boundingBox();
+    const viewport = page.viewportSize();
+    expect(caixa!.height).toBeLessThanOrEqual(viewport!.height);
+    expect(caixa!.y).toBeGreaterThanOrEqual(0);
+
+    await page.getByRole('button', { name: /Botas/ }).tap();
+    expect((await lerEstado(page)).comprados).toContain('botas');
+  });
+
   test('a noite no celular tem lanterna, e o amanhecer devolve o dia', async ({ page }) => {
     await page.evaluate(() => {
       const ponte = window.__tabuada!;
