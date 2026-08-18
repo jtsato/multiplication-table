@@ -21,6 +21,12 @@ jobs:
     name: Stryker (${{ matrix.app }})
     runs-on: ubuntu-latest
 
+    # Sem historico para medir — este workflow ainda nao rodou. Sessenta minutos
+    # e generoso para o Stryker, que reexecuta a suite uma vez por mutante, e
+    # ainda assim corta pela metade o padrao de seis horas. Vale ajustar quando
+    # houver alguns runs reais para olhar.
+    timeout-minutes: 60
+
     strategy:
       # Um app não deve esconder a falha dos outros.
       fail-fast: false
