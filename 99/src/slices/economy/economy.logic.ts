@@ -62,6 +62,7 @@ export type ShopItemKind =
   | 'lanterna-maior'
   | 'botas'
   | 'dica'
+  | 'sementes'
   // Decoracao da casa: o ralo permanente das colheitas de regiao.
   | 'tapete'
   | 'aquario'
@@ -78,7 +79,7 @@ export type ShopItemKind =
  * item descartavel, que e o que o genero cozy pede: a crianca gasta para ter, e
  * o que ela tem fica.
  */
-export type ShopCategory = 'ferramenta' | 'casa';
+export type ShopCategory = 'ferramenta' | 'casa' | 'horta';
 
 /**
  * Um item da loja.
@@ -133,6 +134,13 @@ export const SHOP_ITEMS: Record<ShopItemKind, ShopItem> = {
     category: 'ferramenta',
     coins: 10,
     recipe: { fruta: 4 },
+    repeatable: true,
+  },
+  sementes: {
+    kind: 'sementes',
+    category: 'horta',
+    coins: 8,
+    recipe: { mel: 4 },
     repeatable: true,
   },
 
@@ -195,6 +203,7 @@ export const SHOP_ORDER: readonly ShopItemKind[] = [
   'lanterna-maior',
   'botas',
   'dica',
+  'sementes',
   'tapete',
   'aquario',
   'vaso',

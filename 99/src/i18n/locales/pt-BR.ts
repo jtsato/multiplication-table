@@ -179,6 +179,10 @@ export const ptBR: LocaleDefinition = {
     'lanterna-maior': { label: 'Lanterna maior', effect: 'Ilumina mais longe e dura mais.' },
     botas: { label: 'Botas', effect: 'Você anda mais rápido.' },
     dica: { label: 'Dica', effect: 'Apaga uma resposta errada.' },
+    sementes: {
+      label: 'Sementes',
+      effect: 'Plante na horta do Pomar; rende no dia seguinte.',
+    },
     tapete: { label: 'Tapete de conchas', effect: 'Deixa a sala mais macia.' },
     aquario: { label: 'Aquário', effect: 'Os peixes ficam nadando.' },
     vaso: { label: 'Vaso de cogumelos', effect: 'Brilha um pouquinho à noite.' },

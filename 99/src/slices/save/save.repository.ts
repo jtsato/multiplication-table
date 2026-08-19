@@ -4,6 +4,7 @@ import { migrateLocale, type UserLocale } from '../../i18n';
 import type { ShopItemKind } from '../economy/economy.logic';
 import { SHOP_ITEMS } from '../economy/economy.logic';
 import { emptyInventory, RESOURCE_KINDS, type Inventory } from '../resources/resources.logic';
+import type { GardenState } from '../garden/garden.logic';
 import {
   migrateAnimalBook,
   migratePet,
@@ -33,6 +34,10 @@ export interface GameSave {
   inventory: Inventory;
   owned: ShopItemKind[];
   hints: number;
+  /** Sementes para a horta. Ausente num save anterior a horta, e ai e `0`. */
+  seeds: number;
+  /** Estado da horta do Pomar. Ausente antes da horta, e ai e vazia. */
+  garden: GardenState;
   avatar: AvatarSelection;
   /** Pontes ja compradas. Ausente num save anterior as regioes, e ai e `[]`. */
   openBridges: string[];
@@ -56,6 +61,16 @@ function migrateCount(raw: unknown, campo: string): number {
     throw new Error(`${campo} invalido`);
   }
   return Math.floor(raw);
+}
+
+function migrateGarden(raw: unknown): GardenState {
+  if (raw === undefined) return { planted: false, plantedDay: 0 };
+  if (typeof raw !== 'object' || raw === null) throw new Error('horta invalida');
+  const candidate = raw as Record<string, unknown>;
+  return {
+    planted: candidate.planted === true,
+    plantedDay: migrateCount(candidate.plantedDay, 'horta.plantedDay'),
+  };
 }
 
 /**
@@ -135,6 +150,8 @@ export function migrateSave(raw: unknown): GameSave {
     inventory: migrateInventory(candidate.inventory),
     owned: migrateOwned(candidate.owned),
     hints: migrateCount(candidate.hints, 'dicas'),
+    seeds: migrateCount(candidate.seeds, 'sementes'),
+    garden: migrateGarden(candidate.garden),
     avatar: migrateAvatar(candidate.avatar),
     openBridges: migrateBridges(candidate.openBridges),
     animalBook: migrateAnimalBook(candidate.animalBook),

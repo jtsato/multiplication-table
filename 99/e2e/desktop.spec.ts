@@ -5,6 +5,7 @@ import { DEFAULT_WORLD_SEED } from '../src/slices/world/world.store';
 import { REGIONS } from '../src/slices/regions/regions.logic';
 import { whaleMidWindow } from '../src/slices/wildlife/whale.logic';
 import { merchantPosition, npcPosition, teacherPosition } from '../src/slices/npc/npc.logic';
+import { gardenPosition } from '../src/slices/garden/garden.logic';
 import {
   esperarJogoPronto,
   esperarPainelCentralizado,
@@ -281,6 +282,41 @@ test.describe('partida no computador', () => {
     expect(depois.inventario[pedido.kind]).toBe(5);
     expect(depois.moedas).toBeGreaterThan(0);
     await page.screenshot({ path: 'e2e/telas/32-encomenda.png' });
+  });
+
+  test('a horta do Pomar planta e colhe no dia seguinte', async ({ page }) => {
+    await page.evaluate(() => {
+      window.__tabuada!.store.setState((atual) => ({
+        seeds: 1,
+        clock: { ...atual.clock, day: 1 },
+        animals: [],
+        nodes: [],
+      }));
+    });
+    const pos = gardenPosition();
+    await page.evaluate(({ x, z }) => window.__tabuada!.teleportar?.(x, z), {
+      x: pos.x,
+      z: pos.z,
+    });
+    await page.waitForTimeout(700);
+
+    await page.keyboard.press('KeyE');
+    expect(await page.evaluate(() => window.__tabuada!.store.getState().garden.planted)).toBe(true);
+    await page.screenshot({ path: 'e2e/telas/35-horta-plantada.png' });
+
+    // No dia seguinte a horta esta pronta; colher entrega frutas de graca.
+    // O dia e derivado do relogio vivo, entao avancamos os segundos de verdade.
+    await page.evaluate(() => {
+      window.__tabuada!.clock.seconds = 301;
+    });
+    await page.waitForTimeout(700);
+    await page.keyboard.press('KeyE');
+    const depois = await lerEstado(page);
+    expect(depois.inventario.fruta).toBeGreaterThan(0);
+    expect(await page.evaluate(() => window.__tabuada!.store.getState().garden.planted)).toBe(
+      false,
+    );
+    await page.screenshot({ path: 'e2e/telas/36-horta-colhida.png' });
   });
 
   test('a comerciante abre a loja e o professor abre a tabuada', async ({ page }) => {

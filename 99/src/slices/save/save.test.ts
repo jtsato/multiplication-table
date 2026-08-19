@@ -43,6 +43,8 @@ const saveValido = (): GameSave => ({
   inventory: { ...emptyInventory(), madeira: 5, fruta: 2, pedra: 9 },
   owned: ['botas'],
   hints: 3,
+  seeds: 2,
+  garden: { planted: true, plantedDay: 1 },
   avatar: { silhouette: 'menina', skin: 4, clothes: 6, head: 'bone', face: 'nenhum' },
   openBridges: ['praia-porto'],
   animalBook: [
@@ -78,6 +80,8 @@ describe('migrateSave', () => {
     expect(resultado.avatar).toEqual(DEFAULT_AVATAR);
     expect(resultado.animalBook).toEqual([]);
     expect(resultado.pet).toBeNull();
+    expect(resultado.seeds).toBe(0);
+    expect(resultado.garden).toEqual({ planted: false, plantedDay: 0 });
   });
 
   it('recusa numero negativo ou nao finito', () => {
@@ -253,6 +257,7 @@ describe('snapshot e applySave', () => {
         'animalBook',
         'avatar',
         'coins',
+        'garden',
         'hints',
         'inventory',
         'knownFacts',
@@ -260,6 +265,7 @@ describe('snapshot e applySave', () => {
         'openBridges',
         'owned',
         'pet',
+        'seeds',
         'version',
       ].sort(),
     );
@@ -272,6 +278,8 @@ describe('snapshot e applySave', () => {
     expect(state().knownFacts).toEqual(['2x4', '3x7']);
     expect(state().owned).toEqual(['botas']);
     expect(state().hints).toBe(3);
+    expect(state().seeds).toBe(2);
+    expect(state().garden).toEqual({ planted: true, plantedDay: 1 });
     expect(state().avatar.silhouette).toBe('menina');
     // As pontes atravessam junto: sem isto a crianca perderia a travessia que
     // conquistou so por fechar a pagina.

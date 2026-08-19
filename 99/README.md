@@ -152,6 +152,13 @@ As **pontes** agora têm guardiã: antes de comprar a travessia, a criança reso
 conta da guardiã. Acertar libera a compra (que continua cobrando moedas, recursos
 e a tabuada local); errar não custa nada.
 
+### Horta
+
+A loja vende **sementes** (moedas + mel). Com uma semente na mão, a criança planta
+na **horta do Pomar**; a horta cresce no mesmo dia e fica **pronta no dia
+seguinte**. Colher entrega frutas de graça — a recompensa é por voltar, não por
+resolver mais uma conta. O estado da horta e as sementes sobrevivem ao reload.
+
 ### A noite
 
 À noite a criança pode resolver mais uma multiplicação na fogueira para **acender a
@@ -223,7 +230,7 @@ assinantes 60 vezes por segundo.
 
 ## Testes
 
-Duas camadas: **610 testes** de unidade/integração no Vitest e **36 testes ponta a
+Duas camadas: **617 testes** de unidade/integração no Vitest e **37 testes ponta a
 ponta** em navegador de verdade com Playwright.
 
 ### Ponta a ponta (Playwright)

@@ -183,6 +183,10 @@ export const enUS: LocaleDefinition = {
     'lanterna-maior': { label: 'Bigger lantern', effect: 'Shines farther and lasts longer.' },
     botas: { label: 'Boots', effect: 'You walk faster.' },
     dica: { label: 'Hint', effect: 'Removes one wrong answer.' },
+    sementes: {
+      label: 'Seeds',
+      effect: 'Plant them in the Orchard garden; they grow by the next day.',
+    },
     tapete: { label: 'Shell rug', effect: 'Makes the room softer.' },
     aquario: { label: 'Aquarium', effect: 'The fish keep swimming.' },
     vaso: { label: 'Mushroom pot', effect: 'Glows a little at night.' },

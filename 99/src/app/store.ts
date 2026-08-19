@@ -5,6 +5,7 @@ import { createBuildingSlice, type BuildingSlice } from '../slices/building/buil
 import { createCompanionSlice, type CompanionSlice } from '../slices/companion/companion.store';
 import { createDayNightSlice, type DayNightSlice } from '../slices/daynight/daynight.store';
 import { createEconomySlice, type EconomySlice } from '../slices/economy/economy.store';
+import { createGardenSlice, type GardenSlice } from '../slices/garden/garden.store';
 import { createHomeSlice, type HomeSlice } from '../slices/home/home.store';
 import { HOME_SPOTS } from '../slices/home/home.logic';
 import { dayNightClock } from '../slices/daynight/dayNightClock';
@@ -38,6 +39,7 @@ export type GameState = WorldSlice &
   WildlifeSlice &
   CompanionSlice &
   NpcSlice &
+  GardenSlice &
   I18nSlice;
 
 export const useGameStore = create<GameState>()((...args) => ({
@@ -54,6 +56,7 @@ export const useGameStore = create<GameState>()((...args) => ({
   ...createWildlifeSlice(...args),
   ...createCompanionSlice(...args),
   ...createNpcSlice(...args),
+  ...createGardenSlice(...args),
   ...createI18nSlice(...args),
 }));
 
@@ -116,4 +119,5 @@ export function restartGame(): void {
   state.resetWildlife();
   state.resetCompanion();
   state.resetNpc();
+  state.resetGarden();
 }

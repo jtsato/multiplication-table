@@ -35,6 +35,8 @@ export interface EconomySlice {
   owned: ShopItemKind[];
   /** Dicas em estoque. Consumivel, entao acumula. */
   hints: number;
+  /** Sementes para a horta. Consumivel, entao acumula. */
+  seeds: number;
   /** Ultima recusa de compra, exibida na loja. */
   purchaseError: PurchaseRejection | null;
   shopOpen: boolean;
@@ -75,6 +77,7 @@ export const createEconomySlice: StateCreator<GameState, [], [], EconomySlice> =
   knownFacts: [],
   owned: [],
   hints: 0,
+  seeds: 0,
   purchaseError: null,
   shopOpen: false,
   summaryOpen: false,
@@ -137,6 +140,7 @@ export const createEconomySlice: StateCreator<GameState, [], [], EconomySlice> =
       inventory: payCost(state.inventory, item.recipe),
       owned: item.repeatable ? state.owned : [...state.owned, kind],
       hints: kind === 'dica' ? state.hints + 1 : state.hints,
+      seeds: kind === 'sementes' ? state.seeds + 1 : state.seeds,
       purchaseError: null,
     });
   },
@@ -162,6 +166,7 @@ export const createEconomySlice: StateCreator<GameState, [], [], EconomySlice> =
       knownFacts: [],
       owned: [],
       hints: 0,
+      seeds: 0,
       purchaseError: null,
       shopOpen: false,
       summaryOpen: false,

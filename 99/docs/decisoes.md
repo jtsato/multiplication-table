@@ -795,3 +795,34 @@ continua igual.
 | `npm run test` | 608 testes, 44 arquivos, verde |
 | `npm run e2e` | verde, incluindo encomenda, pedágio, NPCs e quadro |
 | `npm run build` | ok |
+
+---
+
+## Fase 7 — Horta
+
+**O que foi criado:** sementes na loja, canteiro no Pomar, plantio no mesmo dia e
+colheita de graça no dia seguinte.
+
+### Decisões
+
+**Semente é consumível, não melhoria.** A loja trata `sementes` como a dica:
+compra acumula em `seeds`, plantar debita uma. O catálogo ganhou a categoria
+`horta`, sem painel novo — a loja continua uma lista única.
+
+**A horta paga por voltar, não por acertar.** O ciclo plantio → dia seguinte →
+colheita usa o dia derivado do relógio vivo (`dayNumber`), e colher entrega frutas
+sem desafio. É o destino de recurso que recompensa o retorno ao Pomar, em vez de
+mais uma conta no campo.
+
+**Horta e sementes são duráveis.** `GameSave` ganhou `seeds` e `garden`; saves
+antigos seguem válidos porque os campos ausentes recebem os padrões.
+
+### Portões
+
+| Portão | Resultado |
+| --- | --- |
+| `npm run lint` | limpo |
+| `npm run typecheck` | limpo |
+| `npm run test` | 617 testes, 45 arquivos, verde |
+| `npm run e2e` | verde, incluindo plantio e colheita |
+| `npm run build` | ok |
