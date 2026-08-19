@@ -7,6 +7,7 @@ import {
   LocalStorageRepository,
   saveRepository,
   SAVE_VERSION,
+  SAVE_STORAGE_KEY,
   migrateSave,
   type GameSave,
 } from './save.repository';
@@ -89,6 +90,88 @@ describe('migrateSave', () => {
   it('descarta item de loja desconhecido sem recusar o save', () => {
     const resultado = migrateSave({ ...saveValido(), owned: ['botas', 'jetpack'] });
     expect(resultado.owned).toEqual(['botas']);
+  });
+
+  /**
+   * Os casos abaixo vieram de um teste de mutacao: cada defesa contra save
+   * corrompido estava **escrita em comentario e sem teste**, e trocar a condicao
+   * por `true` nao quebrava nada. E o codigo que protege o progresso da crianca
+   * de um dado estranho no navegador.
+   */
+  /**
+   * A chave do armazenamento e contrato de compatibilidade: mudar esta string e
+   * apagar o progresso de toda crianca que ja jogou. Fica presa em teste por
+   * isso, e nao por preciosismo.
+   */
+  it('a chave do armazenamento nao muda', () => {
+    expect(SAVE_STORAGE_KEY).toBe('numi-99.save');
+  });
+
+  /**
+   * Os limites do formato do fato, um a um.
+   *
+   * Veio da mutacao: tirar o `^`, tirar o `$` ou afrouxar o tamanho passava por
+   * todos os testes. Um fato malformado pinta o mural errado, que e exatamente a
+   * razao de esta funcao lancar em vez de descartar.
+   */
+  it('recusa fato que so parece um fato', () => {
+    for (const impostor of ['x2x4', '2x4x', '2x4 ', ' 2x4', '111x2', '2x111', 'a2x4', '2x4b']) {
+      expect(() => migrateSave({ ...saveValido(), knownFacts: [impostor] }), impostor).toThrow();
+    }
+  });
+
+  it('aceita os fatos de verdade, de 1x1 a 10x10', () => {
+    expect(() => migrateSave({ ...saveValido(), knownFacts: ['1x1', '2x10', '10x10'] })).not.toThrow();
+  });
+
+  it('recusa uma lista de fatos que nem lista e', () => {
+    expect(() => migrateSave({ ...saveValido(), knownFacts: 'dois' })).toThrow();
+    expect(() => migrateSave({ ...saveValido(), knownFacts: { a: 1 } })).toThrow();
+  });
+
+  it('recusa um inventario que nao e objeto', () => {
+    expect(() => migrateSave({ ...saveValido(), inventory: 'muita madeira' })).toThrow();
+    expect(() => migrateSave({ ...saveValido(), inventory: 42 })).toThrow();
+    // `null` e objeto para o `typeof`, e por isso tem verificacao propria.
+    expect(() => migrateSave({ ...saveValido(), inventory: null })).toThrow();
+  });
+
+  it('recusa uma lista de itens que nem lista e', () => {
+    expect(() => migrateSave({ ...saveValido(), owned: 'botas' })).toThrow();
+  });
+
+  it('descarta item de loja que nem string e', () => {
+    expect(migrateSave({ ...saveValido(), owned: [42, 'botas', null] }).owned).toEqual(['botas']);
+  });
+
+  /**
+   * Pontes seguem a mesma regra dos itens: desconhecida some em silencio, porque
+   * pode ser de uma versao futura do mapa; lista invalida derruba o save, porque
+   * isso e bug de programa.
+   */
+  it('descarta ponte desconhecida e recusa lista invalida', () => {
+    const resultado = migrateSave({
+      ...saveValido(),
+      openBridges: ['praia-porto', 'praia-lua', 7],
+    });
+    expect(resultado.openBridges).toEqual(['praia-porto']);
+
+    expect(() => migrateSave({ ...saveValido(), openBridges: 'praia-porto' })).toThrow();
+  });
+
+  it('save sem pontes nem idioma — os de antes destas fases — abre no padrao', () => {
+    const antigo = { ...saveValido() } as Record<string, unknown>;
+    delete antigo.openBridges;
+    delete antigo.locale;
+
+    const resultado = migrateSave(antigo);
+    expect(resultado.openBridges).toEqual([]);
+    expect(resultado.locale).toBe('pt-BR');
+  });
+
+  it('idioma desconhecido no save cai no padrao, sem lancar', () => {
+    expect(migrateSave({ ...saveValido(), locale: 'klingon' }).locale).toBe('pt-BR');
+    expect(migrateSave({ ...saveValido(), locale: 99 }).locale).toBe('pt-BR');
   });
 
   it('aparencia estranha volta ao padrao em vez de lancar', () => {

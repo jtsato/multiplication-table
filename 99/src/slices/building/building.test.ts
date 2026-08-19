@@ -5,6 +5,8 @@ import {
   canAfford,
   checkPlacement,
   formatRecipe,
+  fuelRemaining,
+  isLit,
   payCost,
   placementPosition,
   snapFencePlacement,
@@ -284,5 +286,53 @@ describe('formatRecipe', () => {
   it('madeira e invariavel', () => {
     expect(formatRecipe({ madeira: 1 }, pt)).toBe('1 madeira');
     expect(formatRecipe({ madeira: 8 }, pt)).toBe('8 madeira');
+  });
+});
+
+/**
+ * Casos que a mutacao cobrou.
+ *
+ * Cada um deles e uma regra que o codigo cumpre e que nenhum teste afirmava:
+ * trocar a condicao por `true` passava por toda a suite.
+ */
+describe('regras que a mutacao encontrou sem teste', () => {
+  it('cerca nao tem combustivel — so a fogueira queima', () => {
+    const cerca = { ...structure('cerca', 0, 0), fuelUntil: 9999 };
+    expect(fuelRemaining(cerca, 0)).toBe(0);
+    expect(isLit(cerca, 0)).toBe(false);
+
+    const fogueira = { ...structure('fogueira', 0, 0), fuelUntil: 30 };
+    expect(fuelRemaining(fogueira, 0)).toBe(30);
+    expect(isLit(fogueira, 0)).toBe(true);
+  });
+
+  /**
+   * A isencao que deixa duas cercas se emendarem **nao pode valer para a
+   * fogueira**. Sem estes casos, um mutante que ignorava o tipo passava: uma
+   * fogueira poderia nascer colada numa cerca, atravessando-a.
+   */
+  it('a isencao de emenda e so entre cercas', () => {
+    const cercaExistente = structure('cerca', 0, 0);
+    const rico = inv({ madeira: 99, pedra: 99 });
+
+    // Fogueira encostada numa cerca: sem isencao, e recusada.
+    expect(
+      checkPlacement(STRUCTURES.fogueira, vec3(0.2, 0, 0), rico, [cercaExistente], []),
+    ).toEqual({ ok: false, reason: 'sobreposta' });
+
+    // Cerca encostada numa fogueira: tambem sem isencao.
+    const fogueiraExistente = structure('fogueira', 0, 0);
+    expect(
+      checkPlacement(STRUCTURES.cerca, vec3(0.2, 0, 0), rico, [fogueiraExistente], []),
+    ).toEqual({ ok: false, reason: 'sobreposta' });
+  });
+
+  it('duas cercas continuam podendo se emendar', () => {
+    const rico = inv({ madeira: 99 });
+    const existente = structure('cerca', 0, 0);
+    const emenda = vec3(STRUCTURES.cerca.footprint * 2, 0, 0);
+
+    // Alinhadas ponta a ponta, a emenda e permitida.
+    expect(checkPlacement(STRUCTURES.cerca, emenda, rico, [existente], [], 0).ok).toBe(true);
   });
 });

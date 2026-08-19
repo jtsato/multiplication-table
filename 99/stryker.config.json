@@ -1,0 +1,33 @@
+{
+  "$schema": "./node_modules/@stryker-mutator/core/schema/stryker-schema.json",
+  "testRunner": "vitest",
+  "checkers": ["typescript"],
+  "tsconfigFile": "tsconfig.app.json",
+  "coverageAnalysis": "perTest",
+  "mutate": [
+    "src/i18n/grammar.ts",
+    "src/i18n/index.ts",
+    "src/slices/avatar/avatar.logic.ts",
+    "src/slices/building/building.logic.ts",
+    "src/slices/daynight/daynight.logic.ts",
+    "src/slices/economy/economy.logic.ts",
+    "src/slices/home/home.logic.ts",
+    "src/slices/lantern/fireflies.logic.ts",
+    "src/slices/lantern/lantern.logic.ts",
+    "src/slices/math/challengeText.ts",
+    "src/slices/math/math.logic.ts",
+    "src/slices/regions/bridges.logic.ts",
+    "src/slices/regions/regions.logic.ts",
+    "src/slices/regions/waterfalls.logic.ts",
+    "src/slices/resources/resources.logic.ts",
+    "src/slices/resources/resources.look.ts",
+    "src/slices/save/save.repository.ts",
+    "src/slices/world/world.logic.ts"
+  ],
+  "thresholds": {
+    "high": 80,
+    "low": 60,
+    "break": 80
+  },
+  "reporters": ["clear-text", "progress"]
+}
