@@ -1,5 +1,6 @@
 export { BedPanel } from './BedPanel';
 export { WallChart } from './WallChart';
+export { OrdersPanel } from './OrdersPanel';
 export { HomeView } from './HomeView';
 export { HomeDecorations } from './HomeDecorations';
 export { createHomeSlice, type HomeSlice } from './home.store';

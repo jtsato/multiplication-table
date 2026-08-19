@@ -37,7 +37,7 @@ export const HOME = {
 } as const;
 
 /** Os moveis com os quais da para interagir. */
-export type HomeSpot = 'espelho' | 'mural' | 'cama' | 'caderneta';
+export type HomeSpot = 'espelho' | 'mural' | 'cama' | 'caderneta' | 'encomendas';
 
 /**
  * Onde cada movel fica, **relativo ao centro da casa**.
@@ -55,6 +55,7 @@ export const HOME_SPOT_OFFSETS: Record<HomeSpot, Vec3> = {
   mural: vec3(2.2, 0, -1.4),
   cama: vec3(2.2, 0, 1.6),
   caderneta: vec3(-2.8, 0, 2.2),
+  encomendas: vec3(-0.7, 0, 1.0),
 };
 
 /** As mesmas posicoes, em coordenadas do mundo. Usadas pela logica de alcance. */
@@ -79,6 +80,11 @@ export const HOME_SPOTS: Record<HomeSpot, Vec3> = {
     0,
     HOME.position.z + HOME_SPOT_OFFSETS.caderneta.z,
   ),
+  encomendas: vec3(
+    HOME.position.x + HOME_SPOT_OFFSETS.encomendas.x,
+    0,
+    HOME.position.z + HOME_SPOT_OFFSETS.encomendas.z,
+  ),
 };
 
 export const HOME_SPOT_LABELS: Record<HomeSpot, string> = {
@@ -86,6 +92,7 @@ export const HOME_SPOT_LABELS: Record<HomeSpot, string> = {
   mural: 'Mural da tabuada',
   cama: 'Cama',
   caderneta: 'Caderneta dos animais',
+  encomendas: 'Quadro de encomendas',
 };
 
 /**

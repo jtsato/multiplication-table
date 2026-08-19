@@ -20,7 +20,10 @@ export interface ChallengeText {
   question: string;
 }
 
-export function challengeText(challenge: Challenge, bundle: LocaleBundle): ChallengeText {
+/** O minimo que a frase precisa de um desafio — ou de uma encomenda do quadro. */
+export type ChallengeTextTarget = Pick<Challenge, 'kind' | 'groups' | 'perGroup'>;
+
+export function challengeText(challenge: ChallengeTextTarget, bundle: LocaleBundle): ChallengeText {
   const { group, item } = bundle.resources[challenge.kind];
   const { counted, howMany } = bundle.grammar;
 

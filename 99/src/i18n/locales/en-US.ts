@@ -58,6 +58,7 @@ export const enUS: LocaleDefinition = {
     orderPrompt: 'Press E to deliver the order',
     orderDone: 'Order delivered!',
     tollOpen: 'Bridge open!',
+    ordersTitle: 'Order board',
 
     hintsStored: 'Hints saved: {{n}}',
     shopTitle: 'Shop',

@@ -6,7 +6,7 @@ import { Hud } from './Hud';
 import { TouchControls } from './TouchControls';
 import { useIsTouchDevice, useKeyboardBindings } from '../shared/input';
 import { AvatarPanel } from '../slices/avatar';
-import { BedPanel, WallChart } from '../slices/home';
+import { BedPanel, OrdersPanel, WallChart } from '../slices/home';
 import { loadGame, startAutoSave } from '../slices/save';
 import { ShopPanel } from '../slices/economy';
 import { AnimalBookPanel } from '../slices/wildlife';
@@ -77,6 +77,7 @@ export function App() {
       <ShopPanel />
       <AvatarPanel />
       <WallChart />
+      <OrdersPanel />
       <BedPanel />
       <AnimalBookPanel />
       <DaySummary />

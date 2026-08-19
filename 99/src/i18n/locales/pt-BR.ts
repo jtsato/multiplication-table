@@ -54,6 +54,7 @@ export const ptBR: LocaleDefinition = {
     orderPrompt: 'Aperte E para entregar encomenda',
     orderDone: 'Encomenda entregue!',
     tollOpen: 'Ponte liberada!',
+    ordersTitle: 'Quadro de encomendas',
 
     hintsStored: 'Dicas guardadas: {{n}}',
     shopTitle: 'Loja',

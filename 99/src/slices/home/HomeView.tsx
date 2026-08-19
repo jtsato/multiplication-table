@@ -51,6 +51,18 @@ function Furniture() {
         <meshLambertMaterial color={palette.homeChart} flatShading />
       </mesh>
 
+      {/* Quadro de encomendas: placa num cavalete no meio da sala. */}
+      <group position={[HOME_SPOT_OFFSETS.encomendas.x, 0, HOME_SPOT_OFFSETS.encomendas.z]}>
+        <mesh position={[0, 0.5, 0]} castShadow>
+          <boxGeometry args={[0.9, 0.7, 0.1]} />
+          <meshLambertMaterial color={palette.homeChart} flatShading />
+        </mesh>
+        <mesh position={[0, 0.08, 0]} castShadow>
+          <boxGeometry args={[1.1, 0.16, 0.5]} />
+          <meshLambertMaterial color={palette.homeBed} flatShading />
+        </mesh>
+      </group>
+
       {/* Cama: colchao e travesseiro. */}
       <group position={[HOME_SPOT_OFFSETS.cama.x, 0, HOME_SPOT_OFFSETS.cama.z]}>
         <mesh position={[0, 0.3, 0]} castShadow receiveShadow>

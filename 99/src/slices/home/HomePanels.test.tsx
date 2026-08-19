@@ -10,6 +10,7 @@ import { DAYNIGHT, PHASE_BOUNDS, cyclePosition, phaseFor } from '../daynight/day
 import { dayNightClock, resetDayNightClock } from '../daynight/dayNightClock';
 import { factKey } from '../economy';
 import { BedPanel } from './BedPanel';
+import { OrdersPanel } from './OrdersPanel';
 import { WallChart } from './WallChart';
 
 const state = () => useGameStore.getState();
@@ -203,5 +204,37 @@ describe('painéis da casa', () => {
     });
 
     expect(state().openSpot).toBeNull();
+  });
+
+  describe('quadro de encomendas', () => {
+    it('nao aparece longe do quadro', () => {
+      const { container } = render(<OrdersPanel />);
+      expect(container).toBeEmptyDOMElement();
+    });
+
+    it('mostra os pedidos do dia com o enunciado e a recompensa', () => {
+      act(() => {
+        state().setNearbySpot('encomendas');
+        state().openNearbySpot();
+      });
+      render(<OrdersPanel />);
+
+      const quadro = screen.getByRole('dialog', { name: 'Quadro de encomendas' });
+      expect(quadro).toBeVisible();
+      expect(quadro.querySelectorAll('.orders__item')).toHaveLength(state().orders.length);
+      expect(quadro).toHaveTextContent('moedas');
+    });
+
+    it('fechar limpa o painel', async () => {
+      act(() => {
+        state().setNearbySpot('encomendas');
+        state().openNearbySpot();
+      });
+      render(<OrdersPanel />);
+
+      await userEvent.click(screen.getByRole('button', { name: 'Fechar' }));
+
+      expect(state().openSpot).toBeNull();
+    });
   });
 });

@@ -755,8 +755,9 @@ uma mecânica.
 
 **O que foi criado:** um NPC de encomendas por região, com pedido diário
 determinístico; a guardiã da ponte agora cobra uma conta antes de liberar a
-compra da travessia; a comerciante abre a loja no mundo; e o professor mostra a
-tabuada de graça em qualquer lugar.
+compra da travessia; a comerciante abre a loja no mundo; o professor mostra a
+tabuada de graça em qualquer lugar; e a casa ganhou o quadro de encomendas para
+consultar os pedidos do dia sem sair do porto seguro.
 
 ### Decisões
 
@@ -775,6 +776,10 @@ mesma gentileza de alimentar.
 nenhuma física nova — o mundo ganha gente sem o jogo ganhar uma mecânica
 duplicada.
 
+**O quadro de encomendas é consulta, não entrega.** Ele usa os mesmos `orders` e o
+mesmo `challengeText` dos NPCs; a entrega continua acontecendo na região, com o
+painel ancorado no mundo. A casa mostra o destino — o trabalho é lá fora.
+
 **Encomenda e pedágio são só mais dois propósitos no `ChallengePanel`.** A slice
 de matemática não conhece NPC nem ponte: `encomenda` chama `completeOrder` e
 `pedagio` chama `buyBridge` no acerto. O resto do painel, da dica e das moedas
@@ -786,6 +791,6 @@ continua igual.
 | --- | --- |
 | `npm run lint` | limpo |
 | `npm run typecheck` | limpo |
-| `npm run test` | 605 testes, 44 arquivos, verde |
-| `npm run e2e` | verde, incluindo encomenda, pedágio e NPCs |
+| `npm run test` | 608 testes, 44 arquivos, verde |
+| `npm run e2e` | verde, incluindo encomenda, pedágio, NPCs e quadro |
 | `npm run build` | ok |

@@ -95,7 +95,7 @@ Ao entrar, o telhado fica transparente: a leitura vira a de uma casa de boneca, 
 carregar outra cena. Dentro do raio de luz dela a **lanterna não gasta e reacende de
 graça**, sem conta e sem moeda.
 
-Quatro móveis:
+Cinco móveis:
 
 - **Espelho** — silhueta, 6 tons de pele, 8 cores de roupa e acessórios. A silhueta
   escolhida não tranca nada; os acessórios especiais se ganham por marco de tabuada
@@ -106,6 +106,8 @@ Quatro móveis:
 - **Cama** — dormir pula para o próximo amanhecer.
 - **Caderneta dos animais** — quem já foi visto, quem já virou amigo, e o amigo que
   a criança escolhe para acompanhá-la como pet.
+- **Quadro de encomendas** — os pedidos do dia, para a criança ver sem precisar
+  andar atrás de cada NPC.
 
 E as **seis decorações da loja** — tapete, aquário, vaso, lustre, prateleira e
 escultura — aparecem dentro da casa assim que compradas, e continuam lá depois de
@@ -219,7 +221,7 @@ assinantes 60 vezes por segundo.
 
 ## Testes
 
-Duas camadas: **605 testes** de unidade/integração no Vitest e **35 testes ponta a
+Duas camadas: **608 testes** de unidade/integração no Vitest e **36 testes ponta a
 ponta** em navegador de verdade com Playwright.
 
 ### Ponta a ponta (Playwright)
