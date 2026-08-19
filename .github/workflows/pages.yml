@@ -61,14 +61,26 @@ jobs:
 
       # E2E roda no push, para os quatro apps.
       #
-      # O teto deste passo e mais curto que o do job de proposito: ele leva um ou
-      # dois minutos quando a rede coopera, e e exatamente onde o travamento
-      # acontece. Falhar em dez minutos aponta o culpado de imediato, em vez de
-      # gastar o teto inteiro num `apt-get update` que nunca responde.
+      # Sem `--with-deps` de proposito. A imagem do ubuntu-latest ja traz todas as
+      # bibliotecas que o Chromium precisa: no run 32209170685 o apt respondeu
+      # `already the newest version` para as vinte e tantas libs da lista, uma por
+      # uma. O que sobrou para o `--with-deps` baixar foram 21 MB de FONTES
+      # (CJK, emoji, unifont) — e foi ai que o passo morreu, com o espelho apt da
+      # Azure entregando a ~50 kB/s: sete minutos para seis pacotes de fonte,
+      # estouro do teto, e a fila do Pages parada de novo.
+      #
+      # Nenhum teste depende dessas fontes. As capturas em `e2e/telas/` sao
+      # salvas, nunca comparadas — nao ha `toHaveScreenshot` na suite —, entao a
+      # fonte de fallback do runner serve. Trocamos um risco real de travar por
+      # um glifo diferente em PNG que ninguem confere byte a byte.
+      #
+      # O teto continua curto de proposito: o download do Chromium vem do CDN da
+      # Playwright e leva menos de um minuto. Falhar em dez aponta o culpado de
+      # imediato, em vez de gastar o teto inteiro do job.
       - name: Install Playwright browser (${{ matrix.app }})
         timeout-minutes: 10
         working-directory: ${{ matrix.app }}
-        run: npx playwright install --with-deps chromium
+        run: npx playwright install chromium
 
       - name: Run E2E tests (${{ matrix.app }})
         working-directory: ${{ matrix.app }}

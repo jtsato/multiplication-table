@@ -55,5 +55,8 @@
     "typescript-eslint": "^8.41.0",
     "vite": "^8.2.1",
     "vitest": "^4.1.10"
+  },
+  "overrides": {
+    "qs": "6.15.3"
   }
 }
