@@ -74,4 +74,15 @@ que conta como pago.
 - **Onde atacar:** dentro da slice `wildlife/` — ex.: um `WhaleView` ou uma
   função pura de agendamento (`whaleSchedule(clock, rng)`) testada em Vitest, com
   o ciclo animado no `useFrame`.
-- **Status:** aberta.
+- **Status:** fechada em 2026-08-19.
+
+### Resolução
+
+- **`src/slices/wildlife/whale.logic.ts`** define a janela pura do
+  acontecimento: `whaleState(clock)`, `whaleHeight(state)` (sobe e mergulha) e
+  `whaleIsSpouting(state)`.
+- **`WhaleView.tsx`** anima o corpo no mar aberto do Porto dentro do `useFrame`,
+  sem nenhuma escrita no store — é só para olhar, como a spec manda.
+- **Testes:** `whale.test.ts` (4 testes de Vitest) cobre a janela, o progresso e
+  o esguicho; `desktop.spec.ts` grava `e2e/telas/31-baleia.png` com o relógio no
+  meio da janela e confirma que o acontecimento não mexe em moedas nem desafios.

@@ -700,11 +700,11 @@ coisa visível.
 
 ---
 
-## Fase 5 — Animais, pet e caderneta (núcleo)
+## Fase 5 — Animais, pet e caderneta
 
 **O que foi criado:** animais de ambiente por região, alimentar → amigo, caderneta
-na casa, pet que segue o jogador e raros com janela atrelada a sequência de
-acertos. A baleia do Porto ficou registrada como DIV-002.
+na casa, pet que segue o jogador, raros com janela atrelada a sequência de
+acertos e a baleia do Porto como acontecimento visual.
 
 ### Decisões
 
@@ -733,12 +733,18 @@ aberta. Assim a caderneta conhece a espécie antes de ela aparecer.
 o mesmo cuidado do `stepToward` dos inimigos removidos. O pet desenterra uma moeda
 a cada 30 s, sem nenhuma escrita por quadro no store.
 
+**A baleia é janela pura, não estado.** `whaleState(clock)` decide se o corpo
+está visível e `whaleHeight` o faz subir na primeira metade da janela e mergulhar
+na segunda. O `WhaleView` só move um grupo no `useFrame`; o acontecimento não
+escreve no store, não dá moeda e não abre desafio — é exatamente o contrário de
+uma mecânica.
+
 ### Portões
 
 | Portão | Resultado |
 | --- | --- |
 | `npm run lint` | limpo |
 | `npm run typecheck` | limpo |
-| `npm run test` | 589 testes, 42 arquivos, verde |
-| `npm run e2e` | verde, incluindo pet e caderneta |
+| `npm run test` | 593 testes, 43 arquivos, verde |
+| `npm run e2e` | verde, incluindo pet, caderneta e baleia |
 | `npm run build` | ok |

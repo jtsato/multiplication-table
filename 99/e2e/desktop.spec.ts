@@ -3,6 +3,7 @@ import { createSwarms, swarmSeed } from '../src/slices/lantern/fireflies.logic';
 import { createRng } from '../src/shared/rng';
 import { DEFAULT_WORLD_SEED } from '../src/slices/world/world.store';
 import { REGIONS } from '../src/slices/regions/regions.logic';
+import { whaleMidWindow } from '../src/slices/wildlife/whale.logic';
 import {
   esperarJogoPronto,
   esperarPainelCentralizado,
@@ -234,6 +235,25 @@ test.describe('partida no computador', () => {
 
     await page.getByRole('button', { name: 'Fechar' }).click();
     await expect(caderneta).toHaveCount(0);
+  });
+
+  test('a baleia sobe no mar do Porto no meio da janela', async ({ page }) => {
+    // A janela da baleia e independente do dia/noite: um acontecimento para
+    // olhar, nao uma mecanica de progresso.
+    await page.evaluate((segundos) => {
+      window.__tabuada!.clock.seconds = segundos;
+      // Vira a camera para o leste, onde a baleia aparece no mar aberto.
+      window.__tabuada!.transform.yaw = -Math.PI / 2;
+    }, whaleMidWindow());
+    await page.evaluate(() => window.__tabuada!.teleportar?.(42, 0));
+
+    await page.waitForTimeout(1500);
+    await page.screenshot({ path: 'e2e/telas/31-baleia.png' });
+
+    // Acontecimento nao mexe no estado: sem moeda, sem desafio.
+    const estado = await lerEstado(page);
+    expect(estado.moedas).toBe(0);
+    expect(estado.desafio).toBeNull();
   });
 
   test('a loja nao abre com um desafio na tela', async ({ page }) => {

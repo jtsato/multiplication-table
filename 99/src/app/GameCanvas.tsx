@@ -10,7 +10,7 @@ import { PlayerView } from '../slices/player';
 import { FirefliesView } from '../slices/lantern';
 import { RegionsView, WaterfallView } from '../slices/regions';
 import { ResourcesView } from '../slices/resources';
-import { WildlifeView } from '../slices/wildlife';
+import { WhaleView, WildlifeView } from '../slices/wildlife';
 import { WorldView } from '../slices/world';
 import { useGameStore } from './store';
 
@@ -70,6 +70,7 @@ export function GameCanvas({ isTouch = false }: { isTouch?: boolean }) {
         <WorldView seed={worldSeed} />
         <RegionsView />
         <WaterfallView />
+        <WhaleView />
         <FirefliesView seed={worldSeed} />
         <HomeView />
         <WildlifeView />

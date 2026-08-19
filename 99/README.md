@@ -130,6 +130,10 @@ Os **raros** aparecem em janela curta e dependem de domínio, não de sorte: o
 **unicórnio** na Cachoeira à noite e o **dinossauro** no Pico de dia, ambos depois
 de uma sequência de acertos.
 
+De vez em quando a **baleia** sobe no mar aberto do Porto, solta o esguicho e
+mergulha. Ela não dá moeda nem recurso — é um acontecimento para a criança parar
+de fazer conta e olhar.
+
 ### A noite
 
 À noite a criança pode resolver mais uma multiplicação na fogueira para **acender a
@@ -200,7 +204,7 @@ assinantes 60 vezes por segundo.
 
 ## Testes
 
-Duas camadas: **589 testes** de unidade/integração no Vitest e **32 testes ponta a
+Duas camadas: **593 testes** de unidade/integração no Vitest e **33 testes ponta a
 ponta** em navegador de verdade com Playwright.
 
 ### Ponta a ponta (Playwright)
