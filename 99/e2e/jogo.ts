@@ -11,7 +11,13 @@ import { DAYNIGHT, PHASE_BOUNDS, type DayPhase } from '../src/slices/daynight/da
 export interface EstadoJogo {
   inventario: Record<string, number>;
   destacado: string | null;
-  desafio: { prompt: string; opcoes: number[]; resposta: number; proposito: string } | null;
+  desafio: {
+    grupos: number;
+    porGrupo: number;
+    opcoes: number[];
+    resposta: number;
+    proposito: string;
+  } | null;
   fase: string;
   construcoes: number;
   jogador: { x: number; y: number; z: number };
@@ -41,7 +47,10 @@ export async function lerEstado(page: Page): Promise<EstadoJogo> {
       destacado: s.highlightedNodeId,
       desafio: s.activeChallenge
         ? {
-            prompt: s.activeChallenge.prompt,
+            // Dados, e nao a frase: o enunciado deixou de morar no desafio e
+            // passou a ser montado na hora de desenhar, pelo idioma escolhido.
+            grupos: s.activeChallenge.groups,
+            porGrupo: s.activeChallenge.perGroup,
             opcoes: s.activeChallenge.options,
             resposta: s.activeChallenge.answer,
             proposito: s.activeChallenge.purpose,

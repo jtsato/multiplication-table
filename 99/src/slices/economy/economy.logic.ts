@@ -1,3 +1,4 @@
+import type { AppStrings, LocaleBundle } from '../../i18n';
 import { canAfford, formatRecipe, type Recipe } from '../building/building.logic';
 import type { Inventory } from '../resources/resources.logic';
 
@@ -79,12 +80,16 @@ export type ShopItemKind =
  */
 export type ShopCategory = 'ferramenta' | 'casa';
 
+/**
+ * Um item da loja.
+ *
+ * **Sem rotulo nem descricao aqui.** O nome e o efeito sao texto e vivem nos
+ * arquivos de idioma; o que fica no catalogo e o que nao se traduz: preco,
+ * receita, categoria e se repete.
+ */
 export interface ShopItem {
   kind: ShopItemKind;
   category: ShopCategory;
-  label: string;
-  /** Uma frase curta. A regra de nao exigir leitura fluente vale aqui tambem. */
-  effect: string;
   coins: number;
   recipe: Recipe;
   /**
@@ -112,8 +117,6 @@ export const SHOP_ITEMS: Record<ShopItemKind, ShopItem> = {
   'lanterna-maior': {
     kind: 'lanterna-maior',
     category: 'ferramenta',
-    label: 'Lanterna maior',
-    effect: 'Ilumina mais longe e dura mais.',
     coins: 30,
     recipe: { madeira: 8 },
     repeatable: false,
@@ -121,8 +124,6 @@ export const SHOP_ITEMS: Record<ShopItemKind, ShopItem> = {
   botas: {
     kind: 'botas',
     category: 'ferramenta',
-    label: 'Botas',
-    effect: 'Você anda mais rápido.',
     coins: 25,
     recipe: { pedra: 6 },
     repeatable: false,
@@ -130,8 +131,6 @@ export const SHOP_ITEMS: Record<ShopItemKind, ShopItem> = {
   dica: {
     kind: 'dica',
     category: 'ferramenta',
-    label: 'Dica',
-    effect: 'Apaga uma resposta errada.',
     coins: 10,
     recipe: { fruta: 4 },
     repeatable: true,
@@ -151,8 +150,6 @@ export const SHOP_ITEMS: Record<ShopItemKind, ShopItem> = {
   tapete: {
     kind: 'tapete',
     category: 'casa',
-    label: 'Tapete de conchas',
-    effect: 'Deixa a sala mais macia.',
     coins: 20,
     recipe: { concha: 6 },
     repeatable: false,
@@ -160,8 +157,6 @@ export const SHOP_ITEMS: Record<ShopItemKind, ShopItem> = {
   aquario: {
     kind: 'aquario',
     category: 'casa',
-    label: 'Aquário',
-    effect: 'Os peixes ficam nadando.',
     coins: 35,
     recipe: { peixe: 8 },
     repeatable: false,
@@ -169,8 +164,6 @@ export const SHOP_ITEMS: Record<ShopItemKind, ShopItem> = {
   vaso: {
     kind: 'vaso',
     category: 'casa',
-    label: 'Vaso de cogumelos',
-    effect: 'Brilha um pouquinho à noite.',
     coins: 20,
     recipe: { cogumelo: 6 },
     repeatable: false,
@@ -178,8 +171,6 @@ export const SHOP_ITEMS: Record<ShopItemKind, ShopItem> = {
   lustre: {
     kind: 'lustre',
     category: 'casa',
-    label: 'Lustre de cristal',
-    effect: 'Espalha luz colorida.',
     coins: 45,
     recipe: { cristal: 8 },
     repeatable: false,
@@ -187,8 +178,6 @@ export const SHOP_ITEMS: Record<ShopItemKind, ShopItem> = {
   prateleira: {
     kind: 'prateleira',
     category: 'casa',
-    label: 'Prateleira de mel',
-    effect: 'Cheira bem de longe.',
     coins: 25,
     recipe: { mel: 6 },
     repeatable: false,
@@ -196,8 +185,6 @@ export const SHOP_ITEMS: Record<ShopItemKind, ShopItem> = {
   escultura: {
     kind: 'escultura',
     category: 'casa',
-    label: 'Escultura de gelo',
-    effect: 'Não derrete nunca.',
     coins: 40,
     recipe: { gelo: 8 },
     repeatable: false,
@@ -240,13 +227,20 @@ export function checkPurchase(
   return { ok: true };
 }
 
-export const PURCHASE_MESSAGES: Record<PurchaseRejection, string> = {
-  'sem-moedas': 'Faltam moedas',
-  'sem-recursos': 'Faltam recursos',
-  'ja-comprado': 'Você já tem',
-};
+/**
+ * A recusa, escrita no idioma da crianca.
+ *
+ * Funcao em vez de tabela de strings porque a tabela teria que viver em dois
+ * lugares — aqui e no locale — e as duas poderiam divergir. Assim o catalogo
+ * conhece os motivos e o locale conhece as palavras.
+ */
+export function purchaseMessage(reason: PurchaseRejection, strings: AppStrings): string {
+  if (reason === 'sem-moedas') return strings.noCoins;
+  if (reason === 'sem-recursos') return strings.noResources;
+  return strings.alreadyOwned;
+}
 
 /** Custo em recursos, escrito como o HUD escreve as receitas. */
-export function formatShopRecipe(item: ShopItem): string {
-  return formatRecipe(item.recipe);
+export function formatShopRecipe(item: ShopItem, bundle: LocaleBundle): string {
+  return formatRecipe(item.recipe, bundle);
 }

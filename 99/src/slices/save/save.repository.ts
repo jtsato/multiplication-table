@@ -1,5 +1,6 @@
 import { migrateAvatar, type AvatarSelection } from '../avatar/avatar.logic';
 import { bridgeById } from '../regions/bridges.logic';
+import { migrateLocale, type UserLocale } from '../../i18n';
 import type { ShopItemKind } from '../economy/economy.logic';
 import { SHOP_ITEMS } from '../economy/economy.logic';
 import { emptyInventory, RESOURCE_KINDS, type Inventory } from '../resources/resources.logic';
@@ -29,6 +30,8 @@ export interface GameSave {
   avatar: AvatarSelection;
   /** Pontes ja compradas. Ausente num save anterior as regioes, e ai e `[]`. */
   openBridges: string[];
+  /** Idioma escolhido. Ausente num save anterior ao i18n, e ai e o padrao. */
+  locale: UserLocale;
 }
 
 export interface SaveRepository {
@@ -124,6 +127,7 @@ export function migrateSave(raw: unknown): GameSave {
     hints: migrateCount(candidate.hints, 'dicas'),
     avatar: migrateAvatar(candidate.avatar),
     openBridges: migrateBridges(candidate.openBridges),
+    locale: migrateLocale(candidate.locale),
   };
 }
 

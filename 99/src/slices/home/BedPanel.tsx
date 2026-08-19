@@ -15,21 +15,22 @@ export function BedPanel() {
   const openSpot = useGameStore((state) => state.openSpot);
   const sleep = useGameStore((state) => state.sleep);
   const closeSpot = useGameStore((state) => state.closeSpot);
+  const t = useGameStore((state) => state.text).strings;
 
   if (openSpot !== 'cama') return null;
 
   return (
     <div className="bed-overlay">
-      <div className="bed" role="dialog" aria-label="Cama">
-        <h2 className="bed__title">Sua cama</h2>
-        <p className="bed__text">Quer dormir e acordar amanhã de manhã?</p>
+      <div className="bed" role="dialog" aria-label={t.bedLabel}>
+        <h2 className="bed__title">{t.bedTitle}</h2>
+        <p className="bed__text">{t.bedQuestion}</p>
 
         <div className="bed__actions">
           <button type="button" className="bed__button bed__button--sleep" onClick={sleep}>
-            Dormir até amanhecer
+            {t.bedSleep}
           </button>
           <button type="button" className="bed__button" onClick={closeSpot}>
-            Ainda não
+            {t.bedNotYet}
           </button>
         </div>
       </div>

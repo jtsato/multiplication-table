@@ -174,9 +174,7 @@ describe('todo tipo de recurso chega a cena', () => {
     const grupos = renderer.scene.findAllByType('Group').length;
 
     expect(esperados).toBe(RESOURCE_KINDS.length * 3 * 4);
-    expect(grupos, 'itens calculados que nao chegaram ao render').toBeGreaterThanOrEqual(
-      esperados,
-    );
+    expect(grupos, 'itens calculados que nao chegaram ao render').toBeGreaterThanOrEqual(esperados);
 
     await renderer.unmount();
   });

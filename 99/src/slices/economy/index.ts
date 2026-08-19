@@ -2,7 +2,7 @@ export { ShopPanel } from './ShopPanel';
 export { createEconomySlice, type EconomySlice } from './economy.store';
 export {
   ECONOMY,
-  PURCHASE_MESSAGES,
+  purchaseMessage,
   SHOP_ITEMS,
   SHOP_ORDER,
   checkPurchase,

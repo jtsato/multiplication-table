@@ -1,4 +1,5 @@
 import { canAfford, type Recipe } from '../building/building.logic';
+import type { AppStrings } from '../../i18n';
 import { factKey } from '../economy/economy.logic';
 import type { Inventory } from '../resources/resources.logic';
 import { type Vec3, vec3 } from '../../shared/vec';
@@ -107,11 +108,17 @@ export function checkBridge(
   return { ok: true };
 }
 
-export const BRIDGE_MESSAGES: Record<BridgeRejection, string> = {
-  'sem-tabuada': 'Treine a tabuada daqui',
-  'sem-moedas': 'Faltam moedas',
-  'sem-recursos': 'Faltam recursos',
-};
+/**
+ * A recusa da ponte, no idioma da crianca.
+ *
+ * "Treine a tabuada daqui" e a unica mensagem do jogo que aponta para estudar em
+ * vez de juntar — por isso ela nao pode ser confundida com falta de moeda.
+ */
+export function bridgeMessage(reason: BridgeRejection, strings: AppStrings): string {
+  if (reason === 'sem-tabuada') return strings.needTable;
+  if (reason === 'sem-moedas') return strings.noCoins;
+  return strings.noResources;
+}
 
 /**
  * Onde a ponte encosta em cada margem.

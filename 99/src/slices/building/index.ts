@@ -2,11 +2,12 @@ export { BuildingView } from './BuildingView';
 export { createBuildingSlice, type BuildingSlice } from './building.store';
 export {
   BUILDING,
-  REJECTION_MESSAGES,
+  rejectionMessage,
   STRUCTURES,
   canAfford,
   checkPlacement,
   formatRecipe,
+  structureLabel,
   fuelRemaining,
   isLit,
   nearestRefuelable,

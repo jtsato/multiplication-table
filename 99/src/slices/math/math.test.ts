@@ -1,12 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import {
-  CHALLENGE_CONTEXTS,
-  OPTION_COUNT,
-  buildDistractors,
-  generateChallenge,
-  resolveAnswer,
-} from './math.logic';
-import { RESOURCE_KINDS, type ResourceKind, type ResourceNode } from '../resources/resources.logic';
+import { OPTION_COUNT, buildDistractors, generateChallenge, resolveAnswer } from './math.logic';
+import { type ResourceKind, type ResourceNode } from '../resources/resources.logic';
 import { createRng } from '../../shared/rng';
 import { vec3 } from '../../shared/vec';
 
@@ -93,38 +87,6 @@ describe('generateChallenge', () => {
     expect(generateChallenge(node(6), createRng(9))).toEqual(
       generateChallenge(node(6), createRng(9)),
     );
-  });
-
-  it('descreve em palavras exatamente o que esta na cena', () => {
-    const challenge = generateChallenge(node(4, 'fruta'), createRng(1));
-    expect(challenge.prompt).toBe('4 cachos com 2 frutas cada');
-    expect(challenge.question).toBe('Quantas frutas ao todo?');
-  });
-
-  it('concorda o singular quando ha um unico grupo', () => {
-    expect(generateChallenge(node(1, 'madeira'), createRng(1)).prompt).toBe(
-      '1 galho com 2 gravetos cada',
-    );
-  });
-
-  it('concorda o genero da pergunta com o substantivo do item', () => {
-    expect(generateChallenge(node(3, 'madeira'), createRng(1)).question).toBe(
-      'Quantos gravetos ao todo?',
-    );
-    expect(generateChallenge(node(3, 'fruta'), createRng(1)).question).toBe(
-      'Quantas frutas ao todo?',
-    );
-    expect(generateChallenge(node(3, 'pedra'), createRng(1)).question).toBe(
-      'Quantas pedras ao todo?',
-    );
-  });
-
-  it('usa o vocabulario proprio de cada tipo de recurso', () => {
-    for (const kind of ['madeira', 'fruta', 'pedra'] as const) {
-      const challenge = generateChallenge(node(3, kind), createRng(1));
-      expect(challenge.prompt).toContain(CHALLENGE_CONTEXTS[kind].groupNoun.many);
-      expect(challenge.prompt).toContain(CHALLENGE_CONTEXTS[kind].itemNoun.many);
-    }
   });
 });
 
@@ -228,39 +190,6 @@ describe('resolveAnswer', () => {
       expect(resolveAnswer(c, c.answer + 3).reward).toBeLessThanOrEqual(
         resolveAnswer(c, c.answer).reward,
       );
-    }
-  });
-});
-
-describe('os enunciados dos recursos novos', () => {
-  it('todo tipo de recurso sabe se descrever', () => {
-    for (const kind of RESOURCE_KINDS) {
-      const contexto = CHALLENGE_CONTEXTS[kind];
-      expect(contexto, `${kind} nao tem enunciado`).toBeDefined();
-      expect(contexto.groupNoun.one.length).toBeGreaterThan(0);
-      expect(contexto.itemNoun.many.length).toBeGreaterThan(0);
-      expect(['m', 'f']).toContain(contexto.itemNoun.gender);
-    }
-  });
-
-  /**
-   * A concordancia nao e detalhe de estilo: sem o genero, o enunciado sai errado
-   * em portugues — "Quantos conchas" em vez de "Quantas conchas". E a razao de o
-   * campo existir desde a primeira fatia.
-   */
-  it('concorda o "quantos/quantas" com o genero do item', () => {
-    for (const kind of RESOURCE_KINDS) {
-      const desafio = generateChallenge({ id: 'x', kind, groups: 3, perGroup: 4 }, createRng(1));
-      const esperado = CHALLENGE_CONTEXTS[kind].itemNoun.gender === 'f' ? 'Quantas' : 'Quantos';
-      expect(desafio.question.startsWith(esperado), `${kind}: "${desafio.question}"`).toBe(true);
-    }
-  });
-
-  it('o enunciado descreve grupos e itens do tipo certo', () => {
-    for (const kind of RESOURCE_KINDS) {
-      const desafio = generateChallenge({ id: 'x', kind, groups: 4, perGroup: 6 }, createRng(2));
-      expect(desafio.prompt).toContain(CHALLENGE_CONTEXTS[kind].groupNoun.many);
-      expect(desafio.prompt).toContain(CHALLENGE_CONTEXTS[kind].itemNoun.many);
     }
   });
 });

@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { createI18nSlice, type I18nSlice } from '../i18n/i18n.store';
 import { createAvatarSlice, type AvatarSlice } from '../slices/avatar/avatar.store';
 import { createBuildingSlice, type BuildingSlice } from '../slices/building/building.store';
 import { createDayNightSlice, type DayNightSlice } from '../slices/daynight/daynight.store';
@@ -29,7 +30,8 @@ export type GameState = WorldSlice &
   EconomySlice &
   HomeSlice &
   AvatarSlice &
-  RegionsSlice;
+  RegionsSlice &
+  I18nSlice;
 
 export const useGameStore = create<GameState>()((...args) => ({
   ...createWorldSlice(...args),
@@ -42,6 +44,7 @@ export const useGameStore = create<GameState>()((...args) => ({
   ...createHomeSlice(...args),
   ...createAvatarSlice(...args),
   ...createRegionsSlice(...args),
+  ...createI18nSlice(...args),
 }));
 
 /**

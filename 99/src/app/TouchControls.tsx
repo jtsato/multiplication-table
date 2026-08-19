@@ -24,6 +24,8 @@ const JOYSTICK_RADIUS = 56;
  * aplicado ao proprio elemento.
  */
 function Joystick() {
+  const t = useGameStore((state) => state.text).strings;
+
   const baseRef = useRef<HTMLDivElement>(null);
   const knobRef = useRef<HTMLDivElement>(null);
   const pointerIdRef = useRef<number | null>(null);
@@ -85,7 +87,7 @@ function Joystick() {
   }, []);
 
   return (
-    <div className="touch__joystick" ref={baseRef} aria-label="Mover" role="application">
+    <div className="touch__joystick" ref={baseRef} aria-label={t.joystickLabel} role="application">
       <div className="touch__knob" ref={knobRef} />
     </div>
   );

@@ -1,7 +1,7 @@
+export { challengeText, type ChallengeText } from './challengeText';
 export { ChallengePanel } from './ChallengePanel';
 export { createMathSlice, type MathSlice, type ChallengeFeedback } from './math.store';
 export {
-  CHALLENGE_CONTEXTS,
   OPTION_COUNT,
   buildDistractors,
   generateChallenge,

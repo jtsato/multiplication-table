@@ -40,7 +40,7 @@ describe('paleta do avatar', () => {
   it('nenhum acessorio depende da silhueta escolhida', () => {
     const especificacoes = [...HEAD_ACCESSORIES, ...FACE_ACCESSORIES];
     for (const spec of especificacoes) {
-      expect(Object.keys(spec).sort()).toEqual(['id', 'label', 'requiresTable']);
+      expect(Object.keys(spec).sort()).toEqual(['id', 'requiresTable']);
     }
   });
 });

@@ -1,3 +1,4 @@
+import type { AppStrings } from '../../i18n';
 import { palette } from '../../shared/palette';
 
 export type DayPhase = 'dia' | 'entardecer' | 'noite' | 'amanhecer';
@@ -264,9 +265,10 @@ export function skyConfigFor(position: number): SkyConfig {
 }
 
 /** Rotulo da fase para o HUD. */
-export const PHASE_LABELS: Record<DayPhase, string> = {
-  dia: 'Dia',
-  entardecer: 'Entardecer',
-  noite: 'Noite',
-  amanhecer: 'Amanhecer',
-};
+/** O nome da fase no idioma da crianca. */
+export function phaseLabel(phase: DayPhase, strings: AppStrings): string {
+  if (phase === 'dia') return strings.phaseDay;
+  if (phase === 'entardecer') return strings.phaseDusk;
+  if (phase === 'noite') return strings.phaseNight;
+  return strings.phaseDawn;
+}

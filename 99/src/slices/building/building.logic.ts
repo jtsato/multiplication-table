@@ -1,11 +1,7 @@
+import type { AppStrings, LocaleBundle } from '../../i18n';
 import { distanceSqXZ, type Vec3, vec3 } from '../../shared/vec';
 import { fitsOnLand } from '../regions/regions.logic';
-import {
-  RESOURCE_LABELS,
-  type Inventory,
-  type ResourceKind,
-  type ResourceNode,
-} from '../resources/resources.logic';
+import { type Inventory, type ResourceKind, type ResourceNode } from '../resources/resources.logic';
 
 export type StructureKind = 'fogueira' | 'cerca';
 
@@ -36,7 +32,6 @@ export type Recipe = Partial<Record<ResourceKind, number>>;
 
 export interface StructureSpec {
   kind: StructureKind;
-  label: string;
   recipe: Recipe;
   /** Raio que a estrutura ocupa no chao — usado contra sobreposicao. */
   footprint: number;
@@ -45,13 +40,11 @@ export interface StructureSpec {
 export const STRUCTURES: Record<StructureKind, StructureSpec> = {
   fogueira: {
     kind: 'fogueira',
-    label: 'Fogueira',
     recipe: { madeira: 8, pedra: 4 },
     footprint: 1.4,
   },
   cerca: {
     kind: 'cerca',
-    label: 'Cerca',
     recipe: { madeira: 6 },
     footprint: 1.1,
   },
@@ -332,27 +325,32 @@ export function nearestRefuelable(
   return best;
 }
 
-/** Mensagem curta para o HUD explicar a recusa. */
-export const REJECTION_MESSAGES: Record<PlacementRejection, string> = {
-  'fora-da-ilha': 'Longe demais — construa dentro da ilha',
-  sobreposta: 'Já tem algo construído aqui',
-  'perto-de-recurso': 'Perto demais de um recurso',
-  'sem-recursos': 'Recursos insuficientes',
-};
+/** Mensagem curta para o HUD explicar a recusa, no idioma da crianca. */
+/** O nome de uma construcao no idioma da crianca. */
+export function structureLabel(kind: StructureKind, strings: AppStrings): string {
+  return kind === 'fogueira' ? strings.campfire : strings.fence;
+}
+
+export function rejectionMessage(reason: PlacementRejection, strings: AppStrings): string {
+  if (reason === 'fora-da-ilha') return strings.buildOffLand;
+  if (reason === 'sobreposta') return strings.buildOverlaps;
+  if (reason === 'perto-de-recurso') return strings.buildTooClose;
+  return strings.noResources;
+}
 
 /**
  * Texto do custo: "8 madeira · 4 pedras".
  *
- * Usa `RESOURCE_LABELS` em vez da chave do tipo. A chave e sempre singular, e
+ * Passa pela gramatica do idioma em vez de concatenar numero e chave. A chave e
+ * sempre singular e em ingles, e
  * escrever "4 pedra" e "4 fruta" esta errado em portugues — o mesmo cuidado que
  * o enunciado do desafio ja toma com o genero dos substantivos. Ficou visivel
  * quando a loja passou a mostrar custos em letras grandes.
  */
-export function formatRecipe(recipe: Recipe): string {
+export function formatRecipe(recipe: Recipe, bundle: LocaleBundle): string {
   return Object.entries(recipe)
-    .map(([kind, cost]) => {
-      const label = RESOURCE_LABELS[kind as ResourceKind];
-      return `${cost} ${cost === 1 ? label.one : label.many}`;
-    })
+    .map(([kind, cost]) =>
+      bundle.grammar.counted(cost, bundle.resources[kind as ResourceKind].stock),
+    )
     .join(' · ');
 }

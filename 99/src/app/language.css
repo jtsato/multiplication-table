@@ -1,0 +1,53 @@
+/*
+  Seletor de idioma.
+
+  Canto inferior esquerdo, longe do polegar do joystick e do painel de desafio.
+  Discreto por padrão e legível quando se olha para ele: não é uma decisão que a
+  criança toma toda hora, mas é uma que ela precisa conseguir tomar sozinha.
+*/
+.language {
+  position: absolute;
+  left: 12px;
+  bottom: 12px;
+  display: flex;
+  gap: 6px;
+  pointer-events: auto;
+  z-index: 3;
+}
+
+.language__option {
+  padding: 6px 10px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 8px;
+  background: rgba(20, 28, 44, 0.68);
+  color: #e8eef8;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/*
+  O `:not(--on)` não é enfeite.
+
+  `.language__option:hover` tem especificidade maior que `.language__option--on`,
+  então sem ele o hover ganhava do estado selecionado: fundo escuro do hover com
+  a cor de texto escura do selecionado, e o idioma atual ficava ilegível
+  justamente enquanto o ponteiro estava em cima dele.
+*/
+.language__option:not(.language__option--on):hover {
+  background: rgba(20, 28, 44, 0.85);
+}
+
+.language__option--on {
+  background: #ffd166;
+  border-color: #ffd166;
+  color: #22304a;
+}
+
+/* Alvo de toque confortável no celular, onde o dedo é menos preciso. */
+@media (pointer: coarse) {
+  .language__option {
+    padding: 10px 14px;
+    font-size: 0.9rem;
+  }
+}

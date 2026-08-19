@@ -61,23 +61,28 @@ export const DEFAULT_AVATAR: AvatarSelection = {
  * tabuada**: a roupa vira o boletim que a crianca quer exibir, que e o mecanismo
  * do trofeu sem parecer prova.
  */
+/**
+ * Um acessorio.
+ *
+ * **Sem rotulo aqui.** O nome e texto e vive nos arquivos de idioma, pela mesma
+ * razao dos itens de loja: o que fica no catalogo e o que nao se traduz — a
+ * identidade e o marco de tabuada que o libera.
+ */
 export interface AccessorySpec<T extends string> {
   id: T;
-  label: string;
-  /** Tabuada que precisa estar dominada, ou `null` para livre. */
   requiresTable: number | null;
 }
 
 export const HEAD_ACCESSORIES: AccessorySpec<HeadAccessory>[] = [
-  { id: 'nenhum', label: 'Sem chapéu', requiresTable: null },
-  { id: 'bone', label: 'Boné', requiresTable: null },
-  { id: 'chapeu', label: 'Chapéu', requiresTable: 5 },
-  { id: 'coroa', label: 'Coroa', requiresTable: 9 },
+  { id: 'nenhum', requiresTable: null },
+  { id: 'bone', requiresTable: null },
+  { id: 'chapeu', requiresTable: 5 },
+  { id: 'coroa', requiresTable: 9 },
 ];
 
 export const FACE_ACCESSORIES: AccessorySpec<FaceAccessory>[] = [
-  { id: 'nenhum', label: 'Sem óculos', requiresTable: null },
-  { id: 'oculos', label: 'Óculos', requiresTable: 3 },
+  { id: 'nenhum', requiresTable: null },
+  { id: 'oculos', requiresTable: 3 },
 ];
 
 /** Fatores que compoem uma tabuada, de 1 a 10. */

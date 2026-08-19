@@ -1,10 +1,17 @@
 import { useGameStore } from './store';
-import { REJECTION_MESSAGES, STRUCTURES, canAfford, formatRecipe } from '../slices/building';
-import { PHASE_LABELS } from '../slices/daynight';
-import { BRIDGE_MESSAGES, bridgeById } from '../slices/regions';
+import {
+  rejectionMessage,
+  structureLabel,
+  STRUCTURES,
+  canAfford,
+  formatRecipe,
+} from '../slices/building';
+import { phaseLabel } from '../slices/daynight';
+import { bridgeMessage, bridgeById } from '../slices/regions';
 import { regionById } from '../slices/regions/regions.logic';
 import { LANTERN } from '../slices/lantern';
-import { RESOURCE_KINDS, RESOURCE_LABELS } from '../slices/resources';
+import { RESOURCE_KINDS } from '../slices/resources';
+import { interpolate } from '../i18n';
 import './hud.css';
 
 /**
@@ -22,6 +29,8 @@ export function Hud({ isTouch = false }: { isTouch?: boolean } = {}) {
   const currentRegion = useGameStore((state) => state.currentRegion);
   const nearbyBridge = useGameStore((state) => state.nearbyBridge);
   const bridgeError = useGameStore((state) => state.bridgeError);
+  const texto = useGameStore((state) => state.text);
+  const t = texto.strings;
 
   const colheitaDaqui = regionById(currentRegion).harvest;
   const visiveis = RESOURCE_KINDS.filter(
@@ -52,19 +61,19 @@ export function Hud({ isTouch = false }: { isTouch?: boolean } = {}) {
             tabuada dele — "estou no Pico" e "aqui e a do 9" tem que ser a mesma
             informacao. */}
         <span className="hud__region" data-testid="hud-regiao">
-          {regionById(currentRegion).nome}
+          {texto.regions[currentRegion]}
         </span>
 
         <span className={`hud__phase hud__phase--${clock.phase}`}>
-          <strong>{PHASE_LABELS[clock.phase]}</strong>
-          <small>dia {clock.day}</small>
+          <strong>{phaseLabel(clock.phase, t)}</strong>
+          <small>{interpolate(t.day, { n: clock.day })}</small>
           <em>{Math.ceil(clock.secondsToNextPhase)}s</em>
         </span>
 
         <span
           className="hud__lantern"
           role="meter"
-          aria-label="Lanterna"
+          aria-label={t.lanternLabel}
           aria-valuenow={Math.ceil(lanternCharge)}
           aria-valuemin={0}
           aria-valuemax={cargaCheia}
@@ -72,9 +81,9 @@ export function Hud({ isTouch = false }: { isTouch?: boolean } = {}) {
           <i style={{ width: `${Math.min(100, (lanternCharge / cargaCheia) * 100)}%` }} />
         </span>
 
-        <span className="hud__coins" aria-label={`Moedas: ${coins}`}>
+        <span className="hud__coins" aria-label={interpolate(t.coinsLabel, { n: coins })}>
           <i className="hud__dot hud__dot--moeda" aria-hidden="true" />
-          moedas <strong>{coins}</strong>
+          {t.coins} <strong>{coins}</strong>
           {dezenas > 0 && (
             <em className="hud__dezenas" data-testid="hud-dezenas" aria-hidden="true">
               {dezenas}×10 + {unidades}
@@ -93,7 +102,7 @@ export function Hud({ isTouch = false }: { isTouch?: boolean } = {}) {
         {visiveis.map((kind) => (
           <span key={kind} className="hud__resource">
             <i className={`hud__dot hud__dot--${kind}`} aria-hidden="true" />
-            {RESOURCE_LABELS[kind].many} <strong>{inventory[kind]}</strong>
+            {texto.resources[kind].stock.many} <strong>{inventory[kind]}</strong>
           </span>
         ))}
       </div>
@@ -102,12 +111,12 @@ export function Hud({ isTouch = false }: { isTouch?: boolean } = {}) {
           que não existem só ocuparia espaço precioso. */}
       {!isTouch && (
         <div className="hud__panel hud__panel--controls">
-          <strong>Controles</strong>
-          <span>WASD — andar</span>
-          <span>← → ou arrastar o mouse — girar a câmera</span>
-          <span>E — resolver e colher · 1 2 3 — responder</span>
-          <span>B — fogueira · C — cerca · L — loja</span>
-          <span>Espaço — construir · Esc — cancelar</span>
+          <strong>{t.controlsTitle}</strong>
+          <span>{t.controlsMove}</span>
+          <span>{t.controlsCamera}</span>
+          <span>{t.controlsSolve}</span>
+          <span>{t.controlsBuild}</span>
+          <span>{t.controlsSpace}</span>
         </div>
       )}
 
@@ -121,7 +130,7 @@ export function Hud({ isTouch = false }: { isTouch?: boolean } = {}) {
                 canAfford(inventory, spec.recipe) ? 'hud__recipe--ready' : ''
               } ${buildMode === spec.kind ? 'hud__recipe--active' : ''}`}
             >
-              <strong>{spec.label}</strong> {formatRecipe(spec.recipe)}
+              <strong>{structureLabel(spec.kind, t)}</strong> {formatRecipe(spec.recipe, texto)}
             </span>
           ))}
         </div>
@@ -130,20 +139,22 @@ export function Hud({ isTouch = false }: { isTouch?: boolean } = {}) {
             crianca ir treinar, e nao ir juntar. */}
         {bridgeError && (
           <div className="hud__prompt hud__prompt--error" role="alert">
-            {BRIDGE_MESSAGES[bridgeError]}
+            {bridgeMessage(bridgeError, t)}
           </div>
         )}
 
         {!bridgeError && buildError && (
           <div className="hud__prompt hud__prompt--error" role="alert">
-            {REJECTION_MESSAGES[buildError]}
+            {rejectionMessage(buildError, t)}
           </div>
         )}
 
         {!bridgeError && !buildError && nearbyBridge && !isTouch && (
           <div className="hud__prompt" role="status">
-            Aperte <kbd>E</kbd> para construir a ponte ({bridgeById(nearbyBridge)?.coins} moedas ·{' '}
-            {formatRecipe(bridgeById(nearbyBridge)!.recipe)})
+            {interpolate(t.bridgePrompt, {
+              moedas: bridgeById(nearbyBridge)!.coins,
+              receita: formatRecipe(bridgeById(nearbyBridge)!.recipe, texto),
+            })}
           </div>
         )}
 
@@ -151,7 +162,7 @@ export function Hud({ isTouch = false }: { isTouch?: boolean } = {}) {
             que a criança precisa saber é que dá para levar luz com ela. */}
         {!bridgeError && !buildError && !nearbyBridge && clock.phase === 'entardecer' && (
           <div className="hud__prompt hud__prompt--aviso" role="alert">
-            Anoitecendo — acenda a lanterna na fogueira ({Math.ceil(clock.secondsToNextPhase)}s)
+            {interpolate(t.duskWarning, { s: Math.ceil(clock.secondsToNextPhase) })}
           </div>
         )}
 
@@ -159,13 +170,13 @@ export function Hud({ isTouch = false }: { isTouch?: boolean } = {}) {
             carga não tira nada da criança além do que só aparece no escuro. */}
         {!bridgeError && !buildError && !nearbyBridge && clock.phase === 'noite' && cargaFraca && (
           <div className="hud__prompt" role="status">
-            A lanterna está fraca
+            {t.lanternLow}
           </div>
         )}
 
         {!buildError && clock.phase !== 'entardecer' && buildMode && !isTouch && (
           <div className="hud__prompt" role="status">
-            <kbd>Espaço</kbd> para construir · <kbd>Esc</kbd> para cancelar
+            {t.buildPrompt}
           </div>
         )}
 
@@ -179,7 +190,7 @@ export function Hud({ isTouch = false }: { isTouch?: boolean } = {}) {
           highlightedNodeId &&
           !activeChallenge && (
             <div className="hud__prompt" role="status">
-              Aperte <kbd>E</kbd> para colher
+              {t.harvestPrompt}
             </div>
           )}
       </div>

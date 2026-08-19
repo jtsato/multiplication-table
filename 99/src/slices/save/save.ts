@@ -1,5 +1,6 @@
 import { useGameStore } from '../../app/store';
 import { migrateAvatar } from '../avatar/avatar.logic';
+import { bundleFor } from '../../i18n';
 import { saveRepository, type GameSave, SAVE_VERSION } from './save.repository';
 
 /** Quanto tempo esperar antes de gravar, em milissegundos. */
@@ -17,6 +18,7 @@ export function snapshot(): GameSave {
     hints: state.hints,
     avatar: state.avatar,
     openBridges: state.openBridges,
+    locale: state.locale,
   };
 }
 
@@ -36,6 +38,8 @@ export function applySave(save: GameSave): void {
     hints: save.hints,
     avatar: migrateAvatar(save.avatar),
     openBridges: save.openBridges,
+    locale: save.locale,
+    text: bundleFor(save.locale),
   });
 }
 

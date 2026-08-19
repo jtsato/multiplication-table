@@ -6,6 +6,7 @@ import '@testing-library/jest-dom/vitest';
 import { useGameStore } from '../../app/store';
 import { ChallengePanel } from './ChallengePanel';
 import { KeyboardBridge } from '../../test/KeyboardBridge';
+import { challengeText } from './challengeText';
 
 const state = () => useGameStore.getState();
 const alvo = () => state().nodes[0];
@@ -39,8 +40,9 @@ describe('ChallengePanel', () => {
       </>,
     );
 
-    expect(screen.getByText(challenge.prompt)).toBeInTheDocument();
-    expect(screen.getByText(challenge.question)).toBeInTheDocument();
+    const texto = challengeText(challenge, state().text);
+    expect(screen.getByText(texto.prompt)).toBeInTheDocument();
+    expect(screen.getByText(texto.question)).toBeInTheDocument();
     expect(screen.getAllByRole('button')).toHaveLength(3);
     for (const option of challenge.options) {
       expect(screen.getByRole('button', { name: String(option) })).toBeInTheDocument();

@@ -1,3 +1,5 @@
+import { useGameStore } from './store';
+import { LanguagePicker } from './LanguagePicker';
 import { Suspense, lazy, useEffect } from 'react';
 import { DaySummary } from './DaySummary';
 import { Hud } from './Hud';
@@ -24,14 +26,16 @@ const GameCanvas = lazy(() =>
 );
 
 function LoadingScreen() {
+  const t = useGameStore((state) => state.text).strings;
+
   return (
     <div className="loading" role="status">
       <div className="loading__sun" aria-hidden="true" />
-      {/* O nome não traduz; a tagline sim. Quando entrar o i18n, só a
-          segunda linha vira chave de locale. */}
+      {/* O nome não traduz e nunca entra num arquivo de locale — há teste que
+          falha se entrar. A tagline e o resto, sim. */}
       <p className="loading__title">Numi 99</p>
-      <p className="loading__tagline">A ilha da tabuada</p>
-      <p className="loading__text">Preparando a ilha…</p>
+      <p className="loading__tagline">{t.tagline}</p>
+      <p className="loading__text">{t.loading}</p>
     </div>
   );
 }
@@ -67,6 +71,7 @@ export function App() {
         <GameCanvas isTouch={isTouch} />
       </Suspense>
       <Hud isTouch={isTouch} />
+      <LanguagePicker />
       <ChallengePanel />
       <ShopPanel />
       <AvatarPanel />

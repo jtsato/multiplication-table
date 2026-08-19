@@ -14,59 +14,6 @@ export const OPTION_COUNT = 3;
 export const WRONG_ANSWER_RATIO = 0.25;
 
 /**
- * Como cada tipo de recurso descreve seus grupos e itens no enunciado.
- *
- * O genero do substantivo do item faz parte do contexto porque a pergunta
- * concorda com ele: "Quantos gravetos" mas "Quantas frutas". Sem isso o texto
- * sai errado em portugues para dois dos tres tipos de recurso.
- */
-export interface ChallengeContext {
-  groupNoun: { one: string; many: string };
-  itemNoun: { one: string; many: string; gender: 'm' | 'f' };
-}
-
-export const CHALLENGE_CONTEXTS: Record<ResourceKind, ChallengeContext> = {
-  madeira: {
-    groupNoun: { one: 'galho', many: 'galhos' },
-    itemNoun: { one: 'graveto', many: 'gravetos', gender: 'm' },
-  },
-  fruta: {
-    groupNoun: { one: 'cacho', many: 'cachos' },
-    itemNoun: { one: 'fruta', many: 'frutas', gender: 'f' },
-  },
-  pedra: {
-    groupNoun: { one: 'montinho', many: 'montinhos' },
-    itemNoun: { one: 'pedra', many: 'pedras', gender: 'f' },
-  },
-  concha: {
-    groupNoun: { one: 'cestinho', many: 'cestinhos' },
-    itemNoun: { one: 'concha', many: 'conchas', gender: 'f' },
-  },
-  peixe: {
-    groupNoun: { one: 'rede', many: 'redes' },
-    itemNoun: { one: 'peixe', many: 'peixes', gender: 'm' },
-  },
-  cogumelo: {
-    groupNoun: { one: 'toco', many: 'tocos' },
-    itemNoun: { one: 'cogumelo', many: 'cogumelos', gender: 'm' },
-  },
-  cristal: {
-    groupNoun: { one: 'veio', many: 'veios' },
-    // Plural irregular: "cristais", e nao "cristals". O enunciado usa `many`
-    // direto, entao a forma correta precisa estar escrita aqui.
-    itemNoun: { one: 'cristal', many: 'cristais', gender: 'm' },
-  },
-  mel: {
-    groupNoun: { one: 'colmeia', many: 'colmeias' },
-    itemNoun: { one: 'pote de mel', many: 'potes de mel', gender: 'm' },
-  },
-  gelo: {
-    groupNoun: { one: 'monte', many: 'montes' },
-    itemNoun: { one: 'lasca de gelo', many: 'lascas de gelo', gender: 'f' },
-  },
-};
-
-/**
  * Para que serve o desafio.
  *
  * `colher` rende recurso; `abastecer` rende tempo de fogueira. A conta e a
@@ -90,6 +37,14 @@ export interface ChallengeTarget {
   perGroup: number;
 }
 
+/**
+ * Um desafio.
+ *
+ * **So dados.** O enunciado nao mora aqui: ele e montado na hora de desenhar,
+ * pela gramatica do idioma escolhido. Guardar a frase pronta no store faria o
+ * texto congelar no idioma em que o desafio foi aberto — e obrigaria o store,
+ * que e regra de jogo, a conhecer traducao.
+ */
 export interface Challenge {
   targetId: string;
   purpose: ChallengePurpose;
@@ -99,10 +54,6 @@ export interface Challenge {
   /** Itens por grupo — a tabuada perguntada. */
   perGroup: number;
   answer: number;
-  /** Enunciado que descreve o que esta em cena. */
-  prompt: string;
-  /** Pergunta curta, exibida em destaque. */
-  question: string;
   options: number[];
 }
 
@@ -110,10 +61,6 @@ export interface ChallengeOutcome {
   correct: boolean;
   /** Itens creditados no inventario. */
   reward: number;
-}
-
-function plural(count: number, noun: { one: string; many: string }): string {
-  return count === 1 ? noun.one : noun.many;
 }
 
 /**
@@ -174,11 +121,6 @@ export function generateChallenge(
   const groups = target.groups;
   const perGroup = target.perGroup;
   const answer = groups * perGroup;
-  const context = CHALLENGE_CONTEXTS[target.kind];
-
-  const prompt =
-    `${groups} ${plural(groups, context.groupNoun)} ` +
-    `com ${perGroup} ${plural(perGroup, context.itemNoun)} cada`;
 
   return {
     targetId: target.id,
@@ -187,8 +129,6 @@ export function generateChallenge(
     groups,
     perGroup,
     answer,
-    prompt,
-    question: `${context.itemNoun.gender === 'f' ? 'Quantas' : 'Quantos'} ${context.itemNoun.many} ao todo?`,
     options: shuffle(rng, [answer, ...buildDistractors(groups, perGroup, rng)]),
   };
 }

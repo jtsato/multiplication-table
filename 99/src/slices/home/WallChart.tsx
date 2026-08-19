@@ -21,6 +21,7 @@ export function WallChart() {
   const openSpot = useGameStore((state) => state.openSpot);
   const knownFacts = useGameStore((state) => state.knownFacts);
   const closeSpot = useGameStore((state) => state.closeSpot);
+  const t = useGameStore((state) => state.text).strings;
 
   if (openSpot !== 'mural') return null;
 
@@ -30,19 +31,19 @@ export function WallChart() {
 
   return (
     <div className="chart-overlay">
-      <div className="chart" role="dialog" aria-label="Mural da tabuada">
+      <div className="chart" role="dialog" aria-label={t.chartTitle}>
         <header className="chart__head">
-          <h2 className="chart__title">Mural da tabuada</h2>
+          <h2 className="chart__title">{t.chartTitle}</h2>
           <span className="chart__count">
             {dominados} de {FATORES.length * FATORES.length}
           </span>
         </header>
 
         <table className="chart__grid">
-          <caption className="chart__caption">Pode olhar à vontade — aqui não custa nada.</caption>
+          <caption className="chart__caption">{t.chartFree}</caption>
           <thead>
             <tr>
-              <th scope="col" aria-label="tabuada">
+              <th scope="col" aria-label={t.tableHeader}>
                 ×
               </th>
               {FATORES.map((coluna) => (
@@ -76,7 +77,7 @@ export function WallChart() {
         </table>
 
         <button type="button" className="chart__close" onClick={closeSpot}>
-          Fechar
+          {t.close}
         </button>
       </div>
     </div>

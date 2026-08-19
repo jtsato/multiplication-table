@@ -44,6 +44,7 @@ const saveValido = (): GameSave => ({
   hints: 3,
   avatar: { silhouette: 'menina', skin: 4, clothes: 6, head: 'bone', face: 'nenhum' },
   openBridges: ['praia-porto'],
+  locale: 'en-US',
 });
 
 describe('migrateSave', () => {
@@ -162,6 +163,7 @@ describe('snapshot e applySave', () => {
         'hints',
         'inventory',
         'knownFacts',
+        'locale',
         'openBridges',
         'owned',
         'version',
@@ -180,6 +182,9 @@ describe('snapshot e applySave', () => {
     // As pontes atravessam junto: sem isto a crianca perderia a travessia que
     // conquistou so por fechar a pagina.
     expect(state().openBridges).toEqual(['praia-porto']);
+    // O idioma escolhido volta junto, e o pacote de textos vem com ele.
+    expect(state().locale).toBe('en-US');
+    expect(state().text.strings.tagline).toBe('The times table island');
     expect(snapshot()).toEqual(saveValido());
   });
 

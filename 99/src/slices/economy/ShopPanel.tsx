@@ -1,7 +1,8 @@
 import { useGameStore } from '../../app/store';
+import { interpolate } from '../../i18n';
 import { useGameAction } from '../../shared/input';
 import {
-  PURCHASE_MESSAGES,
+  purchaseMessage,
   SHOP_ITEMS,
   SHOP_ORDER,
   checkPurchase,
@@ -28,6 +29,8 @@ export function ShopPanel() {
   const hints = useGameStore((state) => state.hints);
   const purchaseError = useGameStore((state) => state.purchaseError);
   const buy = useGameStore((state) => state.buy);
+  const texto = useGameStore((state) => state.text);
+  const t = texto.strings;
   const toggleShop = useGameStore((state) => state.toggleShop);
   const closeShop = useGameStore((state) => state.closeShop);
 
@@ -38,10 +41,12 @@ export function ShopPanel() {
 
   return (
     <div className="shop-overlay">
-      <div className="shop" role="dialog" aria-label="Loja">
+      <div className="shop" role="dialog" aria-label={t.shopTitle}>
         <header className="shop__head">
-          <h2 className="shop__title">Loja</h2>
-          <span className="shop__coins">{coins} moedas</span>
+          <h2 className="shop__title">{t.shopTitle}</h2>
+          <span className="shop__coins">
+            {coins} {t.coins}
+          </span>
         </header>
 
         <ul className="shop__items">
@@ -57,15 +62,15 @@ export function ShopPanel() {
                   disabled={!check.ok}
                   onClick={() => buy(kind)}
                 >
-                  <strong className="shop__label">{item.label}</strong>
-                  <span className="shop__effect">{item.effect}</span>
+                  <strong className="shop__label">{texto.shop[kind].label}</strong>
+                  <span className="shop__effect">{texto.shop[kind].effect}</span>
                   <span className="shop__cost">
-                    {item.coins} moedas · {formatShopRecipe(item)}
+                    {item.coins} {t.coins} · {formatShopRecipe(item, texto)}
                   </span>
                   {/* Diz o que falta, e não só que não dá: a criança precisa
                       saber o que ir buscar. */}
                   {!check.ok && (
-                    <span className="shop__blocked">{PURCHASE_MESSAGES[check.reason]}</span>
+                    <span className="shop__blocked">{purchaseMessage(check.reason, t)}</span>
                   )}
                 </button>
               </li>
@@ -73,20 +78,16 @@ export function ShopPanel() {
           })}
         </ul>
 
-        {hints > 0 && (
-          <p className="shop__hints">
-            Dicas guardadas: <strong>{hints}</strong>
-          </p>
-        )}
+        {hints > 0 && <p className="shop__hints">{interpolate(t.hintsStored, { n: hints })}</p>}
 
         {purchaseError && (
           <p className="shop__error" role="alert">
-            {PURCHASE_MESSAGES[purchaseError]}
+            {purchaseMessage(purchaseError, t)}
           </p>
         )}
 
         <button type="button" className="shop__close" onClick={closeShop}>
-          Fechar
+          {t.close}
         </button>
       </div>
     </div>

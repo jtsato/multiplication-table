@@ -1,5 +1,7 @@
 import { useEffect } from 'react';
 import { useGameStore } from '../../app/store';
+import { challengeText } from './challengeText';
+import { interpolate } from '../../i18n';
 import { useGameAction } from '../../shared/input';
 import './challenge.css';
 
@@ -18,6 +20,8 @@ export function ChallengePanel() {
   const feedback = useGameStore((state) => state.feedback);
   const answerChallenge = useGameStore((state) => state.answerChallenge);
   const clearFeedback = useGameStore((state) => state.clearFeedback);
+  const bundle = useGameStore((state) => state.text);
+  const t = bundle.strings;
   const hiddenOptions = useGameStore((state) => state.hiddenOptions);
   const hints = useGameStore((state) => state.hints);
   const useHintOnChallenge = useGameStore((state) => state.useHintOnChallenge);
@@ -42,12 +46,16 @@ export function ChallengePanel() {
 
   if (!challenge && !feedback) return null;
 
+  // O enunciado e montado aqui, e nao guardado no desafio: assim trocar de
+  // idioma repinta a frase sem mexer na conta que esta aberta.
+  const texto = challenge ? challengeText(challenge, bundle) : null;
+
   return (
     <div className="challenge-overlay">
-      {challenge ? (
+      {challenge && texto ? (
         <div className="challenge">
-          <p className="challenge__prompt">{challenge.prompt}</p>
-          <p className="challenge__question">{challenge.question}</p>
+          <p className="challenge__prompt">{texto.prompt}</p>
+          <p className="challenge__question">{texto.question}</p>
 
           <div className="challenge__options">
             {challenge.options.map((option, index) =>
@@ -73,7 +81,7 @@ export function ChallengePanel() {
               medo de errar sem tornar o erro gratuito. */}
           {hints > 0 && (
             <button type="button" className="challenge__hint" onClick={useHintOnChallenge}>
-              Usar dica ({hints})
+              {interpolate(t.useHint, { n: hints })}
             </button>
           )}
         </div>
@@ -84,9 +92,11 @@ export function ChallengePanel() {
               feedback.correct ? 'correct' : 'wrong'
             }`}
           >
-            <p className="challenge__result">{feedback.correct ? 'Isso!' : 'Quase!'}</p>
+            <p className="challenge__result">{feedback.correct ? t.correct : t.wrong}</p>
             {!feedback.correct && (
-              <p className="challenge__answer">A resposta era {feedback.answer}</p>
+              <p className="challenge__answer">
+                {interpolate(t.answerWas, { n: feedback.answer })}
+              </p>
             )}
             <p className="challenge__reward">
               {/* A conta na fogueira rende duas coisas, e o feedback diz as
@@ -94,8 +104,8 @@ export function ChallengePanel() {
                   passou a carregar. */}
               {feedback.purpose === 'abastecer'
                 ? feedback.correct
-                  ? 'Fogueira cheia e lanterna acesa!'
-                  : 'Um pouco de lenha e de luz'
+                  ? t.fireFull
+                  : t.fireSome
                 : `+${feedback.reward}`}
             </p>
             {/* A moeda aparece separada do recurso porque são coisas diferentes:

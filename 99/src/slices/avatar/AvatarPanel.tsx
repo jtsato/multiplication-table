@@ -1,4 +1,5 @@
 import { useGameStore } from '../../app/store';
+import { interpolate } from '../../i18n';
 import {
   CLOTHES_COLORS,
   FACE_ACCESSORIES,
@@ -15,11 +16,14 @@ function AccessoryRow<T extends string>({
   legend,
   specs,
   current,
+  rotulo,
   onPick,
 }: {
   legend: string;
   specs: AccessorySpec<T>[];
   current: T;
+  /** O nome do acessorio no idioma escolhido. */
+  rotulo: (id: T) => string;
   onPick: (id: T) => void;
 }) {
   return (
@@ -34,7 +38,7 @@ function AccessoryRow<T extends string>({
             aria-pressed={current === spec.id}
             onClick={() => onPick(spec.id)}
           >
-            {spec.label}
+            {rotulo(spec.id)}
           </button>
         ))}
       </div>
@@ -55,6 +59,7 @@ export function AvatarPanel() {
   const knownFacts = useGameStore((state) => state.knownFacts);
   const setAvatar = useGameStore((state) => state.setAvatar);
   const closeSpot = useGameStore((state) => state.closeSpot);
+  const t = useGameStore((state) => state.text).strings;
 
   if (openSpot !== 'espelho') return null;
 
@@ -63,11 +68,11 @@ export function AvatarPanel() {
 
   return (
     <div className="avatar-overlay">
-      <div className="avatar" role="dialog" aria-label="Espelho">
-        <h2 className="avatar__title">Espelho</h2>
+      <div className="avatar" role="dialog" aria-label={t.mirrorTitle}>
+        <h2 className="avatar__title">{t.mirrorTitle}</h2>
 
         <fieldset className="avatar__group">
-          <legend className="avatar__legend">Personagem</legend>
+          <legend className="avatar__legend">{t.character}</legend>
           <div className="avatar__row">
             {SILHOUETTES.map((silhouette) => (
               <button
@@ -79,14 +84,14 @@ export function AvatarPanel() {
                 aria-pressed={avatar.silhouette === silhouette}
                 onClick={() => setAvatar({ silhouette })}
               >
-                {silhouette === 'menino' ? 'Menino' : 'Menina'}
+                {silhouette === 'menino' ? t.boy : t.girl}
               </button>
             ))}
           </div>
         </fieldset>
 
         <fieldset className="avatar__group">
-          <legend className="avatar__legend">Pele</legend>
+          <legend className="avatar__legend">{t.skin}</legend>
           <div className="avatar__row">
             {SKIN_TONES.map((tone, index) => (
               <button
@@ -94,7 +99,7 @@ export function AvatarPanel() {
                 type="button"
                 className={`avatar__swatch ${avatar.skin === index ? 'avatar__swatch--on' : ''}`}
                 style={{ background: tone }}
-                aria-label={`Tom de pele ${index + 1}`}
+                aria-label={interpolate(t.skinTone, { n: index + 1 })}
                 aria-pressed={avatar.skin === index}
                 onClick={() => setAvatar({ skin: index })}
               />
@@ -103,7 +108,7 @@ export function AvatarPanel() {
         </fieldset>
 
         <fieldset className="avatar__group">
-          <legend className="avatar__legend">Roupa</legend>
+          <legend className="avatar__legend">{t.clothes}</legend>
           <div className="avatar__row">
             {CLOTHES_COLORS.map((color, index) => (
               <button
@@ -111,7 +116,7 @@ export function AvatarPanel() {
                 type="button"
                 className={`avatar__swatch ${avatar.clothes === index ? 'avatar__swatch--on' : ''}`}
                 style={{ background: color }}
-                aria-label={`Cor de roupa ${index + 1}`}
+                aria-label={interpolate(t.clothesColor, { n: index + 1 })}
                 aria-pressed={avatar.clothes === index}
                 onClick={() => setAvatar({ clothes: index })}
               />
@@ -120,15 +125,17 @@ export function AvatarPanel() {
         </fieldset>
 
         <AccessoryRow
-          legend="Cabeça"
+          legend={t.head}
           specs={cabeca}
           current={avatar.head}
+          rotulo={(id) => ({ nenhum: t.noHat, bone: t.cap, chapeu: t.hat, coroa: t.crown })[id]}
           onPick={(head) => setAvatar({ head })}
         />
         <AccessoryRow
-          legend="Rosto"
+          legend={t.face}
           specs={rosto}
           current={avatar.face}
+          rotulo={(id) => ({ nenhum: t.noGlasses, oculos: t.glasses })[id]}
           onPick={(face) => setAvatar({ face })}
         />
 

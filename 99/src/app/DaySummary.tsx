@@ -1,4 +1,5 @@
 import { useGameStore } from './store';
+import { interpolate } from '../i18n';
 import './summary.css';
 
 /**
@@ -19,20 +20,22 @@ export function DaySummary() {
   const coinsToday = useGameStore((state) => state.coinsToday);
   const newFactsToday = useGameStore((state) => state.newFactsToday);
   const closeSummary = useGameStore((state) => state.closeSummary);
+  const t = useGameStore((state) => state.text).strings;
 
   if (!open) return null;
 
   return (
     <div className="summary-overlay">
-      <div className="summary" role="dialog" aria-label="Resumo do dia">
-        <h2 className="summary__title">Amanheceu — dia {day}</h2>
+      <div className="summary" role="dialog" aria-label={t.summaryLabel}>
+        <h2 className="summary__title">{interpolate(t.summaryTitle, { n: day })}</h2>
 
         <ul className="summary__lines">
           <li>
-            <strong>{correctToday}</strong> {correctToday === 1 ? 'conta certa' : 'contas certas'}
+            <strong>{correctToday}</strong>{' '}
+            {correctToday === 1 ? t.summaryCorrectOne : t.summaryCorrect}
           </li>
           <li>
-            <strong>{coinsToday}</strong> {coinsToday === 1 ? 'moeda' : 'moedas'}
+            <strong>{coinsToday}</strong> {coinsToday === 1 ? t.summaryCoinsOne : t.summaryCoins}
           </li>
         </ul>
 
@@ -40,12 +43,14 @@ export function DaySummary() {
             a criança aprendeu, e não do que ela juntou. */}
         {newFactsToday.length > 0 && (
           <p className="summary__facts">
-            Você aprendeu {newFactsToday.map((fact) => fact.replace('x', ' × ')).join(', ')}
+            {interpolate(t.summaryLearned, {
+              fatos: newFactsToday.map((fact) => fact.replace('x', ' × ')).join(', '),
+            })}
           </p>
         )}
 
         <button type="button" className="summary__button" onClick={closeSummary} autoFocus>
-          Continuar
+          {t.continueLabel}
         </button>
       </div>
     </div>

@@ -3,7 +3,7 @@ export { createDayNightSlice, type DayNightSlice, type ClockSample } from './day
 export { dayNightClock, resetDayNightClock } from './dayNightClock';
 export {
   DAYNIGHT,
-  PHASE_LABELS,
+  phaseLabel,
   cyclePosition,
   phaseFor,
   skyConfigFor,

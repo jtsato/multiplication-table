@@ -102,8 +102,8 @@ test.describe('partida no computador', () => {
     const comDesafio = await lerEstado(page);
     expect(comDesafio.desafio).not.toBeNull();
     expect(comDesafio.desafio!.proposito).toBe('colher');
-    // Toda a POC e tabuada do 2.
-    expect(comDesafio.desafio!.prompt).toContain('com 2 ');
+    // Perto do spawn a crianca esta na Praia, que e a regiao da tabuada do 2.
+    expect(comDesafio.desafio!.porGrupo).toBe(2);
 
     const esperado = await responderPeloEnunciado(page, true);
 
@@ -327,6 +327,45 @@ test.describe('partida no computador', () => {
    * Um erro de coordenada numa região distante só apareceria quando a criança
    * chegasse lá.
    */
+  /**
+   * A troca de idioma, no navegador.
+   *
+   * Tradução quebra layout, e isso não aparece em teste de unidade nenhum: o
+   * texto em inglês é mais curto aqui e mais longo ali, e um botão que cresce
+   * escapa do painel. As capturas dos dois idiomas existem para serem olhadas.
+   */
+  test('trocar de idioma repinta o jogo sem recarregar', async ({ page }) => {
+    await page.goto('/');
+    await esperarJogoPronto(page);
+
+    await expect(page.getByText('Controles')).toBeVisible();
+    await page.screenshot({ path: 'e2e/telas/25-idioma-pt.png' });
+
+    await page.getByRole('button', { name: 'English' }).click();
+    await page.waitForTimeout(300);
+
+    // O HUD inteiro trocou, sem recarregar a página.
+    await expect(page.getByText('Controls')).toBeVisible();
+    await expect(page.getByText('Beach')).toBeVisible();
+    await expect(page.getByText('Controles')).toHaveCount(0);
+    // O idioma selecionado tem que continuar legível com o ponteiro em cima: o
+    // `:hover` tem especificidade maior que a classe de selecionado, e já ganhou
+    // dela uma vez, deixando texto escuro sobre fundo escuro.
+    const selecionado = await page.evaluate(() => {
+      const botao = document.querySelector('.language__option--on')!;
+      const cs = getComputedStyle(botao);
+      return { cor: cs.color, fundo: cs.backgroundColor };
+    });
+    expect(selecionado.fundo).not.toContain('20, 28, 44');
+
+    await page.screenshot({ path: 'e2e/telas/26-idioma-en.png' });
+
+    // E a escolha sobrevive a recarregar.
+    await page.reload();
+    await esperarJogoPronto(page);
+    await expect(page.getByText('Controls')).toBeVisible();
+  });
+
   test('o arquipelago inteiro: uma captura de cada regiao', async ({ page }) => {
     await page.goto('/');
     await esperarJogoPronto(page);

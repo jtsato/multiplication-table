@@ -1,0 +1,165 @@
+import type { LocaleDefinition } from '../types';
+
+/**
+ * Português do Brasil — o idioma em que o jogo foi escrito.
+ *
+ * Serve de referência para os outros: quando uma chave aparece aqui, ela existe
+ * em todos, e há um teste que falha se algum idioma divergir.
+ */
+export const ptBR: LocaleDefinition = {
+  strings: {
+    tagline: 'A ilha da tabuada',
+    loading: 'Carregando a ilha…',
+
+    day: 'dia {{n}}',
+    phaseDay: 'Dia',
+    phaseDusk: 'Entardecer',
+    phaseNight: 'Noite',
+    phaseDawn: 'Amanhecer',
+    campfire: 'Fogueira',
+    fence: 'Cerca',
+    coins: 'moedas',
+    coinsLabel: 'Moedas: {{n}}',
+    lanternLabel: 'Lanterna',
+    lanternLow: 'A lanterna está fraca',
+    duskWarning: 'Anoitecendo — acenda a lanterna na fogueira ({{s}}s)',
+    harvestPrompt: 'Aperte E para colher',
+    buildPrompt: 'Espaço para construir · Esc para cancelar',
+    buildOffLand: 'Longe demais — construa em terra firme',
+    buildOverlaps: 'Já tem algo construído aqui',
+    buildTooClose: 'Perto demais de um recurso',
+    bridgePrompt: 'Aperte E para construir a ponte ({{moedas}} moedas · {{receita}})',
+
+    controlsTitle: 'Controles',
+    controlsMove: 'WASD — andar',
+    controlsCamera: '← → ou arrastar o mouse — girar a câmera',
+    controlsSolve: 'E — resolver e colher · 1 2 3 — responder',
+    controlsBuild: 'B — fogueira · C — cerca · L — loja',
+    controlsSpace: 'Espaço — construir · Esc — cancelar',
+    joystickLabel: 'Mover',
+    summaryLabel: 'Resumo do dia',
+    bedLabel: 'Cama',
+    tableHeader: 'tabuada',
+    language: 'Idioma',
+
+    challengePrompt: '{{grupos}} com {{itens}} cada',
+    correct: 'Isso!',
+    wrong: 'Quase!',
+    answerWas: 'A resposta era {{n}}',
+    useHint: 'Usar dica ({{n}})',
+    fireFull: 'Fogueira cheia e lanterna acesa!',
+    fireSome: 'Um pouco de lenha e de luz',
+
+    hintsStored: 'Dicas guardadas: {{n}}',
+    shopTitle: 'Loja',
+    shopClose: 'Fechar',
+    noCoins: 'Faltam moedas',
+    noResources: 'Faltam recursos',
+    alreadyOwned: 'Você já tem',
+    needTable: 'Treine a tabuada daqui',
+
+    mirrorTitle: 'Espelho',
+    chartTitle: 'Mural da tabuada',
+    chartFree: 'Pode olhar à vontade — aqui não custa nada.',
+    bedTitle: 'Sua cama',
+    bedQuestion: 'Quer dormir e acordar amanhã de manhã?',
+    bedSleep: 'Dormir até amanhecer',
+    bedNotYet: 'Ainda não',
+    ready: 'Pronto',
+    close: 'Fechar',
+
+    character: 'Personagem',
+    boy: 'Menino',
+    girl: 'Menina',
+    skin: 'Pele',
+    clothes: 'Roupa',
+    skinTone: 'Tom de pele {{n}}',
+    clothesColor: 'Cor de roupa {{n}}',
+    head: 'Cabeça',
+    face: 'Rosto',
+    noHat: 'Sem chapéu',
+    cap: 'Boné',
+    hat: 'Chapéu',
+    crown: 'Coroa',
+    noGlasses: 'Sem óculos',
+    glasses: 'Óculos',
+
+    summaryTitle: 'Amanheceu — dia {{n}}',
+    summaryCorrect: 'contas certas',
+    summaryCorrectOne: 'conta certa',
+    summaryCoins: 'moedas',
+    summaryCoinsOne: 'moeda',
+    summaryLearned: 'Você aprendeu {{fatos}}',
+    continueLabel: 'Continuar',
+  },
+
+  resources: {
+    madeira: {
+      group: { one: 'galho', many: 'galhos', gender: 'm' },
+      item: { one: 'graveto', many: 'gravetos', gender: 'm' },
+      stock: { one: 'madeira', many: 'madeira' },
+    },
+    fruta: {
+      group: { one: 'cacho', many: 'cachos', gender: 'm' },
+      item: { one: 'fruta', many: 'frutas', gender: 'f' },
+      stock: { one: 'fruta', many: 'frutas', gender: 'f' },
+    },
+    pedra: {
+      group: { one: 'montinho', many: 'montinhos', gender: 'm' },
+      item: { one: 'pedra', many: 'pedras', gender: 'f' },
+      stock: { one: 'pedra', many: 'pedras', gender: 'f' },
+    },
+    concha: {
+      group: { one: 'cestinho', many: 'cestinhos', gender: 'm' },
+      item: { one: 'concha', many: 'conchas', gender: 'f' },
+      stock: { one: 'concha', many: 'conchas', gender: 'f' },
+    },
+    peixe: {
+      group: { one: 'rede', many: 'redes', gender: 'f' },
+      item: { one: 'peixe', many: 'peixes', gender: 'm' },
+      stock: { one: 'peixe', many: 'peixes', gender: 'm' },
+    },
+    cogumelo: {
+      group: { one: 'toco', many: 'tocos', gender: 'm' },
+      item: { one: 'cogumelo', many: 'cogumelos', gender: 'm' },
+      stock: { one: 'cogumelo', many: 'cogumelos', gender: 'm' },
+    },
+    cristal: {
+      group: { one: 'veio', many: 'veios', gender: 'm' },
+      // Plural irregular: "cristais", e não "cristals".
+      item: { one: 'cristal', many: 'cristais', gender: 'm' },
+      stock: { one: 'cristal', many: 'cristais', gender: 'm' },
+    },
+    mel: {
+      group: { one: 'colmeia', many: 'colmeias', gender: 'f' },
+      item: { one: 'pote de mel', many: 'potes de mel', gender: 'm' },
+      stock: { one: 'mel', many: 'mel', gender: 'm' },
+    },
+    gelo: {
+      group: { one: 'monte', many: 'montes', gender: 'm' },
+      item: { one: 'lasca de gelo', many: 'lascas de gelo', gender: 'f' },
+      stock: { one: 'gelo', many: 'gelo', gender: 'm' },
+    },
+  },
+
+  regions: {
+    praia: 'Praia',
+    porto: 'Porto',
+    bosque: 'Bosque',
+    cachoeira: 'Cachoeira',
+    pomar: 'Pomar',
+    pico: 'Pico',
+  },
+
+  shop: {
+    'lanterna-maior': { label: 'Lanterna maior', effect: 'Ilumina mais longe e dura mais.' },
+    botas: { label: 'Botas', effect: 'Você anda mais rápido.' },
+    dica: { label: 'Dica', effect: 'Apaga uma resposta errada.' },
+    tapete: { label: 'Tapete de conchas', effect: 'Deixa a sala mais macia.' },
+    aquario: { label: 'Aquário', effect: 'Os peixes ficam nadando.' },
+    vaso: { label: 'Vaso de cogumelos', effect: 'Brilha um pouquinho à noite.' },
+    lustre: { label: 'Lustre de cristal', effect: 'Espalha luz colorida.' },
+    prateleira: { label: 'Prateleira de mel', effect: 'Cheira bem de longe.' },
+    escultura: { label: 'Escultura de gelo', effect: 'Não derrete nunca.' },
+  },
+};
