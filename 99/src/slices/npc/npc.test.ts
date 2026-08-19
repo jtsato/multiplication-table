@@ -2,7 +2,15 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import { useGameStore } from '../../app/store';
 import { emptyInventory } from '../resources/resources.logic';
 import { REGIONS } from '../regions/regions.logic';
-import { createOrders, nearestOrder, npcPosition, orderQuantity, orderTarget } from './npc.logic';
+import {
+  createOrders,
+  merchantPosition,
+  nearestOrder,
+  npcPosition,
+  orderQuantity,
+  orderTarget,
+  teacherPosition,
+} from './npc.logic';
 
 const state = () => useGameStore.getState();
 
@@ -32,6 +40,16 @@ describe('npc.logic', () => {
 
     // Perto do NPC da Praia, longe dos outros.
     expect(nearestOrder(npcPosition('praia'), orders)?.id).toBe(praia.id);
+  });
+
+  it('comerciante e professor tem posicoes dentro das regioes', () => {
+    const comerciante = merchantPosition();
+    expect(comerciante.x).toBeCloseTo(REGIONS[0].center.x - 4);
+    expect(comerciante.z).toBeCloseTo(REGIONS[0].center.z + 4);
+
+    const professor = teacherPosition('bosque');
+    expect(professor.x).toBeCloseTo(REGIONS[2].center.x + 4);
+    expect(professor.z).toBeCloseTo(REGIONS[2].center.z - 4);
   });
 });
 
@@ -72,5 +90,18 @@ describe('npc.store', () => {
 
     expect(state().orders).toEqual(createOrders(1));
     expect(state().nearbyOrderId).toBeNull();
+  });
+
+  it('publica comerciante e professor e reseta junto', () => {
+    state().setNearbyMerchant(true);
+    state().setNearbyTeacherRegion('pomar');
+
+    expect(state().nearbyMerchant).toBe(true);
+    expect(state().nearbyTeacherRegion).toBe('pomar');
+
+    state().resetNpc();
+
+    expect(state().nearbyMerchant).toBe(false);
+    expect(state().nearbyTeacherRegion).toBeNull();
   });
 });

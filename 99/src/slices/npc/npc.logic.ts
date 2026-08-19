@@ -13,11 +13,14 @@ import type { ChallengeTarget } from '../math/math.logic';
  */
 
 export const NPC = {
-  /** Distancia para falar com um NPC de encomendas. */
+  /** Distancia para falar com um NPC. */
   interactRange: 3.2,
   /** Pagamento base de uma encomenda, em moedas. */
   orderReward: 8,
 } as const;
+
+/** O papel de um NPC: o que ele oferece quando a crianca fala com ele. */
+export type NpcRole = 'encomendas' | 'comerciante' | 'professor';
 
 export interface Order {
   id: string;
@@ -34,6 +37,18 @@ export interface Order {
 export function npcPosition(regionId: RegionId): Vec3 {
   const regiao = REGIONS.find((candidate) => candidate.id === regionId)!;
   return vec3(regiao.center.x + 3, regiao.groundY, regiao.center.z + 3);
+}
+
+/** A comerciante fica na Praia, perto do ponto de nascimento. */
+export function merchantPosition(): Vec3 {
+  const praia = REGIONS.find((candidate) => candidate.id === 'praia')!;
+  return vec3(praia.center.x - 4, praia.groundY, praia.center.z + 4);
+}
+
+/** O professor de cada regiao fica no canto oposto ao NPC de encomendas. */
+export function teacherPosition(regionId: RegionId): Vec3 {
+  const regiao = REGIONS.find((candidate) => candidate.id === regionId)!;
+  return vec3(regiao.center.x + 4, regiao.groundY, regiao.center.z - 4);
 }
 
 /**

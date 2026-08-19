@@ -4,7 +4,7 @@ import { createRng } from '../src/shared/rng';
 import { DEFAULT_WORLD_SEED } from '../src/slices/world/world.store';
 import { REGIONS } from '../src/slices/regions/regions.logic';
 import { whaleMidWindow } from '../src/slices/wildlife/whale.logic';
-import { npcPosition } from '../src/slices/npc/npc.logic';
+import { merchantPosition, npcPosition, teacherPosition } from '../src/slices/npc/npc.logic';
 import {
   esperarJogoPronto,
   esperarPainelCentralizado,
@@ -281,6 +281,32 @@ test.describe('partida no computador', () => {
     expect(depois.inventario[pedido.kind]).toBe(5);
     expect(depois.moedas).toBeGreaterThan(0);
     await page.screenshot({ path: 'e2e/telas/32-encomenda.png' });
+  });
+
+  test('a comerciante abre a loja e o professor abre a tabuada', async ({ page }) => {
+    const loja = merchantPosition();
+    await page.evaluate(({ x, z }) => window.__tabuada!.teleportar?.(x, z), {
+      x: loja.x,
+      z: loja.z,
+    });
+    await page.waitForTimeout(700);
+    await page.keyboard.press('KeyE');
+    await expect(page.getByRole('dialog', { name: 'Loja' })).toBeVisible();
+    await page.keyboard.press('Escape');
+    await page.waitForTimeout(300);
+
+    const professor = teacherPosition('praia');
+    await page.evaluate(({ x, z }) => window.__tabuada!.teleportar?.(x, z), {
+      x: professor.x,
+      z: professor.z,
+    });
+    // Sem animais nem nos de recurso perto: o teste e sobre o NPC, e nao sobre
+    // quem tem prioridade na hora de apertar E (alimentar/colher > professor).
+    await page.evaluate(() => window.__tabuada!.store.setState({ animals: [], nodes: [] }));
+    await page.waitForTimeout(700);
+    await page.keyboard.press('KeyE');
+    await expect(page.getByRole('dialog', { name: 'Mural da tabuada' })).toBeVisible();
+    await page.screenshot({ path: 'e2e/telas/33-professor.png' });
   });
 
   test('a loja nao abre com um desafio na tela', async ({ page }) => {

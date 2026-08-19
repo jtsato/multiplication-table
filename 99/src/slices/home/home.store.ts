@@ -15,6 +15,8 @@ export interface HomeSlice {
   setInsideHome: (inside: boolean) => void;
   /** Abre o painel do movel ao alcance. Ignorado longe de tudo. */
   openNearbySpot: () => void;
+  /** Abre o mural de qualquer lugar — usado pelo professor NPC. */
+  openChartFromNpc: () => void;
   closeSpot: () => void;
   /**
    * Dormir: adianta o relogio ate o proximo amanhecer.
@@ -43,6 +45,13 @@ export const createHomeSlice: StateCreator<GameState, [], [], HomeSlice> = (set,
     // O desafio tem prioridade, como na loja: a conta ja esta na tela.
     if (state.activeChallenge || !state.nearbySpot) return;
     set({ openSpot: state.nearbySpot, shopOpen: false });
+  },
+
+  openChartFromNpc: () => {
+    // O professor nao depende de estar perto do mural: a tabuada e de graca
+    // em qualquer lugar do mundo, como a spec manda.
+    if (get().activeChallenge) return;
+    set({ openSpot: 'mural', shopOpen: false });
   },
 
   closeSpot: () => set((state) => (state.openSpot ? { openSpot: null } : state)),
