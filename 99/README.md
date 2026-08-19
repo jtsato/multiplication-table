@@ -126,7 +126,9 @@ pedido é uma multiplicação); acertar debita a comida da mochila e registra o 
 como amigo na caderneta.
 
 Na caderneta, qualquer amigo pode virar **pet** e passar a seguir o jogador. De vez
-em quando o pet desenterra uma moeda — um agrado gentil, não uma mecânica de pressão.
+em quando o pet desenterra uma moeda — um agrado gentil, não uma mecânica de
+pressão. E quando passa perto de um nó de colheita, ele vira a cabeça para o nó:
+o farejo é o aviso silencioso de que há uma conta esperando ali perto.
 
 Os **raros** aparecem em janela curta e dependem de domínio, não de sorte: o
 **unicórnio** na Cachoeira à noite e o **dinossauro** no Pico de dia, ambos depois
@@ -221,7 +223,7 @@ assinantes 60 vezes por segundo.
 
 ## Testes
 
-Duas camadas: **608 testes** de unidade/integração no Vitest e **36 testes ponta a
+Duas camadas: **610 testes** de unidade/integração no Vitest e **36 testes ponta a
 ponta** em navegador de verdade com Playwright.
 
 ### Ponta a ponta (Playwright)

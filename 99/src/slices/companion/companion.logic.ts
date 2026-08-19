@@ -16,7 +16,14 @@ export const PET = {
   followDistance: 1.6,
   /** De quanto em quanto tempo o pet desenterra uma moeda, em segundos. */
   coinIntervalSeconds: 30,
+  /** Distancia em que o pet fareja o no mais proximo. */
+  sniffRange: 6,
 } as const;
+
+/** O angulo de um corpo em direcao a um alvo, na convencao de yaw do jogo. */
+export function sniffAngle(origin: Vec3, target: Vec3): number {
+  return Math.atan2(target.x - origin.x, target.z - origin.z);
+}
 
 /**
  * Avanca uma posicao em direcao ao alvo sem nunca ultrapassa-lo.

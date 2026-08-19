@@ -731,7 +731,8 @@ aberta. Assim a caderneta conhece a espécie antes de ela aparecer.
 **O pet é posição, não física.** `petTransform` vive fora do React, como
 `playerTransform`, e `petFollow` é uma função pura com teste de não-ultrapasse —
 o mesmo cuidado do `stepToward` dos inimigos removidos. O pet desenterra uma moeda
-a cada 30 s, sem nenhuma escrita por quadro no store.
+a cada 30 s, sem nenhuma escrita por quadro no store. E fareja o nó mais próximo:
+a cabeça vira para ele dentro do `useFrame`, outro gesto que não passa pelo React.
 
 **A baleia é janela pura, não estado.** `whaleState(clock)` decide se o corpo
 está visível e `whaleHeight` o faz subir na primeira metade da janela e mergulhar

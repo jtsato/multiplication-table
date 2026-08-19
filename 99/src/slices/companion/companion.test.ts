@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { vec3 } from '../../shared/vec';
-import { PET, petAnchor, petFollow, stepToward } from './companion.logic';
+import { PET, petAnchor, petFollow, sniffAngle, stepToward } from './companion.logic';
 
 describe('stepToward', () => {
   it('nunca ultrapassa o alvo, mesmo com passo maior que a distancia', () => {
@@ -51,5 +51,15 @@ describe('petFollow', () => {
 
     expect(saida.x).toBeCloseTo(ancora.x);
     expect(saida.z).toBeCloseTo(ancora.z);
+  });
+});
+
+describe('sniffAngle', () => {
+  it('aponta para o leste quando o no esta a leste', () => {
+    expect(sniffAngle(vec3(0, 0, 0), vec3(1, 0, 0))).toBeCloseTo(Math.PI / 2);
+  });
+
+  it('aponta para a frente (+Z) quando o no esta adiante do pet', () => {
+    expect(sniffAngle(vec3(0, 0, 0), vec3(0, 0, 1))).toBeCloseTo(0);
   });
 });

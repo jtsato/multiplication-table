@@ -1,10 +1,11 @@
 import { useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
-import type { Group } from 'three';
+import type { Group, Mesh } from 'three';
 import { useGameStore } from '../../app/store';
 import { palette } from '../../shared/palette';
 import { playerTransform } from '../player/playerTransform';
-import { PET, petFollow } from './companion.logic';
+import { nearestNodeInRange } from '../resources/resources.logic';
+import { PET, petFollow, sniffAngle } from './companion.logic';
 import { petTransform } from './petTransform';
 
 /**
@@ -17,6 +18,7 @@ import { petTransform } from './petTransform';
 export function CompanionView() {
   const pet = useGameStore((state) => state.pet);
   const groupRef = useRef<Group>(null);
+  const headRef = useRef<Mesh>(null);
   const coinTimerRef = useRef(0);
 
   useFrame((_, delta) => {
@@ -37,6 +39,15 @@ export function CompanionView() {
       groupRef.current.position.set(proximo.x, playerTransform.y, proximo.z);
     }
 
+    // Fareja o no mais proximo: a cabeca vira para ele, e volta ao normal quando
+    // nao ha nada perto. Nao muda jogo nenhum — e so o pet parecendo vivo.
+    if (headRef.current) {
+      const no = nearestNodeInRange(proximo, state.nodes, PET.sniffRange);
+      const alvo = no ? sniffAngle(proximo, no.position) : 0;
+      const atual = headRef.current.rotation.y;
+      headRef.current.rotation.y = atual + (alvo - atual) * Math.min(1, delta * 8);
+    }
+
     coinTimerRef.current += delta;
     if (coinTimerRef.current >= PET.coinIntervalSeconds) {
       coinTimerRef.current = 0;
@@ -54,7 +65,7 @@ export function CompanionView() {
         <meshLambertMaterial color={palette.fence} flatShading />
       </mesh>
       {/* Cabeca */}
-      <mesh position={[0, 0.62, 0.38]} castShadow>
+      <mesh ref={headRef} position={[0, 0.62, 0.38]} castShadow>
         <boxGeometry args={[0.3, 0.28, 0.24]} />
         <meshLambertMaterial color={palette.bridgeDeck} flatShading />
       </mesh>
