@@ -1,0 +1,38 @@
+# Dívida técnica
+
+Registro das dívidas conhecidas do Numi 99: o que ficou para trás, por quê, e o
+que conta como pago.
+
+## DIV-001 — Decorações compradas não aparecem na casa
+
+- **Data:** 2026-08-19
+- **Origem:** auditoria da spec `docs/superpowers/specs/2026-08-18-ilha-cozy-design.md`
+  contra o código. A spec promete "a casa evolui com moedas… vagas de decoração";
+  o plano da Fase 4 (Task 5) entregou as decorações como ralo das colheitas
+  regionais.
+- **Problema:** a loja vende seis decorações — tapete, aquário, vaso, lustre,
+  prateleira e escultura — e a compra persiste em `owned`, mas **nenhuma delas é
+  renderizada na cena 3D da casa**. O jogador paga moedas e recursos e não vê
+  nada mudar.
+- **Evidência:**
+  - Catálogo com as peças: `src/slices/economy/economy.logic.ts`
+    (`SHOP_ITEMS`, categoria `casa`).
+  - Casa com apenas espelho, mural e cama: `src/slices/home/HomeView.tsx`
+    (`Furniture`).
+  - Nenhum uso de `owned` em componente de cena (varredura em
+    `src/slices/home`, `src/slices/world`, `src/slices/resources`,
+    `src/app` não encontra nenhum).
+- **Impacto:** o ralo econômico funciona (todo recurso é consumido), mas o
+  prêmio "poder mostrar" da categoria `casa` não é entregue. Para uma criança,
+  comprar uma decoração é gastar sem ver resultado — exatamente o oposto do que
+  a categoria promete.
+- **Critério de aceite para fechar:**
+  - Comprar uma decoração adiciona um objeto visível dentro da casa.
+  - A decoração comprada continua lá depois de recarregar a página.
+  - Não dá para comprar duas vezes (já coberto pela economia; falta o visual).
+  - A cena cobre o caso com teste (`@react-three/test-renderer`) e o e2e grava
+    uma captura dentro da casa com decoração.
+- **Onde atacar:** dentro da slice `home/` — ex.: componente
+  `HomeDecorations` que lê `owned` e desenha cada peça, sem que `home/` importe
+  a slice de economia (o store compõe; a view recebe o estado).
+- **Status:** aberta.

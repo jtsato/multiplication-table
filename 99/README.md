@@ -176,7 +176,7 @@ assinantes 60 vezes por segundo.
 
 ## Testes
 
-Duas camadas: **392 testes** de unidade/integração no Vitest e **25 testes ponta a
+Duas camadas: **552 testes** de unidade/integração no Vitest e **29 testes ponta a
 ponta** em navegador de verdade com Playwright.
 
 ### Ponta a ponta (Playwright)
@@ -235,3 +235,7 @@ npm run e2e         # testes de navegador (exige `npx playwright install chromiu
 
 Registro por fatia, com o porquê de cada escolha não óbvia e os bugs que os
 testes pegaram, em [docs/decisoes.md](docs/decisoes.md).
+
+## Dívidas conhecidas
+
+As dívidas abertas ficam em [docs/divida-tecnica.md](docs/divida-tecnica.md).

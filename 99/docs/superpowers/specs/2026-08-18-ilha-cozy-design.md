@@ -314,6 +314,10 @@ Cada fase segue o padrão do projeto: lógica pura e slices em Vitest `node`, HU
 painéis em jsdom, cena em `@react-three/test-renderer`, e o fluxo completo em
 Playwright contra o build de produção.
 
+Números atuais da suíte (19/08/2026): **552 testes** de unidade/integração em
+37 arquivos no Vitest e **29 testes ponta a ponta** no Playwright (20 desktop +
+9 celular emulado).
+
 Casos que cada fase deve provar:
 
 - **Fase 1** — a noite dura menos que a metade do dia; a carga da lanterna decresce com
