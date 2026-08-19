@@ -697,3 +697,48 @@ coisa visível.
 | `npm run test` | 560 testes, 38 arquivos, verde |
 | `npm run e2e` | verde, incluindo o novo caso de decoração |
 | `npm run build` | ok |
+
+---
+
+## Fase 5 — Animais, pet e caderneta (núcleo)
+
+**O que foi criado:** animais de ambiente por região, alimentar → amigo, caderneta
+na casa, pet que segue o jogador e raros com janela atrelada a sequência de
+acertos. A baleia do Porto ficou registrada como DIV-002.
+
+### Decisões
+
+**Animal nunca é nó de colheita.** A regra tonal da spec virou código: não existe
+colher bicho. O animal é alvo de um desafio de `alimentar` — o pedido é uma
+multiplicação, e o acerto debita a comida e registra amizade. Errar não debita
+nada: a criança vê a resposta certa e pode tentar de novo.
+
+**A conta de alimentar reusa o `ChallengePanel` inteiro.** A slice de matemática
+só ganhou um propósito novo; o alvo é `{ id, kind, groups, perGroup }` como
+sempre. `kind` é a comida do animal, então o enunciado sai natural: "3 cachos com
+4 frutas cada" para o cachorro que come fruta.
+
+**Caderneta mora na casa, mas os dados moram em `wildlife/`.** `AnimalBookPanel`
+lê o store composto; `home/` só ganhou um móvel novo (`caderneta`). O save guarda
+apenas os animais que já apareceram — os ausentes são tratados como "ainda não
+visto" pela interface, o que mantém saves antigos compatíveis sem subir a versão.
+
+**Raro é janela, não sorte.** `animalIsVisible` exige sequência mínima de acertos
+(`WILDLIFE.rareStreak`) e fase certa: unicórnio na Cachoeira à noite, dinossauro
+no Pico de dia. O raro existe no estado sempre; a view decide se a janela está
+aberta. Assim a caderneta conhece a espécie antes de ela aparecer.
+
+**O pet é posição, não física.** `petTransform` vive fora do React, como
+`playerTransform`, e `petFollow` é uma função pura com teste de não-ultrapasse —
+o mesmo cuidado do `stepToward` dos inimigos removidos. O pet desenterra uma moeda
+a cada 30 s, sem nenhuma escrita por quadro no store.
+
+### Portões
+
+| Portão | Resultado |
+| --- | --- |
+| `npm run lint` | limpo |
+| `npm run typecheck` | limpo |
+| `npm run test` | 589 testes, 42 arquivos, verde |
+| `npm run e2e` | verde, incluindo pet e caderneta |
+| `npm run build` | ok |

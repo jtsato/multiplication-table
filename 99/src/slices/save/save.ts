@@ -18,6 +18,8 @@ export function snapshot(): GameSave {
     hints: state.hints,
     avatar: state.avatar,
     openBridges: state.openBridges,
+    animalBook: state.animalBook,
+    pet: state.pet,
     locale: state.locale,
   };
 }
@@ -38,6 +40,8 @@ export function applySave(save: GameSave): void {
     hints: save.hints,
     avatar: migrateAvatar(save.avatar),
     openBridges: save.openBridges,
+    animalBook: save.animalBook,
+    pet: save.pet,
     locale: save.locale,
     text: bundleFor(save.locale),
   });

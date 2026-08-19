@@ -1,6 +1,7 @@
 import type { RegionId } from '../slices/regions/regions.logic';
 import type { ResourceKind } from '../slices/resources/resources.logic';
 import type { ShopItemKind } from '../slices/economy/economy.logic';
+import type { AnimalKind } from '../slices/wildlife/wildlife.logic';
 
 /**
  * Os idiomas que a maquina cobre.
@@ -130,6 +131,10 @@ export interface AppStrings {
   useHint: string;
   fireFull: string;
   fireSome: string;
+  /** Convite para alimentar um animal proximo. */
+  feedPrompt: string;
+  /** Feedback de acerto no desafio de alimentar. */
+  feedFriend: string;
 
   // Loja
   hintsStored: string;
@@ -150,6 +155,14 @@ export interface AppStrings {
   bedNotYet: string;
   ready: string;
   close: string;
+
+  // Caderneta dos animais
+  bookTitle: string;
+  bookSeen: string;
+  bookFriend: string;
+  bookNotSeen: string;
+  bookTake: string;
+  bookCurrentPet: string;
 
   // Avatar
   character: string;
@@ -186,6 +199,8 @@ export interface LocaleDefinition {
   resources: Record<ResourceKind, ResourceNouns>;
   /** O nome de cada regiao. */
   regions: Record<RegionId, string>;
+  /** O nome de cada animal. */
+  animals: Record<AnimalKind, string>;
   /** Rotulo e efeito de cada item da loja. */
   shop: Record<ShopItemKind, { label: string; effect: string }>;
 }

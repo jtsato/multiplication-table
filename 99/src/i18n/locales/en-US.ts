@@ -53,6 +53,8 @@ export const enUS: LocaleDefinition = {
     useHint: 'Use a hint ({{n}})',
     fireFull: 'Campfire full and lantern lit!',
     fireSome: 'A little wood and a little light',
+    feedPrompt: 'Press E to feed',
+    feedFriend: 'Made a friend!',
 
     hintsStored: 'Hints saved: {{n}}',
     shopTitle: 'Shop',
@@ -71,6 +73,13 @@ export const enUS: LocaleDefinition = {
     bedNotYet: 'Not yet',
     ready: 'Done',
     close: 'Close',
+
+    bookTitle: 'Animal notebook',
+    bookSeen: 'Seen',
+    bookFriend: 'Friend',
+    bookNotSeen: 'Not seen yet',
+    bookTake: 'Take along',
+    bookCurrentPet: 'With you: {{animal}}',
 
     character: 'Character',
     boy: 'Boy',
@@ -153,6 +162,17 @@ export const enUS: LocaleDefinition = {
     cachoeira: 'Waterfall',
     pomar: 'Orchard',
     pico: 'Peak',
+  },
+
+  animals: {
+    gaivota: 'Seagull',
+    peixe: 'Fish',
+    cachorro: 'Dog',
+    gato: 'Cat',
+    cavalo: 'Horse',
+    vaca: 'Cow',
+    unicornio: 'Unicorn',
+    dinossauro: 'Dinosaur',
   },
 
   shop: {

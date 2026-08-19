@@ -218,4 +218,50 @@ describe('slice de matematica', () => {
       expect(state().coins).toBeGreaterThan(0);
     });
   });
+
+  describe('alimentar', () => {
+    const animal = {
+      id: 'animal-1',
+      kind: 'cachorro' as const,
+      regionId: 'bosque' as const,
+      position: { x: 0, y: 1.5, z: 0 },
+      rare: false,
+      groups: 3,
+      perGroup: 4,
+    };
+
+    beforeEach(() => {
+      state().resetWildlife();
+      state().resetResources();
+      state().resetEconomy();
+      useGameStore.setState({
+        animals: [animal],
+        inventory: { ...emptyInventory(), fruta: 20 },
+      });
+    });
+
+    it('acertar debita a comida e registra a amizade', () => {
+      state().startChallenge(
+        { id: animal.id, kind: 'fruta', groups: animal.groups, perGroup: animal.perGroup },
+        'alimentar',
+      );
+      state().answerChallenge(state().activeChallenge!.answer);
+
+      expect(state().inventory.fruta).toBe(8);
+      expect(state().animalBook.find((entry) => entry.kind === 'cachorro')?.friend).toBe(true);
+      expect(state().feedback?.purpose).toBe('alimentar');
+    });
+
+    it('errar nao debita comida nem vira amigo', () => {
+      state().startChallenge(
+        { id: animal.id, kind: 'fruta', groups: animal.groups, perGroup: animal.perGroup },
+        'alimentar',
+      );
+      const desafio = state().activeChallenge!;
+      state().answerChallenge(desafio.options.find((option) => option !== desafio.answer)!);
+
+      expect(state().inventory.fruta).toBe(20);
+      expect(state().animalBook.find((entry) => entry.kind === 'cachorro')?.friend).toBe(false);
+    });
+  });
 });

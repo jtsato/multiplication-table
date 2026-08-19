@@ -54,3 +54,24 @@ que conta como pago.
   `e2e/telas/28-casa-decorada-recarregada.png` com a peça ainda presente.
 - **Portões:** lint limpo, typecheck limpo, 560 testes Vitest verdes, build ok,
   E2E verdes.
+
+---
+
+## DIV-002 — A baleia do Porto ainda não é um acontecimento
+
+- **Data:** 2026-08-19
+- **Origem:** escolha de escopo no núcleo da Fase 5 da spec
+  `docs/superpowers/specs/2026-08-18-ilha-cozy-design.md`. O núcleo entregue tem
+  animais de ambiente, alimentar → amigo, caderneta, pet e raros; a baleia ficou
+  para trás de propósito, para a fatia não virar uma entrega gigante.
+- **Problema:** a spec descreve a baleia como **acontecimento** — sobe no mar
+  aberto do Porto, solta o esguicho e mergulha, sem dar moeda nem recurso. Hoje
+  o Porto tem cardumes (peixes de ambiente), mas nenhum evento visual no mar.
+- **Critério de aceite para fechar:**
+  - A baleia aparece em intervalos no mar aberto do Porto.
+  - O ciclo sobe → esguicha → mergulha é visível em captura E2E.
+  - Não interage com a criança nem entrega recompensa.
+- **Onde atacar:** dentro da slice `wildlife/` — ex.: um `WhaleView` ou uma
+  função pura de agendamento (`whaleSchedule(clock, rng)`) testada em Vitest, com
+  o ciclo animado no `useFrame`.
+- **Status:** aberta.

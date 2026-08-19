@@ -4,6 +4,12 @@ import { migrateLocale, type UserLocale } from '../../i18n';
 import type { ShopItemKind } from '../economy/economy.logic';
 import { SHOP_ITEMS } from '../economy/economy.logic';
 import { emptyInventory, RESOURCE_KINDS, type Inventory } from '../resources/resources.logic';
+import {
+  migrateAnimalBook,
+  migratePet,
+  type AnimalBookEntry,
+  type AnimalKind,
+} from '../wildlife/wildlife.logic';
 
 /**
  * Persistencia.
@@ -30,6 +36,10 @@ export interface GameSave {
   avatar: AvatarSelection;
   /** Pontes ja compradas. Ausente num save anterior as regioes, e ai e `[]`. */
   openBridges: string[];
+  /** Caderneta dos animais. Ausente num save anterior a Fase 5, e ai e vazia. */
+  animalBook: AnimalBookEntry[];
+  /** Animal escolhido como pet. Ausente antes da Fase 5, e ai e `null`. */
+  pet: AnimalKind | null;
   /** Idioma escolhido. Ausente num save anterior ao i18n, e ai e o padrao. */
   locale: UserLocale;
 }
@@ -127,6 +137,8 @@ export function migrateSave(raw: unknown): GameSave {
     hints: migrateCount(candidate.hints, 'dicas'),
     avatar: migrateAvatar(candidate.avatar),
     openBridges: migrateBridges(candidate.openBridges),
+    animalBook: migrateAnimalBook(candidate.animalBook),
+    pet: migratePet(candidate.pet),
     locale: migrateLocale(candidate.locale),
   };
 }

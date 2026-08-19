@@ -35,6 +35,10 @@ export interface EstadoJogo {
   lojaAberta: boolean;
   comprados: string[];
   dicas: number;
+  /** Animal escolhido para acompanhar a crianca. */
+  pet: string | null;
+  /** Caderneta dos animais: quem foi visto e quem virou amigo. */
+  caderneta: { kind: string; seen: boolean; friend: boolean }[];
 }
 
 /** Le o estado do jogo pela ponte de depuracao. */
@@ -77,6 +81,8 @@ export async function lerEstado(page: Page): Promise<EstadoJogo> {
       lojaAberta: s.shopOpen,
       comprados: s.owned,
       dicas: s.hints,
+      pet: s.pet,
+      caderneta: s.animalBook.map(({ kind, seen, friend }) => ({ kind, seen, friend })),
     };
   });
 }
@@ -350,7 +356,10 @@ export async function centroDe(page: Page, seletor: string): Promise<Ponto> {
  * Usa o teleporte da ponte, como o resto da suite: atravessar a ilha andando
  * tornaria os testes lentos e instaveis, e andar de verdade ja tem teste proprio.
  */
-export async function irParaOMovel(page: Page, movel: 'espelho' | 'mural' | 'cama'): Promise<void> {
+export async function irParaOMovel(
+  page: Page,
+  movel: 'espelho' | 'mural' | 'cama' | 'caderneta',
+): Promise<void> {
   await page.evaluate((alvo) => {
     const ponte = window.__tabuada!;
     const pontos = ponte.homeSpots;

@@ -42,6 +42,15 @@ function Furniture() {
         <meshLambertMaterial color={palette.homeChart} flatShading />
       </mesh>
 
+      {/* Caderneta dos animais: quadro menor, na parede esquerda da frente. */}
+      <mesh
+        position={[HOME_SPOT_OFFSETS.caderneta.x, 1.3, HOME_SPOT_OFFSETS.caderneta.z - 0.25]}
+        castShadow
+      >
+        <boxGeometry args={[0.9, 1.1, 0.1]} />
+        <meshLambertMaterial color={palette.homeChart} flatShading />
+      </mesh>
+
       {/* Cama: colchao e travesseiro. */}
       <group position={[HOME_SPOT_OFFSETS.cama.x, 0, HOME_SPOT_OFFSETS.cama.z]}>
         <mesh position={[0, 0.3, 0]} castShadow receiveShadow>

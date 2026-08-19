@@ -2,6 +2,7 @@ import { Canvas } from '@react-three/fiber';
 import { Physics } from '@react-three/rapier';
 import { palette } from '../shared/palette';
 import { BuildingView } from '../slices/building';
+import { CompanionView } from '../slices/companion';
 import { DayNightView } from '../slices/daynight';
 import { HomeView } from '../slices/home';
 import { LanternView } from '../slices/lantern';
@@ -9,6 +10,7 @@ import { PlayerView } from '../slices/player';
 import { FirefliesView } from '../slices/lantern';
 import { RegionsView, WaterfallView } from '../slices/regions';
 import { ResourcesView } from '../slices/resources';
+import { WildlifeView } from '../slices/wildlife';
 import { WorldView } from '../slices/world';
 import { useGameStore } from './store';
 
@@ -62,11 +64,15 @@ export function GameCanvas({ isTouch = false }: { isTouch?: boolean }) {
             e num facho de luz isso se ve. */}
         <LanternView />
 
+        {/* O pet tambem le a posicao do jogador no mesmo quadro. */}
+        <CompanionView />
+
         <WorldView seed={worldSeed} />
         <RegionsView />
         <WaterfallView />
         <FirefliesView seed={worldSeed} />
         <HomeView />
+        <WildlifeView />
         <ResourcesView />
         <BuildingView />
       </Physics>

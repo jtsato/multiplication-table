@@ -107,6 +107,17 @@ describe('slice da economia', () => {
     expect(state().coins).toBe(moedas);
     expect(state().knownFacts).toEqual(['2x4']);
   });
+
+  it('addCoins soma no saldo e no contador do dia, sem mexer na sequencia', () => {
+    state().rewardCorrect(2, 4);
+    const sequencia = state().streak;
+
+    state().addCoins(3);
+
+    expect(state().coins).toBe(2 + ECONOMY.newFactBonus + 3);
+    expect(state().coinsToday).toBe(2 + ECONOMY.newFactBonus + 3);
+    expect(state().streak).toBe(sequencia);
+  });
 });
 
 describe('loja', () => {

@@ -95,7 +95,7 @@ Ao entrar, o telhado fica transparente: a leitura vira a de uma casa de boneca, 
 carregar outra cena. Dentro do raio de luz dela a **lanterna não gasta e reacende de
 graça**, sem conta e sem moeda.
 
-Três móveis:
+Quatro móveis:
 
 - **Espelho** — silhueta, 6 tons de pele, 8 cores de roupa e acessórios. A silhueta
   escolhida não tranca nada; os acessórios especiais se ganham por marco de tabuada
@@ -104,14 +104,31 @@ Três móveis:
   domina os fatos. **Aqui consultar é de graça**, e o resultado aparece mesmo do que
   ainda não foi dominado. No campo, a dica custa moeda; em casa, não custa nada.
 - **Cama** — dormir pula para o próximo amanhecer.
+- **Caderneta dos animais** — quem já foi visto, quem já virou amigo, e o amigo que
+  a criança escolhe para acompanhá-la como pet.
 
 E as **seis decorações da loja** — tapete, aquário, vaso, lustre, prateleira e
 escultura — aparecem dentro da casa assim que compradas, e continuam lá depois de
 recarregar a página. É o ralo permanente da economia: a criança gasta moedas e
 colheitas para **ver** a casa mudar.
 
-Moedas, fatos dominados, itens comprados e aparência ficam guardados no navegador e
-sobrevivem a fechar a página.
+Moedas, fatos dominados, itens comprados, caderneta, pet e aparência ficam guardados
+no navegador e sobrevivem a fechar a página.
+
+### Animais e pet
+
+Cada região tem seus bichos: gaivotas na Praia, cardumes no Porto, cães e gatos no
+Bosque, cavalos na Cachoeira e vacas no Pomar. **Animal nunca é nó de colheita** —
+ele é alvo de amizade. Chegar perto e apertar **E** abre um desafio de comida (o
+pedido é uma multiplicação); acertar debita a comida da mochila e registra o bicho
+como amigo na caderneta.
+
+Na caderneta, qualquer amigo pode virar **pet** e passar a seguir o jogador. De vez
+em quando o pet desenterra uma moeda — um agrado gentil, não uma mecânica de pressão.
+
+Os **raros** aparecem em janela curta e dependem de domínio, não de sorte: o
+**unicórnio** na Cachoeira à noite e o **dinossauro** no Pico de dia, ambos depois
+de uma sequência de acertos.
 
 ### A noite
 
@@ -157,6 +174,8 @@ src/
 │   ├── economy/    # moedas, sequência, fatos dominados e a loja
 │   ├── home/       # a casa, o mural da tabuada e a cama
 │   ├── avatar/     # aparência e acessórios por marco
+│   ├── wildlife/   # animais, caderneta e raros
+│   ├── companion/  # o pet que segue o jogador
 │   └── save/       # persistência em localStorage
 └── shared/         # sem regra de negócio: paleta, PRNG, vetor, teclado
 ```
@@ -181,7 +200,7 @@ assinantes 60 vezes por segundo.
 
 ## Testes
 
-Duas camadas: **560 testes** de unidade/integração no Vitest e **30 testes ponta a
+Duas camadas: **589 testes** de unidade/integração no Vitest e **32 testes ponta a
 ponta** em navegador de verdade com Playwright.
 
 ### Ponta a ponta (Playwright)

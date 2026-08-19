@@ -81,6 +81,10 @@ export const createMathSlice: StateCreator<GameState, [], [], MathSlice> = (set,
         // A colheita passa pela slice de recursos: e ela que sabe esgotar o no e
         // somar no inventario. A slice de matematica so decide *quanto*.
         get().collectNode(challenge.targetId, outcome.reward);
+      } else if (challenge.purpose === 'alimentar') {
+        // Alimentar so acontece no acerto: errar nao paga a comida nem vira
+        // amigo — a crianca ve a resposta certa e pode tentar de novo.
+        if (outcome.correct) get().feedAnimal(challenge.targetId);
       } else {
         /**
          * Uma conta, dois efeitos: o fogo do acampamento e a luz que a crianca

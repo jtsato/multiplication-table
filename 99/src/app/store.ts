@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { createI18nSlice, type I18nSlice } from '../i18n/i18n.store';
 import { createAvatarSlice, type AvatarSlice } from '../slices/avatar/avatar.store';
 import { createBuildingSlice, type BuildingSlice } from '../slices/building/building.store';
+import { createCompanionSlice, type CompanionSlice } from '../slices/companion/companion.store';
 import { createDayNightSlice, type DayNightSlice } from '../slices/daynight/daynight.store';
 import { createEconomySlice, type EconomySlice } from '../slices/economy/economy.store';
 import { createHomeSlice, type HomeSlice } from '../slices/home/home.store';
@@ -9,9 +10,11 @@ import { HOME_SPOTS } from '../slices/home/home.logic';
 import { dayNightClock } from '../slices/daynight/dayNightClock';
 import { createLanternSlice, type LanternSlice } from '../slices/lantern/lantern.store';
 import { playerTransform } from '../slices/player/playerTransform';
+import { petTransform } from '../slices/companion/petTransform';
 import { createMathSlice, type MathSlice } from '../slices/math/math.store';
 import { createRegionsSlice, type RegionsSlice } from '../slices/regions/regions.store';
 import { createResourcesSlice, type ResourcesSlice } from '../slices/resources/resources.store';
+import { createWildlifeSlice, type WildlifeSlice } from '../slices/wildlife/wildlife.store';
 import { createWorldSlice, type WorldSlice } from '../slices/world/world.store';
 
 /**
@@ -31,6 +34,8 @@ export type GameState = WorldSlice &
   HomeSlice &
   AvatarSlice &
   RegionsSlice &
+  WildlifeSlice &
+  CompanionSlice &
   I18nSlice;
 
 export const useGameStore = create<GameState>()((...args) => ({
@@ -44,6 +49,8 @@ export const useGameStore = create<GameState>()((...args) => ({
   ...createHomeSlice(...args),
   ...createAvatarSlice(...args),
   ...createRegionsSlice(...args),
+  ...createWildlifeSlice(...args),
+  ...createCompanionSlice(...args),
   ...createI18nSlice(...args),
 }));
 
@@ -60,6 +67,7 @@ declare global {
     __tabuada?: {
       store: typeof useGameStore;
       transform: typeof playerTransform;
+      pet: typeof petTransform;
       clock: typeof dayNightClock;
       homeSpots: typeof HOME_SPOTS;
       /**
@@ -79,6 +87,7 @@ if (typeof window !== 'undefined') {
   window.__tabuada = {
     store: useGameStore,
     transform: playerTransform,
+    pet: petTransform,
     clock: dayNightClock,
     // Posicoes dos moveis, para o E2E levar o jogador ate eles.
     homeSpots: HOME_SPOTS,
@@ -101,4 +110,6 @@ export function restartGame(): void {
   state.resetLantern();
   state.resetEconomy();
   state.resetRegions();
+  state.resetWildlife();
+  state.resetCompanion();
 }

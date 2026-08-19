@@ -10,6 +10,7 @@ import {
   type GameAction,
 } from '../shared/input';
 import { STRUCTURES, canAfford } from '../slices/building';
+import { animalById, canFeedAnimal } from '../slices/wildlife';
 import './touch.css';
 
 /** Raio util do joystick, em pixels. Casado com o tamanho da base no CSS. */
@@ -139,17 +140,26 @@ export function TouchControls() {
   const inventory = useGameStore((state) => state.inventory);
   const structures = useGameStore((state) => state.structures);
   const nearbySpot = useGameStore((state) => state.nearbySpot);
+  const nearbyAnimalId = useGameStore((state) => state.nearbyAnimalId);
+  const animals = useGameStore((state) => state.animals);
+
+  const animalPerto = nearbyAnimalId ? animalById(animals, nearbyAnimalId) : null;
+  const podeAlimentar = animalPerto ? canFeedAnimal(animalPerto, inventory) : false;
 
   const temFogueira = structures.some((structure) => structure.kind === 'fogueira');
   // Colher aparece com recurso ao alcance; abastecer, quando ja existe fogueira;
-  // e o movel, quando a crianca esta em frente a ele dentro de casa.
-  const podeInteragir = Boolean(highlightedNodeId) || Boolean(nearbySpot) || temFogueira;
+  // o movel, quando a crianca esta em frente a ele dentro de casa; e alimentar,
+  // quando um animal amigavel esta perto.
+  const podeInteragir =
+    Boolean(highlightedNodeId) || Boolean(nearbySpot) || temFogueira || podeAlimentar;
 
   const rotuloInteragir = highlightedNodeId
     ? 'Colher'
     : nearbySpot
       ? HOME_SPOT_LABELS[nearbySpot]
-      : 'Acender';
+      : podeAlimentar
+        ? 'Alimentar'
+        : 'Acender';
 
   return (
     <div className="touch">

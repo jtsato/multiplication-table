@@ -101,12 +101,17 @@ export function ChallengePanel() {
             <p className="challenge__reward">
               {/* A conta na fogueira rende duas coisas, e o feedback diz as
                   duas: sem isso a criança não liga a resposta certa à luz que
-                  passou a carregar. */}
+                  passou a carregar. Alimentar rende amizade, e o painel diz isso
+                  também. */}
               {feedback.purpose === 'abastecer'
                 ? feedback.correct
                   ? t.fireFull
                   : t.fireSome
-                : `+${feedback.reward}`}
+                : feedback.purpose === 'alimentar'
+                  ? feedback.correct
+                    ? t.feedFriend
+                    : ''
+                  : `+${feedback.reward}`}
             </p>
             {/* A moeda aparece separada do recurso porque são coisas diferentes:
                 o recurso é o resultado da conta, a moeda é o prêmio por ter

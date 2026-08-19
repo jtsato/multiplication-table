@@ -9,6 +9,7 @@ import { AvatarPanel } from '../slices/avatar';
 import { BedPanel, WallChart } from '../slices/home';
 import { loadGame, startAutoSave } from '../slices/save';
 import { ShopPanel } from '../slices/economy';
+import { AnimalBookPanel } from '../slices/wildlife';
 import { ChallengePanel } from '../slices/math';
 import './loading.css';
 
@@ -77,6 +78,7 @@ export function App() {
       <AvatarPanel />
       <WallChart />
       <BedPanel />
+      <AnimalBookPanel />
       <DaySummary />
       {isTouch && <TouchControls />}
     </>

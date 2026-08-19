@@ -44,6 +44,11 @@ export interface EconomySlice {
   closeShop: () => void;
   /** Compra um item. Recusa vira `purchaseError`. */
   buy: (kind: ShopItemKind) => void;
+  /**
+   * Soma moedas avulsas (ex.: o pet desenterrando uma moeda).
+   * Nao mexe em sequencia nem em fatos — so no saldo e no contador do dia.
+   */
+  addCoins: (amount: number) => void;
   /** Gasta uma dica. Devolve `false` se nao havia nenhuma. */
   useHint: () => boolean;
   /** O resumo do dia esta na tela? */
@@ -141,6 +146,12 @@ export const createEconomySlice: StateCreator<GameState, [], [], EconomySlice> =
     set((state) => ({ hints: state.hints - 1 }));
     return true;
   },
+
+  addCoins: (amount) =>
+    set((state) => ({
+      coins: state.coins + Math.max(0, Math.floor(amount)),
+      coinsToday: state.coinsToday + Math.max(0, Math.floor(amount)),
+    })),
 
   resetDaily: () => set(DIA_ZERADO),
 

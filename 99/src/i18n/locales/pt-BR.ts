@@ -49,6 +49,8 @@ export const ptBR: LocaleDefinition = {
     useHint: 'Usar dica ({{n}})',
     fireFull: 'Fogueira cheia e lanterna acesa!',
     fireSome: 'Um pouco de lenha e de luz',
+    feedPrompt: 'Aperte E para alimentar',
+    feedFriend: 'Virou seu amigo!',
 
     hintsStored: 'Dicas guardadas: {{n}}',
     shopTitle: 'Loja',
@@ -67,6 +69,13 @@ export const ptBR: LocaleDefinition = {
     bedNotYet: 'Ainda não',
     ready: 'Pronto',
     close: 'Fechar',
+
+    bookTitle: 'Caderneta dos animais',
+    bookSeen: 'Visto',
+    bookFriend: 'Amigo',
+    bookNotSeen: 'Ainda não visto',
+    bookTake: 'Levar comigo',
+    bookCurrentPet: 'Com você: {{animal}}',
 
     character: 'Personagem',
     boy: 'Menino',
@@ -149,6 +158,17 @@ export const ptBR: LocaleDefinition = {
     cachoeira: 'Cachoeira',
     pomar: 'Pomar',
     pico: 'Pico',
+  },
+
+  animals: {
+    gaivota: 'Gaivota',
+    peixe: 'Peixe',
+    cachorro: 'Cachorro',
+    gato: 'Gato',
+    cavalo: 'Cavalo',
+    vaca: 'Vaca',
+    unicornio: 'Unicórnio',
+    dinossauro: 'Dinossauro',
   },
 
   shop: {

@@ -192,6 +192,50 @@ test.describe('partida no computador', () => {
     await page.screenshot({ path: 'e2e/telas/28-casa-decorada-recarregada.png' });
   });
 
+  test('o pet segue o jogador', async ({ page }) => {
+    // Amizade e pet montados direto: o caminho de alimentar tem teste de unidade
+    // e o painel da caderneta tem teste proprio logo abaixo.
+    await page.evaluate(() => {
+      window.__tabuada!.store.setState({
+        pet: 'cachorro',
+        animalBook: [{ kind: 'cachorro', seen: true, friend: true }],
+      });
+    });
+
+    await page.waitForTimeout(2500);
+
+    const distancia = await page.evaluate(() => {
+      const ponte = window.__tabuada!;
+      return Math.hypot(ponte.pet.x - ponte.transform.x, ponte.pet.z - ponte.transform.z);
+    });
+    // O pet caminha atras do jogador; alguns metros de folga cobrem o tempo de
+    // convergencia em WebGL por software.
+    expect(distancia).toBeLessThan(4);
+    await page.screenshot({ path: 'e2e/telas/29-pet.png' });
+  });
+
+  test('a caderneta mostra o amigo e escolhe o pet', async ({ page }) => {
+    await page.evaluate(() => {
+      window.__tabuada!.store.setState({
+        animalBook: [{ kind: 'cachorro', seen: true, friend: true }],
+      });
+    });
+
+    await irParaOMovel(page, 'caderneta');
+    await page.keyboard.press('KeyE');
+
+    const caderneta = page.getByRole('dialog', { name: 'Caderneta dos animais' });
+    await expect(caderneta).toBeVisible();
+    await expect(caderneta).toContainText('Cachorro');
+    await page.screenshot({ path: 'e2e/telas/30-caderneta.png' });
+
+    await page.getByRole('button', { name: /Levar comigo Cachorro/ }).click();
+    expect((await lerEstado(page)).pet).toBe('cachorro');
+
+    await page.getByRole('button', { name: 'Fechar' }).click();
+    await expect(caderneta).toHaveCount(0);
+  });
+
   test('a loja nao abre com um desafio na tela', async ({ page }) => {
     await ficarAoLadoDeUmRecurso(page);
     await page.keyboard.press('KeyE');

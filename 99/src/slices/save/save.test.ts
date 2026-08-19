@@ -45,6 +45,11 @@ const saveValido = (): GameSave => ({
   hints: 3,
   avatar: { silhouette: 'menina', skin: 4, clothes: 6, head: 'bone', face: 'nenhum' },
   openBridges: ['praia-porto'],
+  animalBook: [
+    { kind: 'cachorro', seen: true, friend: true },
+    { kind: 'gaivota', seen: true, friend: false },
+  ],
+  pet: 'cachorro',
   locale: 'en-US',
 });
 
@@ -71,6 +76,8 @@ describe('migrateSave', () => {
     expect(resultado.knownFacts).toEqual([]);
     expect(resultado.inventory).toEqual(emptyInventory());
     expect(resultado.avatar).toEqual(DEFAULT_AVATAR);
+    expect(resultado.animalBook).toEqual([]);
+    expect(resultado.pet).toBeNull();
   });
 
   it('recusa numero negativo ou nao finito', () => {
@@ -121,7 +128,9 @@ describe('migrateSave', () => {
   });
 
   it('aceita os fatos de verdade, de 1x1 a 10x10', () => {
-    expect(() => migrateSave({ ...saveValido(), knownFacts: ['1x1', '2x10', '10x10'] })).not.toThrow();
+    expect(() =>
+      migrateSave({ ...saveValido(), knownFacts: ['1x1', '2x10', '10x10'] }),
+    ).not.toThrow();
   });
 
   it('recusa uma lista de fatos que nem lista e', () => {
@@ -241,6 +250,7 @@ describe('snapshot e applySave', () => {
     const recorte = snapshot();
     expect(Object.keys(recorte).sort()).toEqual(
       [
+        'animalBook',
         'avatar',
         'coins',
         'hints',
@@ -249,6 +259,7 @@ describe('snapshot e applySave', () => {
         'locale',
         'openBridges',
         'owned',
+        'pet',
         'version',
       ].sort(),
     );
@@ -265,6 +276,12 @@ describe('snapshot e applySave', () => {
     // As pontes atravessam junto: sem isto a crianca perderia a travessia que
     // conquistou so por fechar a pagina.
     expect(state().openBridges).toEqual(['praia-porto']);
+    // A caderneta e o pet tambem sao duradouros: amizade nao se perde no reload.
+    expect(state().animalBook.find((entry) => entry.kind === 'cachorro')).toMatchObject({
+      seen: true,
+      friend: true,
+    });
+    expect(state().pet).toBe('cachorro');
     // O idioma escolhido volta junto, e o pacote de textos vem com ele.
     expect(state().locale).toBe('en-US');
     expect(state().text.strings.tagline).toBe('The times table island');

@@ -12,6 +12,7 @@ import type { NounForms, UserLocale } from './types';
 import { RESOURCE_KINDS } from '../slices/resources/resources.logic';
 import { REGION_ORDER } from '../slices/regions/regions.logic';
 import { SHOP_ORDER } from '../slices/economy/economy.logic';
+import { ANIMAL_KINDS } from '../slices/wildlife/wildlife.logic';
 
 const concha: NounForms = { one: 'concha', many: 'conchas', gender: 'f' };
 const peixe: NounForms = { one: 'peixe', many: 'peixes', gender: 'm' };
@@ -122,6 +123,10 @@ describe('os idiomas disponiveis', () => {
 
       for (const regiao of REGION_ORDER) {
         expect(pacote.regions[regiao], `${idioma}: regiao ${regiao}`).toBeTruthy();
+      }
+
+      for (const animal of ANIMAL_KINDS) {
+        expect(pacote.animals[animal], `${idioma}: animal ${animal}`).toBeTruthy();
       }
 
       for (const item of SHOP_ORDER) {

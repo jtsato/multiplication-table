@@ -37,7 +37,7 @@ export const HOME = {
 } as const;
 
 /** Os moveis com os quais da para interagir. */
-export type HomeSpot = 'espelho' | 'mural' | 'cama';
+export type HomeSpot = 'espelho' | 'mural' | 'cama' | 'caderneta';
 
 /**
  * Onde cada movel fica, **relativo ao centro da casa**.
@@ -54,6 +54,7 @@ export const HOME_SPOT_OFFSETS: Record<HomeSpot, Vec3> = {
   espelho: vec3(-2.2, 0, -1.4),
   mural: vec3(2.2, 0, -1.4),
   cama: vec3(2.2, 0, 1.6),
+  caderneta: vec3(-2.8, 0, 2.2),
 };
 
 /** As mesmas posicoes, em coordenadas do mundo. Usadas pela logica de alcance. */
@@ -73,12 +74,18 @@ export const HOME_SPOTS: Record<HomeSpot, Vec3> = {
     0,
     HOME.position.z + HOME_SPOT_OFFSETS.cama.z,
   ),
+  caderneta: vec3(
+    HOME.position.x + HOME_SPOT_OFFSETS.caderneta.x,
+    0,
+    HOME.position.z + HOME_SPOT_OFFSETS.caderneta.z,
+  ),
 };
 
 export const HOME_SPOT_LABELS: Record<HomeSpot, string> = {
   espelho: 'Espelho',
   mural: 'Mural da tabuada',
   cama: 'Cama',
+  caderneta: 'Caderneta dos animais',
 };
 
 /**
@@ -108,7 +115,7 @@ export type HomeDecorationKind = (typeof HOME_DECORATION_KINDS)[number];
  */
 export const HOME_DECORATION_OFFSETS: Record<HomeDecorationKind, Vec3> = {
   tapete: vec3(0, 0.04, 0.4),
-  aquario: vec3(-2.3, 0, 1.8),
+  aquario: vec3(-1.4, 0, 2.3),
   vaso: vec3(2.8, 0, 0.1),
   lustre: vec3(0, HOME.wallHeight - 0.45, 0),
   prateleira: vec3(-2.7, 1.2, 0.1),
