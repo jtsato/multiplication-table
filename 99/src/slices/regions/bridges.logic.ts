@@ -70,6 +70,41 @@ export function bridgeFor(a: RegionId, b: RegionId): Bridge | undefined {
 }
 
 /**
+ * Onde a guardia fica: na margem de origem, um passo para dentro da regiao e
+ * para o lado da ponte.
+ *
+ * A guardia e a cara do pedagio — a crianca ve quem vai cobrar a conta antes de
+ * apertar `E`. Ela fica do lado de onde se sai porque a conta cobrada e a da
+ * regiao de origem; ficar no meio do tabuleiro bloquearia a passagem depois que
+ * a ponte abrisse.
+ */
+export const BRIDGE_GUARD = {
+  /** Distancia da margem para dentro da regiao de origem. */
+  back: 1.6,
+  /** Deslocamento lateral em relacao a direcao da ponte. */
+  side: 1.1,
+} as const;
+
+export function bridgeGuardPosition(ponte: Bridge): Vec3 {
+  const { from, to } = bridgeAnchors(ponte);
+  const origem = regionById(ponte.from);
+  const dx = to.x - from.x;
+  const dz = to.z - from.z;
+  const length = Math.hypot(dx, dz) || 1;
+  const ux = dx / length;
+  const uz = dz / length;
+  // Perpendicular a direcao da ponte: o lado esquerdo de quem sai da origem.
+  const px = -uz;
+  const pz = ux;
+
+  return vec3(
+    from.x - ux * BRIDGE_GUARD.back + px * BRIDGE_GUARD.side,
+    origem.groundY,
+    from.z - uz * BRIDGE_GUARD.back + pz * BRIDGE_GUARD.side,
+  );
+}
+
+/**
  * A conta da guardia da ponte.
  *
  * Usa a colheita e a tabuada da regiao de origem — a mesma regra do resto da

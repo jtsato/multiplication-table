@@ -612,6 +612,8 @@ test.describe('partida no computador', () => {
     await page.evaluate(() => window.__tabuada!.teleportar?.(14, 0));
     await page.waitForTimeout(400);
     expect((await lerEstado(page)).regiao).toBe('praia');
+    // A guardia fica na margem, ao lado da ponte fechada: o pedagio tem cara.
+    await page.screenshot({ path: 'e2e/telas/20b-guardia.png' });
 
     // Com a ponte fechada, andar para leste esbarra na parede.
     await page.keyboard.down('KeyD');

@@ -826,3 +826,38 @@ antigos seguem válidos porque os campos ausentes recebem os padrões.
 | `npm run test` | 617 testes, 45 arquivos, verde |
 | `npm run e2e` | verde, incluindo plantio e colheita |
 | `npm run build` | ok |
+
+---
+
+## Fase 8 — Guardiã visível nas pontes
+
+**O que foi criado:** a guardiã da ponte deixou de ser só lógica e texto de HUD.
+Cada ponte fechada agora tem uma guardiã em pé na margem de origem, de lanterna na
+mão, pronta para cobrar a conta do pedágio.
+
+### Decisões
+
+**A guardiã fica na margem de origem, não no tabuleiro.** A posição vem de
+`bridgeGuardPosition`, função pura derivada das âncoras da ponte: um passo para
+dentro da região e outro para o lado. Ficar no meio do tabuleiro bloquearia a
+passagem depois que a ponte abrisse — e a guardiã cobra a tabuada de onde se sai,
+então o lugar dela é a margem de saída.
+
+**A guardiã some quando a ponte abre.** Enquanto há pedágio a cobrar, ela é a cara
+da compra; ponte aberta, o trabalho dela acabou e o tabuleiro fica livre. A
+`RegionsView` só desenha a guardiã para pontes fechadas.
+
+**A guardiã é visual, não um NPC novo.** Ela reaproveita as primitivas dos outros
+NPCs (corpo, cabeça, placa) e ganha uma lanterna para se distinguir de longe. A
+interação continua a mesma — chegar perto e apertar `E` — porque a guardiã é a
+tradução visual de um pedágio que já existia.
+
+### Portões
+
+| Portão | Resultado |
+| --- | --- |
+| `npm run lint` | limpo |
+| `npm run typecheck` | limpo |
+| `npm run test` | 623 testes, 47 arquivos, verde |
+| `npm run e2e` | verde, incluindo travessia de ponte com guardiã |
+| `npm run build` | ok |

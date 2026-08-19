@@ -5,6 +5,7 @@ import { useGameStore } from '../../app/store';
 import { useGameAction } from '../../shared/input';
 import { palette } from '../../shared/palette';
 import { playerTransform } from '../player/playerTransform';
+import { BridgeGuardView } from './BridgeGuardView';
 import {
   BRIDGES,
   bridgeAnchors,
@@ -162,7 +163,11 @@ export function RegionsView() {
         openBridges.includes(tracado.ponte.id) ? (
           <OpenBridge key={tracado.ponte.id} tracado={tracado} />
         ) : (
-          <ClosedBridge key={tracado.ponte.id} tracado={tracado} />
+          <group key={tracado.ponte.id}>
+            <ClosedBridge tracado={tracado} />
+            {/* A guardia so existe enquanto ha pedagio a cobrar. */}
+            <BridgeGuardView ponte={tracado.ponte} />
+          </group>
         ),
       )}
     </>

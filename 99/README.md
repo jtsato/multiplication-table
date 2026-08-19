@@ -148,9 +148,10 @@ A **comerciante** fica na Praia e abre a mesma loja do `L`. O **professor** exis
 em todas as regiões e abre a tabuada de graça, em qualquer lugar — consultar não é
 só um privilégio de casa.
 
-As **pontes** agora têm guardiã: antes de comprar a travessia, a criança resolve a
-conta da guardiã. Acertar libera a compra (que continua cobrando moedas, recursos
-e a tabuada local); errar não custa nada.
+As **pontes** agora têm guardiã: ela fica visível na margem de origem, de lanterna
+na mão, e antes de comprar a travessia a criança resolve a conta dela. Acertar
+libera a compra (que continua cobrando moedas, recursos e a tabuada local); errar
+não custa nada. Ponte aberta, a guardiã vai embora — não há mais pedágio a cobrar.
 
 ### Horta
 
@@ -230,7 +231,7 @@ assinantes 60 vezes por segundo.
 
 ## Testes
 
-Duas camadas: **617 testes** de unidade/integração no Vitest e **37 testes ponta a
+Duas camadas: **623 testes** de unidade/integração no Vitest e **37 testes ponta a
 ponta** em navegador de verdade com Playwright.
 
 ### Ponta a ponta (Playwright)

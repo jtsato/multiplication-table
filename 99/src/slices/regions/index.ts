@@ -10,11 +10,13 @@ export { RegionsView } from './RegionsView';
 export { createRegionsSlice, unlockedRegions, type RegionsSlice } from './regions.store';
 export {
   BRIDGES,
+  BRIDGE_GUARD,
   BRIDGE_MASTERY,
   bridgeMessage,
   bridgeAnchors,
   bridgeById,
   bridgeFor,
+  bridgeGuardPosition,
   checkBridge,
   openingsFor,
   reachableFrom,

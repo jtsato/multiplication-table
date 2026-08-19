@@ -1,16 +1,18 @@
 import { describe, expect, it } from 'vitest';
 import {
   BRIDGES,
+  BRIDGE_GUARD,
   BRIDGE_MASTERY,
   bridgeAnchors,
   bridgeById,
   bridgeFor,
+  bridgeGuardPosition,
   checkBridge,
   openingsFor,
   reachableFrom,
   requiredTables,
 } from './bridges.logic';
-import { REGION_ORDER, regionById, type RegionId } from './regions.logic';
+import { REGION_ORDER, regionAt, regionById, type RegionId } from './regions.logic';
 import { emptyInventory, type Inventory } from '../resources/resources.logic';
 import { factKey } from '../economy/economy.logic';
 
@@ -175,6 +177,32 @@ describe('bridgeAnchors', () => {
     expect(from.y).toBe(regionById('bosque').groundY);
     expect(to.y).toBe(regionById('cachoeira').groundY);
     expect(from.y).not.toBe(to.y);
+  });
+});
+
+describe('bridgeGuardPosition', () => {
+  it('fica na regiao de origem — a guardia cobra a tabuada de onde se sai', () => {
+    for (const ponte of BRIDGES) {
+      const posicao = bridgeGuardPosition(ponte);
+      expect(regionAt(posicao)?.id, ponte.id).toBe(ponte.from);
+    }
+  });
+
+  it('fica na altura da margem de origem, nao no meio do desnivel', () => {
+    for (const ponte of BRIDGES) {
+      expect(bridgeGuardPosition(ponte).y, ponte.id).toBe(regionById(ponte.from).groundY);
+    }
+  });
+
+  it('fica perto da margem, um passo para dentro e para o lado', () => {
+    for (const ponte of BRIDGES) {
+      const { from } = bridgeAnchors(ponte);
+      const posicao = bridgeGuardPosition(ponte);
+      const distancia = Math.hypot(posicao.x - from.x, posicao.z - from.z);
+      // Recuo lateral e para tras somados: perto da ponte, mas fora do tabuleiro.
+      expect(distancia, ponte.id).toBeGreaterThan(BRIDGE_GUARD.side);
+      expect(distancia, ponte.id).toBeLessThan(BRIDGE_GUARD.side + BRIDGE_GUARD.back + 0.5);
+    }
   });
 });
 
