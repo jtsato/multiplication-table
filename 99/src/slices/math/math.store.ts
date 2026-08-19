@@ -85,6 +85,13 @@ export const createMathSlice: StateCreator<GameState, [], [], MathSlice> = (set,
         // Alimentar so acontece no acerto: errar nao paga a comida nem vira
         // amigo — a crianca ve a resposta certa e pode tentar de novo.
         if (outcome.correct) get().feedAnimal(challenge.targetId);
+      } else if (challenge.purpose === 'encomenda') {
+        // Entrega so no acerto: errar nao tira recurso da mochila.
+        if (outcome.correct) get().completeOrder(challenge.targetId);
+      } else if (challenge.purpose === 'pedagio') {
+        // A conta da guardia libera a ponte; a compra em si (moedas, recursos e
+        // tabuada) continua sendo validada pela slice de regioes.
+        if (outcome.correct) get().buyBridge(challenge.targetId);
       } else {
         /**
          * Uma conta, dois efeitos: o fogo do acampamento e a luz que a crianca

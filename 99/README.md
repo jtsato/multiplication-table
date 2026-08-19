@@ -134,6 +134,16 @@ De vez em quando a **baleia** sobe no mar aberto do Porto, solta o esguicho e
 mergulha. Ela não dá moeda nem recurso — é um acontecimento para a criança parar
 de fazer conta e olhar.
 
+### NPCs e encomendas
+
+Cada região tem um NPC de **encomendas**: o pedido é uma multiplicação, e entregar
+debilta a quantidade da mochila e paga moedas. É o destino que paga em moeda sem
+virar venda — o recurso continua sendo o resultado da conta.
+
+As **pontes** agora têm guardiã: antes de comprar a travessia, a criança resolve a
+conta da guardiã. Acertar libera a compra (que continua cobrando moedas, recursos
+e a tabuada local); errar não custa nada.
+
 ### A noite
 
 À noite a criança pode resolver mais uma multiplicação na fogueira para **acender a
@@ -180,6 +190,7 @@ src/
 │   ├── avatar/     # aparência e acessórios por marco
 │   ├── wildlife/   # animais, caderneta e raros
 │   ├── companion/  # o pet que segue o jogador
+│   ├── npc/        # encomendas e os NPCs do mundo
 │   └── save/       # persistência em localStorage
 └── shared/         # sem regra de negócio: paleta, PRNG, vetor, teclado
 ```
@@ -204,7 +215,7 @@ assinantes 60 vezes por segundo.
 
 ## Testes
 
-Duas camadas: **593 testes** de unidade/integração no Vitest e **33 testes ponta a
+Duas camadas: **603 testes** de unidade/integração no Vitest e **34 testes ponta a
 ponta** em navegador de verdade com Playwright.
 
 ### Ponta a ponta (Playwright)

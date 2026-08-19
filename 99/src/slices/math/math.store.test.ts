@@ -4,6 +4,8 @@ import { dayNightClock } from '../daynight/dayNightClock';
 import { LANTERN, chargeRemaining } from '../lantern';
 import { resolveAnswer } from './math.logic';
 import { emptyInventory } from '../resources/resources.logic';
+import { BRIDGES, bridgeById, bridgeChallengeTarget } from '../regions/bridges.logic';
+import { orderQuantity, orderTarget } from '../npc/npc.logic';
 
 const state = () => useGameStore.getState();
 
@@ -262,6 +264,77 @@ describe('slice de matematica', () => {
 
       expect(state().inventory.fruta).toBe(20);
       expect(state().animalBook.find((entry) => entry.kind === 'cachorro')?.friend).toBe(false);
+    });
+  });
+
+  describe('encomenda e pedagio', () => {
+    beforeEach(() => {
+      state().resetNpc();
+      state().resetResources();
+      state().resetEconomy();
+      state().resetRegions();
+    });
+
+    it('acertar a encomenda debita a quantidade e paga moedas', () => {
+      const order = state().orders[0];
+      useGameStore.setState({
+        inventory: { ...emptyInventory(), [order.kind]: orderQuantity(order) + 5 },
+      });
+
+      state().startChallenge(orderTarget(order), 'encomenda');
+      state().answerChallenge(state().activeChallenge!.answer);
+
+      expect(state().inventory[order.kind]).toBe(5);
+      expect(state().coins).toBeGreaterThan(0);
+      expect(state().feedback?.purpose).toBe('encomenda');
+    });
+
+    it('errar a encomenda nao debita nada', () => {
+      const order = state().orders[0];
+      useGameStore.setState({
+        inventory: { ...emptyInventory(), [order.kind]: orderQuantity(order) + 5 },
+      });
+
+      state().startChallenge(orderTarget(order), 'encomenda');
+      const desafio = state().activeChallenge!;
+      state().answerChallenge(desafio.options.find((option) => option !== desafio.answer)!);
+
+      expect(state().inventory[order.kind]).toBe(orderQuantity(order) + 5);
+    });
+
+    it('acertar o pedagio compra a ponte', () => {
+      const ponte = bridgeById(BRIDGES[0].id)!;
+      useGameStore.setState({
+        coins: 999,
+        inventory: { ...emptyInventory(), madeira: 50, pedra: 50 },
+        knownFacts: Array.from(
+          { length: 10 },
+          (_, i) => `${Math.min(2, i + 1)}x${Math.max(2, i + 1)}`,
+        ),
+      });
+
+      state().startChallenge(bridgeChallengeTarget(ponte), 'pedagio');
+      state().answerChallenge(state().activeChallenge!.answer);
+
+      expect(state().openBridges).toContain(ponte.id);
+    });
+
+    it('errar o pedagio nao compra a ponte', () => {
+      const ponte = bridgeById(BRIDGES[0].id)!;
+      useGameStore.setState({
+        coins: 999,
+        inventory: { ...emptyInventory(), madeira: 50, pedra: 50 },
+        knownFacts: Array.from(
+          { length: 10 },
+          (_, i) => `${Math.min(2, i + 1)}x${Math.max(2, i + 1)}`,
+        ),
+      });
+
+      state().startChallenge(bridgeChallengeTarget(ponte), 'pedagio');
+      const desafio = state().activeChallenge!;
+      state().answerChallenge(desafio.options.find((option) => option !== desafio.answer)!);
+
+      expect(state().openBridges).not.toContain(ponte.id);
     });
   });
 });

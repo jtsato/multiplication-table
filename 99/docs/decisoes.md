@@ -748,3 +748,38 @@ uma mecânica.
 | `npm run test` | 593 testes, 43 arquivos, verde |
 | `npm run e2e` | verde, incluindo pet, caderneta e baleia |
 | `npm run build` | ok |
+
+---
+
+## Fase 6 — NPCs e encomendas
+
+**O que foi criado:** um NPC de encomendas por região, com pedido diário
+determinístico; a guardiã da ponte agora cobra uma conta antes de liberar a
+compra da travessia.
+
+### Decisões
+
+**Encomenda é a conta, e o pagamento é moeda.** O pedido usa o recurso da região
+e a tabuada da região — "3 feixes de 4 frutas" —, a criança resolve, a mochila
+debilta a quantidade e o NPC paga moedas. Não é venda: o recurso continua sendo o
+resultado da conta; o que mudou é que ele ganhou mais um destino.
+
+**A guardiã veio antes da compra, não no lugar dela.** A ponte continua exigindo
+moedas, recursos e tabuada local; o que mudou é que o `E` na ponte agora abre um
+desafio de `pedagio` e só o acerto chama `buyBridge`. Errar não custa nada — é a
+mesma gentileza de alimentar.
+
+**Encomenda e pedágio são só mais dois propósitos no `ChallengePanel`.** A slice
+de matemática não conhece NPC nem ponte: `encomenda` chama `completeOrder` e
+`pedagio` chama `buyBridge` no acerto. O resto do painel, da dica e das moedas
+continua igual.
+
+### Portões
+
+| Portão | Resultado |
+| --- | --- |
+| `npm run lint` | limpo |
+| `npm run typecheck` | limpo |
+| `npm run test` | 603 testes, 44 arquivos, verde |
+| `npm run e2e` | verde, incluindo encomenda e pedágio |
+| `npm run build` | ok |

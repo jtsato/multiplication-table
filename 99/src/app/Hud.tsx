@@ -12,6 +12,7 @@ import { regionById } from '../slices/regions/regions.logic';
 import { LANTERN } from '../slices/lantern';
 import { RESOURCE_KINDS } from '../slices/resources';
 import { animalById, canFeedAnimal } from '../slices/wildlife';
+import { orderQuantity } from '../slices/npc';
 import { interpolate } from '../i18n';
 import './hud.css';
 
@@ -32,11 +33,15 @@ export function Hud({ isTouch = false }: { isTouch?: boolean } = {}) {
   const bridgeError = useGameStore((state) => state.bridgeError);
   const nearbyAnimalId = useGameStore((state) => state.nearbyAnimalId);
   const animals = useGameStore((state) => state.animals);
+  const nearbyOrderId = useGameStore((state) => state.nearbyOrderId);
+  const orders = useGameStore((state) => state.orders);
   const texto = useGameStore((state) => state.text);
   const t = texto.strings;
 
   const animalPerto = nearbyAnimalId ? animalById(animals, nearbyAnimalId) : null;
   const podeAlimentar = animalPerto ? canFeedAnimal(animalPerto, inventory) : false;
+  const orderPerto = nearbyOrderId ? orders.find((order) => order.id === nearbyOrderId) : null;
+  const podeEntregar = orderPerto ? inventory[orderPerto.kind] >= orderQuantity(orderPerto) : false;
 
   const colheitaDaqui = regionById(currentRegion).harvest;
   const visiveis = RESOURCE_KINDS.filter(
@@ -194,9 +199,13 @@ export function Hud({ isTouch = false }: { isTouch?: boolean } = {}) {
           !buildMode &&
           !isTouch &&
           !activeChallenge &&
-          (highlightedNodeId || (animalPerto && podeAlimentar)) && (
+          (highlightedNodeId || (animalPerto && podeAlimentar) || (orderPerto && podeEntregar)) && (
             <div className="hud__prompt" role="status">
-              {highlightedNodeId ? t.harvestPrompt : t.feedPrompt}
+              {highlightedNodeId
+                ? t.harvestPrompt
+                : animalPerto && podeAlimentar
+                  ? t.feedPrompt
+                  : t.orderPrompt}
             </div>
           )}
       </div>

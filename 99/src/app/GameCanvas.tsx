@@ -6,6 +6,7 @@ import { CompanionView } from '../slices/companion';
 import { DayNightView } from '../slices/daynight';
 import { HomeView } from '../slices/home';
 import { LanternView } from '../slices/lantern';
+import { NpcView } from '../slices/npc';
 import { PlayerView } from '../slices/player';
 import { FirefliesView } from '../slices/lantern';
 import { RegionsView, WaterfallView } from '../slices/regions';
@@ -74,6 +75,7 @@ export function GameCanvas({ isTouch = false }: { isTouch?: boolean }) {
         <FirefliesView seed={worldSeed} />
         <HomeView />
         <WildlifeView />
+        <NpcView />
         <ResourcesView />
         <BuildingView />
       </Physics>

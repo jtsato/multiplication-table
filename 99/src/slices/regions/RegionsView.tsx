@@ -5,7 +5,13 @@ import { useGameStore } from '../../app/store';
 import { useGameAction } from '../../shared/input';
 import { palette } from '../../shared/palette';
 import { playerTransform } from '../player/playerTransform';
-import { BRIDGES, bridgeAnchors, type Bridge } from './bridges.logic';
+import {
+  BRIDGES,
+  bridgeAnchors,
+  bridgeById,
+  bridgeChallengeTarget,
+  type Bridge,
+} from './bridges.logic';
 import { regionAt } from './regions.logic';
 
 /** Publicacao para o HUD: 4 Hz basta para "voce esta no Bosque". */
@@ -144,7 +150,10 @@ export function RegionsView() {
     // no meio do nada, entao ela cede a vez para tudo que estiver junto.
     if (state.activeChallenge || state.highlightedNodeId || state.nearbySpot) return;
     if (!state.nearbyBridge) return;
-    state.buyBridge(state.nearbyBridge);
+    const ponte = bridgeById(state.nearbyBridge);
+    if (!ponte) return;
+    // A guardia cobra uma conta antes de liberar a compra; errar nao custa nada.
+    state.startChallenge(bridgeChallengeTarget(ponte), 'pedagio');
   });
 
   return (

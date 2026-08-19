@@ -1,6 +1,7 @@
 import { canAfford, type Recipe } from '../building/building.logic';
 import type { AppStrings } from '../../i18n';
 import { factKey } from '../economy/economy.logic';
+import type { ChallengeTarget } from '../math/math.logic';
 import type { Inventory } from '../resources/resources.logic';
 import { type Vec3, vec3 } from '../../shared/vec';
 import { REGION_ORDER, regionById, type RegionId } from './regions.logic';
@@ -66,6 +67,22 @@ export function bridgeFor(a: RegionId, b: RegionId): Bridge | undefined {
   return BRIDGES.find(
     (ponte) => (ponte.from === a && ponte.to === b) || (ponte.from === b && ponte.to === a),
   );
+}
+
+/**
+ * A conta da guardia da ponte.
+ *
+ * Usa a colheita e a tabuada da regiao de origem — a mesma regra do resto da
+ * ponte: cobra-se o que a crianca ja teve onde aprender.
+ */
+export function bridgeChallengeTarget(ponte: Bridge): ChallengeTarget {
+  const origem = regionById(ponte.from);
+  return {
+    id: ponte.id,
+    kind: origem.harvest[0],
+    groups: 1 + (ponte.id.length % 10),
+    perGroup: origem.tables[0],
+  };
 }
 
 /** As tabuadas que esta ponte cobra — as da regiao de origem. */

@@ -17,10 +17,12 @@ export const WRONG_ANSWER_RATIO = 0.25;
  * Para que serve o desafio.
  *
  * `colher` rende recurso; `abastecer` rende tempo de fogueira; `alimentar`
- * rende amizade com um animal. A conta e a mesma — o que muda e o que ela
- * compra. A matematica continua sendo a unica moeda de progresso.
+ * rende amizade com um animal; `encomenda` entrega um pedido de NPC e paga
+ * moedas; `pedagio` libera a ponte depois da conta da guardia. A conta e a
+ * mesma — o que muda e o que ela compra. A matematica continua sendo a unica
+ * moeda de progresso.
  */
-export type ChallengePurpose = 'colher' | 'abastecer' | 'alimentar';
+export type ChallengePurpose = 'colher' | 'abastecer' | 'alimentar' | 'encomenda' | 'pedagio';
 
 /**
  * Alvo minimo de um desafio.

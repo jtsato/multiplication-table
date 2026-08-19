@@ -11,6 +11,7 @@ import {
 } from '../shared/input';
 import { STRUCTURES, canAfford } from '../slices/building';
 import { animalById, canFeedAnimal } from '../slices/wildlife';
+import { orderQuantity } from '../slices/npc';
 import './touch.css';
 
 /** Raio util do joystick, em pixels. Casado com o tamanho da base no CSS. */
@@ -142,16 +143,24 @@ export function TouchControls() {
   const nearbySpot = useGameStore((state) => state.nearbySpot);
   const nearbyAnimalId = useGameStore((state) => state.nearbyAnimalId);
   const animals = useGameStore((state) => state.animals);
+  const nearbyOrderId = useGameStore((state) => state.nearbyOrderId);
+  const orders = useGameStore((state) => state.orders);
 
   const animalPerto = nearbyAnimalId ? animalById(animals, nearbyAnimalId) : null;
   const podeAlimentar = animalPerto ? canFeedAnimal(animalPerto, inventory) : false;
+  const orderPerto = nearbyOrderId ? orders.find((order) => order.id === nearbyOrderId) : null;
+  const podeEntregar = orderPerto ? inventory[orderPerto.kind] >= orderQuantity(orderPerto) : false;
 
   const temFogueira = structures.some((structure) => structure.kind === 'fogueira');
   // Colher aparece com recurso ao alcance; abastecer, quando ja existe fogueira;
-  // o movel, quando a crianca esta em frente a ele dentro de casa; e alimentar,
-  // quando um animal amigavel esta perto.
+  // o movel, quando a crianca esta em frente a ele dentro de casa; alimentar,
+  // quando um animal amigavel esta perto; e entregar, com um NPC de encomenda.
   const podeInteragir =
-    Boolean(highlightedNodeId) || Boolean(nearbySpot) || temFogueira || podeAlimentar;
+    Boolean(highlightedNodeId) ||
+    Boolean(nearbySpot) ||
+    temFogueira ||
+    podeAlimentar ||
+    podeEntregar;
 
   const rotuloInteragir = highlightedNodeId
     ? 'Colher'
@@ -159,7 +168,9 @@ export function TouchControls() {
       ? HOME_SPOT_LABELS[nearbySpot]
       : podeAlimentar
         ? 'Alimentar'
-        : 'Acender';
+        : podeEntregar
+          ? 'Entregar'
+          : 'Acender';
 
   return (
     <div className="touch">

@@ -4,6 +4,7 @@ import { createRng } from '../src/shared/rng';
 import { DEFAULT_WORLD_SEED } from '../src/slices/world/world.store';
 import { REGIONS } from '../src/slices/regions/regions.logic';
 import { whaleMidWindow } from '../src/slices/wildlife/whale.logic';
+import { npcPosition } from '../src/slices/npc/npc.logic';
 import {
   esperarJogoPronto,
   esperarPainelCentralizado,
@@ -254,6 +255,32 @@ test.describe('partida no computador', () => {
     const estado = await lerEstado(page);
     expect(estado.moedas).toBe(0);
     expect(estado.desafio).toBeNull();
+  });
+
+  test('entregar uma encomenda debita recurso e paga moedas', async ({ page }) => {
+    const pedido = await page.evaluate(() => {
+      const ponte = window.__tabuada!;
+      const order = ponte.store.getState().orders.find((o) => o.regionId === 'praia')!;
+      const quantidade = order.groups * order.perGroup;
+      ponte.store.setState({
+        inventory: { ...ponte.store.getState().inventory, [order.kind]: quantidade + 5 },
+      });
+      return { kind: order.kind, quantidade };
+    });
+
+    const pos = npcPosition('praia');
+    await page.evaluate(({ x, z }) => window.__tabuada!.teleportar?.(x, z), { x: pos.x, z: pos.z });
+    await page.waitForTimeout(700);
+
+    await page.keyboard.press('KeyE');
+    await expect(page.locator('.challenge')).toBeVisible();
+    await responderPeloEnunciado(page, true);
+    await page.waitForTimeout(400);
+
+    const depois = await lerEstado(page);
+    expect(depois.inventario[pedido.kind]).toBe(5);
+    expect(depois.moedas).toBeGreaterThan(0);
+    await page.screenshot({ path: 'e2e/telas/32-encomenda.png' });
   });
 
   test('a loja nao abre com um desafio na tela', async ({ page }) => {
@@ -520,9 +547,11 @@ test.describe('partida no computador', () => {
     expect(barrado.jogador.x).toBeLessThan(17);
     await page.screenshot({ path: 'e2e/telas/21-ponte-fechada.png' });
 
-    // Compra a ponte de onde ela se oferece.
+    // A guardia cobra a conta antes de liberar a compra.
     await expect(page.getByText(/para construir a ponte/)).toBeVisible();
     await page.keyboard.press('KeyE');
+    await expect(page.locator('.challenge')).toBeVisible();
+    await responderPeloEnunciado(page, true);
     await page.waitForTimeout(400);
     expect((await lerEstado(page)).pontes).toContain('praia-porto');
     await page.screenshot({ path: 'e2e/telas/22-ponte-aberta.png' });

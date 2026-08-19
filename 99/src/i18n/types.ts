@@ -135,6 +135,12 @@ export interface AppStrings {
   feedPrompt: string;
   /** Feedback de acerto no desafio de alimentar. */
   feedFriend: string;
+  /** Convite para entregar uma encomenda a um NPC. */
+  orderPrompt: string;
+  /** Feedback de acerto no desafio de encomenda. */
+  orderDone: string;
+  /** Feedback de acerto no pedagio da ponte. */
+  tollOpen: string;
 
   // Loja
   hintsStored: string;

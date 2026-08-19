@@ -12,6 +12,7 @@ import { createLanternSlice, type LanternSlice } from '../slices/lantern/lantern
 import { playerTransform } from '../slices/player/playerTransform';
 import { petTransform } from '../slices/companion/petTransform';
 import { createMathSlice, type MathSlice } from '../slices/math/math.store';
+import { createNpcSlice, type NpcSlice } from '../slices/npc/npc.store';
 import { createRegionsSlice, type RegionsSlice } from '../slices/regions/regions.store';
 import { createResourcesSlice, type ResourcesSlice } from '../slices/resources/resources.store';
 import { createWildlifeSlice, type WildlifeSlice } from '../slices/wildlife/wildlife.store';
@@ -36,6 +37,7 @@ export type GameState = WorldSlice &
   RegionsSlice &
   WildlifeSlice &
   CompanionSlice &
+  NpcSlice &
   I18nSlice;
 
 export const useGameStore = create<GameState>()((...args) => ({
@@ -51,6 +53,7 @@ export const useGameStore = create<GameState>()((...args) => ({
   ...createRegionsSlice(...args),
   ...createWildlifeSlice(...args),
   ...createCompanionSlice(...args),
+  ...createNpcSlice(...args),
   ...createI18nSlice(...args),
 }));
 
@@ -112,4 +115,5 @@ export function restartGame(): void {
   state.resetRegions();
   state.resetWildlife();
   state.resetCompanion();
+  state.resetNpc();
 }

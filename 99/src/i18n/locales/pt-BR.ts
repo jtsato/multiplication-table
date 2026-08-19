@@ -51,6 +51,9 @@ export const ptBR: LocaleDefinition = {
     fireSome: 'Um pouco de lenha e de luz',
     feedPrompt: 'Aperte E para alimentar',
     feedFriend: 'Virou seu amigo!',
+    orderPrompt: 'Aperte E para entregar encomenda',
+    orderDone: 'Encomenda entregue!',
+    tollOpen: 'Ponte liberada!',
 
     hintsStored: 'Dicas guardadas: {{n}}',
     shopTitle: 'Loja',

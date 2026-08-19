@@ -55,6 +55,9 @@ export const enUS: LocaleDefinition = {
     fireSome: 'A little wood and a little light',
     feedPrompt: 'Press E to feed',
     feedFriend: 'Made a friend!',
+    orderPrompt: 'Press E to deliver the order',
+    orderDone: 'Order delivered!',
+    tollOpen: 'Bridge open!',
 
     hintsStored: 'Hints saved: {{n}}',
     shopTitle: 'Shop',
