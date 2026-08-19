@@ -158,6 +158,40 @@ test.describe('partida no computador', () => {
     expect((await lerEstado(page)).lojaAberta).toBe(false);
   });
 
+  test('a decoracao comprada aparece na casa e sobrevive a recarregar', async ({ page }) => {
+    // Moedas e gelo suficientes para a escultura, sem depender de colher a ilha;
+    // o caminho completo de compra (debita moedas e recursos) já tem teste acima.
+    await page.evaluate(() => {
+      window.__tabuada!.store.setState({
+        coins: 120,
+        inventory: {
+          ...window.__tabuada!.store.getState().inventory,
+          gelo: 20,
+        },
+      });
+    });
+
+    await page.keyboard.press('KeyL');
+    await expect(page.getByRole('dialog', { name: 'Loja' })).toBeVisible();
+    await page.getByRole('button', { name: /Escultura de gelo/ }).click();
+    await page.waitForTimeout(300);
+    expect((await lerEstado(page)).comprados).toContain('escultura');
+    await page.getByRole('button', { name: 'Fechar' }).click();
+
+    // Dentro da casa, a escultura fica na parede do fundo — visível na captura.
+    await irParaOMovel(page, 'mural');
+    await page.waitForTimeout(500);
+    await page.screenshot({ path: 'e2e/telas/27-casa-decorada.png' });
+
+    // O save grava com atraso; espera passar do debounce antes de recarregar.
+    await page.waitForTimeout(1200);
+    await page.reload();
+    await esperarJogoPronto(page);
+    await irParaOMovel(page, 'mural');
+    expect((await lerEstado(page)).comprados).toContain('escultura');
+    await page.screenshot({ path: 'e2e/telas/28-casa-decorada-recarregada.png' });
+  });
+
   test('a loja nao abre com um desafio na tela', async ({ page }) => {
     await ficarAoLadoDeUmRecurso(page);
     await page.keyboard.press('KeyE');

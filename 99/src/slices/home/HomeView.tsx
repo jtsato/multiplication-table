@@ -8,6 +8,7 @@ import { palette } from '../../shared/palette';
 import { cyclePosition, phaseFor } from '../daynight/daynight.logic';
 import { dayNightClock } from '../daynight/dayNightClock';
 import { playerTransform } from '../player/playerTransform';
+import { HomeDecorations } from './HomeDecorations';
 import { HOME, HOME_SPOT_OFFSETS, isInsideHome, nearestSpot } from './home.logic';
 
 /** Publicacao para o HUD: 4 Hz basta para "voce esta perto do espelho". */
@@ -178,6 +179,7 @@ export function HomeView() {
       </RigidBody>
 
       <Furniture />
+      <HomeDecorations />
 
       {/* Telhado de duas aguas, simplificado como uma piramide achatada. */}
       <mesh ref={roofRef} position={[0, HOME.wallHeight + 0.55, 0]} rotation={[0, Math.PI / 4, 0]}>

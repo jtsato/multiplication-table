@@ -659,3 +659,41 @@ navegador antigo.
 | `npm run test` | 309 testes, 18 arquivos, verde |
 | `npm run e2e` | 18 testes, desktop + celular, verde |
 | `npm run build` | ok |
+
+---
+
+## Fechamento da dívida DIV-001 — Decorações visíveis na casa
+
+**O que foi criado:** as seis decorações da loja — tapete, aquário, vaso, lustre,
+prateleira e escultura — passam a aparecer dentro da casa assim que compradas, e
+continuam lá depois de recarregar a página.
+
+### Decisões
+
+**O catálogo visual mora em `home/`, não em `economy/`.** A casa sabe o que ela
+exibe; a loja sabe o que ela vende. `HOME_DECORATION_KINDS` e
+`HOME_DECORATION_OFFSETS` ficam em `home.logic.ts`, e o componente
+`HomeDecorations` lê `owned` do store composto — a slice de economia não é
+importada por `home/`, como manda a regra vertical. Um teste cruza as duas
+listas para que ninguém acrescente uma peça à loja sem desenhar na casa.
+
+**As posições são dados testados, não números soltos na cena.** Cada offset é
+verificado contra as paredes e contra os móveis interativos. O lustre pendura do
+teto e a prateleira fica na parede, em altura diferente — por isso só as peças
+de piso disputam o chão com espelho, mural e cama.
+
+**Cada peça é primitiva low poly, como todo o jogo.** Nenhum asset externo. A
+escultura usa o mesmo octaedro dos cristais da cachoeira; o aquário tem dois
+peixes, porque a loja promete "os peixes ficam nadando"; o vaso tem cogumelos,
+porque promete "brilha um pouquinho à noite". O efeito descrito no catálogo vira
+coisa visível.
+
+### Portões
+
+| Portão | Resultado |
+| --- | --- |
+| `npm run lint` | limpo |
+| `npm run typecheck` | limpo |
+| `npm run test` | 560 testes, 38 arquivos, verde |
+| `npm run e2e` | verde, incluindo o novo caso de decoração |
+| `npm run build` | ok |

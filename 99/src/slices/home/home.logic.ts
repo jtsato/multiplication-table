@@ -82,6 +82,40 @@ export const HOME_SPOT_LABELS: Record<HomeSpot, string> = {
 };
 
 /**
+ * As seis decorações da loja que a casa desenha.
+ *
+ * A lista mora aqui, e não na slice de economia: a casa sabe o que ela exibe e
+ * a loja sabe o que ela vende. Um teste cruza as duas listas para garantir que
+ * nenhum item de categoria `casa` fique sem visual nem apareça peça órfã.
+ */
+export const HOME_DECORATION_KINDS = [
+  'tapete',
+  'aquario',
+  'vaso',
+  'lustre',
+  'prateleira',
+  'escultura',
+] as const;
+
+export type HomeDecorationKind = (typeof HOME_DECORATION_KINDS)[number];
+
+/**
+ * Onde cada decoração fica, **relativo ao centro da casa**.
+ *
+ * As posições respeitam as paredes e os móveis interativos: nenhuma peça nasce
+ * em cima do espelho, do mural ou da cama, e todas ficam dentro do retângulo da
+ * casa. O lustre pendura do teto; a prateleira fica na parede, mais alta.
+ */
+export const HOME_DECORATION_OFFSETS: Record<HomeDecorationKind, Vec3> = {
+  tapete: vec3(0, 0.04, 0.4),
+  aquario: vec3(-2.3, 0, 1.8),
+  vaso: vec3(2.8, 0, 0.1),
+  lustre: vec3(0, HOME.wallHeight - 0.45, 0),
+  prateleira: vec3(-2.7, 1.2, 0.1),
+  escultura: vec3(0, 0, -2.1),
+};
+
+/**
  * A posicao esta dentro das paredes?
  *
  * Retangulo, e nao circulo: a casa e retangular, e usar um circulo faria o

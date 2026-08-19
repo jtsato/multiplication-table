@@ -38,6 +38,7 @@ describe('HomeView', () => {
   beforeEach(() => {
     resetDayNightClock();
     resetPlayerTransform();
+    state().resetEconomy();
     state().setInsideHome(false);
     state().setNearbySpot(null);
   });
@@ -95,6 +96,20 @@ describe('HomeView', () => {
     await renderer.advanceFrames(2, 1 / 60);
 
     expect(luzes(renderer)[0].intensity).toBeGreaterThan(deDia);
+
+    await renderer.unmount();
+  });
+
+  it('desenha a decoracao comprada dentro da casa', async () => {
+    useGameStore.setState({ owned: ['escultura'] });
+    const renderer = await renderScene(<HomeView />);
+    await renderer.advanceFrames(2, 1 / 60);
+
+    const nomes = renderer.scene
+      .findAllByType('Group')
+      .map((no) => no.instance as unknown as { name: string })
+      .map((grupo) => grupo.name);
+    expect(nomes).toContain('escultura');
 
     await renderer.unmount();
   });

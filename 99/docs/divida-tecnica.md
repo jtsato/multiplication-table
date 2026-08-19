@@ -35,4 +35,22 @@ que conta como pago.
 - **Onde atacar:** dentro da slice `home/` — ex.: componente
   `HomeDecorations` que lê `owned` e desenha cada peça, sem que `home/` importe
   a slice de economia (o store compõe; a view recebe o estado).
-- **Status:** aberta.
+- **Status:** fechada em 2026-08-19.
+
+### Resolução
+
+- **`src/slices/home/HomeDecorations.tsx`** lê `owned` do store composto e
+  desenha as seis peças com primitivas low poly: tapete, aquário, vaso, lustre,
+  prateleira e escultura.
+- **`HOME_DECORATION_KINDS` / `HOME_DECORATION_OFFSETS`** moram em
+  `home.logic.ts`. A casa sabe o que ela exibe; a loja sabe o que ela vende.
+  Um teste cruza as duas listas: todo item de categoria `casa` da loja tem
+  visual na casa, e só ele.
+- **Testes:** `HomeDecorations.test.tsx` (4 testes de cena) + `home.test.ts`
+  (paridade, posições dentro das paredes e distância dos móveis) +
+  `HomeView.test.tsx` (integração: a casa desenha a peça comprada).
+- **E2E:** `desktop.spec.ts` compra a Escultura de gelo, entra na casa, grava
+  `e2e/telas/27-casa-decorada.png`, recarrega a página e grava
+  `e2e/telas/28-casa-decorada-recarregada.png` com a peça ainda presente.
+- **Portões:** lint limpo, typecheck limpo, 560 testes Vitest verdes, build ok,
+  E2E verdes.

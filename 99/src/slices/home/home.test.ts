@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { SHOP_ITEMS } from '../economy/economy.logic';
 import { REGIONS } from '../regions/regions.logic';
 import { createRng } from '../../shared/rng';
 import { vec3 } from '../../shared/vec';
@@ -8,6 +9,8 @@ import {
   HOME,
   HOME_SPOTS,
   HOME_SPOT_OFFSETS,
+  HOME_DECORATION_KINDS,
+  HOME_DECORATION_OFFSETS,
   blocksHome,
   isInHomeLight,
   isInsideHome,
@@ -144,6 +147,44 @@ describe('coordenadas dos moveis', () => {
   it('todos os moveis ficam dentro das paredes', () => {
     for (const posicao of Object.values(HOME_SPOTS)) {
       expect(isInsideHome(posicao)).toBe(true);
+    }
+  });
+});
+
+describe('decoracoes da casa', () => {
+  /**
+   * A lista visual mora em `home/` e o catalogo em `economy/`, de proposito.
+   * Este teste e a ponte entre os dois: se alguem acrescentar uma peca a loja
+   * sem desenhar na casa, ou desenhar uma peca que a loja nao vende, quebra.
+   */
+  it('todo item de categoria casa da loja tem visual na casa, e so ele', () => {
+    const casa = Object.values(SHOP_ITEMS)
+      .filter((item) => item.category === 'casa')
+      .map((item) => item.kind)
+      .sort();
+
+    expect([...HOME_DECORATION_KINDS].sort()).toEqual(casa);
+  });
+
+  it('nenhuma decoracao fica fora das paredes', () => {
+    for (const [kind, offset] of Object.entries(HOME_DECORATION_OFFSETS)) {
+      const absoluto = vec3(HOME.position.x + offset.x, 0, HOME.position.z + offset.z);
+      expect(isInsideHome(absoluto), `${kind} ficou fora da casa`).toBe(true);
+    }
+  });
+
+  it('as decoracoes de piso nao nascem em cima dos moveis interativos', () => {
+    // Ignora lustre e prateleira: pendem do teto / ficam na parede, em outra
+    // altura, e nao disputam o chao com espelho, mural e cama.
+    const dePiso = ['tapete', 'aquario', 'vaso', 'escultura'] as const;
+    const moveis = Object.values(HOME_SPOT_OFFSETS);
+
+    for (const kind of dePiso) {
+      const offset = HOME_DECORATION_OFFSETS[kind];
+      for (const movel of moveis) {
+        const distancia = Math.hypot(offset.x - movel.x, offset.z - movel.z);
+        expect(distancia, `${kind} colado em um movel`).toBeGreaterThan(0.9);
+      }
     }
   });
 });

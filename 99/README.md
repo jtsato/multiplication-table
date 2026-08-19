@@ -105,6 +105,11 @@ Três móveis:
   ainda não foi dominado. No campo, a dica custa moeda; em casa, não custa nada.
 - **Cama** — dormir pula para o próximo amanhecer.
 
+E as **seis decorações da loja** — tapete, aquário, vaso, lustre, prateleira e
+escultura — aparecem dentro da casa assim que compradas, e continuam lá depois de
+recarregar a página. É o ralo permanente da economia: a criança gasta moedas e
+colheitas para **ver** a casa mudar.
+
 Moedas, fatos dominados, itens comprados e aparência ficam guardados no navegador e
 sobrevivem a fechar a página.
 
@@ -176,7 +181,7 @@ assinantes 60 vezes por segundo.
 
 ## Testes
 
-Duas camadas: **552 testes** de unidade/integração no Vitest e **29 testes ponta a
+Duas camadas: **560 testes** de unidade/integração no Vitest e **30 testes ponta a
 ponta** em navegador de verdade com Playwright.
 
 ### Ponta a ponta (Playwright)
