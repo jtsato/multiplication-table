@@ -100,6 +100,10 @@ export const createMathSlice: StateCreator<GameState, [], [], MathSlice> = (set,
         // A conta da guardia libera a ponte; a compra em si (moedas, recursos e
         // tabuada) continua sendo validada pela slice de regioes.
         if (outcome.correct) get().buyBridge(challenge.targetId);
+      } else if (challenge.purpose === 'construir') {
+        // Construir também é conta: acertou, a construção sai do papel; errou,
+        // nada é gasto e a criança pode tentar de novo.
+        if (outcome.correct) get().completePendingBuild();
       } else {
         /**
          * Uma conta, dois efeitos: o fogo do acampamento e a luz que a crianca

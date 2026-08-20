@@ -233,7 +233,9 @@ export function BuildingView() {
       state.structures,
       state.nodes,
     );
-    state.placeStructure(placement.position, placement.rotation, dayNightClock.seconds);
+    // A construção vira um desafio: Espaço valida a posição e abre a conta;
+    // acertar ergue a estrutura, errar permite tentar de novo.
+    state.requestBuild(placement.position, placement.rotation);
   });
 
   /**

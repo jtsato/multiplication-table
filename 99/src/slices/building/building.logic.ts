@@ -2,6 +2,7 @@ import type { AppStrings, LocaleBundle } from '../../i18n';
 import { distanceSqXZ, type Vec3, vec3 } from '../../shared/vec';
 import { fitsOnLand } from '../regions/regions.logic';
 import { type Inventory, type ResourceKind, type ResourceNode } from '../resources/resources.logic';
+import type { ChallengeTarget } from '../math/math.logic';
 
 export type StructureKind = 'fogueira' | 'cerca';
 
@@ -49,6 +50,27 @@ export const STRUCTURES: Record<StructureKind, StructureSpec> = {
     footprint: 1.1,
   },
 };
+
+/**
+ * A conta que ergue uma construção.
+ *
+ * Usa a própria receita para montar a tabuada: a fogueira pede 8 grupos de 4
+ * (8×4 = madeira 8 + pedra 4 é a receita); a cerca vira 3 grupos de 2 (3×2 =
+ * 6 madeiras). Assim o desafio nunca é arbitrário — a criança está contando o
+ * material que vai gastar.
+ */
+export function constructionTarget(kind: StructureKind): ChallengeTarget {
+  const recipe = STRUCTURES[kind].recipe;
+  const numeros = [recipe.madeira, recipe.pedra].filter((n): n is number => n !== undefined);
+  const [a, b] =
+    numeros.length === 1 ? [Math.max(1, Math.ceil(numeros[0] / 2)), 2] : [numeros[0], numeros[1] ?? 1];
+  return {
+    id: `construir-${kind}`,
+    kind: 'madeira',
+    groups: a,
+    perGroup: b,
+  };
+}
 
 export const BUILDING = {
   /** A que distancia a frente do jogador o fantasma e posicionado. */

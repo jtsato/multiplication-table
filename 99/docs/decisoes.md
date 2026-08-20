@@ -977,3 +977,98 @@ painel apenas espelha `fullscreenchange` para o rótulo ficar correto.
 | `npm run typecheck` | limpo |
 | `npm run test` | 681 testes, 58 arquivos, verde |
 | `npm run build` | ok |
+
+---
+
+## Fase 9G — Construção com vínculo pedagógico
+
+**O que foi criado:** construir uma fogueira ou cerca agora **exige uma conta de
+tabuada** — o jogador posiciona, aperta Espaço (ou toca em Construir) e resolve o
+desafio. Acertou, a construção ergue; errou, nada é gasto e dá para tentar de
+novo. Pontes continuam com o pedágio de sempre.
+
+### Decisões
+
+**A receita vira a tabuada.** A fogueira pede 8 grupos de 4 (8×4 — os 8 madeiras
+e 4 pedras da receita); a cerca vira 3 grupos de 2 (3×2 — as 6 madeiras). O
+desafio nunca é arbitrário: a criança está contando o material que vai gastar.
+
+**Errar não cobra material.** `requestBuild` valida a posição e guarda a
+construção como `pendingBuild`; só `completePendingBuild` debita os recursos e
+ergue a estrutura. Assim o erro mantém o acolhimento do resto do jogo — a conta
+certa é a moeda de progresso, não o castigo.
+
+**O fluxo antigo continua no store.** `placeStructure` segue existindo para a
+finalização interna e para testes; a view e o desafio usam o novo caminho
+`requestBuild → completePendingBuild`. Isso manteve o modo fantasma, o encaixe de
+cercas e o custo de recursos intactos.
+
+### Portões
+
+| Portão | Resultado |
+| --- | --- |
+| `npm run lint` | limpo |
+| `npm run typecheck` | limpo |
+| `npm run test` | 685 testes, 58 arquivos, verde |
+| `npm run build` | ok |
+
+---
+
+## Fase 9H — Coerência física
+
+**O que foi criado:** conchas e pedras deixaram de flutuar na altura do peito.
+Agora elas são **itens de chão**: ficam espalhadas rentes ao chão em volta da
+base do nó, continuam perfeitamente contáveis para a tabuada e não quebram a
+física do mundo.
+
+### Decisões
+
+**O tipo do recurso decide o chão ou o galho.** `GROUND_ITEMS` (`concha`,
+`pedra`) usa altura `0.08` e cada volta extra de grupos vira um **anel mais
+largo** no chão. Madeira, fruta, cristal e os demais continuam em galhos
+(altura 1.15+), porque pendurar concha no ar é que era o problema.
+
+**Contar continua sendo a regra.** O layout preserva a separação entre itens e a
+distância fora da base — a mudança é só no eixo Y. Os testes de contrato visual
+continuam passando e ganharam dois novos: “concha/pedra ficam rentes ao chão” e
+“itens de galho continuam acima do chão”.
+
+### Portões
+
+| Portão | Resultado |
+| --- | --- |
+| `npm run lint` | limpo |
+| `npm run typecheck` | limpo |
+| `npm run test` | 687 testes, 58 arquivos, verde |
+| `npm run build` | ok |
+
+---
+
+## Fase 9I — Elementos lúdicos/fantasia
+
+**O que foi criado:** unicórnio e dinossauro ganharam **presença de ambiente**.
+Antes eles existiam só como raros — apareciam em janela curta e exigiam
+sequência de acertos, então a criança podia jogar muito tempo sem nunca ver um.
+Agora o unicórnio pasta na Cachoeira e o dinossauro vive no Pico **sempre**, e a
+janela rara da mesma espécie virou um segundo encontro premiado.
+
+### Decisões
+
+**Fantasia não é sorte, é lugar.** Em vez de criar um modo novo, colocamos as
+duas espécies no `AMBIENT_BY_REGION` das suas regiões. Elas já tinham visual
+próprio (chifre dourado, cauda, cor verde) e já entravam na caderneta/loja de
+pet — faltava a criança vê-las de verdade.
+
+**O raro continua raro, agora como bônus.** A janela rara (noite para o
+unicórnio, dia para o dinossauro, com sequência de acertos) continua existindo.
+Ela não é mais a única chance de encontrar a criatura: é a chance de encontrar
+**outra** dela, premiando quem já está treinando a tabuada.
+
+### Portões
+
+| Portão | Resultado |
+| --- | --- |
+| `npm run lint` | limpo |
+| `npm run typecheck` | limpo |
+| `npm run test` | 688 testes, 58 arquivos, verde |
+| `npm run build` | ok |

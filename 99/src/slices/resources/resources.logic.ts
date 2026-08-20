@@ -253,6 +253,16 @@ const GROUPS_PER_LEVEL = 5;
 /** Quanto uma volta sobe em relacao a de baixo. */
 const LEVEL_HEIGHT = 0.62;
 
+/**
+ * Recursos que ficam no chão, em vez de pendurados em galhos.
+ *
+ * Conchas e pedras no ar quebravam a física do mundo: a criança vê a concha
+ * flutuando na altura do peito. Elas continuam contáveis, mas espalhadas no
+ * chão em volta da base — e cada andar extra de grupos é um anel mais largo, não
+ * uma altura maior.
+ */
+const GROUND_ITEMS: readonly ResourceKind[] = ['concha', 'pedra'];
+
 /** Posicao de um item dentro do no, relativa ao centro dele. */
 export interface ItemPlacement {
   groupIndex: number;
@@ -293,16 +303,19 @@ export function itemPlacements(node: ResourceNode): ItemPlacement[] {
     porVolta > 1 ? (larguraDoGrupo + itemSpread) / (2 * Math.sin(Math.PI / porVolta)) : 0;
   // Tambem por fora da base: um item escondido dentro do proprio no nao se conta.
   const foraDaBase = BASE_RADIUS[node.kind] + BASE_CLEARANCE + larguraDoGrupo / 2;
-  const radius = Math.max(BASE_RING_RADIUS, raioNecessario, foraDaBase);
+  const isGroundItem = GROUND_ITEMS.includes(node.kind);
+  // Itens de chao (concha, pedra) nao sobem de andar: cada volta extra vira um
+  // anel mais largo no chao, mantendo todos visiveis e contaveis sem flutuar.
+  const raioPorVolta = isGroundItem ? 0.7 : 0;
 
   for (let groupIndex = 0; groupIndex < node.groups; groupIndex += 1) {
     const volta = Math.floor(groupIndex / GROUPS_PER_LEVEL);
     const naVolta = groupIndex % GROUPS_PER_LEVEL;
     const gruposNestaVolta = Math.min(GROUPS_PER_LEVEL, node.groups - volta * GROUPS_PER_LEVEL);
+    const radius = Math.max(BASE_RING_RADIUS, raioNecessario, foraDaBase) + volta * raioPorVolta;
     // Cada volta comeca girada meia posicao em relacao a de baixo, para grupos
     // de andares vizinhos nao ficarem alinhados um sobre o outro.
     const angle = (naVolta / gruposNestaVolta) * Math.PI * 2 + volta * (Math.PI / GROUPS_PER_LEVEL);
-    const height = 1.15 + volta * LEVEL_HEIGHT;
     const outward = { x: Math.cos(angle), z: Math.sin(angle) };
     // Direcao tangente ao circulo: separa os itens do grupo.
     const tangent = { x: -Math.sin(angle), z: Math.cos(angle) };
@@ -314,13 +327,18 @@ export function itemPlacements(node: ResourceNode): ItemPlacement[] {
       // mantem o grupo simetrico em vez de deixar um rabo de fora.
       const itemsNaFileira = Math.min(ITEMS_PER_ROW, node.perGroup - row * ITEMS_PER_ROW);
       const offset = (column - (itemsNaFileira - 1) / 2) * itemSpread;
+      // Concha e pedra ficam rentes ao chao; o resto (madeira, fruta, cristal...)
+      // sobe como galhos para a crianca contar de frente.
+      const y = node.position.y + (isGroundItem
+        ? 0.08 + row * rowSpacing
+        : 1.15 + volta * LEVEL_HEIGHT + row * rowSpacing);
 
       placements.push({
         groupIndex,
         itemIndex,
         position: {
           x: node.position.x + outward.x * radius + tangent.x * offset,
-          y: node.position.y + height + row * rowSpacing,
+          y,
           z: node.position.z + outward.z * radius + tangent.z * offset,
         },
       });

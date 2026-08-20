@@ -669,6 +669,11 @@ test.describe('partida no computador', () => {
     await page.keyboard.press('Space');
     await page.waitForTimeout(400);
 
+    // Construir também é conta: o Espaço abre o desafio e o acerto ergue a
+    // fogueira.
+    await responderPeloEnunciado(page, true);
+    await page.waitForTimeout(400);
+
     const estado = await lerEstado(page);
     expect(estado.construcoes).toBe(1);
     // 8 madeira e 4 pedra debitados.

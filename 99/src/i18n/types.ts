@@ -141,6 +141,8 @@ export interface AppStrings {
   orderDone: string;
   /** Feedback de acerto no pedagio da ponte. */
   tollOpen: string;
+  /** Feedback de acerto no desafio de construir. */
+  buildDone: string;
   /** Titulo do quadro de encomendas dentro de casa. */
   ordersTitle: string;
 

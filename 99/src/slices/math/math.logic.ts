@@ -22,7 +22,13 @@ export const WRONG_ANSWER_RATIO = 0.25;
  * mesma — o que muda e o que ela compra. A matematica continua sendo a unica
  * moeda de progresso.
  */
-export type ChallengePurpose = 'colher' | 'abastecer' | 'alimentar' | 'encomenda' | 'pedagio';
+export type ChallengePurpose =
+  | 'colher'
+  | 'abastecer'
+  | 'alimentar'
+  | 'encomenda'
+  | 'pedagio'
+  | 'construir';
 
 /**
  * Alvo minimo de um desafio.

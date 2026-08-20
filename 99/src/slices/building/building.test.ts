@@ -4,6 +4,7 @@ import {
   STRUCTURES,
   canAfford,
   checkPlacement,
+  constructionTarget,
   formatRecipe,
   fuelRemaining,
   isLit,
@@ -334,5 +335,23 @@ describe('regras que a mutacao encontrou sem teste', () => {
 
     // Alinhadas ponta a ponta, a emenda e permitida.
     expect(checkPlacement(STRUCTURES.cerca, emenda, rico, [existente], [], 0).ok).toBe(true);
+  });
+});
+
+describe('constructionTarget', () => {
+  it('a fogueira pede 8 grupos de 4 — a própria receita', () => {
+    expect(constructionTarget('fogueira')).toMatchObject({
+      id: 'construir-fogueira',
+      kind: 'madeira',
+      groups: 8,
+      perGroup: 4,
+    });
+  });
+
+  it('a cerca vira 3 grupos de 2 madeiras', () => {
+    const alvo = constructionTarget('cerca');
+    expect(alvo.groups).toBe(3);
+    expect(alvo.perGroup).toBe(2);
+    expect(alvo.groups * alvo.perGroup).toBe(STRUCTURES.cerca.recipe.madeira);
   });
 });

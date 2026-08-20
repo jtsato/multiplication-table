@@ -10,7 +10,7 @@ import type { ChallengeFeedback } from '../math/math.store';
  * pé está pisando e de quanto em quanto tempo um passo deve soar.
  */
 
-export type BurstKind = 'correct' | 'wrong' | 'lantern' | 'feed' | 'order' | 'bridge';
+export type BurstKind = 'correct' | 'wrong' | 'lantern' | 'feed' | 'order' | 'bridge' | 'build';
 
 export interface BurstSpec {
   kind: BurstKind;
@@ -99,6 +99,16 @@ export function burstForFeedback(feedback: ChallengeFeedback): BurstSpec {
         sound: 'bridge',
         shake: 0,
         size: 0.14,
+      };
+    case 'construir':
+      return {
+        kind: 'build',
+        color: palette.correct,
+        count: 18,
+        speed: 2.6,
+        sound: 'build',
+        shake: 0,
+        size: 0.12,
       };
   }
 }

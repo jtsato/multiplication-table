@@ -119,7 +119,11 @@ export function ChallengePanel() {
                       ? feedback.correct
                         ? t.tollOpen
                         : ''
-                      : `+${feedback.reward}`}
+                      : feedback.purpose === 'construir'
+                        ? feedback.correct
+                          ? t.buildDone
+                          : ''
+                        : `+${feedback.reward}`}
             </p>
             {/* A moeda aparece separada do recurso porque são coisas diferentes:
                 o recurso é o resultado da conta, a moeda é o prêmio por ter

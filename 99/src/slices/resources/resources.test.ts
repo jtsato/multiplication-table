@@ -393,3 +393,25 @@ describe('os itens nunca somem dentro da base', () => {
     }
   });
 });
+
+describe('itens de chão não flutuam', () => {
+  it('concha e pedra ficam rentes ao chão em qualquer tabuada', () => {
+    for (const kind of ['concha', 'pedra'] as const) {
+      for (const perGroup of TABUADAS) {
+        for (let groups = 1; groups <= 10; groups += 1) {
+          const alvo = { ...node('a', 0, 0), kind, groups, perGroup };
+          for (const p of itemPlacements(alvo)) {
+            expect(p.position.y, `${kind} groups=${groups} perGroup=${perGroup}`).toBeLessThan(0.5);
+          }
+        }
+      }
+    }
+  });
+
+  it('itens de galho continuam acima do chão', () => {
+    const alvo = { ...node('a', 0, 0), kind: 'madeira' as const, groups: 3, perGroup: 2 };
+    for (const p of itemPlacements(alvo)) {
+      expect(p.position.y).toBeGreaterThan(1);
+    }
+  });
+});

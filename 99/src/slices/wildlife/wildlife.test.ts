@@ -50,6 +50,14 @@ describe('wildlife.logic', () => {
     expect(primeiro.some((animal) => animal.kind === 'dinossauro')).toBe(true);
   });
 
+  it('unicórnio e dinossauro têm presença de ambiente além da janela rara', () => {
+    const animais = createAnimals(createRng(20260816));
+    const ambiente = animais.filter((animal) => !animal.rare);
+
+    expect(ambiente.some((animal) => animal.kind === 'unicornio')).toBe(true);
+    expect(ambiente.some((animal) => animal.kind === 'dinossauro')).toBe(true);
+  });
+
   it('animal de ambiente esta sempre visivel', () => {
     expect(animalIsVisible(cachorro, 'dia', 0)).toBe(true);
     expect(animalIsVisible(cachorro, 'noite', 0)).toBe(true);

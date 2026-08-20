@@ -136,6 +136,11 @@ test.describe('partida no celular', () => {
     await construir.tap();
     await page.waitForTimeout(400);
 
+    // Construir também é conta: o toque abre o desafio e o acerto ergue a
+    // fogueira.
+    await responderPeloEnunciado(page, true);
+    await page.waitForTimeout(400);
+
     const estado = await lerEstado(page);
     expect(estado.construcoes).toBe(1);
     await page.screenshot({ path: 'e2e/telas/celular-07-fogueira.png' });

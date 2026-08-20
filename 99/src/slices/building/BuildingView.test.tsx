@@ -18,6 +18,15 @@ function pressKey(code: string) {
   });
 }
 
+/** Resolve o desafio de construção aberto pelo Espaço. */
+function resolveBuildChallenge() {
+  const desafio = state().activeChallenge;
+  expect(desafio?.purpose).toBe('construir');
+  act(() => {
+    state().answerChallenge(desafio!.answer);
+  });
+}
+
 /** Enche o inventário para os testes que não são sobre custo. */
 function encheInventario() {
   act(() => {
@@ -90,6 +99,7 @@ describe('BuildingView', () => {
 
     pressKey('KeyC');
     pressKey('Space');
+    resolveBuildChallenge();
 
     expect(state().structures).toHaveLength(1);
     expect(state().structures[0].kind).toBe('cerca');
@@ -107,6 +117,7 @@ describe('BuildingView', () => {
 
     pressKey('KeyC');
     pressKey('Space');
+    resolveBuildChallenge();
     const primeira = state().structures[0];
 
     playerTransform.x = primeira.position.x + 5.4;
@@ -114,6 +125,7 @@ describe('BuildingView', () => {
     playerTransform.yaw = Math.PI / 2;
     pressKey('KeyC');
     pressKey('Space');
+    resolveBuildChallenge();
 
     expect(state().structures).toHaveLength(2);
     expect(state().structures[1].position.x).toBeCloseTo(primeira.position.x + 2);
@@ -130,6 +142,7 @@ describe('BuildingView', () => {
 
     pressKey('KeyC');
     pressKey('Space');
+    resolveBuildChallenge();
     const primeira = state().structures[0];
 
     playerTransform.x = primeira.position.x + 5.4;
@@ -137,6 +150,7 @@ describe('BuildingView', () => {
     playerTransform.yaw = Math.PI / 2;
     pressKey('KeyC');
     pressKey('Space');
+    resolveBuildChallenge();
 
     expect(state().structures[1].rotation).toBeCloseTo(0);
 
@@ -151,6 +165,7 @@ describe('BuildingView', () => {
 
     pressKey('KeyC');
     pressKey('Space');
+    resolveBuildChallenge();
     const primeira = state().structures[0];
 
     playerTransform.x = primeira.position.x + 5.4;
@@ -166,6 +181,7 @@ describe('BuildingView', () => {
     const previa = fantasma!.instance;
 
     pressKey('Space');
+    resolveBuildChallenge();
     const confirmada = state().structures[1];
 
     expect(confirmada.position.x).toBeCloseTo(previa.position.x);
@@ -184,6 +200,7 @@ describe('BuildingView', () => {
 
     pressKey('KeyC');
     pressKey('Space');
+    resolveBuildChallenge();
     const primeira = state().structures[0];
 
     playerTransform.x = primeira.position.x + 4.4;
@@ -191,6 +208,7 @@ describe('BuildingView', () => {
     playerTransform.yaw = Math.PI / 2;
     pressKey('KeyC');
     pressKey('Space');
+    resolveBuildChallenge();
 
     expect(state().structures).toHaveLength(2);
     expect(state().structures[1].position.x).toBeCloseTo(primeira.position.x + 1);
@@ -223,6 +241,7 @@ describe('BuildingView', () => {
 
     pressKey('KeyC');
     pressKey('Space');
+    resolveBuildChallenge();
     const madeiraDepoisDaPrimeira = state().inventory.madeira;
 
     // A fogueira na mesma posicao nao pode usar o encaixe exclusivo da cerca.
@@ -268,6 +287,49 @@ describe('BuildingView', () => {
     await renderer.unmount();
   });
 
+  it('Espaço abre o desafio de construção antes de erguer', async () => {
+    posicionaEmLocalLivre();
+    encheInventario();
+    const renderer = await renderScene(<BuildingView />);
+    await renderer.advanceFrames(1, 1 / 60);
+
+    pressKey('KeyC');
+    pressKey('Space');
+
+    expect(state().structures).toHaveLength(0);
+    expect(state().activeChallenge?.purpose).toBe('construir');
+    expect(state().pendingBuild?.kind).toBe('cerca');
+
+    await renderer.unmount();
+  });
+
+  it('errar o desafio de construção não ergue e permite tentar de novo', async () => {
+    posicionaEmLocalLivre();
+    encheInventario();
+    const renderer = await renderScene(<BuildingView />);
+    await renderer.advanceFrames(1, 1 / 60);
+
+    pressKey('KeyC');
+    pressKey('Space');
+    const desafio = state().activeChallenge!;
+    const errada = desafio.options.find((opcao) => opcao !== desafio.answer)!;
+    act(() => {
+      state().answerChallenge(errada);
+    });
+
+    expect(state().structures).toHaveLength(0);
+    expect(state().buildMode).toBe('cerca');
+    expect(state().pendingBuild).not.toBeNull();
+
+    // Tentar de novo: o mesmo Espaço reabre a conta e o acerto ergue a cerca.
+    pressKey('Space');
+    resolveBuildChallenge();
+    expect(state().structures).toHaveLength(1);
+    expect(state().buildMode).toBeNull();
+
+    await renderer.unmount();
+  });
+
   it('a fogueira nasce acesa e apaga quando o combustivel acaba', async () => {
     posicionaEmLocalLivre();
     encheInventario();
@@ -277,6 +339,7 @@ describe('BuildingView', () => {
 
     pressKey('KeyB');
     pressKey('Space');
+    resolveBuildChallenge();
 
     const fogueira = state().structures[0];
     expect(isLit(fogueira, dayNightClock.seconds)).toBe(true);
@@ -299,6 +362,7 @@ describe('BuildingView', () => {
 
     pressKey('KeyB');
     pressKey('Space');
+    resolveBuildChallenge();
     const fogueira = state().structures[0];
 
     // Encosta na fogueira e deixa o fogo quase acabar.
@@ -323,6 +387,7 @@ describe('BuildingView', () => {
       posicionaEmLocalLivre();
       pressKey('KeyB');
       pressKey('Space');
+      resolveBuildChallenge();
       return state().structures.at(-1)!;
     };
 
@@ -353,6 +418,7 @@ describe('BuildingView', () => {
     posicionaEmLocalLivre();
     pressKey('KeyB');
     pressKey('Space');
+    resolveBuildChallenge();
 
     const fogueira = state().structures.at(-1)!;
     playerTransform.x = fogueira.position.x;
@@ -387,6 +453,7 @@ describe('BuildingView', () => {
 
     pressKey('KeyB');
     pressKey('Space');
+    resolveBuildChallenge();
     await renderer.advanceFrames(1, 1 / 60);
 
     expect(renderer.scene.findAllByType('PointLight')).toHaveLength(1);

@@ -92,14 +92,20 @@ export const ANIMAL_FOOD: Record<AnimalKind, ResourceKind> = {
   dinossauro: 'fruta',
 };
 
-/** Especies de ambiente por regiao; os raros ficam fora desta lista. */
+/**
+ * Especies de ambiente por regiao.
+ *
+ * Os raros (unicornio/dinossauro) tambem entram aqui: a crianca encontra o
+ * unicornio na Cachoeira e o dinossauro no Pico **sempre**, e a janela rara da
+ * mesma especie e um segundo encontro premiado pela sequencia de acertos.
+ */
 const AMBIENT_BY_REGION: Record<RegionId, readonly AnimalKind[]> = {
   praia: ['gaivota'],
   porto: ['peixe'],
   bosque: ['cachorro', 'gato'],
-  cachoeira: ['cavalo'],
+  cachoeira: ['cavalo', 'unicornio'],
   pomar: ['vaca'],
-  pico: [],
+  pico: ['dinossauro'],
 };
 
 /** Cria os animais do mundo com a mesma semente dos recursos. */
