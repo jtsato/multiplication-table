@@ -154,6 +154,21 @@ function PlayerAvatar() {
         <meshLambertMaterial color={pele} flatShading />
       </mesh>
 
+      {/* Rosto: dois olhos e um sorriso low-poly. Sem isto o personagem era um
+          manequim; com isto ele tem expressão e a criança se reconhece nele. */}
+      <mesh position={[-0.11, 1.1, 0.27]}>
+        <boxGeometry args={[0.06, 0.07, 0.02]} />
+        <meshLambertMaterial color={palette.glasses} flatShading />
+      </mesh>
+      <mesh position={[0.11, 1.1, 0.27]}>
+        <boxGeometry args={[0.06, 0.07, 0.02]} />
+        <meshLambertMaterial color={palette.glasses} flatShading />
+      </mesh>
+      <mesh position={[0, 1.0, 0.29]} rotation={[0, 0, 0.08]}>
+        <boxGeometry args={[0.17, 0.03, 0.02]} />
+        <meshLambertMaterial color={palette.trunk} flatShading />
+      </mesh>
+
       {/* Cabelo: mais volume na silhueta "menina", mesma cor nas duas. */}
       <mesh position={[0, 1.16, menina ? -0.06 : 0]} castShadow>
         <sphereGeometry args={[menina ? 0.36 : 0.3, 8, 6, 0, Math.PI * 2, 0, Math.PI / 1.8]} />

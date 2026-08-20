@@ -15,7 +15,7 @@ import {
   type Order,
 } from './npc.logic';
 
-/** Um NPC: corpo simples, com uma placa na frente. */
+/** Um NPC: corpo, rosto expressivo e acessório do papel. */
 function NpcMesh({
   role,
   regionId,
@@ -43,6 +43,64 @@ function NpcMesh({
         <sphereGeometry args={[0.28, 6, 5]} />
         <meshLambertMaterial color={palette.playerHead} flatShading />
       </mesh>
+      {/* Rosto: olhos e sorriso, para o NPC não ser só uma placa com corpo. */}
+      <mesh position={[-0.1, 1.4, 0.24]}>
+        <boxGeometry args={[0.06, 0.07, 0.02]} />
+        <meshLambertMaterial color={palette.glasses} flatShading />
+      </mesh>
+      <mesh position={[0.1, 1.4, 0.24]}>
+        <boxGeometry args={[0.06, 0.07, 0.02]} />
+        <meshLambertMaterial color={palette.glasses} flatShading />
+      </mesh>
+      <mesh position={[0, 1.29, 0.26]}>
+        <boxGeometry args={[0.15, 0.03, 0.02]} />
+        <meshLambertMaterial color={palette.trunk} flatShading />
+      </mesh>
+
+      {/* Professor: óculos — a identidade dele é o olhar de quem ensina. */}
+      {role === 'professor' && (
+        <group position={[0, 1.4, 0.22]}>
+          {[-0.11, 0.11].map((offset) => (
+            <mesh key={offset} position={[offset, 0, 0]}>
+              <boxGeometry args={[0.18, 0.13, 0.04]} />
+              <meshBasicMaterial color={palette.glasses} />
+            </mesh>
+          ))}
+          <mesh>
+            <boxGeometry args={[0.09, 0.03, 0.03]} />
+            <meshBasicMaterial color={palette.glasses} />
+          </mesh>
+        </group>
+      )}
+
+      {/* Comerciante: chapéu de feira. */}
+      {role === 'comerciante' && (
+        <group position={[0, 1.56, 0]}>
+          <mesh castShadow>
+            <cylinderGeometry args={[0.22, 0.24, 0.26, 8]} />
+            <meshLambertMaterial color={palette.trunk} flatShading />
+          </mesh>
+          <mesh position={[0, -0.12, 0]} castShadow>
+            <cylinderGeometry args={[0.42, 0.42, 0.05, 10]} />
+            <meshLambertMaterial color={palette.trunk} flatShading />
+          </mesh>
+        </group>
+      )}
+
+      {/* Encomendas: boné de entregador. */}
+      {role === 'encomendas' && (
+        <group position={[0, 1.56, 0]}>
+          <mesh castShadow>
+            <sphereGeometry args={[0.27, 8, 5, 0, Math.PI * 2, 0, Math.PI / 1.6]} />
+            <meshLambertMaterial color={palette.homeBed} flatShading />
+          </mesh>
+          <mesh position={[0, -0.05, 0.2]} castShadow>
+            <boxGeometry args={[0.44, 0.06, 0.3]} />
+            <meshLambertMaterial color={palette.homeBed} flatShading />
+          </mesh>
+        </group>
+      )}
+
       {/* Placa */}
       <mesh position={[0, 1.0, 0.45]} castShadow>
         <boxGeometry args={[0.5, 0.34, 0.06]} />

@@ -1102,3 +1102,36 @@ canto, a suíte falha.
 | `npm run typecheck` | limpo |
 | `npm run test` | 688 testes, 58 arquivos, verde |
 | `npm run build` | ok |
+
+---
+
+## Fase 9K — Identidade visual
+
+**O que foi criado:** personagens deixaram de ser manequins geométricos.
+
+- **Jogador**: ganhou **rosto low-poly** (dois olhos e um sorriso) — continua
+  personalizável por silhueta, pele, roupa, cabelo e acessórios, mas agora
+  expressa uma pessoa, não uma capsula vestida.
+- **NPCs**: ganharam rosto e **acessórios por papel** — o professor tem óculos, o
+  comerciante tem chapéu de feira e o entregador de encomendas tem boné. Cada um
+  se lê de longe pelo ofício, não só pela placa.
+
+### Decisões
+
+**Identidade é função, não decoração.** Em vez de aleatorizar cores, cada
+acessório conta quem é aquele personagem: óculos = quem ensina, chapéu = quem
+vende, boné = quem entrega. A criança reconhece o NPC pelo papel antes de chegar
+perto.
+
+**Tudo continua primitiva e flat.** Olhos, sorrisos e acessórios são caixas,
+cilindros e meias-esferas com as cores da paleta existente — zero asset externo,
+zero textura, mesma regra do projeto.
+
+### Portões
+
+| Portão | Resultado |
+| --- | --- |
+| `npm run lint` | limpo |
+| `npm run typecheck` | limpo |
+| `npm run test` | 688 testes, 58 arquivos, verde |
+| `npm run build` | ok |
