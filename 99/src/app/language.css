@@ -1,14 +1,16 @@
 /*
   Seletor de idioma.
 
-  Canto inferior esquerdo, longe do polegar do joystick e do painel de desafio.
+  Canto superior esquerdo, longe do polegar do joystick (inferior esquerdo), dos
+  botões de ação (inferior direito) e do botão de configurações (superior
+  direito). No computador também fica fora do painel de controles do HUD.
   Discreto por padrão e legível quando se olha para ele: não é uma decisão que a
   criança toma toda hora, mas é uma que ela precisa conseguir tomar sozinha.
 */
 .language {
   position: absolute;
-  left: 12px;
-  bottom: 12px;
+  top: max(12px, env(safe-area-inset-top));
+  left: max(12px, env(safe-area-inset-left));
   display: flex;
   gap: 6px;
   pointer-events: auto;

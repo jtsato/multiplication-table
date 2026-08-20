@@ -37,6 +37,14 @@ test.describe('partida no celular', () => {
     // e dos botoes, e as receitas ja aparecem nos proprios botoes.
     await expect(page.locator('.hud__recipes')).toBeHidden();
 
+    // O idioma não pode cobrir o joystick: os dois ficavam no canto inferior
+    // esquerdo e a criança perdia a área de movimento.
+    const idioma = await page.locator('.language').boundingBox();
+    const joystick = await page.locator('.touch__joystick').boundingBox();
+    expect(idioma).not.toBeNull();
+    expect(joystick).not.toBeNull();
+    expect(idioma!.y + idioma!.height).toBeLessThanOrEqual(joystick!.y);
+
     await page.screenshot({ path: 'e2e/telas/celular-01-inicio.png' });
   });
 

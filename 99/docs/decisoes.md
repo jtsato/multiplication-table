@@ -1072,3 +1072,33 @@ Ela não é mais a única chance de encontrar a criatura: é a chance de encontr
 | `npm run typecheck` | limpo |
 | `npm run test` | 688 testes, 58 arquivos, verde |
 | `npm run build` | ok |
+
+---
+
+## Fase 9J — UI mobile
+
+**O que foi corrigido:** o seletor de idioma e o joystick ficavam **ambos no
+canto inferior esquerdo** — no celular, as opções de idioma cobriam a área de
+movimento. O idioma subiu para o **canto superior esquerdo**, longe do polegar,
+dos botões de ação e do botão de configurações.
+
+### Decisões
+
+**O idioma é descoberta, não HUD de movimento.** No computador ele ficava no
+rodapé sem atrapalhar; no celular disputava o mesmo canto do joystick. Mover para
+o topo esquerdo mantém a descoberta (continua visível, sem menu) e libera o
+polegar esquerdo inteiro para andar.
+
+**O teste E2E agora prova a separação.** O primeiro teste do celular mede os
+`boundingBox` do `.language` e do `.touch__joystick` e exige que o idioma termine
+antes de o joystick começar — se alguém mover um deles de volta para o mesmo
+canto, a suíte falha.
+
+### Portões
+
+| Portão | Resultado |
+| --- | --- |
+| `npm run lint` | limpo |
+| `npm run typecheck` | limpo |
+| `npm run test` | 688 testes, 58 arquivos, verde |
+| `npm run build` | ok |
