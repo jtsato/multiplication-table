@@ -122,6 +122,8 @@ export interface AppStrings {
   bedLabel: string;
   tableHeader: string;
   language: string;
+  /** Rótulo acessível do minimapa. */
+  mapLabel: string;
 
   // Desafio
   challengePrompt: string;

@@ -546,7 +546,9 @@ test.describe('partida no computador', () => {
 
     // O HUD inteiro trocou, sem recarregar a página.
     await expect(page.getByText('Controls')).toBeVisible();
-    await expect(page.getByText('Beach')).toBeVisible();
+    // O minimapa também tem o nome da região; o teste mira o HUD para continuar
+    // verificando a repintura sem depender de quantos rótulos repetidos existem.
+    await expect(page.getByTestId('hud-regiao')).toHaveText('Beach');
     await expect(page.getByText('Controles')).toHaveCount(0);
     // O idioma selecionado tem que continuar legível com o ponteiro em cima: o
     // `:hover` tem especificidade maior que a classe de selecionado, e já ganhou

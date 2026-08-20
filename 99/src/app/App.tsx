@@ -14,6 +14,7 @@ import { AnimalBookPanel } from '../slices/wildlife';
 import { DailyBanner } from '../slices/daily';
 import { ChallengePanel } from '../slices/math';
 import { SettingsPanel, SettingsToggle } from '../slices/settings';
+import { Minimapa } from '../slices/navigation';
 import './loading.css';
 
 /**
@@ -95,6 +96,7 @@ export function App() {
       <DailyBanner />
       <SettingsToggle />
       <SettingsPanel />
+      <Minimapa />
       <LanguagePicker />
       <ChallengePanel />
       <ShopPanel />

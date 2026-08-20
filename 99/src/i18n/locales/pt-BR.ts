@@ -41,6 +41,7 @@ export const ptBR: LocaleDefinition = {
     bedLabel: 'Cama',
     tableHeader: 'tabuada',
     language: 'Idioma',
+    mapLabel: 'Mapa da ilha',
 
     challengePrompt: '{{grupos}} com {{itens}} cada',
     correct: 'Isso!',

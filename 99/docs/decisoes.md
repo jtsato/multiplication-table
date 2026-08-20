@@ -1135,3 +1135,33 @@ zero textura, mesma regra do projeto.
 | `npm run typecheck` | limpo |
 | `npm run test` | 688 testes, 58 arquivos, verde |
 | `npm run build` | ok |
+
+---
+
+## Fase 9L — Navegação
+
+**O que foi criado:** um **minimapa** no canto superior direito com as seis
+regiões coloridas, nomes e o ponto do jogador. A criança vê de relance onde
+está, para onde ir e o que ainda falta conhecer — sem precisar decorar as pontes.
+
+### Decisões
+
+**Projeção derivada da geografia, não escrita à mão.** `projectToMinimap` usa
+`WORLD_BOUNDS` para enquadrar o arquipélago inteiro num painel quadrado. Se uma
+região mudar de lugar, o minimapa acompanha sem recalibragem manual.
+
+**O ponto do jogador não passa pelo React.** `requestAnimationFrame` lê
+`playerTransform` e escreve direto no `transform` do ponto — mesmo padrão do
+joystick e do relógio. O minimapa nunca re-renderiza a árvore por quadro.
+
+**O painel é transparente ao toque.** `pointer-events: none` no minimapa: ele
+informa, mas não rouba toque nem clique de quem está jogando.
+
+### Portões
+
+| Portão | Resultado |
+| --- | --- |
+| `npm run lint` | limpo |
+| `npm run typecheck` | limpo |
+| `npm run test` | 691 testes, 60 arquivos, verde |
+| `npm run build` | ok |

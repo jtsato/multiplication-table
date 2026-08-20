@@ -45,6 +45,7 @@ export const enUS: LocaleDefinition = {
     bedLabel: 'Bed',
     tableHeader: 'times table',
     language: 'Language',
+    mapLabel: 'Island map',
 
     challengePrompt: '{{grupos}} with {{itens}} each',
     correct: 'Yes!',
