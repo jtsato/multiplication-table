@@ -1165,3 +1165,35 @@ informa, mas não rouba toque nem clique de quem está jogando.
 | `npm run typecheck` | limpo |
 | `npm run test` | 691 testes, 60 arquivos, verde |
 | `npm run build` | ok |
+
+---
+
+## Fase 9M — Noite envolvente
+
+**O que foi criado:** a noite deixou de ser só "escurecer a tela". Ganhou um
+**céu estrelado** (220 estrelas determinísticas) e uma **lua visível** que
+aparecem no entardecer/amanhecer e brilham na noite.
+
+### Decisões
+
+**Estrelas são pontos, não textura.** Um único `Points` com `Float32Array`
+gerado por semente cobre o hemisfério superior da esfera do céu. Sem asset, sem
+textura, sem draw call por estrela.
+
+**A lua é uma esfera emissiva da paleta.** `meshBasicMaterial` com a cor do
+crepúsculo do jogo, opacidade acompanhando a fase — de dia some, de noite
+aparece.
+
+**Sombras do luar continuam vindas da luz direcional do ciclo.** A luz que já
+caminhava com o sol agora também é a luz da lua no fim da noite (elevação 0.4 e
+intensidade 0.78), então as sombras projetadas continuam presentes sem adicionar
+um segundo mapa de sombra caro no celular.
+
+### Portões
+
+| Portão | Resultado |
+| --- | --- |
+| `npm run lint` | limpo |
+| `npm run typecheck` | limpo |
+| `npm run test` | 692 testes, 60 arquivos, verde |
+| `npm run build` | ok |

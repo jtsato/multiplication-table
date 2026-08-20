@@ -1,5 +1,6 @@
 import type { AppStrings } from '../../i18n';
 import { palette } from '../../shared/palette';
+import { createRng } from '../../shared/rng';
 
 export type DayPhase = 'dia' | 'entardecer' | 'noite' | 'amanhecer';
 
@@ -262,6 +263,34 @@ export function skyConfigFor(position: number): SkyConfig {
     ambientIntensity: lerp(from.ambientIntensity, to.ambientIntensity, eased),
     elevation: lerp(from.elevation, to.elevation, eased),
   };
+}
+
+/** Ceu noturno: estrelas e lua. */
+export const NIGHT_SKY = {
+  starCount: 220,
+  starRadius: 120,
+  starSeed: 20260820,
+  moonPosition: { x: 30, y: 38, z: -24 },
+} as const;
+
+/**
+ * Posições das estrelas numa esfera, determinísticas pela semente.
+ *
+ * Só o hemisfério superior (y ≥ 0): estrelas abaixo do horizonte seriam
+ * pontos atravessando o chão.
+ */
+export function createStarPositions(seed: number = NIGHT_SKY.starSeed): Float32Array {
+  const rng = createRng(seed);
+  const positions = new Float32Array(NIGHT_SKY.starCount * 3);
+  for (let i = 0; i < NIGHT_SKY.starCount; i += 1) {
+    const theta = rng() * Math.PI * 2;
+    const phi = Math.acos(rng());
+    const sinPhi = Math.sin(phi);
+    positions[i * 3] = sinPhi * Math.cos(theta) * NIGHT_SKY.starRadius;
+    positions[i * 3 + 1] = Math.cos(phi) * NIGHT_SKY.starRadius;
+    positions[i * 3 + 2] = sinPhi * Math.sin(theta) * NIGHT_SKY.starRadius;
+  }
+  return positions;
 }
 
 /** Rotulo da fase para o HUD. */

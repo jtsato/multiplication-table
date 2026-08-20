@@ -12,6 +12,7 @@ import {
   secondsUntilNextPhase,
   skyConfigFor,
 } from './daynight.logic';
+import { NightSky } from './NightSky';
 
 /** Cor reaproveitada entre quadros — `new Color()` por quadro geraria lixo. */
 const scratchColor = new Color();
@@ -90,6 +91,7 @@ export function DayNightView({ isTouch = false }: { isTouch?: boolean } = {}) {
 
   return (
     <>
+      <NightSky />
       <hemisphereLight ref={ambientRef} intensity={1.1} groundColor="#3f8f45" />
       <directionalLight
         ref={sunRef}

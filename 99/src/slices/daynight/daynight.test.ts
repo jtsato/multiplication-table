@@ -1,8 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import {
   DAYNIGHT,
+  NIGHT_SKY,
   PHASE_BOUNDS,
   advanceClock,
+  createStarPositions,
   cyclePosition,
   dayNumber,
   mixHex,
@@ -291,5 +293,15 @@ describe('luar', () => {
     const dia = skyConfigFor(PHASE_BOUNDS.dia.start + 0.1);
     const noite = skyConfigFor(PHASE_BOUNDS.noite.end - 0.001);
     expect(noite.ambientIntensity).toBeLessThan(dia.ambientIntensity * 0.7);
+  });
+
+  it('as estrelas ficam no hemisfério superior e são determinísticas', () => {
+    const primeiro = createStarPositions();
+    const segundo = createStarPositions();
+    expect(primeiro).toEqual(segundo);
+    expect(primeiro.length).toBe(NIGHT_SKY.starCount * 3);
+    for (let i = 1; i < primeiro.length; i += 3) {
+      expect(primeiro[i]).toBeGreaterThanOrEqual(0);
+    }
   });
 });
