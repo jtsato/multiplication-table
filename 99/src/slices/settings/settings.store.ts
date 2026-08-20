@@ -15,20 +15,24 @@ export interface SettingsSlice {
   volume: number;
   /** Multiplicador da sensibilidade da câmera, de 0.5 a 2. */
   cameraSensitivity: number;
+  /** Se `true`, construir não exige acertar a conta — para quem já domina. */
+  instantBuild: boolean;
   openSettings: () => void;
   closeSettings: () => void;
   toggleSettings: () => void;
   setVolume: (value: number) => void;
   setCameraSensitivity: (value: number) => void;
+  setInstantBuild: (value: boolean) => void;
   resetSettings: () => void;
   /** Restaura configurações vindas do save e aplica no áudio. */
-  loadSettings: (volume: number, cameraSensitivity: number) => void;
+  loadSettings: (volume: number, cameraSensitivity: number, instantBuild: boolean) => void;
 }
 
 export const createSettingsSlice: StateCreator<GameState, [], [], SettingsSlice> = (set) => ({
   settingsOpen: false,
   volume: SETTINGS.defaultVolume,
   cameraSensitivity: SETTINGS.defaultSensitivity,
+  instantBuild: SETTINGS.defaultInstantBuild,
 
   openSettings: () => set({ settingsOpen: true }),
   closeSettings: () => set({ settingsOpen: false }),
@@ -42,20 +46,24 @@ export const createSettingsSlice: StateCreator<GameState, [], [], SettingsSlice>
 
   setCameraSensitivity: (value) => set({ cameraSensitivity: clampSensitivity(value) }),
 
+  setInstantBuild: (value) => set({ instantBuild: Boolean(value) }),
+
   resetSettings: () => {
     setAudioVolume(SETTINGS.defaultVolume);
     set({
       volume: SETTINGS.defaultVolume,
       cameraSensitivity: SETTINGS.defaultSensitivity,
+      instantBuild: SETTINGS.defaultInstantBuild,
     });
   },
 
-  loadSettings: (volume, cameraSensitivity) => {
+  loadSettings: (volume, cameraSensitivity, instantBuild) => {
     const ajustado = clampVolume(volume);
     setAudioVolume(ajustado);
     set({
       volume: ajustado,
       cameraSensitivity: clampSensitivity(cameraSensitivity),
+      instantBuild: Boolean(instantBuild),
     });
   },
 });

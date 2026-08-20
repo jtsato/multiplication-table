@@ -1197,3 +1197,55 @@ um segundo mapa de sombra caro no celular.
 | `npm run typecheck` | limpo |
 | `npm run test` | 692 testes, 60 arquivos, verde |
 | `npm run build` | ok |
+
+---
+
+## Revisão — Mitigação dos pontos de atenção
+
+Após a revisão geral, os pontos levantados foram endereçados:
+
+### PA-1 — Chunks grandes
+
+`vite.config.ts` ganhou `manualChunks` separando `three`, `react-three` e
+`rapier`, e `resolve.dedupe` para `three`. O aviso de 1.5 MB sumiu e os vendors
+agora são cacheados separadamente. O WASM do Rapier (2.2 MB) continua embutido —
+é o custo do motor de física — mas o limite foi documentado, não silenciado por
+acaso.
+
+### PA-2 — Commits WIP
+
+`docs/historico.md` mapeia os commits `work in progress` (6ada84d, 914eac4,
+e21cc0d) para as fases 9A–9J. Política daqui em diante: commit por fase/assunto,
+sem WIP em `main`.
+
+### PA-3 — E2E sensível a texto repetido
+
+`Hud` ganhou `data-testid="hud-controls"`; o teste de troca de idioma agora mira
+o HUD em vez de `getByText('Beach'/'Controles')` genéricos.
+
+### PA-4 — Duração do E2E
+
+Scripts `e2e:shard:1` e `e2e:shard:2` permitem dividir a suíte em dois jobs de
+CI, cada um com um worker (a limitação de WebGL continua respeitada).
+
+### PA-5 — Melhorias futuras
+
+- **Placas 3D** (`RegionSignposts`): poste + placa colorida no centro de cada
+  região, com teste de cena.
+- **Sombra da lanterna**: `castShadow` com mapa 256 e frustum limitado ao
+  alcance — sombra local barata na noite.
+- **Construção instantânea**: nova configuração persistente (`instantBuild`,
+  save v4) que pula o desafio de tabuada para quem já domina.
+- **Acessibilidade**: `accessibility.css` respeita `prefers-contrast: more` e
+  `prefers-reduced-motion: reduce`.
+- **Backlog**: `docs/divida-tecnica.md` ganhou seção de melhorias futuras
+  opcionais (vagalumes com sombra, texto 3D, axe-core, PWA etc.).
+
+### Portões
+
+| Portão | Resultado |
+| --- | --- |
+| `npm run lint` | limpo |
+| `npm run typecheck` | limpo |
+| `npm run test` | 696 testes, 60 arquivos, verde |
+| `npm run build` | ok |

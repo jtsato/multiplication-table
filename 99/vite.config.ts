@@ -6,11 +6,28 @@ export default defineConfig({
   plugins: [react()],
   // Necessario para o deploy em subcaminho do GitHub Pages (site/99).
   base: './',
+  // three costuma aparecer duas vezes quando ha dependencias que importam
+  // versoes diferentes; dedupe garante que o bundle use uma instancia so.
+  resolve: {
+    dedupe: ['three'],
+  },
   build: {
     target: 'es2020',
-    // three + rapier geram bundles grandes por natureza; o aviso padrao de 500kB
-    // so produziria ruido em todo build.
-    chunkSizeWarningLimit: 1500,
+    // O WASM do Rapier e embutido como base64 no proprio JS (~2.2 MB); nao ha
+    // como encolher sem trocar de mecanismo de fisica. O limite fica acima dele
+    // para o build nao gritar a cada commit, e o `manualChunks` separa three/R3F
+    // para o navegador cachear vendors que mudam pouco.
+    chunkSizeWarningLimit: 2600,
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes('node_modules/@dimforge')) return 'rapier';
+          if (id.includes('node_modules/three')) return 'three';
+          if (id.includes('node_modules/@react-three')) return 'react-three';
+          return undefined;
+        },
+      },
+    },
   },
   test: {
     globals: true,

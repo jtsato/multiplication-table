@@ -62,6 +62,22 @@ describe('LanternView', () => {
     await renderer.unmount();
   });
 
+  it('projeta sombra pequena com custo controlado', async () => {
+    act(() => {
+      state().rechargeLantern(1, dayNightClock.seconds);
+    });
+
+    const renderer = await renderScene(<LanternView />);
+    await renderer.advanceFrames(2, 1 / 60);
+
+    const luz = luzDa(renderer);
+    expect(luz.castShadow).toBe(true);
+    expect(luz.shadow.mapSize.x).toBe(256);
+    expect(luz.shadow.mapSize.y).toBe(256);
+
+    await renderer.unmount();
+  });
+
   it('apaga sozinha quando a carga acaba, sem passar pelo store', async () => {
     act(() => {
       state().rechargeLantern(1, dayNightClock.seconds);

@@ -40,4 +40,18 @@ describe('WorldView', () => {
     expect(first).toBe(second);
     expect(first).toBeGreaterThanOrEqual(3);
   });
+
+  it('planta uma placa de navegação em cada região', async () => {
+    const renderer = await renderScene(<WorldView seed={20260816} />);
+
+    const nomes = renderer.scene
+      .findAllByType('Group')
+      .map((no) => no.instance as unknown as { name: string })
+      .map((grupo) => grupo.name);
+    for (const id of ['praia', 'porto', 'bosque', 'cachoeira', 'pomar', 'pico']) {
+      expect(nomes).toContain(`placa-${id}`);
+    }
+
+    await renderer.unmount();
+  });
 });

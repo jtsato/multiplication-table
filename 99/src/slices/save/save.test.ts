@@ -63,6 +63,7 @@ const saveValido = (): GameSave => ({
   clockSeconds: 12345,
   volume: 0.7,
   cameraSensitivity: 1.5,
+  instantBuild: true,
 });
 
 describe('migrateSave', () => {
@@ -96,6 +97,7 @@ describe('migrateSave', () => {
     expect(resultado.clockSeconds).toBe(0);
     expect(resultado.volume).toBe(0.5);
     expect(resultado.cameraSensitivity).toBe(1);
+    expect(resultado.instantBuild).toBe(false);
   });
 
   it('migra um save da versão 1 sem construções, relógio nem configurações', () => {
@@ -104,6 +106,7 @@ describe('migrateSave', () => {
     delete antigo.clockSeconds;
     delete antigo.volume;
     delete antigo.cameraSensitivity;
+    delete antigo.instantBuild;
 
     const resultado = migrateSave(antigo);
     expect(resultado.version).toBe(SAVE_VERSION);
@@ -111,6 +114,7 @@ describe('migrateSave', () => {
     expect(resultado.clockSeconds).toBe(0);
     expect(resultado.volume).toBe(0.5);
     expect(resultado.cameraSensitivity).toBe(1);
+    expect(resultado.instantBuild).toBe(false);
     expect(resultado.coins).toBe(42);
   });
 
@@ -306,6 +310,7 @@ describe('snapshot e applySave', () => {
         'coins',
         'garden',
         'hints',
+        'instantBuild',
         'inventory',
         'knownFacts',
         'locale',

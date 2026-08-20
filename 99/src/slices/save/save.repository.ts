@@ -25,7 +25,7 @@ import {
  * `localStorage` indisponivel (aba privada, cota cheia) e um fato da vida, e nao
  * pode impedir a crianca de jogar.
  */
-export const SAVE_VERSION = 3;
+export const SAVE_VERSION = 4;
 
 export const SAVE_STORAGE_KEY = 'numi-99.save';
 
@@ -65,6 +65,8 @@ export interface GameSave {
   volume: number;
   /** Multiplicador da sensibilidade da câmera, de 0.5 a 2. Ausente antes da Fase 9F. */
   cameraSensitivity: number;
+  /** Construção instantânea sem desafio. Ausente antes da v4, e ai é `false`. */
+  instantBuild: boolean;
 }
 
 export interface SaveRepository {
@@ -91,6 +93,12 @@ function migrateSensitivity(raw: unknown): number {
   if (raw === undefined) return SETTINGS.defaultSensitivity;
   if (typeof raw !== 'number' || !Number.isFinite(raw)) throw new Error('sensibilidade invalida');
   return clampSensitivity(raw);
+}
+
+function migrateInstantBuild(raw: unknown): boolean {
+  if (raw === undefined) return SETTINGS.defaultInstantBuild;
+  if (typeof raw !== 'boolean') throw new Error('construcao instantanea invalida');
+  return raw;
 }
 
 function migrateGarden(raw: unknown): GardenState {
@@ -219,7 +227,7 @@ export function migrateSave(raw: unknown): GameSave {
   const candidate = raw as Record<string, unknown>;
 
   const rawVersion = candidate.version;
-  if (rawVersion !== 1 && rawVersion !== 2 && rawVersion !== SAVE_VERSION) {
+  if (rawVersion !== 1 && rawVersion !== 2 && rawVersion !== 3 && rawVersion !== SAVE_VERSION) {
     throw new Error(`versao de save nao suportada: ${String(rawVersion)}`);
   }
 
@@ -241,6 +249,7 @@ export function migrateSave(raw: unknown): GameSave {
     clockSeconds: migrateCount(candidate.clockSeconds, 'relogio'),
     volume: migrateVolume(candidate.volume),
     cameraSensitivity: migrateSensitivity(candidate.cameraSensitivity),
+    instantBuild: migrateInstantBuild(candidate.instantBuild),
   };
 }
 

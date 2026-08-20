@@ -15,6 +15,7 @@ import { DailyBanner } from '../slices/daily';
 import { ChallengePanel } from '../slices/math';
 import { SettingsPanel, SettingsToggle } from '../slices/settings';
 import { Minimapa } from '../slices/navigation';
+import './accessibility.css';
 import './loading.css';
 
 /**

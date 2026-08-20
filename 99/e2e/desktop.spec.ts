@@ -41,7 +41,7 @@ test.describe('partida no computador', () => {
 
   test('carrega a ilha e mostra o HUD', async ({ page }) => {
     await expect(page.locator('canvas')).toBeVisible();
-    await expect(page.getByText('Controles')).toBeVisible();
+    await expect(page.getByTestId('hud-controls')).toBeVisible();
     await expect(page.getByRole('meter', { name: 'Lanterna' })).toBeVisible();
 
     const estado = await lerEstado(page);
@@ -538,18 +538,18 @@ test.describe('partida no computador', () => {
     await page.goto('/');
     await esperarJogoPronto(page);
 
-    await expect(page.getByText('Controles')).toBeVisible();
+    await expect(page.getByTestId('hud-controls')).toContainText('Controles');
     await page.screenshot({ path: 'e2e/telas/25-idioma-pt.png' });
 
     await page.getByRole('button', { name: 'English' }).click();
     await page.waitForTimeout(300);
 
     // O HUD inteiro trocou, sem recarregar a página.
-    await expect(page.getByText('Controls')).toBeVisible();
+    await expect(page.getByTestId('hud-controls')).toContainText('Controls');
     // O minimapa também tem o nome da região; o teste mira o HUD para continuar
     // verificando a repintura sem depender de quantos rótulos repetidos existem.
     await expect(page.getByTestId('hud-regiao')).toHaveText('Beach');
-    await expect(page.getByText('Controles')).toHaveCount(0);
+    await expect(page.getByTestId('hud-controls')).not.toContainText('Controles');
     // O idioma selecionado tem que continuar legível com o ponteiro em cima: o
     // `:hover` tem especificidade maior que a classe de selecionado, e já ganhou
     // dela uma vez, deixando texto escuro sobre fundo escuro.
@@ -565,7 +565,7 @@ test.describe('partida no computador', () => {
     // E a escolha sobrevive a recarregar.
     await page.reload();
     await esperarJogoPronto(page);
-    await expect(page.getByText('Controls')).toBeVisible();
+    await expect(page.getByTestId('hud-controls')).toContainText('Controls');
   });
 
   test('o arquipelago inteiro: uma captura de cada regiao', async ({ page }) => {

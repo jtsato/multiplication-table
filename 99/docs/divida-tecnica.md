@@ -86,3 +86,19 @@ que conta como pago.
 - **Testes:** `whale.test.ts` (4 testes de Vitest) cobre a janela, o progresso e
   o esguicho; `desktop.spec.ts` grava `e2e/telas/31-baleia.png` com o relógio no
   meio da janela e confirma que o acontecimento não mexe em moedas nem desafios.
+
+---
+
+## Melhorias futuras (opcionais)
+
+Itens que **não são dívida**: o jogo atual funciona sem eles, mas ficam como
+backlog para quando o escopo crescer.
+
+| Melhoria | Por que ficou de fora |
+| --- | --- |
+| Sombras individuais de vagalumes | São centenas de pontos pequenos; sombra por ponto custaria caro. A lanterna já projeta sombra local com mapa 256. |
+| Texto 3D nas placas de região | Exigiria fonte/asset externo; a cor + minimapa com nome cobre a navegação. |
+| Auditoria automatizada de acessibilidade (axe-core) | Pode entrar no E2E quando houver CI dedicado; hoje o suporte é via CSS `prefers-contrast`/`prefers-reduced-motion` e ARIA nos controles principais. |
+| Lazy-load ainda mais fino do Rapier | O WASM já está em chunk separado; dá para adiar até a primeira física se o bundle inicial virar problema no mobile. |
+| PWA/offline | Exigiria service worker e manifesto; o deploy atual é estático simples. |
+

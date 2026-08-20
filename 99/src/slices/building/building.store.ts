@@ -125,6 +125,13 @@ export const createBuildingSlice: StateCreator<GameState, [], [], BuildingSlice>
       return;
     }
 
+    // "Construção instantânea" (configurações) pula o desafio para quem já
+    // domina a tabuada. Os recursos são debitados direto, sem conta na tela.
+    if (get().instantBuild) {
+      get().placeStructure(position, rotation, dayNightClock.seconds);
+      return;
+    }
+
     // A construção só sai do papel com uma conta certa. Os recursos ainda não
     // foram gastos: errar não cobra nada além da tentativa.
     set({ pendingBuild: { kind, position, rotation }, buildError: null });

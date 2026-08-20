@@ -59,6 +59,20 @@
   accent-color: #ffe66d;
 }
 
+.settings__field--check {
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.settings__field--check input[type='checkbox'] {
+  width: 20px;
+  height: 20px;
+  accent-color: #ffe66d;
+  cursor: pointer;
+}
+
 .settings__languages {
   display: flex;
   gap: 8px;

@@ -17,7 +17,9 @@ export default defineConfig({
   testDir: './e2e',
   outputDir: './e2e/.resultados',
   // Um worker: cada teste sobe um contexto WebGL, e varios em paralelo brigam
-  // pela GPU virtual e produzem falhas intermitentes.
+  // pela GPU virtual e produzem falhas intermitentes. Para encurtar no CI,
+  // use shards (`npm run e2e:shard:1` e `e2e:shard:2`) — cada shard continua
+  // rodando com um worker, mas os dois jobs podem executar em máquinas distintas.
   workers: 1,
   fullyParallel: false,
   timeout: 90_000,

@@ -121,7 +121,7 @@ export function Hud({ isTouch = false }: { isTouch?: boolean } = {}) {
       {/* No celular os próprios botões na tela dizem o que fazer; listar teclas
           que não existem só ocuparia espaço precioso. */}
       {!isTouch && (
-        <div className="hud__panel hud__panel--controls">
+        <div className="hud__panel hud__panel--controls" data-testid="hud-controls">
           <strong>{t.controlsTitle}</strong>
           <span>{t.controlsMove}</span>
           <span>{t.controlsCamera}</span>

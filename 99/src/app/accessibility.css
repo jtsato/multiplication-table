@@ -1,0 +1,47 @@
+/*
+  Acessibilidade.
+
+  Respeita as preferências do sistema para contraste e movimento. Sem toggle
+  extra: quem pede, recebe; quem não pede, não muda nada.
+*/
+
+@media (prefers-contrast: more) {
+  .hud__panel,
+  .touch__button,
+  .settings,
+  .minimap,
+  .language__option {
+    border-color: #ffffff !important;
+  }
+
+  .hud__panel,
+  .touch__button,
+  .settings,
+  .language__option {
+    background: rgba(0, 0, 0, 0.85) !important;
+  }
+
+  .hud__panel strong,
+  .hud__panel span,
+  .touch__button,
+  .settings,
+  .language__option {
+    color: #ffffff !important;
+  }
+
+  .hud__region,
+  .hud__dezenas {
+    text-shadow: 0 0 3px #000000, 0 0 3px #000000;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

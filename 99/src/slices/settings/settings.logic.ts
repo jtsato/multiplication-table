@@ -12,6 +12,7 @@ export const SETTINGS = {
   defaultSensitivity: 1,
   minSensitivity: 0.5,
   maxSensitivity: 2,
+  defaultInstantBuild: false,
 } as const;
 
 /** Limita o volume a [0, 1]. */

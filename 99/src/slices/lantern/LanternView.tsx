@@ -90,6 +90,13 @@ export function LanternView() {
       intensity={0}
       distance={lanternRadius(melhorada)}
       decay={2}
+      // Sombra pequena e barata: mapa 256 e frustum do tamanho do alcance da
+      // lanterna. Só o que está perto do jogador ganha profundidade na noite.
+      castShadow
+      shadow-mapSize={[256, 256]}
+      shadow-camera-near={0.1}
+      shadow-camera-far={lanternRadius(melhorada)}
+      shadow-bias={-0.002}
     />
   );
 }
