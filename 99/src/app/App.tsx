@@ -5,12 +5,15 @@ import { DaySummary } from './DaySummary';
 import { Hud } from './Hud';
 import { TouchControls } from './TouchControls';
 import { useIsTouchDevice, useKeyboardBindings } from '../shared/input';
+import { unlockAudio } from '../shared/audio';
 import { AvatarPanel } from '../slices/avatar';
 import { BedPanel, OrdersPanel, WallChart } from '../slices/home';
 import { loadGame, startAutoSave } from '../slices/save';
 import { ShopPanel } from '../slices/economy';
 import { AnimalBookPanel } from '../slices/wildlife';
+import { DailyBanner } from '../slices/daily';
 import { ChallengePanel } from '../slices/math';
+import { SettingsPanel, SettingsToggle } from '../slices/settings';
 import './loading.css';
 
 /**
@@ -55,6 +58,23 @@ export function App() {
   useKeyboardBindings();
 
   /**
+   * Libera o AudioContext no primeiro gesto do usuario.
+   *
+   * Navegadores bloqueiam áudio antes de qualquer interacao; este listener
+   * unico (uma vez por tipo de evento) e o suficiente para o jogo comecar a
+   * soar no primeiro toque ou tecla.
+   */
+  useEffect(() => {
+    const unlock = () => unlockAudio();
+    window.addEventListener('pointerdown', unlock, { once: true });
+    window.addEventListener('keydown', unlock, { once: true });
+    return () => {
+      window.removeEventListener('pointerdown', unlock);
+      window.removeEventListener('keydown', unlock);
+    };
+  }, []);
+
+  /**
    * Carrega o progresso e liga a gravacao automatica.
    *
    * Antes do canvas de proposito: o mundo se monta com as moedas, os itens e a
@@ -72,6 +92,9 @@ export function App() {
         <GameCanvas isTouch={isTouch} />
       </Suspense>
       <Hud isTouch={isTouch} />
+      <DailyBanner />
+      <SettingsToggle />
+      <SettingsPanel />
       <LanguagePicker />
       <ChallengePanel />
       <ShopPanel />

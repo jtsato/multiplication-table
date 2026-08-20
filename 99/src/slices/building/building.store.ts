@@ -27,6 +27,8 @@ export interface BuildingSlice {
   refuelStructure: (structureId: string, ratio: number, now?: number) => void;
   clearBuildError: () => void;
   resetBuilding: () => void;
+  /** Restaura estruturas vindas do save e ajusta o contador de ids. */
+  loadStructures: (structures: Structure[]) => void;
 }
 
 let nextStructureId = 0;
@@ -98,4 +100,15 @@ export const createBuildingSlice: StateCreator<GameState, [], [], BuildingSlice>
   clearBuildError: () => set({ buildError: null }),
 
   resetBuilding: () => set({ structures: [], buildMode: null, buildError: null }),
+
+  loadStructures: (structures) => {
+    // O contador de ids vive fora do store; sem este ajuste, construir depois de
+    // um reload geraria um id repetido (fogueira-1 de novo) e a fogueira nova
+    // brigaria com a antiga no mesmo array.
+    nextStructureId = structures.reduce((maior, structure) => {
+      const sufixo = Number(structure.id.split('-').pop() ?? 0);
+      return Number.isFinite(sufixo) ? Math.max(maior, sufixo) : maior;
+    }, 0);
+    set({ structures, buildMode: null, buildError: null });
+  },
 });

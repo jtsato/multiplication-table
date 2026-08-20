@@ -12,6 +12,7 @@ import {
   type Region,
 } from '../regions/regions.logic';
 import { scatterPositions } from './world.logic';
+import { WindTufts } from './WindTufts';
 
 /** Quanto de terra existe abaixo do chao de uma regiao, ate afundar no mar. */
 const BASE_THICKNESS = 3;
@@ -237,6 +238,7 @@ export function WorldView({ seed }: { seed: number }) {
       ))}
 
       <Scenery seed={seed} />
+      <WindTufts seed={seed} />
     </>
   );
 }

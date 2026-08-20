@@ -78,6 +78,13 @@ export const enUS: LocaleDefinition = {
     ready: 'Done',
     close: 'Close',
 
+    settingsTitle: 'Settings',
+    settingsVolume: 'Volume',
+    settingsSensitivity: 'Camera sensitivity',
+    settingsLanguage: 'Language',
+    settingsFullscreen: 'Enter fullscreen',
+    settingsExitFullscreen: 'Exit fullscreen',
+
     bookTitle: 'Animal notebook',
     bookSeen: 'Seen',
     bookFriend: 'Friend',
@@ -108,6 +115,12 @@ export const enUS: LocaleDefinition = {
     summaryCoinsOne: 'coin',
     summaryLearned: 'You learned {{fatos}}',
     continueLabel: 'Continue',
+
+    dailyTitle: 'Today',
+    dailyChuva: 'Rainy day — the garden starts watered',
+    dailyFartura: 'Bountiful day — harvests yield double',
+    dailyVisitante: 'Special visitor at the harbor',
+    dailyBaleiaNaPraia: 'The whale is near the beach',
   },
 
   resources: {

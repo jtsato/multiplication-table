@@ -1,8 +1,17 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import { useGameStore } from '../../app/store';
+import { eventForDay } from '../daily/daily.logic';
 import { GARDEN, gardenStatus } from './garden.logic';
 
 const state = () => useGameStore.getState();
+
+/** Um dia sem chuva, para o plantio seguir a regra normal de "dia seguinte". */
+function diaSemChuva(): number {
+  for (let day = 1; day <= 100; day += 1) {
+    if (eventForDay(day).kind !== 'chuva') return day;
+  }
+  throw new Error('nenhum dia sem chuva encontrado');
+}
 
 describe('garden.logic', () => {
   it('esta vazia sem plantio', () => {
@@ -26,11 +35,12 @@ describe('garden.store', () => {
   });
 
   it('plantar exige semente e debita uma', () => {
-    useGameStore.setState({ seeds: 1, clock: { ...state().clock, day: 5 } });
+    const dia = diaSemChuva();
+    useGameStore.setState({ seeds: 1, clock: { ...state().clock, day: dia } });
     state().plantGarden();
 
     expect(state().seeds).toBe(0);
-    expect(state().garden).toEqual({ planted: true, plantedDay: 5 });
+    expect(state().garden).toEqual({ planted: true, plantedDay: dia });
   });
 
   it('sem semente, nao planta', () => {

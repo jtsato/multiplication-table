@@ -3,6 +3,7 @@ import type { GameState } from '../../app/store';
 import { createRng, randomInt } from '../../shared/rng';
 import { DEFAULT_WORLD_SEED } from '../world/world.store';
 import { WRONG_ANSWER_RATIO, generateChallenge, resolveAnswer } from './math.logic';
+import { eventForDay, harvestMultiplier } from '../daily/daily.logic';
 import type { Challenge, ChallengePurpose, ChallengeTarget } from './math.logic';
 
 /** Resultado da ultima resposta, exibido como feedback antes do painel fechar. */
@@ -77,10 +78,17 @@ export const createMathSlice: StateCreator<GameState, [], [], MathSlice> = (set,
 
       const outcome = resolveAnswer(challenge, choice);
 
+      // Dia de fartura: a colheita rende o dobro. Só colher — as outras contas
+      // continuam valendo o mesmo, para o evento não virar inflação em tudo.
+      const recompensa =
+        challenge.purpose === 'colher'
+          ? outcome.reward * harvestMultiplier(eventForDay(get().clock.day).kind)
+          : outcome.reward;
+
       if (challenge.purpose === 'colher') {
         // A colheita passa pela slice de recursos: e ela que sabe esgotar o no e
         // somar no inventario. A slice de matematica so decide *quanto*.
-        get().collectNode(challenge.targetId, outcome.reward);
+        get().collectNode(challenge.targetId, recompensa);
       } else if (challenge.purpose === 'alimentar') {
         // Alimentar so acontece no acerto: errar nao paga a comida nem vira
         // amigo — a crianca ve a resposta certa e pode tentar de novo.
@@ -129,7 +137,7 @@ export const createMathSlice: StateCreator<GameState, [], [], MathSlice> = (set,
           purpose: challenge.purpose,
           correct: outcome.correct,
           answer: challenge.answer,
-          reward: outcome.reward,
+          reward: recompensa,
           coins: get().coins - coinsAntes,
         },
       });

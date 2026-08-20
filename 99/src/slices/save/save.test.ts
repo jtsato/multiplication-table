@@ -12,6 +12,9 @@ import {
   type GameSave,
 } from './save.repository';
 import { emptyInventory } from '../resources/resources.logic';
+import { dayNightClock, resetDayNightClock } from '../daynight/dayNightClock';
+import { dayNumber } from '../daynight/daynight.logic';
+import { vec3 } from '../../shared/vec';
 
 const state = () => useGameStore.getState();
 
@@ -53,6 +56,13 @@ const saveValido = (): GameSave => ({
   ],
   pet: 'cachorro',
   locale: 'en-US',
+  structures: [
+    { id: 'fogueira-1', kind: 'fogueira', position: { x: 1, y: 0, z: 2 }, rotation: 0, fuelUntil: 500 },
+    { id: 'cerca-2', kind: 'cerca', position: { x: 3, y: 0, z: 4 }, rotation: 0.5, fuelUntil: 0 },
+  ],
+  clockSeconds: 12345,
+  volume: 0.7,
+  cameraSensitivity: 1.5,
 });
 
 describe('migrateSave', () => {
@@ -82,6 +92,38 @@ describe('migrateSave', () => {
     expect(resultado.pet).toBeNull();
     expect(resultado.seeds).toBe(0);
     expect(resultado.garden).toEqual({ planted: false, plantedDay: 0 });
+    expect(resultado.structures).toEqual([]);
+    expect(resultado.clockSeconds).toBe(0);
+    expect(resultado.volume).toBe(0.5);
+    expect(resultado.cameraSensitivity).toBe(1);
+  });
+
+  it('migra um save da versão 1 sem construções, relógio nem configurações', () => {
+    const antigo = { ...saveValido(), version: 1 } as Record<string, unknown>;
+    delete antigo.structures;
+    delete antigo.clockSeconds;
+    delete antigo.volume;
+    delete antigo.cameraSensitivity;
+
+    const resultado = migrateSave(antigo);
+    expect(resultado.version).toBe(SAVE_VERSION);
+    expect(resultado.structures).toEqual([]);
+    expect(resultado.clockSeconds).toBe(0);
+    expect(resultado.volume).toBe(0.5);
+    expect(resultado.cameraSensitivity).toBe(1);
+    expect(resultado.coins).toBe(42);
+  });
+
+  it('migra um save da versão 2 sem configurações', () => {
+    const antigo = { ...saveValido(), version: 2 } as Record<string, unknown>;
+    delete antigo.volume;
+    delete antigo.cameraSensitivity;
+
+    const resultado = migrateSave(antigo);
+    expect(resultado.version).toBe(SAVE_VERSION);
+    expect(resultado.volume).toBe(0.5);
+    expect(resultado.cameraSensitivity).toBe(1);
+    expect(resultado.structures).toHaveLength(2);
   });
 
   it('recusa numero negativo ou nao finito', () => {
@@ -245,9 +287,12 @@ describe('LocalStorageRepository', () => {
 
 describe('snapshot e applySave', () => {
   beforeEach(() => {
+    resetDayNightClock();
     state().resetEconomy();
     state().resetResources();
     state().resetAvatar();
+    state().resetBuilding();
+    state().resetSettings();
   });
 
   it('recorta so o que e duravel', () => {
@@ -256,6 +301,8 @@ describe('snapshot e applySave', () => {
       [
         'animalBook',
         'avatar',
+        'cameraSensitivity',
+        'clockSeconds',
         'coins',
         'garden',
         'hints',
@@ -266,7 +313,9 @@ describe('snapshot e applySave', () => {
         'owned',
         'pet',
         'seeds',
+        'structures',
         'version',
+        'volume',
       ].sort(),
     );
   });
@@ -293,6 +342,13 @@ describe('snapshot e applySave', () => {
     // O idioma escolhido volta junto, e o pacote de textos vem com ele.
     expect(state().locale).toBe('en-US');
     expect(state().text.strings.tagline).toBe('The times table island');
+    // Construções e relógio: a fogueira que a criança ergueu não some no reload,
+    // e o combustível/dia continuam fazendo sentido.
+    expect(state().structures).toEqual(saveValido().structures);
+    expect(dayNightClock.seconds).toBe(12345);
+    expect(state().clock.day).toBe(dayNumber(12345));
+    expect(state().volume).toBe(0.7);
+    expect(state().cameraSensitivity).toBe(1.5);
     expect(snapshot()).toEqual(saveValido());
   });
 
@@ -300,6 +356,18 @@ describe('snapshot e applySave', () => {
     const spy = vi.spyOn(saveRepository, 'load').mockReturnValue(null);
     expect(loadGame()).toBe(false);
     spy.mockRestore();
+  });
+
+  it('construir depois de um reload nao duplica id de estrutura', () => {
+    applySave(saveValido());
+    // Ambiente controlado: sem nós por perto, a nova cerca não esbarra em nada.
+    useGameStore.setState({ nodes: [], inventory: { ...state().inventory, madeira: 100 } });
+    state().toggleBuildMode('cerca');
+    state().placeStructure(vec3(10, 0, 10), 0, 100);
+
+    const ids = state().structures.map((structure) => structure.id);
+    expect(ids).toContain('cerca-3');
+    expect(new Set(ids).size).toBe(ids.length);
   });
 });
 
@@ -340,6 +408,25 @@ describe('startAutoSave', () => {
     vi.advanceTimersByTime(1000);
 
     expect(gravar).toHaveBeenCalled();
+    parar();
+    gravar.mockRestore();
+  });
+
+  it('relogio vivo mudando nao impede o save de sair', () => {
+    const gravar = vi.spyOn(saveRepository, 'save');
+    const parar = startAutoSave();
+
+    act(() => state().rewardCorrect(2, 4));
+    // `clockSeconds` agora faz parte do save, mas não pode participar da
+    // assinatura de igualdade: ele muda todo quadro e rearmaria o debounce.
+    for (let i = 0; i < 8; i += 1) {
+      dayNightClock.seconds += 1;
+      vi.advanceTimersByTime(100);
+      act(() => state().publishClock({ phase: 'dia', day: 1, secondsToNextPhase: 100 - i }));
+    }
+    vi.advanceTimersByTime(1000);
+
+    expect(gravar).toHaveBeenCalledTimes(1);
     parar();
     gravar.mockRestore();
   });

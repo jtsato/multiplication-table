@@ -5,8 +5,11 @@ import { Vector3, type Group } from 'three';
 import { useGameStore } from '../../app/store';
 import { CLOTHES_COLORS, SKIN_TONES } from '../avatar/avatar.logic';
 import { touchAxes } from '../../shared/input';
+import { playSound } from '../../shared/audio';
+import { STEP_DISTANCE_METERS, stepSoundFor } from '../../shared/terrain';
 import { useHeldKeys } from '../../shared/keyboard';
 import { palette } from '../../shared/palette';
+import { regionAt } from '../regions/regions.logic';
 import {
   PLAYER,
   axesToDirection,
@@ -79,9 +82,11 @@ function usePointerYaw(yawRef: RefObject<number>) {
     const onPointerMove = (event: PointerEvent) => {
       if (dragPointerId !== event.pointerId) return;
       // O dedo percorre menos pixels que o mouse: o toque precisa girar mais
-      // por pixel para a camera nao parecer travada.
-      const sensitivity =
+      // por pixel para a camera nao parecer travada. A preferência do jogador
+      // multiplica os dois.
+      const baseSensitivity =
         event.pointerType === 'touch' ? PLAYER.touchYawSensitivity : PLAYER.pointerYawSensitivity;
+      const sensitivity = baseSensitivity * useGameStore.getState().cameraSensitivity;
       yawRef.current += (event.clientX - lastX) * sensitivity;
       lastX = event.clientX;
     };
@@ -225,6 +230,7 @@ export function PlayerView() {
   const bodyRef = useRef<RapierRigidBody>(null);
   const avatarRef = useRef<Group>(null);
   const yawRef = useRef(0);
+  const stepDistanceRef = useRef(0);
 
   const heldKeys = useHeldKeys();
   const camera = useThree((state) => state.camera);
@@ -254,11 +260,12 @@ export function PlayerView() {
     const held = heldKeys.current;
 
     // 1. Giro da camera pelo teclado (o arrasto do mouse ja escreveu no ref).
+    const sensitivity = useGameStore.getState().cameraSensitivity;
     if (ROTATE_LEFT_KEYS.some((code) => held.has(code))) {
-      yawRef.current += PLAYER.keyboardYawSpeed * delta;
+      yawRef.current += PLAYER.keyboardYawSpeed * sensitivity * delta;
     }
     if (ROTATE_RIGHT_KEYS.some((code) => held.has(code))) {
-      yawRef.current -= PLAYER.keyboardYawSpeed * delta;
+      yawRef.current -= PLAYER.keyboardYawSpeed * sensitivity * delta;
     }
     const yaw = yawRef.current;
 
@@ -282,6 +289,19 @@ export function PlayerView() {
     playerTransform.y = translation.y;
     playerTransform.z = translation.z;
     playerTransform.yaw = yaw;
+
+    // 3b. Passos: a cada `STEP_DISTANCE_METERS` andados, toca o som da
+    //     superficie atual (areia, grama, madeira ou pedra).
+    if (direction.x !== 0 || direction.z !== 0) {
+      stepDistanceRef.current += speed * delta;
+      if (stepDistanceRef.current >= STEP_DISTANCE_METERS) {
+        stepDistanceRef.current = 0;
+        const surface = stepSoundFor(regionAt(playerTransform)?.id ?? null);
+        if (surface) playSound(surface);
+      }
+    } else {
+      stepDistanceRef.current = 0;
+    }
 
     // 4. O avatar encara a direcao do movimento (o corpo fisico tem rotacao travada).
     if (avatarRef.current && (direction.x !== 0 || direction.z !== 0)) {

@@ -1,0 +1,24 @@
+.daily-banner {
+  position: fixed;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 8;
+  background: rgba(14, 20, 32, 0.85);
+  color: #f5f7fa;
+  padding: 8px 16px;
+  border-radius: 999px;
+  font-size: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(3px);
+  pointer-events: none;
+  white-space: nowrap;
+  max-width: 90vw;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.daily-banner strong {
+  color: #ffe66d;
+  margin-right: 6px;
+}

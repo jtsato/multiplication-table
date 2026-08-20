@@ -74,6 +74,13 @@ export const ptBR: LocaleDefinition = {
     ready: 'Pronto',
     close: 'Fechar',
 
+    settingsTitle: 'Configurações',
+    settingsVolume: 'Volume',
+    settingsSensitivity: 'Sensibilidade da câmera',
+    settingsLanguage: 'Idioma',
+    settingsFullscreen: 'Entrar em tela cheia',
+    settingsExitFullscreen: 'Sair da tela cheia',
+
     bookTitle: 'Caderneta dos animais',
     bookSeen: 'Visto',
     bookFriend: 'Amigo',
@@ -104,6 +111,12 @@ export const ptBR: LocaleDefinition = {
     summaryCoinsOne: 'moeda',
     summaryLearned: 'Você aprendeu {{fatos}}',
     continueLabel: 'Continuar',
+
+    dailyTitle: 'Hoje',
+    dailyChuva: 'Dia de chuva — a horta já amanhece regada',
+    dailyFartura: 'Dia de fartura — colheitas rendem o dobro',
+    dailyVisitante: 'Visitante especial no Porto',
+    dailyBaleiaNaPraia: 'A baleia apareceu perto da Praia',
   },
 
   resources: {

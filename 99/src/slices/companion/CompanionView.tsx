@@ -5,7 +5,7 @@ import { useGameStore } from '../../app/store';
 import { palette } from '../../shared/palette';
 import { playerTransform } from '../player/playerTransform';
 import { nearestNodeInRange } from '../resources/resources.logic';
-import { PET, petFollow, sniffAngle } from './companion.logic';
+import { PET, petFollow, petRestAmount, sniffAngle } from './companion.logic';
 import { petTransform } from './petTransform';
 
 /**
@@ -20,10 +20,24 @@ export function CompanionView() {
   const groupRef = useRef<Group>(null);
   const headRef = useRef<Mesh>(null);
   const coinTimerRef = useRef(0);
+  const idleTimeRef = useRef(0);
+  const prevPlayerRef = useRef({ x: playerTransform.x, z: playerTransform.z });
 
   useFrame((_, delta) => {
     const state = useGameStore.getState();
     if (!state.pet) return;
+
+    // Descanso: quando o jogador fica parado, o pet se acomoda.
+    const moved =
+      Math.hypot(
+        playerTransform.x - prevPlayerRef.current.x,
+        playerTransform.z - prevPlayerRef.current.z,
+      ) > 0.05;
+    prevPlayerRef.current.x = playerTransform.x;
+    prevPlayerRef.current.z = playerTransform.z;
+    if (moved) idleTimeRef.current = 0;
+    else idleTimeRef.current += delta;
+    const descanso = petRestAmount(idleTimeRef.current);
 
     const proximo = petFollow(
       { x: petTransform.x, y: petTransform.y, z: petTransform.z },
@@ -36,16 +50,22 @@ export function CompanionView() {
     petTransform.z = proximo.z;
 
     if (groupRef.current) {
-      groupRef.current.position.set(proximo.x, playerTransform.y, proximo.z);
+      groupRef.current.position.set(
+        proximo.x,
+        playerTransform.y - descanso * 0.1,
+        proximo.z,
+      );
+      groupRef.current.scale.y = 1 - descanso * 0.12;
     }
 
     // Fareja o no mais proximo: a cabeca vira para ele, e volta ao normal quando
-    // nao ha nada perto. Nao muda jogo nenhum — e so o pet parecendo vivo.
+    // nao ha nada perto. Descansando, a cabeca tambem baixa um pouco.
     if (headRef.current) {
       const no = nearestNodeInRange(proximo, state.nodes, PET.sniffRange);
       const alvo = no ? sniffAngle(proximo, no.position) : 0;
       const atual = headRef.current.rotation.y;
       headRef.current.rotation.y = atual + (alvo - atual) * Math.min(1, delta * 8);
+      headRef.current.rotation.x = descanso * 0.35;
     }
 
     coinTimerRef.current += delta;

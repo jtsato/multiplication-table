@@ -861,3 +861,119 @@ tradução visual de um pedágio que já existia.
 | `npm run test` | 623 testes, 47 arquivos, verde |
 | `npm run e2e` | verde, incluindo travessia de ponte com guardiã |
 | `npm run build` | ok |
+
+---
+
+## Fase 9 — Cozy e juice
+
+**O que foi criado:** quatro levas de acabamento para o jogo não parecer um quiz
+com enfeite 3D — feedback sensorial (juice), mundo vivo, eventos diários e
+progresso visível na ilha.
+
+### Decisões
+
+**Áudio é dado puro, não asset.** `src/shared/audio.ts` descreve cada efeito
+como `SOUND_PRESETS` (notas e ruído filtrado) e toca com Web Audio na hora.
+Mantém a regra de zero asset externo, permite testar a partitura sem navegador e
+dá volume/silêncio sem trocar arquivos.
+
+**Partículas e tremor vivem fora do React.** O `JuiceView` usa um `Points`
+reutilizado e arrays mutáveis de módulo, no mesmo padrão do `playerTransform`: o
+que muda por quadro não passa por re-render. O tremor do erro decai sozinho e
+some em ~0,5 s — o suficiente para dizer "não bateu" sem virar punição.
+
+**O mundo vivo é barato e determinístico.** Borboletas/pássaros (`ambient`) e
+tufos de vento (`wind`) são poucos, com posições derivadas da semente do mundo.
+A borboleta foge do jogador com uma função pura; a vegetação dobra para o lado
+oposto; o pet descansa quando o jogador para — tudo sem física nova.
+
+**Eventos diários são derivados do dia, não estado salvo.** `eventForDay(day)`
+é determinístico: chuva, fartura, visitante e baleia-na-praia mudam o sabor do
+dia sem exigir persistência. Fartura dobra a colheita; chuva faz a horta render
+no mesmo dia; visitante ganha um barco no Porto; baleia-na-praia move a baleia.
+
+**Progresso aparece no mundo.** Pontes abertas ganham luzes nas pontas e o
+quintal da casa floresce com pontes abertas e decorações compradas. É o "poder
+mostrar" da economia agora visível também do lado de fora.
+
+### Portões
+
+| Portão | Resultado |
+| --- | --- |
+| `npm run lint` | limpo |
+| `npm run typecheck` | limpo |
+| `npm run test` | 666 testes, 55 arquivos, verde |
+| `npm run e2e` | verde |
+| `npm run build` | ok |
+
+---
+
+## Fase 9E — Persistência
+
+**O que foi criado:** o save passou a guardar também as **construções** (fogueira
+e cercas) e o **relógio do jogo** — até aqui, fechar a página apagava o que a
+criança construiu e zerava o dia, o que deixava a horta plantada no dia 3 abrindo
+como pronta no dia 1.
+
+### Decisões
+
+**Construção é progresso, não acidente de sessão.** `structures` entrou no
+`GameSave` e é restaurada por `loadStructures`, que também ajusta o contador de
+ids — sem isso, construir depois de um reload geraria `fogueira-1` de novo e as
+duas brigariam no mesmo array.
+
+**Relógio salvo para o combustível continuar sendo prazo.** A fogueira guarda
+`fuelUntil` como instante do relógio do jogo. Persistir só o dia não bastaria:
+salvar `clockSeconds` faz `fuelRemaining` continuar correto depois do reload, e o
+dia exibido no HUD é derivado do mesmo número.
+
+**Versão 1 migra em silêncio.** `SAVE_VERSION` subiu para 2; um save da versão 1
+ganha `structures: []` e `clockSeconds: 0` e segue jogável. Dado malformado
+continua derrubando o save de propósito — bug de programa não pode virar
+progresso corrompido.
+
+### Portões
+
+| Portão | Resultado |
+| --- | --- |
+| `npm run lint` | limpo |
+| `npm run typecheck` | limpo |
+| `npm run test` | 669 testes, 55 arquivos, verde |
+| `npm run build` | ok |
+
+---
+
+## Fase 9F — Menu de configurações
+
+**O que foi criado:** um painel de configurações acessível por um botão fixo no
+canto superior direito, com **volume de áudio**, **sensibilidade da câmera**,
+**idioma** e **tela cheia**. Volume e sensibilidade entram no save (versão 3) e
+sobrevivem ao reload.
+
+### Decisões
+
+**Volume mestre é um valor do motor, não um toggle de sessão.** `setAudioVolume`
+escreve no `GainNode` do Web Audio e guarda o valor desejado mesmo antes de o
+`AudioContext` existir — quando o primeiro gesto libera o áudio, ele já nasce no
+volume escolhido.
+
+**Sensibilidade multiplica o comportamento existente.** Em vez de duplicar as
+constantes de mouse/toque/teclado, a preferência é um multiplicador aplicado no
+mesmo lugar onde o yaw é calculado. Mouse e toque continuam com proporções
+diferentes; o jogador só ajusta o "quão rápido" ambos giram.
+
+**Idioma continua no save, agora também no painel.** O `LanguagePicker` da tela
+principal permanece (criança vê o que existe); o painel adiciona o mesmo
+controle em um lugar de ajustes, sem criar um segundo estado de idioma.
+
+**Tela cheia não é persistida.** É um estado do navegador, não do jogo — o
+painel apenas espelha `fullscreenchange` para o rótulo ficar correto.
+
+### Portões
+
+| Portão | Resultado |
+| --- | --- |
+| `npm run lint` | limpo |
+| `npm run typecheck` | limpo |
+| `npm run test` | 681 testes, 58 arquivos, verde |
+| `npm run build` | ok |

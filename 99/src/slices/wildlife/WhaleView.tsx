@@ -3,6 +3,8 @@ import { useFrame } from '@react-three/fiber';
 import type { Group } from 'three';
 import { palette } from '../../shared/palette';
 import { dayNightClock } from '../daynight/dayNightClock';
+import { dayNumber } from '../daynight/daynight.logic';
+import { eventForDay, whalePositionFor } from '../daily/daily.logic';
 import { WHALE, whaleHeight, whaleIsSpouting, whaleState } from './whale.logic';
 
 /**
@@ -19,9 +21,11 @@ export function WhaleView() {
   useFrame(() => {
     const state = whaleState(dayNightClock.seconds);
     const altura = whaleHeight(state);
+    const dia = dayNumber(dayNightClock.seconds);
+    const posicao = whalePositionFor(eventForDay(dia).kind) ?? WHALE.position;
 
     if (groupRef.current) {
-      groupRef.current.position.set(WHALE.position.x, altura, WHALE.position.z);
+      groupRef.current.position.set(posicao.x, altura, posicao.z);
     }
     if (spoutRef.current) {
       spoutRef.current.visible = whaleIsSpouting(state);

@@ -8,6 +8,7 @@ import { palette } from '../../shared/palette';
 import { cyclePosition, phaseFor } from '../daynight/daynight.logic';
 import { dayNightClock } from '../daynight/dayNightClock';
 import { playerTransform } from '../player/playerTransform';
+import { SHOP_ITEMS } from '../economy/economy.logic';
 import { HomeDecorations } from './HomeDecorations';
 import { HOME, HOME_SPOT_OFFSETS, isInsideHome, nearestSpot } from './home.logic';
 
@@ -75,6 +76,51 @@ function Furniture() {
         </mesh>
       </group>
     </>
+  );
+}
+
+/** Posições de flores no quintal, relativas ao centro da casa. */
+const YARD_FLOWER_SPOTS: ReadonlyArray<readonly [number, number]> = [
+  [-4.4, -3.4],
+  [4.4, -3.4],
+  [-4.4, 3.4],
+  [4.4, 3.4],
+  [-5.2, 0],
+  [5.2, 0],
+  [0, -4.2],
+  [0, 4.2],
+];
+
+/**
+ * Flores no quintal.
+ *
+ * O quintal cresce com o progresso: uma base de três flores, mais duas para cada
+ * ponte aberta e uma para cada decoração de casa comprada. É a ilha mostrando
+ * que a criança esteve ali — sem depender de estado novo, porque isso tudo já
+ * está no save.
+ */
+function YardFlowers() {
+  const openBridges = useGameStore((state) => state.openBridges);
+  const owned = useGameStore((state) => state.owned);
+
+  const decoracoes = owned.filter((kind) => SHOP_ITEMS[kind]?.category === 'casa').length;
+  const total = Math.min(YARD_FLOWER_SPOTS.length, 3 + openBridges.length * 2 + decoracoes);
+
+  return (
+    <group name="flores-do-quintal">
+      {YARD_FLOWER_SPOTS.slice(0, total).map(([fx, fz], index) => (
+        <group key={`${fx}-${fz}`} position={[fx, 0, fz]}>
+          <mesh position={[0, 0.15, 0]}>
+            <cylinderGeometry args={[0.04, 0.06, 0.32, 5]} />
+            <meshLambertMaterial color={palette.grassDark} flatShading />
+          </mesh>
+          <mesh position={[0, 0.34, 0]}>
+            <icosahedronGeometry args={[0.1, 0]} />
+            <meshLambertMaterial color={index % 2 === 0 ? palette.crown : palette.berry} flatShading />
+          </mesh>
+        </group>
+      ))}
+    </group>
   );
 }
 
@@ -201,6 +247,7 @@ export function HomeView() {
 
       <Furniture />
       <HomeDecorations />
+      <YardFlowers />
 
       {/* Telhado de duas aguas, simplificado como uma piramide achatada. */}
       <mesh ref={roofRef} position={[0, HOME.wallHeight + 0.55, 0]} rotation={[0, Math.PI / 4, 0]}>

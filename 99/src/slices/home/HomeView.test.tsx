@@ -113,4 +113,35 @@ describe('HomeView', () => {
 
     await renderer.unmount();
   });
+
+  it('o quintal começa com poucas flores', async () => {
+    const renderer = await renderScene(<HomeView />);
+    await renderer.advanceFrames(2, 1 / 60);
+
+    const jardim = renderer.scene
+      .findAllByType('Group')
+      .map((no) => no.instance as unknown as { name: string; children: unknown[] })
+      .find((grupo) => grupo.name === 'flores-do-quintal');
+    expect(jardim?.children.length).toBe(3);
+
+    await renderer.unmount();
+  });
+
+  it('o quintal floresce com pontes abertas e decorações', async () => {
+    useGameStore.setState({
+      openBridges: ['praia-porto', 'porto-bosque'],
+      owned: ['escultura', 'tapete'],
+    });
+    const renderer = await renderScene(<HomeView />);
+    await renderer.advanceFrames(2, 1 / 60);
+
+    const jardim = renderer.scene
+      .findAllByType('Group')
+      .map((no) => no.instance as unknown as { name: string; children: unknown[] })
+      .find((grupo) => grupo.name === 'flores-do-quintal');
+    // 3 base + 4 (duas pontes × 2) + 2 decorações = 9, limitado aos 8 canteiros.
+    expect(jardim?.children.length).toBe(8);
+
+    await renderer.unmount();
+  });
 });

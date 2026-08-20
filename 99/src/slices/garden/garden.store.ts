@@ -1,5 +1,6 @@
 import type { StateCreator } from 'zustand';
 import type { GameState } from '../../app/store';
+import { eventForDay, gardenPlantedDay } from '../daily/daily.logic';
 import { GARDEN, gardenStatus, type GardenState } from './garden.logic';
 
 export interface GardenSlice {
@@ -27,7 +28,11 @@ export const createGardenSlice: StateCreator<GameState, [], [], GardenSlice> = (
 
     set({
       seeds: state.seeds - 1,
-      garden: { planted: true, plantedDay: state.clock.day },
+      garden: {
+        planted: true,
+        // Dia de chuva: a horta já amanhece regada e rende no mesmo dia.
+        plantedDay: gardenPlantedDay(eventForDay(state.clock.day).kind, state.clock.day),
+      },
     });
   },
 

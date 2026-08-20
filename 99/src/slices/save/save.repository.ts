@@ -5,6 +5,9 @@ import type { ShopItemKind } from '../economy/economy.logic';
 import { SHOP_ITEMS } from '../economy/economy.logic';
 import { emptyInventory, RESOURCE_KINDS, type Inventory } from '../resources/resources.logic';
 import type { GardenState } from '../garden/garden.logic';
+import { vec3, type Vec3 } from '../../shared/vec';
+import type { Structure, StructureKind } from '../building/building.logic';
+import { clampSensitivity, clampVolume, SETTINGS } from '../settings/settings.logic';
 import {
   migrateAnimalBook,
   migratePet,
@@ -22,7 +25,7 @@ import {
  * `localStorage` indisponivel (aba privada, cota cheia) e um fato da vida, e nao
  * pode impedir a crianca de jogar.
  */
-export const SAVE_VERSION = 1;
+export const SAVE_VERSION = 3;
 
 export const SAVE_STORAGE_KEY = 'numi-99.save';
 
@@ -47,6 +50,21 @@ export interface GameSave {
   pet: AnimalKind | null;
   /** Idioma escolhido. Ausente num save anterior ao i18n, e ai e o padrao. */
   locale: UserLocale;
+  /**
+   * Construcoes (fogueira, cerca). Ausente num save anterior a Fase 9E, e ai e
+   * `[]` — a crianca nao perde o que construiu ao fechar a tela.
+   */
+  structures: Structure[];
+  /**
+   * Segundos do relogio do jogo. Sem isto o combustivel da fogueira e o numero
+   * do dia voltariam ao zero no reload, e uma horta plantada no dia 3 abriria
+   * como pronta no dia 1.
+   */
+  clockSeconds: number;
+  /** Volume mestre do áudio, de 0 a 1. Ausente antes da Fase 9F, e ai e 0.5. */
+  volume: number;
+  /** Multiplicador da sensibilidade da câmera, de 0.5 a 2. Ausente antes da Fase 9F. */
+  cameraSensitivity: number;
 }
 
 export interface SaveRepository {
@@ -63,6 +81,18 @@ function migrateCount(raw: unknown, campo: string): number {
   return Math.floor(raw);
 }
 
+function migrateVolume(raw: unknown): number {
+  if (raw === undefined) return SETTINGS.defaultVolume;
+  if (typeof raw !== 'number' || !Number.isFinite(raw)) throw new Error('volume invalido');
+  return clampVolume(raw);
+}
+
+function migrateSensitivity(raw: unknown): number {
+  if (raw === undefined) return SETTINGS.defaultSensitivity;
+  if (typeof raw !== 'number' || !Number.isFinite(raw)) throw new Error('sensibilidade invalida');
+  return clampSensitivity(raw);
+}
+
 function migrateGarden(raw: unknown): GardenState {
   if (raw === undefined) return { planted: false, plantedDay: 0 };
   if (typeof raw !== 'object' || raw === null) throw new Error('horta invalida');
@@ -71,6 +101,55 @@ function migrateGarden(raw: unknown): GardenState {
     planted: candidate.planted === true,
     plantedDay: migrateCount(candidate.plantedDay, 'horta.plantedDay'),
   };
+}
+
+/** Número finito que pode ser negativo (rotação, por exemplo). */
+function migrateFiniteNumber(raw: unknown, campo: string): number {
+  if (typeof raw !== 'number' || !Number.isFinite(raw)) {
+    throw new Error(`${campo} invalido`);
+  }
+  return raw;
+}
+
+function migrateVec3(raw: unknown, campo: string): Vec3 {
+  if (typeof raw !== 'object' || raw === null) throw new Error(`${campo} invalido`);
+  const candidate = raw as Record<string, unknown>;
+  return vec3(
+    migrateFiniteNumber(candidate.x, `${campo}.x`),
+    migrateFiniteNumber(candidate.y, `${campo}.y`),
+    migrateFiniteNumber(candidate.z, `${campo}.z`),
+  );
+}
+
+const STRUCTURE_KINDS: readonly StructureKind[] = ['fogueira', 'cerca'];
+
+/**
+ * Construcoes guardadas.
+ *
+ * Estrutura malformada e bug e derruba o save; campo ausente (save anterior a
+ * Fase 9E) significa que a crianca ainda nao construiu nada.
+ */
+function migrateStructures(raw: unknown): Structure[] {
+  if (raw === undefined) return [];
+  if (!Array.isArray(raw)) throw new Error('construcoes invalidas');
+
+  return raw.map((item, index) => {
+    if (typeof item !== 'object' || item === null) throw new Error('construcao invalida');
+    const candidate = item as Record<string, unknown>;
+    if (typeof candidate.id !== 'string' || candidate.id.length === 0) {
+      throw new Error('construcao invalida');
+    }
+    if (typeof candidate.kind !== 'string' || !STRUCTURE_KINDS.includes(candidate.kind as StructureKind)) {
+      throw new Error('construcao invalida');
+    }
+    return {
+      id: candidate.id,
+      kind: candidate.kind as StructureKind,
+      position: migrateVec3(candidate.position, `construcoes[${index}].position`),
+      rotation: migrateFiniteNumber(candidate.rotation, `construcoes[${index}].rotation`),
+      fuelUntil: migrateFiniteNumber(candidate.fuelUntil, `construcoes[${index}].fuelUntil`),
+    };
+  });
 }
 
 /**
@@ -139,8 +218,9 @@ export function migrateSave(raw: unknown): GameSave {
   }
   const candidate = raw as Record<string, unknown>;
 
-  if (candidate.version !== SAVE_VERSION) {
-    throw new Error(`versao de save nao suportada: ${String(candidate.version)}`);
+  const rawVersion = candidate.version;
+  if (rawVersion !== 1 && rawVersion !== 2 && rawVersion !== SAVE_VERSION) {
+    throw new Error(`versao de save nao suportada: ${String(rawVersion)}`);
   }
 
   return {
@@ -157,6 +237,10 @@ export function migrateSave(raw: unknown): GameSave {
     animalBook: migrateAnimalBook(candidate.animalBook),
     pet: migratePet(candidate.pet),
     locale: migrateLocale(candidate.locale),
+    structures: migrateStructures(candidate.structures),
+    clockSeconds: migrateCount(candidate.clockSeconds, 'relogio'),
+    volume: migrateVolume(candidate.volume),
+    cameraSensitivity: migrateSensitivity(candidate.cameraSensitivity),
   };
 }
 

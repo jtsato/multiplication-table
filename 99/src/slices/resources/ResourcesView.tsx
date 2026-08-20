@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { Instance, Instances } from '@react-three/drei';
-import type { Mesh } from 'three';
+import type { Group, Mesh } from 'three';
 import { useGameStore } from '../../app/store';
 import { useGameAction } from '../../shared/input';
 import { palette } from '../../shared/palette';
@@ -76,11 +76,52 @@ function NodeBase({ node, highlighted }: { node: ResourceNode; highlighted: bool
   const emissive = highlighted ? palette.highlight : '#000000';
   const emissiveIntensity = highlighted ? 0.45 : 0;
   const look = NODE_BASE[node.kind];
+  const feedback = useGameStore((state) => state.feedback);
+  const groupRef = useRef<Group>(null);
+  const erroAtRef = useRef<number | null>(null);
+
+  // Semente estável por nó: o vento balança cada planta num ritmo próprio, sem
+  // o mundo inteiro ondulando em uníssono.
+  const swaySeed = useMemo(() => {
+    let hash = 0;
+    for (const char of node.id) hash = (hash * 31 + char.charCodeAt(0)) % 997;
+    return hash;
+  }, [node.id]);
+
+  // Erro de colheita: o nó balança de leve por ~0,6 s. É o equivalente visual do
+  // som de mola — diz "não bateu" sem derrubar nada nem punir.
+  const erro =
+    feedback !== null && !feedback.correct && feedback.purpose === 'colher' && feedback.targetId === node.id;
+
+  useFrame((state) => {
+    const group = groupRef.current;
+    if (!group) return;
+    if (!erro) {
+      erroAtRef.current = null;
+      // Vento: oscilação lenta e sutil, com um leve balanço vertical.
+      const t = state.clock.elapsedTime;
+      group.rotation.z = Math.sin(t * 0.8 + swaySeed) * 0.015;
+      group.rotation.x = Math.cos(t * 0.7 + swaySeed) * 0.01;
+      group.position.y = y + Math.sin(t * 1.1 + swaySeed) * 0.02;
+      return;
+    }
+    if (erroAtRef.current === null) erroAtRef.current = state.clock.elapsedTime;
+    const elapsed = state.clock.elapsedTime - erroAtRef.current;
+    if (elapsed >= 0.6) {
+      group.rotation.z = 0;
+      group.rotation.x = 0;
+      erroAtRef.current = null;
+      return;
+    }
+    const decay = 1 - elapsed / 0.6;
+    group.rotation.z = Math.sin(elapsed * 22) * 0.05 * decay;
+    group.rotation.x = Math.cos(elapsed * 19) * 0.03 * decay;
+  });
 
   // A arvore e o unico tipo com duas pecas: tronco e copa.
   if (look.forma === 'arvore') {
     return (
-      <group position={[x, y, z]}>
+      <group ref={groupRef} position={[x, y, z]}>
         <mesh position={[0, look.altura, 0]} castShadow receiveShadow>
           <cylinderGeometry args={[0.18, 0.26, 1.8, 6]} />
           <meshLambertMaterial
@@ -99,15 +140,17 @@ function NodeBase({ node, highlighted }: { node: ResourceNode; highlighted: bool
   }
 
   return (
-    <mesh position={[x, y + look.altura, z]} castShadow receiveShadow>
-      <GeometriaDaBase forma={look.forma} raio={BASE_RADIUS[node.kind]} />
-      <meshLambertMaterial
-        color={look.cor}
-        flatShading
-        emissive={emissive}
-        emissiveIntensity={emissiveIntensity}
-      />
-    </mesh>
+    <group ref={groupRef} position={[x, y, z]}>
+      <mesh position={[0, look.altura, 0]} castShadow receiveShadow>
+        <GeometriaDaBase forma={look.forma} raio={BASE_RADIUS[node.kind]} />
+        <meshLambertMaterial
+          color={look.cor}
+          flatShading
+          emissive={emissive}
+          emissiveIntensity={emissiveIntensity}
+        />
+      </mesh>
+    </group>
   );
 }
 

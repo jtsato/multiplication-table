@@ -1,6 +1,8 @@
 import { useGameStore } from '../../app/store';
 import { migrateAvatar } from '../avatar/avatar.logic';
 import { bundleFor } from '../../i18n';
+import { dayNightClock } from '../daynight/dayNightClock';
+import { dayNumber } from '../daynight/daynight.logic';
 import { saveRepository, type GameSave, SAVE_VERSION } from './save.repository';
 
 /** Quanto tempo esperar antes de gravar, em milissegundos. */
@@ -23,6 +25,10 @@ export function snapshot(): GameSave {
     animalBook: state.animalBook,
     pet: state.pet,
     locale: state.locale,
+    structures: state.structures,
+    clockSeconds: dayNightClock.seconds,
+    volume: state.volume,
+    cameraSensitivity: state.cameraSensitivity,
   };
 }
 
@@ -34,6 +40,10 @@ export function snapshot(): GameSave {
  * disponibilidade fica com o store, que conhece `knownFacts` no momento certo.
  */
 export function applySave(save: GameSave): void {
+  // O relogio vivo precisa voltar junto: o combustível da fogueira e o dia da
+  // horta são prazos/contagens relativos a ele.
+  dayNightClock.seconds = save.clockSeconds;
+
   useGameStore.setState({
     coins: save.coins,
     knownFacts: save.knownFacts,
@@ -48,7 +58,16 @@ export function applySave(save: GameSave): void {
     pet: save.pet,
     locale: save.locale,
     text: bundleFor(save.locale),
+    // O dia deriva dos segundos salvos; a fase recomeça de dia.
+    clock: { ...useGameStore.getState().clock, day: dayNumber(save.clockSeconds) },
   });
+
+  // Restaura as construções e ajusta o contador de ids para não duplicar.
+  useGameStore.getState().loadStructures(save.structures);
+
+  // Volume e sensibilidade voltam com o save; loadSettings também aplica o
+  // volume no AudioContext (que ainda pode estar fechado — o valor fica salvo).
+  useGameStore.getState().loadSettings(save.volume, save.cameraSensitivity);
 }
 
 /** Carrega o save, se houver. Devolve `false` quando comeca do zero. */
@@ -60,6 +79,20 @@ export function loadGame(): boolean {
 }
 
 let timer: ReturnType<typeof setTimeout> | null = null;
+
+/**
+ * Assinatura do progresso durável, **sem o relógio vivo**.
+ *
+ * `clockSeconds` muda a cada quadro; incluí-lo na comparação do autosave faria o
+ * debounce se rearmar para sempre e o save nunca sairia — o mesmo bug que o
+ * filtro de igualdade original já resolvia. O relógio continua sendo gravado,
+ * só não participa da decisão de *quando* gravar.
+ */
+function durableSignature(): string {
+  const { clockSeconds, ...duravel } = snapshot();
+  void clockSeconds;
+  return JSON.stringify(duravel);
+}
 
 /**
  * Assina o store e grava com atraso.
@@ -77,10 +110,10 @@ let timer: ReturnType<typeof setTimeout> | null = null;
  * Devolve o cancelamento, para os testes nao deixarem timer vivo.
  */
 export function startAutoSave(): () => void {
-  let ultimo = JSON.stringify(snapshot());
+  let ultimo = durableSignature();
 
   const unsubscribe = useGameStore.subscribe(() => {
-    const atual = JSON.stringify(snapshot());
+    const atual = durableSignature();
     if (atual === ultimo) return;
     ultimo = atual;
 

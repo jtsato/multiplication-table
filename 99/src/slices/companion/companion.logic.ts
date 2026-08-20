@@ -18,7 +18,24 @@ export const PET = {
   coinIntervalSeconds: 30,
   /** Distancia em que o pet fareja o no mais proximo. */
   sniffRange: 6,
+  /** Quanto tempo parado antes de o pet começar a descansar, em segundos. */
+  idleRestSeconds: 2.5,
 } as const;
+
+/**
+ * Quanto o pet está "descansando", de 0 a 1.
+ *
+ * Começa a valer depois de `idleRestSeconds` parado e chega a 1 aos poucos. É o
+ * que a view usa para baixar o corpo e deitar a cabeça — o pet não é um
+ * objeto que só existe quando o jogador se mexe.
+ */
+export function petRestAmount(
+  idleSeconds: number,
+  threshold: number = PET.idleRestSeconds,
+): number {
+  if (idleSeconds <= 0) return 0;
+  return Math.min(1, idleSeconds / threshold);
+}
 
 /** O angulo de um corpo em direcao a um alvo, na convencao de yaw do jogo. */
 export function sniffAngle(origin: Vec3, target: Vec3): number {

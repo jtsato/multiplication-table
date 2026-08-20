@@ -164,6 +164,14 @@ export interface AppStrings {
   ready: string;
   close: string;
 
+  // Configurações
+  settingsTitle: string;
+  settingsVolume: string;
+  settingsSensitivity: string;
+  settingsLanguage: string;
+  settingsFullscreen: string;
+  settingsExitFullscreen: string;
+
   // Caderneta dos animais
   bookTitle: string;
   bookSeen: string;
@@ -198,6 +206,13 @@ export interface AppStrings {
   summaryCoinsOne: string;
   summaryLearned: string;
   continueLabel: string;
+
+  // Eventos diários
+  dailyTitle: string;
+  dailyChuva: string;
+  dailyFartura: string;
+  dailyVisitante: string;
+  dailyBaleiaNaPraia: string;
 }
 
 /** Um idioma completo: interface, gramatica e os substantivos do mundo. */

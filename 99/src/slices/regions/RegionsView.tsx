@@ -96,6 +96,21 @@ function OpenBridge({ tracado }: { tracado: Traçado }) {
         </mesh>
       ))}
 
+      {/* Luzes nas pontas: a ponte aberta vira parte do lugar acolhedor, e a
+          crianca reconhece de longe que ja passou por aqui. */}
+      {[-1, 1].map((lado) => (
+        <group key={`luz-${lado}`} position={[(lado * deck) / 2, 0.9, 0]}>
+          <mesh>
+            <cylinderGeometry args={[0.08, 0.1, 1, 6]} />
+            <meshLambertMaterial color={palette.trunk} flatShading />
+          </mesh>
+          <mesh position={[0, 0.55, 0]}>
+            <sphereGeometry args={[0.14, 6, 4]} />
+            <meshBasicMaterial color={palette.homeGlow} />
+          </mesh>
+        </group>
+      ))}
+
       {/* O colisor cobre o tabuleiro; as guardas sao so enfeite, para nao
           transformar a travessia num corredor apertado de fisica. */}
       <CuboidCollider args={[deck / 2, 0.15, DECK_WIDTH / 2]} />

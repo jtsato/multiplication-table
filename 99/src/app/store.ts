@@ -18,6 +18,7 @@ import { createRegionsSlice, type RegionsSlice } from '../slices/regions/regions
 import { createResourcesSlice, type ResourcesSlice } from '../slices/resources/resources.store';
 import { createWildlifeSlice, type WildlifeSlice } from '../slices/wildlife/wildlife.store';
 import { createWorldSlice, type WorldSlice } from '../slices/world/world.store';
+import { createSettingsSlice, type SettingsSlice } from '../slices/settings/settings.store';
 
 /**
  * Estado do jogo, composto pelas slices verticais.
@@ -40,7 +41,8 @@ export type GameState = WorldSlice &
   CompanionSlice &
   NpcSlice &
   GardenSlice &
-  I18nSlice;
+  I18nSlice &
+  SettingsSlice;
 
 export const useGameStore = create<GameState>()((...args) => ({
   ...createWorldSlice(...args),
@@ -58,6 +60,7 @@ export const useGameStore = create<GameState>()((...args) => ({
   ...createNpcSlice(...args),
   ...createGardenSlice(...args),
   ...createI18nSlice(...args),
+  ...createSettingsSlice(...args),
 }));
 
 /**

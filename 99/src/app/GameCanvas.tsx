@@ -12,8 +12,11 @@ import { PlayerView } from '../slices/player';
 import { FirefliesView } from '../slices/lantern';
 import { RegionsView, WaterfallView } from '../slices/regions';
 import { ResourcesView } from '../slices/resources';
+import { JuiceView } from '../slices/juice';
 import { WhaleView, WildlifeView } from '../slices/wildlife';
 import { WorldView } from '../slices/world';
+import { AmbientView } from '../slices/ambient';
+import { DailyEventView } from '../slices/daily';
 import { useGameStore } from './store';
 
 export function GameCanvas({ isTouch = false }: { isTouch?: boolean }) {
@@ -70,6 +73,8 @@ export function GameCanvas({ isTouch = false }: { isTouch?: boolean }) {
         <CompanionView />
 
         <WorldView seed={worldSeed} />
+        <AmbientView seed={worldSeed} />
+        <DailyEventView />
         <RegionsView />
         <WaterfallView />
         <WhaleView />
@@ -80,6 +85,7 @@ export function GameCanvas({ isTouch = false }: { isTouch?: boolean }) {
         <GardenView />
         <ResourcesView />
         <BuildingView />
+        <JuiceView />
       </Physics>
     </Canvas>
   );

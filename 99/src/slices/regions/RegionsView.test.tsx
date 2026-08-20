@@ -36,4 +36,25 @@ describe('RegionsView — guardias nas pontes', () => {
 
     await renderer.unmount();
   });
+
+  it('ponte aberta ganha luzes de progresso nas pontas', async () => {
+    useGameStore.setState({ openBridges: [BRIDGES[0].id] });
+    const renderer = await renderScene(<RegionsView />);
+    await renderer.advanceFrames(2, 1 / 60);
+
+    // As luzes usam MeshBasicMaterial (emissivo de verdade); o resto do jogo usa
+    // Lambert. Ponta aberta = pelo menos duas luzes.
+    expect(renderer.scene.findAllByType('MeshBasicMaterial').length).toBeGreaterThanOrEqual(2);
+
+    await renderer.unmount();
+  });
+
+  it('nenhuma ponte aberta nao tem luz', async () => {
+    const renderer = await renderScene(<RegionsView />);
+    await renderer.advanceFrames(2, 1 / 60);
+
+    expect(renderer.scene.findAllByType('MeshBasicMaterial')).toHaveLength(0);
+
+    await renderer.unmount();
+  });
 });
