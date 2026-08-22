@@ -5,6 +5,8 @@ import { DEFAULT_WORLD_SEED } from '../world/world.store';
 import { WRONG_ANSWER_RATIO, generateChallenge, resolveAnswer } from './math.logic';
 import { eventForDay, harvestMultiplier } from '../daily/daily.logic';
 import { factKey } from '../economy/economy.logic';
+import { factFactorForTable } from '../pedagogy/pedagogy.logic';
+import { regionAt } from '../regions/regions.logic';
 import type { Challenge, ChallengePurpose, ChallengeTarget } from './math.logic';
 
 /** Resultado da ultima resposta, exibido como feedback antes do painel fechar. */
@@ -22,6 +24,7 @@ export interface ChallengeFeedback {
 export interface MathSlice {
   activeChallenge: Challenge | null;
   feedback: ChallengeFeedback | null;
+  challengeOriginalNode: { id: string; groups: number; perGroup: number } | null;
   /**
    * Alternativas apagadas pela dica.
    *
@@ -54,18 +57,49 @@ export const createMathSlice: StateCreator<GameState, [], [], MathSlice> = (set,
     activeChallenge: null,
     feedback: null,
     hiddenOptions: [],
+    challengeOriginalNode: null,
 
     startChallenge: (target, purpose = 'colher') =>
       set((state) => {
         if (state.activeChallenge) return state;
-        // Guarda defensiva: se o alvo for um no ja colhido, nao ha o que
-        // desafiar. A view tambem checa, mas quem chama o store direto — outra
-        // slice, um teste — nao deveria conseguir abrir um desafio invalido.
         const node = state.nodes.find((candidate) => candidate.id === target.id);
         if (node?.depleted) return state;
 
+        let challengeTarget = target;
+        let nodes = state.nodes;
+        let challengeOriginalNode: MathSlice['challengeOriginalNode'] = null;
+
+        if (purpose === 'colher' && node) {
+          const region = regionAt(node.position);
+          const table = region?.tables.includes(node.perGroup)
+            ? node.perGroup
+            : region?.tables[0];
+
+          if (table !== undefined) {
+            const factor = factFactorForTable(
+              table,
+              state.factProgress,
+              state.learningStep,
+              rng,
+              state.lastFactKey ?? undefined,
+              node.groups,
+            );
+            challengeOriginalNode = {
+              id: node.id,
+              groups: node.groups,
+              perGroup: node.perGroup,
+            };
+            challengeTarget = { ...target, groups: factor, perGroup: table };
+            nodes = state.nodes.map((candidate) =>
+              candidate.id === node.id ? { ...candidate, groups: factor, perGroup: table } : candidate,
+            );
+          }
+        }
+
         return {
-          activeChallenge: generateChallenge(target, rng, purpose),
+          nodes,
+          activeChallenge: generateChallenge(challengeTarget, rng, purpose),
+          challengeOriginalNode,
           feedback: null,
           hiddenOptions: [],
         };
@@ -134,9 +168,20 @@ export const createMathSlice: StateCreator<GameState, [], [], MathSlice> = (set,
         get().breakStreak(factKey(challenge.perGroup, challenge.groups));
       }
 
+      const original = get().challengeOriginalNode;
+      const nodes = original
+        ? get().nodes.map((node) =>
+            node.id === original.id
+              ? { ...node, groups: original.groups, perGroup: original.perGroup }
+              : node,
+          )
+        : get().nodes;
+
       set({
+        nodes,
         activeChallenge: null,
         hiddenOptions: [],
+        challengeOriginalNode: null,
         feedback: {
           targetId: challenge.targetId,
           purpose: challenge.purpose,
@@ -166,7 +211,24 @@ export const createMathSlice: StateCreator<GameState, [], [], MathSlice> = (set,
       set({ hiddenOptions: [...state.hiddenOptions, candidatas[0]] });
     },
 
-    cancelChallenge: () => set({ activeChallenge: null, hiddenOptions: [] }),
+    cancelChallenge: () =>
+      set((state) => {
+        const original = state.challengeOriginalNode;
+        if (!original) {
+          return { activeChallenge: null, hiddenOptions: [], challengeOriginalNode: null };
+        }
+
+        return {
+          nodes: state.nodes.map((node) =>
+            node.id === original.id
+              ? { ...node, groups: original.groups, perGroup: original.perGroup }
+              : node,
+          ),
+          activeChallenge: null,
+          hiddenOptions: [],
+          challengeOriginalNode: null,
+        };
+      }),
 
     clearFeedback: () => set({ feedback: null }),
   };

@@ -84,19 +84,45 @@ function weightedPick(items: readonly FactProgress[], now: number, rng: Rng): Fa
   return items[items.length - 1];
 }
 
+export function factFactorForTable(
+  table: number,
+  progress: FactProgressMap,
+  now: number,
+  rng: Rng,
+  lastKey?: string,
+  preferredFactor?: number,
+): number {
+  const candidates = buildFactCandidates([table], progress);
+  const preferred = preferredFactor !== undefined && preferredFactor >= 1 && preferredFactor <= 10;
+  const preferredKey = preferred
+    ? `${Math.min(table, preferredFactor)}x${Math.max(table, preferredFactor)}`
+    : null;
+  const hasDue = candidates.some((candidate) => candidate.dueAt > 0 && candidate.dueAt <= now);
+
+  if (preferred && !hasDue && preferredKey !== lastKey) return preferredFactor;
+
+  const selected = selectNextFact(candidates, now, rng, lastKey);
+  const factors = selected.key.split('x').map(Number);
+  return factors[factors[0] === table ? 1 : 0];
+}
+
 export function buildFactCandidates(
   tables: readonly number[],
   progress: FactProgressMap,
   factors: readonly number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
 ): FactProgress[] {
-  return tables.flatMap((table) =>
-    factors.map((factor) => {
+  const candidates = new Map<string, FactProgress>();
+
+  for (const table of tables) {
+    for (const factor of factors) {
       const menor = Math.min(table, factor);
       const maior = Math.max(table, factor);
       const key = `${menor}x${maior}`;
-      return progress[key] ?? createFactProgress(key);
-    }),
-  );
+      if (!candidates.has(key)) candidates.set(key, progress[key] ?? createFactProgress(key));
+    }
+  }
+
+  return [...candidates.values()];
 }
 
 export function selectNextFact(

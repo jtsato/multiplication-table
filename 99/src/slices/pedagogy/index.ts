@@ -3,6 +3,7 @@ export {
   SMALL_REVIEW,
   buildFactCandidates,
   createFactProgress,
+  factFactorForTable,
   factPriority,
   factProgressToCounts,
   factProgressToKnownFacts,
