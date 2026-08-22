@@ -31,8 +31,6 @@ export interface BuildingSlice {
   pendingBuild: PendingBuild | null;
   toggleBuildMode: (kind: StructureKind) => void;
   exitBuildMode: () => void;
-  /** Tenta construir na posicao dada. Recusa vira `buildError`. */
-  placeStructure: (position: Vec3, rotation: number, now: number) => void;
   /** Valida a posição e abre o desafio de construção. */
   requestBuild: (position: Vec3, rotation: number) => void;
   /** Ergue a construção pendente quando a conta é acertada. */
@@ -66,47 +64,6 @@ export const createBuildingSlice: StateCreator<GameState, [], [], BuildingSlice>
 
   exitBuildMode: () => set({ buildMode: null, buildError: null, pendingBuild: null }),
 
-  placeStructure: (position, rotation, now) => {
-    const state = get();
-    const kind = state.buildMode;
-    if (!kind) return;
-
-    const spec = STRUCTURES[kind];
-    const check = checkPlacement(
-      spec,
-      position,
-      state.inventory,
-      state.structures,
-      state.nodes,
-      rotation,
-    );
-
-    if (!check.ok) {
-      set({ buildError: check.reason });
-      return;
-    }
-
-    nextStructureId += 1;
-    set({
-      structures: [
-        ...state.structures,
-        {
-          id: `${kind}-${nextStructureId}`,
-          kind,
-          position,
-          rotation,
-          // A fogueira ja nasce acesa; a cerca nunca queima.
-          fuelUntil: kind === 'fogueira' ? now + BUILDING.fireFuelSeconds : 0,
-        },
-      ],
-      inventory: payCost(state.inventory, spec.recipe),
-      buildError: null,
-      // Sai do modo apos construir: continuar nele levaria a construir varias
-      // por engano com a mesma tecla.
-      buildMode: null,
-    });
-  },
-
   requestBuild: (position, rotation) => {
     const state = get();
     const kind = state.buildMode;
@@ -136,8 +93,38 @@ export const createBuildingSlice: StateCreator<GameState, [], [], BuildingSlice>
   completePendingBuild: () => {
     const pending = get().pendingBuild;
     if (!pending) return;
-    get().placeStructure(pending.position, pending.rotation, dayNightClock.seconds);
-    set({ pendingBuild: null });
+    const state = get();
+    const spec = STRUCTURES[pending.kind];
+    const check = checkPlacement(
+      spec,
+      pending.position,
+      state.inventory,
+      state.structures,
+      state.nodes,
+      pending.rotation,
+    );
+    if (!check.ok) {
+      set({ buildError: check.reason, pendingBuild: null });
+      return;
+    }
+
+    nextStructureId += 1;
+    set({
+      structures: [
+        ...state.structures,
+        {
+          id: `${pending.kind}-${nextStructureId}`,
+          kind: pending.kind,
+          position: pending.position,
+          rotation: pending.rotation,
+          fuelUntil: pending.kind === 'fogueira' ? dayNightClock.seconds + BUILDING.fireFuelSeconds : 0,
+        },
+      ],
+      inventory: payCost(state.inventory, spec.recipe),
+      buildError: null,
+      pendingBuild: null,
+      buildMode: null,
+    });
   },
 
   cancelPendingBuild: () => set({ pendingBuild: null }),

@@ -366,7 +366,10 @@ describe('snapshot e applySave', () => {
     // Ambiente controlado: sem nós por perto, a nova cerca não esbarra em nada.
     useGameStore.setState({ nodes: [], inventory: { ...state().inventory, madeira: 100 } });
     state().toggleBuildMode('cerca');
-    state().placeStructure(vec3(10, 0, 10), 0, 100);
+    state().requestBuild(vec3(10, 0, 10), 0);
+    const desafio = state().activeChallenge;
+    expect(desafio?.purpose).toBe('construir');
+    state().answerChallenge(desafio!.answer);
 
     const ids = state().structures.map((structure) => structure.id);
     expect(ids).toContain('cerca-3');
