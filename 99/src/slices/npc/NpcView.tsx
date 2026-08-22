@@ -38,14 +38,18 @@ function NpcMesh({
     const group = groupRef.current;
     if (!group) return;
     const elapsed = clock.getElapsedTime() + phase;
-    const distance = Math.hypot(playerTransform.x - position[0], playerTransform.z - position[2]);
+    const offsetX = Math.sin(elapsed * 0.35) * 0.8;
+    const offsetZ = Math.cos(elapsed * 0.27) * 0.8;
+    const currentX = position[0] + offsetX;
+    const currentZ = position[2] + offsetZ;
+    const distance = Math.hypot(playerTransform.x - currentX, playerTransform.z - currentZ);
     const nextGreeting = distance <= NPC.interactRange;
     if (greetingRef.current !== nextGreeting) {
       greetingRef.current = nextGreeting;
       setGreeting(nextGreeting);
     }
-    group.position.x = Math.sin(elapsed * 0.35) * 0.8;
-    group.position.z = Math.cos(elapsed * 0.27) * 0.8;
+    group.position.x = offsetX;
+    group.position.z = offsetZ;
     group.position.y = Math.abs(Math.sin(elapsed * 1.8)) * 0.04;
     group.scale.setScalar(distance <= NPC.interactRange ? 1.08 : 1);
   });
