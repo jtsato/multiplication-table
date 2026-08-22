@@ -133,6 +133,8 @@ export interface AppStrings {
   useHint: string;
   fireFull: string;
   fireSome: string;
+  /** Saudação exibida quando um NPC se aproxima. */
+  npcGreeting: string;
   /** Convite para alimentar um animal proximo. */
   feedPrompt: string;
   /** Feedback de acerto no desafio de alimentar. */

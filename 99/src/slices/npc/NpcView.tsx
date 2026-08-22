@@ -29,6 +29,7 @@ function NpcMesh({
   position: [number, number, number];
 }) {
   const groupRef = useRef<Group>(null);
+  const greetingText = useGameStore((state) => state.text.strings.npcGreeting);
   const [greeting, setGreeting] = useState(false);
   const greetingRef = useRef(false);
   const phase = position[0] * 0.13 + position[2] * 0.07;
@@ -131,8 +132,13 @@ function NpcMesh({
         <meshLambertMaterial color={palette.homeChart} flatShading />
       </mesh>
       {greeting && (
-        <Text position={[0, 2.1, 0]} fontSize={0.26} color={palette.homeChart} anchorX="center">
-          Olá!
+        <Text
+          position={[0, 2.1, 0]}
+          fontSize={0.26}
+          color={palette.homeChart}
+          anchorX="center"
+        >
+          {greetingText}
         </Text>
       )}
     </group>

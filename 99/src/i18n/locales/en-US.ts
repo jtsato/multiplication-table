@@ -54,6 +54,7 @@ export const enUS: LocaleDefinition = {
     useHint: 'Use a hint ({{n}})',
     fireFull: 'Campfire full and lantern lit!',
     fireSome: 'A little wood and a little light',
+    npcGreeting: 'Hello!',
     feedPrompt: 'Press E to feed',
     feedFriend: 'Made a friend!',
     orderPrompt: 'Press E to deliver the order',

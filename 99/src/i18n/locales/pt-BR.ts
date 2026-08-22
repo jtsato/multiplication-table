@@ -50,6 +50,7 @@ export const ptBR: LocaleDefinition = {
     useHint: 'Usar dica ({{n}})',
     fireFull: 'Fogueira cheia e lanterna acesa!',
     fireSome: 'Um pouco de lenha e de luz',
+    npcGreeting: 'Olá!',
     feedPrompt: 'Aperte E para alimentar',
     feedFriend: 'Virou seu amigo!',
     orderPrompt: 'Aperte E para entregar encomenda',
