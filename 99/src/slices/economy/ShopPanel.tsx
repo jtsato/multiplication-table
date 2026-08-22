@@ -7,8 +7,32 @@ import {
   SHOP_ORDER,
   checkPurchase,
   formatShopRecipe,
+  type ShopItemKind,
 } from './economy.logic';
 import './shop.css';
+
+const SHOP_COLORS: Record<ShopItemKind, string> = {
+  'lanterna-maior': '#ffd166',
+  botas: '#8fd3f4',
+  dica: '#c8f77a',
+  sementes: '#3fbf6f',
+  tapete: '#d94f6a',
+  aquario: '#7fe3f0',
+  vaso: '#f2b134',
+  lustre: '#ffe08a',
+  prateleira: '#c08b52',
+  escultura: '#bcd9e8',
+};
+
+function ShopImage({ kind }: { kind: ShopItemKind }) {
+  return (
+    <svg className="shop__image" viewBox="0 0 80 80" role="img" aria-label={kind}>
+      <rect x="8" y="8" width="64" height="64" rx="16" fill={SHOP_COLORS[kind]} opacity="0.22" />
+      <circle cx="40" cy="34" r="16" fill={SHOP_COLORS[kind]} />
+      <path d="M24 58h32" stroke={SHOP_COLORS[kind]} strokeWidth="7" strokeLinecap="round" />
+    </svg>
+  );
+}
 
 /**
  * A loja.
@@ -62,6 +86,9 @@ export function ShopPanel() {
                   disabled={!check.ok}
                   onClick={() => buy(kind)}
                 >
+                  <span className="shop__icon">
+                    <ShopImage kind={kind} />
+                  </span>
                   <strong className="shop__label">{texto.shop[kind].label}</strong>
                   <span className="shop__effect">{texto.shop[kind].effect}</span>
                   <span className="shop__cost">

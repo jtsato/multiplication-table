@@ -20,8 +20,16 @@ import { factKey } from '../economy/economy.logic';
 const fatosDe = (table: number, quantos = 10) =>
   Array.from({ length: quantos }, (_, i) => factKey(table, i + 1));
 
-/** Fatos suficientes para liberar a saida desta regiao. */
-const dominaSaidaDe = (id: RegionId) => regionById(id).tables.flatMap((t) => fatosDe(t));
+/** Contagens: cada fato com `repeticoes` acertos (padrão 3 = domina). */
+const contagensDe = (table: number, repeticoes = BRIDGE_MASTERY): Record<string, number> =>
+  Object.fromEntries(fatosDe(table).map((fato) => [fato, repeticoes]));
+
+/** Contagens suficientes para liberar a saida desta regiao. */
+const dominaSaidaDe = (id: RegionId) =>
+  regionById(id).tables.reduce<Record<string, number>>(
+    (acc, t) => ({ ...acc, ...contagensDe(t) }),
+    {},
+  );
 
 const rico: Inventory = { ...emptyInventory(), madeira: 99, fruta: 99, pedra: 99 };
 
@@ -58,14 +66,14 @@ describe('o catalogo de pontes', () => {
    */
   it('exige a tabuada da regiao de origem', () => {
     expect(requiredTables(bridgeFor('praia', 'porto')!)).toEqual([2]);
-    expect(requiredTables(bridgeFor('porto', 'bosque')!)).toEqual([5, 10]);
+    expect(requiredTables(bridgeFor('porto', 'bosque')!)).toEqual([3]);
   });
 });
 
 describe('checkBridge', () => {
   const ponte = () => bridgeFor('praia', 'porto')!;
 
-  it('abre com moeda, recurso e a tabuada dominada', () => {
+  it('abre com moeda, recurso e a tabuada repetida 3 vezes', () => {
     expect(checkBridge(ponte(), 999, rico, dominaSaidaDe('praia'))).toEqual({ ok: true });
   });
 
@@ -89,7 +97,7 @@ describe('checkBridge', () => {
    * crianca juntar mais moedas, que e exatamente o caminho errado.
    */
   it('recusa sem a tabuada, mesmo com moeda e recurso sobrando', () => {
-    expect(checkBridge(ponte(), 999, rico, [])).toEqual({
+    expect(checkBridge(ponte(), 999, rico, {})).toEqual({
       ok: false,
       reason: 'sem-tabuada',
     });
@@ -102,24 +110,24 @@ describe('checkBridge', () => {
    * prioridade que o comentario do codigo promete era so comentario.
    */
   it('sem nada, a recusa fala da tabuada — o unico caminho util', () => {
-    expect(checkBridge(ponte(), 0, emptyInventory(), [])).toEqual({
+    expect(checkBridge(ponte(), 0, emptyInventory(), {})).toEqual({
       ok: false,
       reason: 'sem-tabuada',
     });
   });
 
-  it('conta os fatos que faltam, para a recusa poder dizer quanto falta', () => {
-    const quaseLa = fatosDe(2, BRIDGE_MASTERY - 1);
+  it('exige 3 repetições de cada fato — 2 não bastam', () => {
+    const quaseLa = contagensDe(2, BRIDGE_MASTERY - 1);
     expect(checkBridge(ponte(), 999, rico, quaseLa)).toEqual({
       ok: false,
       reason: 'sem-tabuada',
     });
-    expect(checkBridge(ponte(), 999, rico, fatosDe(2, BRIDGE_MASTERY))).toEqual({ ok: true });
+    expect(checkBridge(ponte(), 999, rico, contagensDe(2))).toEqual({ ok: true });
   });
 
-  it('uma regiao de duas tabuadas exige as duas', () => {
+  it('a ilha do Porto exige a tabuada do 3', () => {
     const ponteDoPorto = bridgeFor('porto', 'bosque')!;
-    expect(checkBridge(ponteDoPorto, 999, rico, fatosDe(5))).toEqual({
+    expect(checkBridge(ponteDoPorto, 999, rico, contagensDe(5))).toEqual({
       ok: false,
       reason: 'sem-tabuada',
     });
@@ -221,7 +229,7 @@ describe('reachableFrom', () => {
    * aqui isolaria uma tabuada para sempre, e o jogo so mostraria isso para a
    * crianca que chegasse la.
    */
-  it('com todas compradas, alcanca as seis', () => {
+  it('com todas compradas, alcanca as nove', () => {
     const todas = BRIDGES.map((b) => b.id);
     expect(reachableFrom('praia', todas)).toHaveLength(REGION_ORDER.length);
   });

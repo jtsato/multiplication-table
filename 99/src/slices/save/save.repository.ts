@@ -25,7 +25,7 @@ import {
  * `localStorage` indisponivel (aba privada, cota cheia) e um fato da vida, e nao
  * pode impedir a crianca de jogar.
  */
-export const SAVE_VERSION = 4;
+export const SAVE_VERSION = 5;
 
 export const SAVE_STORAGE_KEY = 'numi-99.save';
 
@@ -34,6 +34,8 @@ export interface GameSave {
   coins: number;
   /** Fatos ja resolvidos ao menos uma vez, na forma "2x4". */
   knownFacts: string[];
+  /** Quantas vezes cada fato foi resolvido (3 repeteções por fato por ilha). */
+  factCounts: Record<string, number>;
   inventory: Inventory;
   owned: ShopItemKind[];
   hints: number;
@@ -65,8 +67,6 @@ export interface GameSave {
   volume: number;
   /** Multiplicador da sensibilidade da câmera, de 0.5 a 2. Ausente antes da Fase 9F. */
   cameraSensitivity: number;
-  /** Construção instantânea sem desafio. Ausente antes da v4, e ai é `false`. */
-  instantBuild: boolean;
 }
 
 export interface SaveRepository {
@@ -93,12 +93,6 @@ function migrateSensitivity(raw: unknown): number {
   if (raw === undefined) return SETTINGS.defaultSensitivity;
   if (typeof raw !== 'number' || !Number.isFinite(raw)) throw new Error('sensibilidade invalida');
   return clampSensitivity(raw);
-}
-
-function migrateInstantBuild(raw: unknown): boolean {
-  if (raw === undefined) return SETTINGS.defaultInstantBuild;
-  if (typeof raw !== 'boolean') throw new Error('construcao instantanea invalida');
-  return raw;
 }
 
 function migrateGarden(raw: unknown): GardenState {
@@ -178,6 +172,22 @@ export function migrateFacts(raw: unknown): string[] {
   });
 }
 
+/** Contagem de repetições por fato. Ausente antes da v5, e ai é `{}`. */
+export function migrateFactCounts(raw: unknown): Record<string, number> {
+  if (raw === undefined) return {};
+  if (typeof raw !== 'object' || raw === null || Array.isArray(raw)) {
+    throw new Error('contagem de fatos invalida');
+  }
+  const resultado: Record<string, number> = {};
+  for (const [chave, valor] of Object.entries(raw as Record<string, unknown>)) {
+    if (typeof valor !== 'number' || !Number.isFinite(valor) || valor < 0) {
+      throw new Error('contagem de fatos invalida');
+    }
+    resultado[chave] = Math.floor(valor);
+  }
+  return resultado;
+}
+
 export function migrateInventory(raw: unknown): Inventory {
   if (raw === undefined) return emptyInventory();
   if (typeof raw !== 'object' || raw === null) throw new Error('inventario invalido');
@@ -227,7 +237,7 @@ export function migrateSave(raw: unknown): GameSave {
   const candidate = raw as Record<string, unknown>;
 
   const rawVersion = candidate.version;
-  if (rawVersion !== 1 && rawVersion !== 2 && rawVersion !== 3 && rawVersion !== SAVE_VERSION) {
+  if (rawVersion !== 1 && rawVersion !== 2 && rawVersion !== 3 && rawVersion !== 4 && rawVersion !== SAVE_VERSION) {
     throw new Error(`versao de save nao suportada: ${String(rawVersion)}`);
   }
 
@@ -235,6 +245,7 @@ export function migrateSave(raw: unknown): GameSave {
     version: SAVE_VERSION,
     coins: migrateCount(candidate.coins, 'moedas'),
     knownFacts: migrateFacts(candidate.knownFacts),
+    factCounts: migrateFactCounts(candidate.factCounts),
     inventory: migrateInventory(candidate.inventory),
     owned: migrateOwned(candidate.owned),
     hints: migrateCount(candidate.hints, 'dicas'),
@@ -249,7 +260,6 @@ export function migrateSave(raw: unknown): GameSave {
     clockSeconds: migrateCount(candidate.clockSeconds, 'relogio'),
     volume: migrateVolume(candidate.volume),
     cameraSensitivity: migrateSensitivity(candidate.cameraSensitivity),
-    instantBuild: migrateInstantBuild(candidate.instantBuild),
   };
 }
 

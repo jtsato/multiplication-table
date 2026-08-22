@@ -347,6 +347,31 @@ export function nearestRefuelable(
   return best;
 }
 
+/** Distância para remover uma cerca com `R`. */
+export const REMOVE_FENCE_RANGE = 2.5;
+
+/** A cerca mais próxima do jogador, para a ação de remover. */
+export function nearestRemovableFence(
+  structures: readonly Structure[],
+  position: Vec3,
+  range: number = REMOVE_FENCE_RANGE,
+): Structure | null {
+  const rangeSq = range * range;
+  let best: Structure | null = null;
+  let bestDistanceSq = Infinity;
+
+  for (const structure of structures) {
+    if (structure.kind !== 'cerca') continue;
+    const distanceSq = distanceSqXZ(position, structure.position);
+    if (distanceSq <= rangeSq && distanceSq < bestDistanceSq) {
+      best = structure;
+      bestDistanceSq = distanceSq;
+    }
+  }
+
+  return best;
+}
+
 /** Mensagem curta para o HUD explicar a recusa, no idioma da crianca. */
 /** O nome de uma construcao no idioma da crianca. */
 export function structureLabel(kind: StructureKind, strings: AppStrings): string {

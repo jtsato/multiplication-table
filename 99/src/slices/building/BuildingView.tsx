@@ -14,6 +14,7 @@ import {
   checkPlacement,
   fuelRemaining,
   nearestRefuelable,
+  nearestRemovableFence,
   placementPosition,
   snapFencePlacement,
   type StructureKind,
@@ -223,6 +224,14 @@ export function BuildingView() {
   useGameAction('construir-fogueira', () => toggleBuildMode('fogueira'));
   useGameAction('construir-cerca', () => toggleBuildMode('cerca'));
   useGameAction('cancelar', () => exitBuildMode());
+
+  /** `R` remove a cerca mais próxima — ninguém pode ficar cercado. */
+  useGameAction('remover-cerca', () => {
+    const state = useGameStore.getState();
+    if (state.buildMode) return;
+    const cerca = nearestRemovableFence(state.structures, playerTransform);
+    if (cerca) state.removeStructure(cerca.id);
+  });
 
   useGameAction('confirmar', () => {
     const state = useGameStore.getState();

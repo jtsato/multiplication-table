@@ -125,4 +125,7 @@ export const REGION_PALETTE = {
   pomar: { ground: '#7cc45a', shore: '#e0cf95', tuft: '#5a9d3d' },
   // Neve: o Pico e o unico lugar do jogo sem verde nenhum.
   pico: { ground: '#e8f1f7', shore: '#c9d8e2', tuft: '#b8cddb' },
+  vale: { ground: '#6fbf5f', shore: '#d8cfa8', tuft: '#4e9442' },
+  montanha: { ground: '#9aa7b5', shore: '#cfd6dd', tuft: '#7a8794' },
+  observatorio: { ground: '#8e7cc3', shore: '#d5cfe8', tuft: '#6a5aa3' },
 } as const;

@@ -30,19 +30,10 @@ describe('settings.store', () => {
     expect(state().cameraSensitivity).toBe(SETTINGS.minSensitivity);
   });
 
-  it('setInstantBuild alterna a construção instantânea', () => {
-    expect(state().instantBuild).toBe(false);
-    state().setInstantBuild(true);
-    expect(state().instantBuild).toBe(true);
-    state().setInstantBuild(false);
-    expect(state().instantBuild).toBe(false);
-  });
-
   it('loadSettings restaura valores e aplica o volume', () => {
-    state().loadSettings(0.2, 1.8, true);
+    state().loadSettings(0.2, 1.8);
     expect(state().volume).toBe(0.2);
     expect(state().cameraSensitivity).toBe(1.8);
-    expect(state().instantBuild).toBe(true);
     expect(setAudioVolume).toHaveBeenCalledWith(0.2);
   });
 });

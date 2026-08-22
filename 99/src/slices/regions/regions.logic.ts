@@ -18,7 +18,17 @@ import type { ResourceKind } from '../resources/resources.logic';
  * fica legivel para a crianca e para o adulto sem nenhum menu de nivel.
  */
 
-export const REGION_ORDER = ['praia', 'porto', 'bosque', 'cachoeira', 'pomar', 'pico'] as const;
+export const REGION_ORDER = [
+  'praia',
+  'porto',
+  'bosque',
+  'cachoeira',
+  'pomar',
+  'pico',
+  'vale',
+  'montanha',
+  'observatorio',
+] as const;
 export type RegionId = (typeof REGION_ORDER)[number];
 
 export interface Region {
@@ -79,7 +89,7 @@ export const REGIONS: Region[] = [
     center: vec3(36, 0, 0),
     radius: 13,
     groundY: 0,
-    tables: [5, 10],
+    tables: [3],
     harvest: ['peixe', 'madeira'],
     clearance: 0,
   },
@@ -89,7 +99,7 @@ export const REGIONS: Region[] = [
     center: vec3(55, 0, 27),
     radius: 13,
     groundY: 1.5,
-    tables: [3, 4],
+    tables: [4],
     harvest: ['cogumelo', 'madeira'],
     clearance: 0,
   },
@@ -99,7 +109,7 @@ export const REGIONS: Region[] = [
     center: vec3(44, 0, 58),
     radius: 13,
     groundY: 4,
-    tables: [6],
+    tables: [5],
     harvest: ['cristal', 'pedra'],
     clearance: 0,
   },
@@ -109,7 +119,7 @@ export const REGIONS: Region[] = [
     center: vec3(12, 0, 66),
     radius: 13,
     groundY: 2,
-    tables: [7, 8],
+    tables: [6],
     harvest: ['fruta', 'mel'],
     clearance: 0,
   },
@@ -119,8 +129,38 @@ export const REGIONS: Region[] = [
     center: vec3(-14, 0, 45),
     radius: 13,
     groundY: 7,
-    tables: [9],
+    tables: [7],
     harvest: ['gelo', 'pedra'],
+    clearance: 0,
+  },
+  {
+    id: 'vale',
+    nome: 'Vale',
+    center: vec3(-36, 0, 20),
+    radius: 13,
+    groundY: 2,
+    tables: [8],
+    harvest: ['madeira', 'fruta'],
+    clearance: 0,
+  },
+  {
+    id: 'montanha',
+    nome: 'Montanha',
+    center: vec3(-44, 0, -12),
+    radius: 13,
+    groundY: 6,
+    tables: [9],
+    harvest: ['pedra', 'gelo'],
+    clearance: 0,
+  },
+  {
+    id: 'observatorio',
+    nome: 'Observatório',
+    center: vec3(-26, 0, -38),
+    radius: 13,
+    groundY: 3,
+    tables: [10],
+    harvest: ['mel', 'cristal'],
     clearance: 0,
   },
 ];

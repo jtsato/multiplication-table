@@ -26,55 +26,89 @@ function Furniture() {
   return (
     <>
       {/* Espelho: moldura clara encostada na parede do fundo. */}
-      <mesh
-        position={[HOME_SPOT_OFFSETS.espelho.x, 1.1, HOME_SPOT_OFFSETS.espelho.z - 0.25]}
-        castShadow
-      >
-        <boxGeometry args={[1.1, 1.6, 0.12]} />
-        <meshLambertMaterial color={palette.homeMirror} flatShading />
-      </mesh>
+      <RigidBody type="fixed" colliders={false}>
+        <CuboidCollider
+          args={[0.55, 0.8, 0.06]}
+          position={[HOME_SPOT_OFFSETS.espelho.x, 1.1, HOME_SPOT_OFFSETS.espelho.z - 0.25]}
+        />
+        <mesh
+          position={[HOME_SPOT_OFFSETS.espelho.x, 1.1, HOME_SPOT_OFFSETS.espelho.z - 0.25]}
+          castShadow
+        >
+          <boxGeometry args={[1.1, 1.6, 0.12]} />
+          <meshLambertMaterial color={palette.homeMirror} flatShading />
+        </mesh>
+      </RigidBody>
 
       {/* Mural: quadro grande, do tamanho de uma tabuada inteira. */}
-      <mesh
-        position={[HOME_SPOT_OFFSETS.mural.x, 1.3, HOME_SPOT_OFFSETS.mural.z - 0.25]}
-        castShadow
-      >
-        <boxGeometry args={[1.6, 1.2, 0.1]} />
-        <meshLambertMaterial color={palette.homeChart} flatShading />
-      </mesh>
-
-      {/* Caderneta dos animais: quadro menor, na parede esquerda da frente. */}
-      <mesh
-        position={[HOME_SPOT_OFFSETS.caderneta.x, 1.3, HOME_SPOT_OFFSETS.caderneta.z - 0.25]}
-        castShadow
-      >
-        <boxGeometry args={[0.9, 1.1, 0.1]} />
-        <meshLambertMaterial color={palette.homeChart} flatShading />
-      </mesh>
-
-      {/* Quadro de encomendas: placa num cavalete no meio da sala. */}
-      <group position={[HOME_SPOT_OFFSETS.encomendas.x, 0, HOME_SPOT_OFFSETS.encomendas.z]}>
-        <mesh position={[0, 0.5, 0]} castShadow>
-          <boxGeometry args={[0.9, 0.7, 0.1]} />
+      <RigidBody type="fixed" colliders={false}>
+        <CuboidCollider
+          args={[0.8, 0.6, 0.05]}
+          position={[HOME_SPOT_OFFSETS.mural.x, 1.3, HOME_SPOT_OFFSETS.mural.z - 0.25]}
+        />
+        <mesh
+          position={[HOME_SPOT_OFFSETS.mural.x, 1.3, HOME_SPOT_OFFSETS.mural.z - 0.25]}
+          castShadow
+        >
+          <boxGeometry args={[1.6, 1.2, 0.1]} />
           <meshLambertMaterial color={palette.homeChart} flatShading />
         </mesh>
-        <mesh position={[0, 0.08, 0]} castShadow>
-          <boxGeometry args={[1.1, 0.16, 0.5]} />
-          <meshLambertMaterial color={palette.homeBed} flatShading />
+      </RigidBody>
+
+      {/* Caderneta dos animais: quadro menor, na parede esquerda da frente. */}
+      <RigidBody type="fixed" colliders={false}>
+        <CuboidCollider
+          args={[0.45, 0.55, 0.05]}
+          position={[HOME_SPOT_OFFSETS.caderneta.x, 1.3, HOME_SPOT_OFFSETS.caderneta.z - 0.25]}
+        />
+        <mesh
+          position={[HOME_SPOT_OFFSETS.caderneta.x, 1.3, HOME_SPOT_OFFSETS.caderneta.z - 0.25]}
+          castShadow
+        >
+          <boxGeometry args={[0.9, 1.1, 0.1]} />
+          <meshLambertMaterial color={palette.homeChart} flatShading />
         </mesh>
-      </group>
+      </RigidBody>
+
+      {/* Quadro de encomendas: placa num cavalete no meio da sala. */}
+      <RigidBody type="fixed" colliders={false}>
+        <CuboidCollider
+          args={[0.55, 0.35, 0.05]}
+          position={[0, 0.5, 0]}
+        />
+        <group position={[HOME_SPOT_OFFSETS.encomendas.x, 0, HOME_SPOT_OFFSETS.encomendas.z]}>
+          <mesh position={[0, 0.5, 0]} castShadow>
+            <boxGeometry args={[0.9, 0.7, 0.1]} />
+            <meshLambertMaterial color={palette.homeChart} flatShading />
+          </mesh>
+          <mesh position={[0, 0.08, 0]} castShadow>
+            <boxGeometry args={[1.1, 0.16, 0.5]} />
+            <meshLambertMaterial color={palette.homeBed} flatShading />
+          </mesh>
+        </group>
+      </RigidBody>
 
       {/* Cama: colchao e travesseiro. */}
-      <group position={[HOME_SPOT_OFFSETS.cama.x, 0, HOME_SPOT_OFFSETS.cama.z]}>
-        <mesh position={[0, 0.3, 0]} castShadow receiveShadow>
-          <boxGeometry args={[1.1, 0.5, 1.9]} />
-          <meshLambertMaterial color={palette.homeBed} flatShading />
-        </mesh>
-        <mesh position={[0, 0.62, -0.6]} castShadow>
-          <boxGeometry args={[0.9, 0.22, 0.5]} />
-          <meshLambertMaterial color={palette.homePillow} flatShading />
-        </mesh>
-      </group>
+      <RigidBody type="fixed" colliders={false}>
+        <CuboidCollider
+          args={[0.55, 0.25, 0.95]}
+          position={[0, 0.3, 0]}
+        />
+        <CuboidCollider
+          args={[0.45, 0.11, 0.25]}
+          position={[0, 0.62, -0.6]}
+        />
+        <group position={[HOME_SPOT_OFFSETS.cama.x, 0, HOME_SPOT_OFFSETS.cama.z]}>
+          <mesh position={[0, 0.3, 0]} castShadow receiveShadow>
+            <boxGeometry args={[1.1, 0.5, 1.9]} />
+            <meshLambertMaterial color={palette.homeBed} flatShading />
+          </mesh>
+          <mesh position={[0, 0.62, -0.6]} castShadow>
+            <boxGeometry args={[0.9, 0.22, 0.5]} />
+            <meshLambertMaterial color={palette.homePillow} flatShading />
+          </mesh>
+        </group>
+      </RigidBody>
     </>
   );
 }

@@ -106,6 +106,9 @@ const AMBIENT_BY_REGION: Record<RegionId, readonly AnimalKind[]> = {
   cachoeira: ['cavalo', 'unicornio'],
   pomar: ['vaca'],
   pico: ['dinossauro'],
+  vale: ['cachorro', 'vaca'],
+  montanha: ['cavalo'],
+  observatorio: ['gaivota', 'peixe'],
 };
 
 /** Cria os animais do mundo com a mesma semente dos recursos. */

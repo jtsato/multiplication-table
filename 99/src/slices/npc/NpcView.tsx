@@ -1,4 +1,7 @@
 import { useFrame } from '@react-three/fiber';
+import { useRef, useState } from 'react';
+import type { Group } from 'three';
+import { Text } from '@react-three/drei';
 import { useGameStore } from '../../app/store';
 import { palette } from '../../shared/palette';
 import { useGameAction } from '../../shared/input';
@@ -25,6 +28,27 @@ function NpcMesh({
   regionId: RegionId;
   position: [number, number, number];
 }) {
+  const groupRef = useRef<Group>(null);
+  const [greeting, setGreeting] = useState(false);
+  const greetingRef = useRef(false);
+  const phase = position[0] * 0.13 + position[2] * 0.07;
+
+  useFrame(({ clock }) => {
+    const group = groupRef.current;
+    if (!group) return;
+    const elapsed = clock.getElapsedTime() + phase;
+    const distance = Math.hypot(playerTransform.x - position[0], playerTransform.z - position[2]);
+    const nextGreeting = distance <= NPC.interactRange;
+    if (greetingRef.current !== nextGreeting) {
+      greetingRef.current = nextGreeting;
+      setGreeting(nextGreeting);
+    }
+    group.position.x = Math.sin(elapsed * 0.35) * 0.8;
+    group.position.z = Math.cos(elapsed * 0.27) * 0.8;
+    group.position.y = Math.abs(Math.sin(elapsed * 1.8)) * 0.04;
+    group.scale.setScalar(distance <= NPC.interactRange ? 1.08 : 1);
+  });
+
   const cor =
     role === 'comerciante'
       ? palette.honey
@@ -32,7 +56,7 @@ function NpcMesh({
         ? palette.mushroom
         : palette.playerBody;
   return (
-    <group position={position} name={`npc-${role}-${regionId}`}>
+    <group ref={groupRef} position={position} name={`npc-${role}-${regionId}`}>
       {/* Corpo */}
       <mesh position={[0, 0.7, 0]} castShadow>
         <boxGeometry args={[0.6, 0.9, 0.4]} />
@@ -106,6 +130,11 @@ function NpcMesh({
         <boxGeometry args={[0.5, 0.34, 0.06]} />
         <meshLambertMaterial color={palette.homeChart} flatShading />
       </mesh>
+      {greeting && (
+        <Text position={[0, 2.1, 0]} fontSize={0.26} color={palette.homeChart} anchorX="center">
+          Olá!
+        </Text>
+      )}
     </group>
   );
 }

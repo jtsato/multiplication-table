@@ -14,10 +14,8 @@ export function SettingsPanel() {
   const open = useGameStore((state) => state.settingsOpen);
   const volume = useGameStore((state) => state.volume);
   const cameraSensitivity = useGameStore((state) => state.cameraSensitivity);
-  const instantBuild = useGameStore((state) => state.instantBuild);
   const setVolume = useGameStore((state) => state.setVolume);
   const setCameraSensitivity = useGameStore((state) => state.setCameraSensitivity);
-  const setInstantBuild = useGameStore((state) => state.setInstantBuild);
   const closeSettings = useGameStore((state) => state.closeSettings);
   const locale = useGameStore((state) => state.locale);
   const setLocale = useGameStore((state) => state.setLocale);
@@ -66,16 +64,6 @@ export function SettingsPanel() {
             aria-label={t.settingsSensitivity}
             onChange={(event) => setCameraSensitivity(Number(event.target.value))}
           />
-        </label>
-
-        <label className="settings__field settings__field--check">
-          <input
-            type="checkbox"
-            checked={instantBuild}
-            aria-label={t.settingsInstantBuild}
-            onChange={(event) => setInstantBuild(event.target.checked)}
-          />
-          <span>{t.settingsInstantBuild}</span>
         </label>
 
         <div className="settings__field">

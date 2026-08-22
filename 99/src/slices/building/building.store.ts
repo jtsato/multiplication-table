@@ -38,6 +38,8 @@ export interface BuildingSlice {
   /** Ergue a construção pendente quando a conta é acertada. */
   completePendingBuild: () => void;
   cancelPendingBuild: () => void;
+  /** Remove uma construção (cerca) para o jogador nunca ficar preso. */
+  removeStructure: (structureId: string) => void;
   /** Renova o combustivel da fogueira. `ratio` de 0 a 1 conforme o acerto. */
   refuelStructure: (structureId: string, ratio: number, now?: number) => void;
   clearBuildError: () => void;
@@ -125,13 +127,6 @@ export const createBuildingSlice: StateCreator<GameState, [], [], BuildingSlice>
       return;
     }
 
-    // "Construção instantânea" (configurações) pula o desafio para quem já
-    // domina a tabuada. Os recursos são debitados direto, sem conta na tela.
-    if (get().instantBuild) {
-      get().placeStructure(position, rotation, dayNightClock.seconds);
-      return;
-    }
-
     // A construção só sai do papel com uma conta certa. Os recursos ainda não
     // foram gastos: errar não cobra nada além da tentativa.
     set({ pendingBuild: { kind, position, rotation }, buildError: null });
@@ -146,6 +141,11 @@ export const createBuildingSlice: StateCreator<GameState, [], [], BuildingSlice>
   },
 
   cancelPendingBuild: () => set({ pendingBuild: null }),
+
+  removeStructure: (structureId) =>
+    set((state) => ({
+      structures: state.structures.filter((structure) => structure.id !== structureId),
+    })),
 
   refuelStructure: (structureId, ratio, now = dayNightClock.seconds) =>
     set((state) => ({

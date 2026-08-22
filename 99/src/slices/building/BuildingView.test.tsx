@@ -55,7 +55,6 @@ describe('BuildingView', () => {
     state().resetBuilding();
     state().cancelChallenge();
     state().clearFeedback();
-    state().setInstantBuild(false);
     resetPlayerTransform();
     resetDayNightClock();
   });
@@ -300,25 +299,6 @@ describe('BuildingView', () => {
     expect(state().structures).toHaveLength(0);
     expect(state().activeChallenge?.purpose).toBe('construir');
     expect(state().pendingBuild?.kind).toBe('cerca');
-
-    await renderer.unmount();
-  });
-
-  it('construção instantânea ergue sem abrir desafio', async () => {
-    posicionaEmLocalLivre();
-    encheInventario();
-    act(() => {
-      state().setInstantBuild(true);
-    });
-    const renderer = await renderScene(<BuildingView />);
-    await renderer.advanceFrames(1, 1 / 60);
-
-    pressKey('KeyC');
-    pressKey('Space');
-
-    expect(state().structures).toHaveLength(1);
-    expect(state().activeChallenge).toBeNull();
-    expect(state().pendingBuild).toBeNull();
 
     await renderer.unmount();
   });

@@ -84,7 +84,6 @@ export const enUS: LocaleDefinition = {
     settingsVolume: 'Volume',
     settingsSensitivity: 'Camera sensitivity',
     settingsLanguage: 'Language',
-    settingsInstantBuild: 'Instant build (no math)',
     settingsFullscreen: 'Enter fullscreen',
     settingsExitFullscreen: 'Exit fullscreen',
 
@@ -182,6 +181,9 @@ export const enUS: LocaleDefinition = {
     cachoeira: 'Waterfall',
     pomar: 'Orchard',
     pico: 'Peak',
+    vale: 'Valley',
+    montanha: 'Mountain',
+    observatorio: 'Observatory',
   },
 
   animals: {

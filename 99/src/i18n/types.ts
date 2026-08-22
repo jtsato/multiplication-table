@@ -173,8 +173,6 @@ export interface AppStrings {
   settingsVolume: string;
   settingsSensitivity: string;
   settingsLanguage: string;
-  /** Construção sem desafio, para quem já domina a tabuada. */
-  settingsInstantBuild: string;
   settingsFullscreen: string;
   settingsExitFullscreen: string;
 

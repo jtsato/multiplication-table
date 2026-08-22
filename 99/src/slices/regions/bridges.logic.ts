@@ -18,14 +18,13 @@ import { REGION_ORDER, regionById, type RegionId } from './regions.logic';
  */
 
 /**
- * Quantos dos dez fatos de uma tabuada a ponte exige.
+ * Quantas repetições de cada fato a ponte exige.
  *
- * Num numero so, de proposito. A spec aprovou "a tabuada local dominada", que
- * sao os dez — mas como portao de progressao isso e pesado: quem empaca em 7x8
- * fica trancado fora do resto do mundo, num jogo cujo nao-objetivo declarado e
- * nao punir. Afrouxar para 7 e mudar esta linha, e nada mais.
+ * Cada multiplicação da ilha (ex.: 2x2) precisa ser resolvida 3 vezes. Como a
+ * tabuada tem 10 fatos, são 30 cálculos por ilha — o ritmo que o usuário pediu
+ * para juntar moedas e abrir a ponte seguinte.
  */
-export const BRIDGE_MASTERY = 10;
+export const BRIDGE_MASTERY = 3;
 
 export interface Bridge {
   id: string;
@@ -47,11 +46,14 @@ export interface Bridge {
  */
 export const BRIDGES: Bridge[] = REGION_ORDER.slice(0, -1).map((from, index) => {
   const to = REGION_ORDER[index + 1];
+  const tabela = regionById(from).tables[0];
   return {
     id: `${from}-${to}`,
     from,
     to,
-    coins: 20 + index * 15,
+    // 30 acertos na tabuada da ilha (3x cada fato) pagam a ponte de saída;
+    // cada ilha seguinte soma um extra pelo custo crescente do mundo.
+    coins: 30 * tabela + index * 15,
     recipe: { madeira: 6 + index * 2, pedra: 2 + index },
   };
 });
@@ -125,17 +127,17 @@ export function requiredTables(ponte: Bridge): number[] {
   return regionById(ponte.from).tables;
 }
 
-/** Quantos dos dez fatos desta tabuada a crianca ja domina. */
-export function factsKnownFor(table: number, knownFacts: readonly string[]): number {
+/** Quantos dos dez fatos desta tabuada a crianca ja resolveu 3 vezes. */
+export function factsMasteredFor(table: number, factCounts: Record<string, number>): number {
   let total = 0;
   for (let fator = 1; fator <= 10; fator += 1) {
-    if (knownFacts.includes(factKey(table, fator))) total += 1;
+    if ((factCounts[factKey(table, fator)] ?? 0) >= BRIDGE_MASTERY) total += 1;
   }
   return total;
 }
 
-export function tablesAreMastered(ponte: Bridge, knownFacts: readonly string[]): boolean {
-  return requiredTables(ponte).every((table) => factsKnownFor(table, knownFacts) >= BRIDGE_MASTERY);
+export function tablesAreMastered(ponte: Bridge, factCounts: Record<string, number>): boolean {
+  return requiredTables(ponte).every((table) => factsMasteredFor(table, factCounts) === 10);
 }
 
 export type BridgeRejection = 'sem-tabuada' | 'sem-moedas' | 'sem-recursos';
@@ -152,9 +154,9 @@ export function checkBridge(
   ponte: Bridge,
   coins: number,
   inventory: Inventory,
-  knownFacts: readonly string[],
+  factCounts: Record<string, number>,
 ): BridgeCheck {
-  if (!tablesAreMastered(ponte, knownFacts)) return { ok: false, reason: 'sem-tabuada' };
+  if (!tablesAreMastered(ponte, factCounts)) return { ok: false, reason: 'sem-tabuada' };
   if (coins < ponte.coins) return { ok: false, reason: 'sem-moedas' };
   if (!canAfford(inventory, ponte.recipe)) return { ok: false, reason: 'sem-recursos' };
   return { ok: true };

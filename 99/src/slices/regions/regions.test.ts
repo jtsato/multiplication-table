@@ -17,15 +17,22 @@ import { vec3 } from '../../shared/vec';
 const distanciaXZ = (a: { x: number; z: number }, b: { x: number; z: number }) =>
   Math.hypot(a.x - b.x, a.z - b.z);
 
-describe('as seis regioes', () => {
-  it('sao seis, na ordem didatica', () => {
-    // 2 -> 5 e 10 -> 3 e 4 -> 6 -> 7 e 8 -> 9. A ordem numerica seria outra, e e
-    // de proposito que nao e ela: a tabuada do 10 vem cedo porque e facil e da
-    // confianca, nao tarde porque o numero e grande.
-    expect(REGION_ORDER).toEqual(['praia', 'porto', 'bosque', 'cachoeira', 'pomar', 'pico']);
-    expect(REGIONS).toHaveLength(6);
+describe('as nove ilhas', () => {
+  it('sao nove, uma por tabuada, na ordem didatica', () => {
+    expect(REGION_ORDER).toEqual([
+      'praia',
+      'porto',
+      'bosque',
+      'cachoeira',
+      'pomar',
+      'pico',
+      'vale',
+      'montanha',
+      'observatorio',
+    ]);
+    expect(REGIONS).toHaveLength(9);
     expect(REGIONS.map((r) => r.id)).toEqual(REGION_ORDER);
-    expect(REGIONS.map((r) => r.tables)).toEqual([[2], [5, 10], [3, 4], [6], [7, 8], [9]]);
+    expect(REGIONS.map((r) => r.tables)).toEqual([[2], [3], [4], [5], [6], [7], [8], [9], [10]]);
   });
 
   it('cobre as tabuadas de 2 a 10, sem buraco e sem repetir', () => {

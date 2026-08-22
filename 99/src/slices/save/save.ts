@@ -15,6 +15,7 @@ export function snapshot(): GameSave {
     version: SAVE_VERSION,
     coins: state.coins,
     knownFacts: state.knownFacts,
+    factCounts: state.factCounts,
     inventory: state.inventory,
     owned: state.owned,
     hints: state.hints,
@@ -29,7 +30,6 @@ export function snapshot(): GameSave {
     clockSeconds: dayNightClock.seconds,
     volume: state.volume,
     cameraSensitivity: state.cameraSensitivity,
-    instantBuild: state.instantBuild,
   };
 }
 
@@ -48,6 +48,7 @@ export function applySave(save: GameSave): void {
   useGameStore.setState({
     coins: save.coins,
     knownFacts: save.knownFacts,
+    factCounts: save.factCounts,
     inventory: save.inventory,
     owned: save.owned,
     hints: save.hints,
@@ -66,10 +67,9 @@ export function applySave(save: GameSave): void {
   // Restaura as construções e ajusta o contador de ids para não duplicar.
   useGameStore.getState().loadStructures(save.structures);
 
-  // Volume, sensibilidade e construção instantânea voltam com o save;
-  // loadSettings também aplica o volume no AudioContext (que ainda pode estar
-  // fechado — o valor fica salvo).
-  useGameStore.getState().loadSettings(save.volume, save.cameraSensitivity, save.instantBuild);
+  // Volume e sensibilidade voltam com o save; loadSettings também aplica o
+  // volume no AudioContext (que ainda pode estar fechado — o valor fica salvo).
+  useGameStore.getState().loadSettings(save.volume, save.cameraSensitivity);
 }
 
 /** Carrega o save, se houver. Devolve `false` quando comeca do zero. */

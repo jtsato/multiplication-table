@@ -80,7 +80,6 @@ export const ptBR: LocaleDefinition = {
     settingsVolume: 'Volume',
     settingsSensitivity: 'Sensibilidade da câmera',
     settingsLanguage: 'Idioma',
-    settingsInstantBuild: 'Construção instantânea (sem conta)',
     settingsFullscreen: 'Entrar em tela cheia',
     settingsExitFullscreen: 'Sair da tela cheia',
 
@@ -178,6 +177,9 @@ export const ptBR: LocaleDefinition = {
     cachoeira: 'Cachoeira',
     pomar: 'Pomar',
     pico: 'Pico',
+    vale: 'Vale',
+    montanha: 'Montanha',
+    observatorio: 'Observatório',
   },
 
   animals: {

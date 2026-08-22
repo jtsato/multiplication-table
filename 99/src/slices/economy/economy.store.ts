@@ -23,6 +23,11 @@ export interface EconomySlice {
    * (Fase 3) e do portao das regioes (Fase 4).
    */
   knownFacts: string[];
+  /**
+   * Quantas vezes cada fato já foi resolvido. O portão das pontes exige 3
+   * repetições por fato (30 cálculos por ilha), não só conhecer uma vez.
+   */
+  factCounts: Record<string, number>;
   /** Contadores do dia, consumidos pelo resumo do amanhecer. */
   correctToday: number;
   coinsToday: number;
@@ -75,6 +80,7 @@ export const createEconomySlice: StateCreator<GameState, [], [], EconomySlice> =
   coins: 0,
   streak: 0,
   knownFacts: [],
+  factCounts: {},
   owned: [],
   hints: 0,
   seeds: 0,
@@ -95,6 +101,7 @@ export const createEconomySlice: StateCreator<GameState, [], [], EconomySlice> =
         coins: state.coins + coins,
         streak,
         knownFacts: factIsNew ? [...state.knownFacts, key] : state.knownFacts,
+        factCounts: { ...state.factCounts, [key]: (state.factCounts[key] ?? 0) + 1 },
         correctToday: state.correctToday + 1,
         coinsToday: state.coinsToday + coins,
         newFactsToday: factIsNew ? [...state.newFactsToday, key] : state.newFactsToday,
@@ -164,6 +171,7 @@ export const createEconomySlice: StateCreator<GameState, [], [], EconomySlice> =
       coins: 0,
       streak: 0,
       knownFacts: [],
+      factCounts: {},
       owned: [],
       hints: 0,
       seeds: 0,

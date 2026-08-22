@@ -1,5 +1,4 @@
 import { useGameStore } from './store';
-import { LanguagePicker } from './LanguagePicker';
 import { Suspense, lazy, useEffect } from 'react';
 import { Hud } from './Hud';
 import { TouchControls } from './TouchControls';
@@ -125,7 +124,6 @@ export function App() {
       <SettingsToggle />
       <SettingsPanel />
       <Minimapa />
-      <LanguagePicker />
       <Suspense fallback={null}>
         <ChallengePanel />
         <ShopPanel />
