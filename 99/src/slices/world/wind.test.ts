@@ -4,7 +4,7 @@ import { createWindTufts, tuftPose, WIND } from './wind.logic';
 
 describe('createWindTufts', () => {
   it('gera seis tufos por região, determinísticos', () => {
-    expect(createWindTufts(42)).toHaveLength(6 * WIND.tuftsPerRegion);
+    expect(createWindTufts(42)).toHaveLength(9 * WIND.tuftsPerRegion);
     expect(createWindTufts(42)).toEqual(createWindTufts(42));
   });
 });

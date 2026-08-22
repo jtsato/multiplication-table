@@ -14,8 +14,8 @@ describe('createAmbient', () => {
     const borboletas = criaturas.filter((c) => c.kind === 'borboleta');
     const passaros = criaturas.filter((c) => c.kind === 'passaro');
 
-    expect(borboletas.length).toBe(6 * AMBIENT.butterfliesPerRegion);
-    expect(passaros.length).toBe(6 * AMBIENT.birdsPerRegion);
+    expect(borboletas.length).toBe(9 * AMBIENT.butterfliesPerRegion);
+    expect(passaros.length).toBe(9 * AMBIENT.birdsPerRegion);
     expect(criaturas.length).toBe(borboletas.length + passaros.length);
   });
 

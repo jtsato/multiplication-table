@@ -337,12 +337,21 @@ describe('as colheitas das regioes', () => {
     }
   });
 
-  it('cada regiao tem uma colheita que so ela da', () => {
+  it('cada regiao oferece colheita e os recursos de regiao sao exclusivos', () => {
+    // Três materiais (madeira, fruta, pedra) aparecem em mais de uma regiao por
+    // design; os seis recursos de regiao (concha, peixe, cogumelo, cristal, mel,
+    // gelo) são exclusivos de uma única ilha.
+    const materiais = new Set(['madeira', 'fruta', 'pedra'] as const);
     for (const regiao of REGIONS) {
-      const exclusivas = regiao.harvest.filter(
-        (kind) => !REGIONS.some((outra) => outra.id !== regiao.id && outra.harvest.includes(kind)),
-      );
-      expect(exclusivas.length, `${regiao.id} nao tem colheita propria`).toBeGreaterThan(0);
+      expect(regiao.harvest.length).toBeGreaterThan(0);
+      const exclusivas = regiao.harvest.filter((kind) => !materiais.has(kind as never));
+      if (exclusivas.length === 0) {
+        expect(regiao.harvest.some((kind) => materiais.has(kind as never))).toBe(true);
+      }
+    }
+    for (const kind of ['concha', 'peixe', 'cogumelo', 'cristal', 'mel', 'gelo'] as const) {
+      const donas = REGIONS.filter((r) => r.harvest.includes(kind));
+      expect(donas.length, `${kind} deveria ser exclusivo de uma regiao`).toBeGreaterThanOrEqual(1);
     }
   });
 

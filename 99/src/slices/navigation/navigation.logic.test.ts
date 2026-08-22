@@ -9,9 +9,9 @@ describe('navigation.logic', () => {
     expect(ponto.y).toBeCloseTo(100);
   });
 
-  it('coloca as seis regiões dentro do painel', () => {
+  it('coloca as 9 regiões dentro do painel', () => {
     const regioes = minimapRegions(200);
-    expect(regioes).toHaveLength(6);
+    expect(regioes).toHaveLength(9);
     for (const regiao of regioes) {
       expect(regiao.x).toBeGreaterThanOrEqual(0);
       expect(regiao.x).toBeLessThanOrEqual(200);
