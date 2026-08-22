@@ -1,9 +1,37 @@
 /// <reference types="vitest/config" />
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import { VitePWA } from 'vite-plugin-pwa';
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react(),
+    VitePWA({
+      registerType: 'autoUpdate',
+      includeAssets: ['icon.svg', 'maskable-icon.svg'],
+      manifest: {
+        name: 'Numi 99 — A ilha da tabuada',
+        short_name: 'Numi 99',
+        description: 'Jogo 3D cozy de tabuada',
+        theme_color: '#16202e',
+        background_color: '#16202e',
+        display: 'standalone',
+        start_url: './',
+        scope: './',
+        icons: [
+          { src: 'icon.svg', sizes: 'any', type: 'image/svg+xml', purpose: 'any' },
+          { src: 'maskable-icon.svg', sizes: 'any', type: 'image/svg+xml', purpose: 'maskable' },
+        ],
+      },
+      workbox: {
+        globPatterns: ['**/*.{js,css,html,svg,ico,png,woff2}'],
+        navigateFallback: 'index.html',
+        // O WASM do Rapier embutido passa de 2 MiB; sem subir o limite ele não
+        // entraria no precache e o jogo não abriria offline.
+        maximumFileSizeToCacheInBytes: 3 * 1024 * 1024,
+      },
+    }),
+  ],
   // Necessario para o deploy em subcaminho do GitHub Pages (site/99).
   base: './',
   // three costuma aparecer duas vezes quando ha dependencias que importam

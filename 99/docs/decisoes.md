@@ -1249,3 +1249,40 @@ CI, cada um com um worker (a limitação de WebGL continua respeitada).
 | `npm run typecheck` | limpo |
 | `npm run test` | 696 testes, 60 arquivos, verde |
 | `npm run build` | ok |
+
+---
+
+## Fase 10 — Prontidão para produção
+
+### 10A — PWA/offline
+
+`vite-plugin-pwa` gera service worker, `manifest.webmanifest` e `registerSW.js`.
+O build passou a precachear **13 entradas (3.4 MB)**, incluindo o chunk do Rapier
+— para isso o limite do Workbox subiu de 2 MiB para 3 MiB, com comentário
+explicando o porquê. Ícones SVG (normal + maskable) foram criados em `public/`
+sem asset externo.
+
+### 10B — Lazy-load do Rapier
+
+O Rapier já era carregado por importação tardia do `GameCanvas` e separado em
+chunk próprio pelo `manualChunks`. Na Fase 10 isso foi **reforçado**: o chunk de
+2.2 MB agora também entra no precache do service worker, então a segunda visita
+(ou modo offline) não rebaixa o WASM. Não foi adicionado um lazy aninhado dentro
+do Canvas porque isso faria a tela de carregamento sumir antes da física ficar
+pronta, deixando um céu vazio durante o download — pior para a criança.
+
+### 10C — Auditoria de acessibilidade
+
+`@axe-core/playwright` entrou no E2E: o teste `prontidao.spec.ts` roda WCAG 2 A/AA
++ best practices na tela inicial e **falha em qualquer violação crítica**. O
+teste de PWA verifica `link[rel="manifest"]` e `navigator.serviceWorker.ready`.
+
+### Portões
+
+| Portão | Resultado |
+| --- | --- |
+| `npm run lint` | limpo |
+| `npm run typecheck` | limpo |
+| `npm run test` | 696 testes, 60 arquivos, verde |
+| `npm run build` | ok |
+| `npm run e2e` | 39 testes, verde |
