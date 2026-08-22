@@ -603,9 +603,11 @@ test.describe('partida no computador', () => {
           fruta: 20,
           pedra: 40,
         },
-        knownFacts: Array.from(
-          { length: 10 },
-          (_, i) => `${Math.min(2, i + 1)}x${Math.max(2, i + 1)}`,
+        factCounts: Object.fromEntries(
+          Array.from({ length: 10 }, (_, i) => [
+            `${Math.min(2, i + 1)}x${Math.max(2, i + 1)}`,
+            3,
+          ]),
         ),
       });
     });

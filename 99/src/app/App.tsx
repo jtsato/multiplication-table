@@ -9,6 +9,7 @@ import { DailyBanner } from '../slices/daily';
 import { SettingsPanel, SettingsToggle } from '../slices/settings';
 import { Minimapa } from '../slices/navigation';
 import { FpsMeter } from './FpsMeter';
+import { LanguagePicker } from './LanguagePicker';
 import './accessibility.css';
 import './loading.css';
 
@@ -120,6 +121,7 @@ export function App() {
         <GameCanvas isTouch={isTouch} />
       </Suspense>
       <Hud isTouch={isTouch} />
+      <LanguagePicker />
       <DailyBanner />
       <SettingsToggle />
       <SettingsPanel />

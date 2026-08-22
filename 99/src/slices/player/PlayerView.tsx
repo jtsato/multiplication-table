@@ -261,7 +261,8 @@ export function PlayerView() {
   useEffect(() => {
     if (typeof window === 'undefined' || !window.__tabuada) return;
     window.__tabuada.teleportar = (x, z) => {
-      bodyRef.current?.setTranslation({ x, y: 1.2, z }, true);
+      const groundY = regionAt({ x, y: 0, z })?.groundY ?? 0;
+      bodyRef.current?.setTranslation({ x, y: groundY + 1.2, z }, true);
       bodyRef.current?.setLinvel({ x: 0, y: 0, z: 0 }, true);
     };
   }, []);
