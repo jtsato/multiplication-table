@@ -14,6 +14,7 @@ import { playerTransform } from '../slices/player/playerTransform';
 import { petTransform } from '../slices/companion/petTransform';
 import { createMathSlice, type MathSlice } from '../slices/math/math.store';
 import { createNpcSlice, type NpcSlice } from '../slices/npc/npc.store';
+import { createPedagogySlice, type PedagogySlice } from '../slices/pedagogy/pedagogy.store';
 import { createRegionsSlice, type RegionsSlice } from '../slices/regions/regions.store';
 import { createResourcesSlice, type ResourcesSlice } from '../slices/resources/resources.store';
 import { createWildlifeSlice, type WildlifeSlice } from '../slices/wildlife/wildlife.store';
@@ -40,6 +41,7 @@ export type GameState = WorldSlice &
   WildlifeSlice &
   CompanionSlice &
   NpcSlice &
+  PedagogySlice &
   GardenSlice &
   I18nSlice &
   SettingsSlice;
@@ -58,6 +60,7 @@ export const useGameStore = create<GameState>()((...args) => ({
   ...createWildlifeSlice(...args),
   ...createCompanionSlice(...args),
   ...createNpcSlice(...args),
+  ...createPedagogySlice(...args),
   ...createGardenSlice(...args),
   ...createI18nSlice(...args),
   ...createSettingsSlice(...args),
@@ -123,4 +126,5 @@ export function restartGame(): void {
   state.resetCompanion();
   state.resetNpc();
   state.resetGarden();
+  state.resetPedagogy();
 }

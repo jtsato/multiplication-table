@@ -16,6 +16,7 @@
     "src/slices/lantern/lantern.logic.ts",
     "src/slices/math/challengeText.ts",
     "src/slices/math/math.logic.ts",
+    "src/slices/pedagogy/pedagogy.logic.ts",
     "src/slices/regions/bridges.logic.ts",
     "src/slices/regions/regions.logic.ts",
     "src/slices/regions/waterfalls.logic.ts",
@@ -24,6 +25,7 @@
     "src/slices/save/save.repository.ts",
     "src/slices/world/world.logic.ts"
   ],
+
   "thresholds": {
     "high": 80,
     "low": 60,

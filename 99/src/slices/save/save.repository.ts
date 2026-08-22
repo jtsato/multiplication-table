@@ -14,6 +14,14 @@ import {
   type AnimalBookEntry,
   type AnimalKind,
 } from '../wildlife/wildlife.logic';
+import {
+  factProgressToCounts,
+  factProgressToKnownFacts,
+  isValidFactKey,
+  migrateToProgress,
+  type FactProgress,
+  type FactProgressMap,
+} from '../pedagogy/pedagogy.logic';
 
 /**
  * Persistencia.
@@ -25,7 +33,7 @@ import {
  * `localStorage` indisponivel (aba privada, cota cheia) e um fato da vida, e nao
  * pode impedir a crianca de jogar.
  */
-export const SAVE_VERSION = 5;
+export const SAVE_VERSION = 6;
 
 export const SAVE_STORAGE_KEY = 'numi-99.save';
 
@@ -36,6 +44,9 @@ export interface GameSave {
   knownFacts: string[];
   /** Quantas vezes cada fato foi resolvido (3 repeteções por fato por ilha). */
   factCounts: Record<string, number>;
+  factProgress: FactProgressMap;
+  learningStep: number;
+  lastFactKey: string | null;
   inventory: Inventory;
   owned: ShopItemKind[];
   hints: number;
@@ -224,6 +235,57 @@ export function migrateOwned(raw: unknown): ShopItemKind[] {
   return raw.filter((item): item is ShopItemKind => typeof item === 'string' && item in SHOP_ITEMS);
 }
 
+export function migrateFactProgress(
+  raw: unknown,
+  knownFacts: unknown,
+  factCounts: unknown,
+): FactProgressMap {
+  const herdado = migrateToProgress(migrateFacts(knownFacts), migrateFactCounts(factCounts));
+
+  if (raw === undefined) return herdado;
+  if (typeof raw !== 'object' || raw === null || Array.isArray(raw)) {
+    throw new Error('progresso pedagógico inválido');
+  }
+
+  const candidato = raw as Record<string, unknown>;
+  const resultado: FactProgressMap = { ...herdado };
+
+  for (const [chave, valor] of Object.entries(candidato)) {
+    if (!isValidFactKey(chave)) throw new Error(`fato inválido: ${chave}`);
+    resultado[chave] = validateFactProgress(chave, valor);
+  }
+
+  return resultado;
+}
+
+function validateFactProgress(key: string, raw: unknown): FactProgress {
+  if (typeof raw !== 'object' || raw === null || Array.isArray(raw)) {
+    throw new Error(`progresso do fato inválido: ${key}`);
+  }
+  const candidato = raw as Record<string, unknown>;
+
+  const numero = (campo: string, valor: unknown): number => {
+    if (typeof valor !== 'number' || !Number.isFinite(valor) || valor < 0) {
+      throw new Error(`progresso do fato inválido: ${key}.${campo}`);
+    }
+    return Math.floor(valor);
+  };
+
+  const lastSeen = candidato.lastSeen;
+  if (lastSeen !== null && (typeof lastSeen !== 'number' || !Number.isFinite(lastSeen))) {
+    throw new Error(`progresso do fato inválido: ${key}.lastSeen`);
+  }
+
+  return {
+    key,
+    correct: numero('correct', candidato.correct),
+    wrong: numero('wrong', candidato.wrong),
+    streak: numero('streak', candidato.streak),
+    lastSeen: (lastSeen as number | null) ?? null,
+    dueAt: numero('dueAt', candidato.dueAt),
+  };
+}
+
 /**
  * Valida e migra um save bruto para o schema atual.
  *
@@ -237,15 +299,31 @@ export function migrateSave(raw: unknown): GameSave {
   const candidate = raw as Record<string, unknown>;
 
   const rawVersion = candidate.version;
-  if (rawVersion !== 1 && rawVersion !== 2 && rawVersion !== 3 && rawVersion !== 4 && rawVersion !== SAVE_VERSION) {
+  if (
+    rawVersion !== 1 &&
+    rawVersion !== 2 &&
+    rawVersion !== 3 &&
+    rawVersion !== 4 &&
+    rawVersion !== 5 &&
+    rawVersion !== SAVE_VERSION
+  ) {
     throw new Error(`versao de save nao suportada: ${String(rawVersion)}`);
   }
+
+  const factProgress = migrateFactProgress(
+    candidate.factProgress,
+    candidate.knownFacts,
+    candidate.factCounts,
+  );
 
   return {
     version: SAVE_VERSION,
     coins: migrateCount(candidate.coins, 'moedas'),
-    knownFacts: migrateFacts(candidate.knownFacts),
-    factCounts: migrateFactCounts(candidate.factCounts),
+    knownFacts: factProgressToKnownFacts(factProgress),
+    factCounts: factProgressToCounts(factProgress),
+    factProgress,
+    learningStep: migrateCount(candidate.learningStep, 'aprendizado'),
+    lastFactKey: typeof candidate.lastFactKey === 'string' ? candidate.lastFactKey : null,
     inventory: migrateInventory(candidate.inventory),
     owned: migrateOwned(candidate.owned),
     hints: migrateCount(candidate.hints, 'dicas'),

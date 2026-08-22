@@ -4,6 +4,7 @@ import { createRng, randomInt } from '../../shared/rng';
 import { DEFAULT_WORLD_SEED } from '../world/world.store';
 import { WRONG_ANSWER_RATIO, generateChallenge, resolveAnswer } from './math.logic';
 import { eventForDay, harvestMultiplier } from '../daily/daily.logic';
+import { factKey } from '../economy/economy.logic';
 import type { Challenge, ChallengePurpose, ChallengeTarget } from './math.logic';
 
 /** Resultado da ultima resposta, exibido como feedback antes do painel fechar. */
@@ -130,7 +131,7 @@ export const createMathSlice: StateCreator<GameState, [], [], MathSlice> = (set,
       if (outcome.correct) {
         get().rewardCorrect(challenge.perGroup, challenge.groups);
       } else {
-        get().breakStreak();
+        get().breakStreak(factKey(challenge.perGroup, challenge.groups));
       }
 
       set({

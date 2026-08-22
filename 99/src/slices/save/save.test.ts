@@ -44,6 +44,12 @@ const saveValido = (): GameSave => ({
   coins: 42,
   knownFacts: ['2x4', '3x7'],
   factCounts: { '2x4': 3, '3x7': 1 },
+  factProgress: {
+    '2x4': { key: '2x4', correct: 3, wrong: 0, streak: 2, lastSeen: 12, dueAt: 16 },
+    '3x7': { key: '3x7', correct: 1, wrong: 0, streak: 1, lastSeen: 11, dueAt: 13 },
+  },
+  learningStep: 12,
+  lastFactKey: '3x7',
   inventory: { ...emptyInventory(), madeira: 5, fruta: 2, pedra: 9 },
   owned: ['botas'],
   hints: 3,
@@ -88,6 +94,9 @@ describe('migrateSave', () => {
     expect(resultado.coins).toBe(0);
     expect(resultado.knownFacts).toEqual([]);
     expect(resultado.factCounts).toEqual({});
+    expect(resultado.factProgress).toEqual({});
+    expect(resultado.learningStep).toBe(0);
+    expect(resultado.lastFactKey).toBeNull();
     expect(resultado.inventory).toEqual(emptyInventory());
     expect(resultado.avatar).toEqual(DEFAULT_AVATAR);
     expect(resultado.animalBook).toEqual([]);
@@ -236,6 +245,38 @@ describe('migrateSave', () => {
     expect(resultado.avatar.silhouette).toBe(DEFAULT_AVATAR.silhouette);
     expect(resultado.avatar.skin).toBe(DEFAULT_AVATAR.skin);
   });
+
+  it('reconstrói factProgress a partir de um save sem os campos novos', () => {
+    const antigo = {
+      version: 5,
+      coins: 42,
+      knownFacts: ['2x4', '3x7'],
+      factCounts: { '2x4': 3, '3x7': 1 },
+      inventory: { ...emptyInventory(), madeira: 5, fruta: 2, pedra: 9 },
+      owned: ['botas'] as const,
+      hints: 3,
+      seeds: 2,
+      garden: { planted: true, plantedDay: 1 },
+      avatar: { silhouette: 'menina', skin: 4, clothes: 6, head: 'bone', face: 'nenhum' },
+      openBridges: ['praia-porto'] as const,
+      animalBook: [],
+      pet: null,
+      locale: 'en-US',
+      structures: [],
+      clockSeconds: 12345,
+      volume: 0.7,
+      cameraSensitivity: 1.5,
+    };
+
+    const resultado = migrateSave(antigo);
+
+    expect(resultado.version).toBe(SAVE_VERSION);
+    expect(resultado.factProgress['2x4'].correct).toBe(3);
+    expect(resultado.factProgress['3x7'].correct).toBe(1);
+    expect(resultado.knownFacts).toEqual(['2x4', '3x7']);
+    expect(resultado.learningStep).toBe(0);
+    expect(resultado.lastFactKey).toBeNull();
+  });
 });
 
 describe('LocalStorageRepository', () => {
@@ -307,7 +348,10 @@ describe('snapshot e applySave', () => {
         'clockSeconds',
         'coins',
         'factCounts',
+        'factProgress',
         'garden',
+        'lastFactKey',
+        'learningStep',
         'hints',
         'inventory',
         'knownFacts',
