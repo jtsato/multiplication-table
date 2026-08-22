@@ -1,0 +1,40 @@
+name: E2E - 99
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: e2e-99
+  cancel-in-progress: false
+
+jobs:
+  e2e:
+    name: E2E (99)
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+
+      - name: Setup Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: 99/package-lock.json
+
+      - name: Install dependencies
+        working-directory: 99
+        run: npm ci --prefer-offline --no-audit --fund=false
+
+      - name: Install Playwright browser
+        working-directory: 99
+        run: npx playwright install chromium
+
+      - name: Run E2E tests
+        working-directory: 99
+        run: npm run test:e2e

@@ -21,22 +21,13 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    # Teto de tempo, medido pelos runs que deram certo: o `99` e o mais lento e
-    # leva 15 min com o E2E; os outros tres ficam entre 1 e 7. Vinte e cinco da
-    # folga de sobra para o pior caso legitimo.
-    #
-    # Sem isto o job herda o padrao de SEIS HORAS. Em 18/08/2026 o espelho apt da
-    # Azure ficou inacessivel nos runners, o `playwright install --with-deps`
-    # pendurou, e dois jobs consumiram 73 e 154 minutos de runner sem entregar
-    # nada — alem de travar a fila do Pages a tarde inteira, porque a
-    # concorrencia nao cancela o que esta em voo.
     timeout-minutes: 25
 
     strategy:
       # Sem fail-fast para que um app quebrado nao esconda os outros tres.
       fail-fast: false
       matrix:
-        app: [cc, '99', st, ds]
+        app: [cc, "99", st, ds]
 
     steps:
       - name: Checkout
@@ -58,33 +49,6 @@ jobs:
       - name: Lint, typecheck, test and build (${{ matrix.app }})
         working-directory: ${{ matrix.app }}
         run: npm run ci
-
-      # E2E roda no push, para os quatro apps.
-      #
-      # Sem `--with-deps` de proposito. A imagem do ubuntu-latest ja traz todas as
-      # bibliotecas que o Chromium precisa: no run 32209170685 o apt respondeu
-      # `already the newest version` para as vinte e tantas libs da lista, uma por
-      # uma. O que sobrou para o `--with-deps` baixar foram 21 MB de FONTES
-      # (CJK, emoji, unifont) — e foi ai que o passo morreu, com o espelho apt da
-      # Azure entregando a ~50 kB/s: sete minutos para seis pacotes de fonte,
-      # estouro do teto, e a fila do Pages parada de novo.
-      #
-      # Nenhum teste depende dessas fontes. As capturas em `e2e/telas/` sao
-      # salvas, nunca comparadas — nao ha `toHaveScreenshot` na suite —, entao a
-      # fonte de fallback do runner serve. Trocamos um risco real de travar por
-      # um glifo diferente em PNG que ninguem confere byte a byte.
-      #
-      # O teto continua curto de proposito: o download do Chromium vem do CDN da
-      # Playwright e leva menos de um minuto. Falhar em dez aponta o culpado de
-      # imediato, em vez de gastar o teto inteiro do job.
-      - name: Install Playwright browser (${{ matrix.app }})
-        timeout-minutes: 10
-        working-directory: ${{ matrix.app }}
-        run: npx playwright install chromium
-
-      - name: Run E2E tests (${{ matrix.app }})
-        working-directory: ${{ matrix.app }}
-        run: npm run test:e2e
 
       - name: Upload build output (${{ matrix.app }})
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1

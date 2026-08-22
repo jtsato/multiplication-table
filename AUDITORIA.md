@@ -5,6 +5,7 @@
 **Escopo:** diretórios `99`, `cc`, `ds`, `st` no working tree atual (a auditoria reflete o estado atual do disco; o `HEAD` já contém os ajustes anteriores).
 
 > Ajustes aplicados nesta rodada:
+>
 > - **CI do `99` voltou a ficar verde** (teste do `PlayerView` corrigido com espera pelo corpo da física).
 > - **Stryker do `st` elevado para `break: 60`** (mutation score **63.5%**).
 > - **Stryker do `cc` elevado para `break: 65`** (mutation score **65.3%**; meta de 70 ainda não atingida).
@@ -14,12 +15,12 @@
 
 ## Resumo executivo
 
-| Projeto | CI (`lint+typecheck+test+build`) | Testes unitários | Testes E2E | Stryker (semanal) | Estado geral |
-| --- | --- | --- | --- | --- | --- |
-| **99** (Numi 99) | ✅ **verde** | 408 | 25 | fora da pipeline | CI restaurado; fora das pipelines por decisão |
-| **cc** (Ilhas da Tabuada) | ✅ verde | 295 | 24 | ✅ 65.3% (break 65) | Muito maduro; caminho para 70% em andamento |
-| **ds** (Batalha da Tabuada) | ✅ verde | 201 | 13 | ✅ (≥80%) | Bom; cobertura E2E ainda menor |
-| **st** (Lojinha Maluca) | ✅ verde | 99 | 16 | ✅ 63.5% (break 60) | Mutation testing em trajetória de melhora |
+| Projeto                     | CI (`lint+typecheck+test+build`) | Testes unitários | Testes E2E | Stryker (semanal)   | Estado geral                                  |
+| --------------------------- | -------------------------------- | ---------------- | ---------- | ------------------- | --------------------------------------------- |
+| **99** (Numi 99)            | ✅ **verde**                     | 408              | 25         | fora da pipeline    | E2E manual por produto; CI restaurado         |
+| **cc** (Ilhas da Tabuada)   | ✅ verde                         | 295              | 24         | ✅ 65.3% (break 65) | E2E manual por produto; muito maduro          |
+| **ds** (Batalha da Tabuada) | ✅ verde                         | 201              | 13         | ✅ (≥80%)           | E2E manual por produto; cobertura ainda menor |
+| **st** (Lojinha Maluca)     | ✅ verde                         | 99               | 16         | ✅ 63.5% (break 60) | E2E manual por produto; mutation em melhora   |
 
 ---
 
@@ -39,7 +40,7 @@
 
 - ❌ **Sem i18n**, **sem áudio**, **sem axe-core**.
 - ⚠️ README diz **392 testes**; a execução atual encontrou **408**.
-- ⚠️ Fora da pipeline de E2E e Stryker por decisão (trabalho em andamento).
+- ⚠️ E2E e Stryker rodam em workflows separados; o E2E é disparado manualmente por produto.
 
 ### Ações recomendadas
 
@@ -63,7 +64,7 @@
 - **Áudio sintetizado** com Web Audio API.
 - ✅ **ESLint sem warnings**.
 - ✅ **README atualizado** (295 testes, 8 locales, comandos de e2e/mutation).
-- ✅ **E2E no GitHub Actions**.
+- ✅ **E2E no GitHub Actions**, em workflow manual separado por produto.
 - ✅ **Stryker na pipeline semanal** — mutation score **65.3%**, `break: 65`.
 - ✅ **+21 testes** adicionados (questions, persistence/schema, levelSession).
 
@@ -89,7 +90,7 @@
 - **Vertical slices** completas com domínio puro (`slices/*/*.ts`), UI colocalizada e RNG injetado.
 - **Quality gates avançados**: lint, typecheck, test, build, e2e **e mutation testing (Stryker ≥80%)** na lógica crítica.
 - ✅ **Mutation testing em pipeline semanal** (`.github/workflows/mutation.yml`).
-- ✅ **E2E no GitHub Actions**.
+- ✅ **E2E no GitHub Actions**, em workflow manual separado por produto.
 - **Acessibilidade forte**: `@axe-core/playwright` falha em violações serious/critical.
 - **i18n tipado**: 8 locales com `satisfies` + teste de paridade bidirecional.
 - **Persistência com versão**: `SaveRepository` + `local-storage.repository` + auto-resume.
@@ -120,7 +121,7 @@
 - **i18n tipado**: 8 locales com teste de paridade e gramática.
 - ✅ **Prettier adicionado** e código formatado.
 - ✅ **Documentação atualizada** (99 testes, 16 E2E, axe nas telas principais).
-- ✅ **E2E no GitHub Actions**.
+- ✅ **E2E no GitHub Actions**, em workflow manual separado por produto.
 - ✅ **Stryker na pipeline semanal** — mutation score **63.5%**, `break: 60`.
 - ✅ **+21 testes** adicionados (objetivos, progressão, conquistas, economia, fatos, dicas) — vários arquivos chegaram a **100%**.
 
@@ -138,26 +139,26 @@
 
 ## Comparativo consolidado
 
-| Prática | 99 | cc | ds | st |
-| --- | --- | --- | --- | --- |
-| TypeScript strict | ✅ | ✅ | ✅ | ✅ |
-| ESLint flat config | ✅ | ✅ (0 warnings) | ✅ | ✅ |
-| Prettier + format scripts | ✅ | ✅ | ✅ | ✅ |
-| Domínio puro sem React/DOM/storage | ✅ | ✅ | ✅ | ✅ |
-| Vertical slices | ✅ | ➖ camadas claras | ✅ | ➖ camadas claras |
-| Estado mínimo (sem lib desnecessária) | ✅ Zustand | ✅ Context | ✅ useReducer/useState | ✅ useState |
-| i18n com chaves tipadas + paridade | ❌ | ✅ | ✅ | ✅ |
-| Persistência versionada + migração | ✅ | ✅ | ✅ | ✅ |
-| Offline/PWA | ❌ | ❌ | ❌ | ✅ |
-| Áudio opcional/configurável | ❌ | ✅ | ❌ | ✅ |
-| Acessibilidade automatizada (axe) | ❌ | ➖ contraste computado | ✅ | ✅ |
-| Testes unitários | 408 ✅ | 295 ✅ | 201 ✅ | 99 ✅ |
-| Testes E2E Playwright | 25 | 24 | 13 | 16 |
-| Mutation testing (Stryker semanal) | ❌ | ✅ 65.3% (break 65) | ✅ ≥80% | ✅ 63.5% (break 60) |
-| E2E no GitHub Actions | ❌ | ✅ | ✅ | ✅ |
-| CI verde hoje | ✅ | ✅ | ✅ | ✅ |
-| Docs de arquitetura/decisões | ✅ | ✅ | ✅ | ✅ |
-| Docs atualizadas com números atuais | ⚠️ | ✅ | ✅ | ✅ |
+| Prática                               | 99         | cc                     | ds                     | st                  |
+| ------------------------------------- | ---------- | ---------------------- | ---------------------- | ------------------- |
+| TypeScript strict                     | ✅         | ✅                     | ✅                     | ✅                  |
+| ESLint flat config                    | ✅         | ✅ (0 warnings)        | ✅                     | ✅                  |
+| Prettier + format scripts             | ✅         | ✅                     | ✅                     | ✅                  |
+| Domínio puro sem React/DOM/storage    | ✅         | ✅                     | ✅                     | ✅                  |
+| Vertical slices                       | ✅         | ➖ camadas claras      | ✅                     | ➖ camadas claras   |
+| Estado mínimo (sem lib desnecessária) | ✅ Zustand | ✅ Context             | ✅ useReducer/useState | ✅ useState         |
+| i18n com chaves tipadas + paridade    | ❌         | ✅                     | ✅                     | ✅                  |
+| Persistência versionada + migração    | ✅         | ✅                     | ✅                     | ✅                  |
+| Offline/PWA                           | ❌         | ❌                     | ❌                     | ✅                  |
+| Áudio opcional/configurável           | ❌         | ✅                     | ❌                     | ✅                  |
+| Acessibilidade automatizada (axe)     | ❌         | ➖ contraste computado | ✅                     | ✅                  |
+| Testes unitários                      | 408 ✅     | 295 ✅                 | 201 ✅                 | 99 ✅               |
+| Testes E2E Playwright                 | 25         | 24                     | 13                     | 16                  |
+| Mutation testing (Stryker semanal)    | ❌         | ✅ 65.3% (break 65)    | ✅ ≥80%                | ✅ 63.5% (break 60) |
+| E2E no GitHub Actions                 | ❌         | ✅                     | ✅                     | ✅                  |
+| CI verde hoje                         | ✅         | ✅                     | ✅                     | ✅                  |
+| Docs de arquitetura/decisões          | ✅         | ✅                     | ✅                     | ✅                  |
+| Docs atualizadas com números atuais   | ⚠️         | ✅                     | ✅                     | ✅                  |
 
 Legenda: ✅ atende · ➖ atende de forma diferente · ⚠️ parcial/desatualizado · ❌ não atende.
 

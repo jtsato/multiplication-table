@@ -1,0 +1,56 @@
+#!/usr/bin/env sh
+set -eu
+
+root=$(git rev-parse --show-toplevel)
+cd "$root"
+
+zero=0000000000000000000000000000000000000000
+products=""
+all_products=0
+
+add_product() {
+  case " $products " in
+    *" $1 "*) ;;
+    *) products="$products $1" ;;
+  esac
+}
+
+while IFS=' ' read -r local_ref local_oid remote_ref remote_oid; do
+  [ -n "${local_oid:-}" ] || continue
+  [ "$local_oid" = "$zero" ] && continue
+
+  if [ "$remote_oid" = "$zero" ]; then
+    if base_ref=$(git symbolic-ref --quiet refs/remotes/origin/HEAD 2>/dev/null); then
+      base_oid=$(git rev-parse "$base_ref")
+    else
+      base_oid=$(git rev-list --max-parents=0 "$local_oid" | tail -n 1)
+    fi
+    range="$base_oid..$local_oid"
+  else
+    range="$remote_oid..$local_oid"
+  fi
+
+  for file in $(git diff --name-only "$range"); do
+    case "$file" in
+      99/*) add_product 99 ;;
+      cc/*) add_product cc ;;
+      ds/*) add_product ds ;;
+      st/*) add_product st ;;
+      *) all_products=1 ;;
+    esac
+  done
+done
+
+if [ "$all_products" -eq 1 ]; then
+  products="99 cc ds st"
+fi
+
+if [ -z "$products" ]; then
+  printf '%s\n' 'No product changes detected; skipping E2E.'
+  exit 0
+fi
+
+for product in $products; do
+  printf 'Running E2E for %s...\n' "$product"
+  npm --prefix "$root/$product" run test:e2e
+done

@@ -17,6 +17,7 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
+    "prepare": "git config core.hooksPath .githooks",
     "test:mutation": "stryker run",
     "ci": "npm run lint && npm run typecheck && npm run test && npm run build"
   },

@@ -6,7 +6,7 @@ name: Mutation Testing (weekly)
 on:
   schedule:
     # Domingo 06:00 UTC — dia/horário tradicionalmente de baixa carga no GitHub.
-    - cron: '0 6 * * 0'
+    - cron: "0 6 * * 0"
   workflow_dispatch:
 
 permissions:
