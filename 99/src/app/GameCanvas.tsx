@@ -1,30 +1,35 @@
 import { Canvas } from '@react-three/fiber';
 import { Physics } from '@react-three/rapier';
 import { palette } from '../shared/palette';
-import { BuildingView } from '../slices/building';
-import { CompanionView } from '../slices/companion';
+import { BuildingView } from '../slices/building/BuildingView';
+import { CompanionView } from '../slices/companion/CompanionView';
 import { DayNightView } from '../slices/daynight';
-import { HomeView } from '../slices/home';
-import { LanternView } from '../slices/lantern';
-import { NpcView } from '../slices/npc';
-import { GardenView } from '../slices/garden';
+import { HomeView } from '../slices/home/HomeView';
+import { LanternView } from '../slices/lantern/LanternView';
+import { NpcView } from '../slices/npc/NpcView';
+import { GardenView } from '../slices/garden/GardenView';
 import { PlayerView } from '../slices/player';
-import { FirefliesView } from '../slices/lantern';
-import { RegionsView, WaterfallView } from '../slices/regions';
-import { ResourcesView } from '../slices/resources';
-import { JuiceView } from '../slices/juice';
-import { WhaleView, WildlifeView } from '../slices/wildlife';
-import { WorldView } from '../slices/world';
-import { AmbientView } from '../slices/ambient';
-import { DailyEventView } from '../slices/daily';
+import { FirefliesView } from '../slices/lantern/FirefliesView';
+import { RegionsView } from '../slices/regions/RegionsView';
+import { WaterfallView } from '../slices/regions/WaterfallView';
+import { ResourcesView } from '../slices/resources/ResourcesView';
+import { JuiceView } from '../slices/juice/JuiceView';
+import { WhaleView } from '../slices/wildlife/WhaleView';
+import { WildlifeView } from '../slices/wildlife/WildlifeView';
+import { WorldView } from '../slices/world/WorldView';
+import { AmbientView } from '../slices/ambient/AmbientView';
+import { DailyEventView } from '../slices/daily/DailyEventView';
 import { useGameStore } from './store';
+import { FpsProbe } from './FpsProbe';
 
 export function GameCanvas({ isTouch = false }: { isTouch?: boolean }) {
   const worldSeed = useGameStore((state) => state.worldSeed);
 
   return (
     <Canvas
-      shadows
+      // No celular a sombra é a variante mais barata (hardware): mantém o clima
+      // low-poly sem o custo do filtro PCF. No desktop fica a suave.
+      shadows={isTouch ? 'basic' : 'soft'}
       /**
        * Campo de visao maior no celular.
        *
@@ -48,6 +53,9 @@ export function GameCanvas({ isTouch = false }: { isTouch?: boolean }) {
       <color attach="background" args={[palette.skyDay]} />
       {/* Neblina da cor do ceu: esconde a borda do mar e adianta o clima noturno. */}
       <fog attach="fog" args={[palette.skyDay, 45, 110]} />
+
+      {/* Conta os quadros para o medidor `?fps=1`. Custa uma soma por frame. */}
+      <FpsProbe />
 
       <Physics gravity={[0, -22, 0]}>
         {/*

@@ -231,7 +231,7 @@ assinantes 60 vezes por segundo.
 
 ## Testes
 
-Duas camadas: **696 testes** de unidade/integração no Vitest e **39 testes ponta a
+Duas camadas: **699 testes** de unidade/integração no Vitest e **39 testes ponta a
 ponta** em navegador de verdade com Playwright.
 
 ### Ponta a ponta (Playwright)

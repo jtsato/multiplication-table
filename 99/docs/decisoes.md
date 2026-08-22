@@ -1286,3 +1286,43 @@ teste de PWA verifica `link[rel="manifest"]` e `navigator.serviceWorker.ready`.
 | `npm run test` | 696 testes, 60 arquivos, verde |
 | `npm run build` | ok |
 | `npm run e2e` | 39 testes, verde |
+
+---
+
+## Fase 11 — Performance mobile
+
+### 11A — Bundle inicial menor
+
+Os painéis DOM que só abrem sob demanda (loja, espelho, mural, encomendas,
+cama, caderneta, desafio e resumo do dia) viraram **importações tardias**. Os
+consumidores estáticos (`GameCanvas`, `Hud`, `TouchControls`) também passaram a
+importar caminhos profundos em vez de barrels, para o Rollup realmente conseguir
+fatiar.
+
+Resultado no build:
+- `index` caiu de ~302 kB para **201 kB** (gzip 91 → 63 kB).
+- Cada painel virou um chunk de 1–3 kB carregado só quando aberto.
+- Zero warnings de `INEFFECTIVE_DYNAMIC_IMPORT`.
+
+### 11B — Sombras no celular
+
+`<Canvas shadows>` agora usa **`basic` no celular** (mais barato, sem filtro PCF)
+e `soft` no desktop. Junto com o mapa de sombra 512 do sol no touch, o custo por
+quadro cai sem mudar a leitura do jogo.
+
+### 11C — Medidor de FPS
+
+- `src/shared/fps.ts`: contador mutável de módulo, alimentado por `FpsProbe`
+  dentro do `useFrame` (custo: uma soma por quadro).
+- `FpsMeter` em DOM aparece apenas com **`?fps=1`** na URL.
+- Testes de unidade cobrem o cálculo da janela de 1 segundo e o reset.
+
+### Portões
+
+| Portão | Resultado |
+| --- | --- |
+| `npm run lint` | limpo |
+| `npm run typecheck` | limpo |
+| `npm run test` | 699 testes, 61 arquivos, verde |
+| `npm run build` | ok |
+| `npm run e2e` | 39 testes, verde |

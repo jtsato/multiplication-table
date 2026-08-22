@@ -1,0 +1,16 @@
+.fps-meter {
+  position: fixed;
+  left: 50%;
+  bottom: 12px;
+  transform: translateX(-50%);
+  z-index: 12;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(14, 20, 32, 0.82);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: #ffe66d;
+  font-size: 13px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  pointer-events: none;
+}

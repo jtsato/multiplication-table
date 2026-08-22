@@ -1,20 +1,15 @@
 import { useGameStore } from './store';
 import { LanguagePicker } from './LanguagePicker';
 import { Suspense, lazy, useEffect } from 'react';
-import { DaySummary } from './DaySummary';
 import { Hud } from './Hud';
 import { TouchControls } from './TouchControls';
 import { useIsTouchDevice, useKeyboardBindings } from '../shared/input';
 import { unlockAudio } from '../shared/audio';
-import { AvatarPanel } from '../slices/avatar';
-import { BedPanel, OrdersPanel, WallChart } from '../slices/home';
 import { loadGame, startAutoSave } from '../slices/save';
-import { ShopPanel } from '../slices/economy';
-import { AnimalBookPanel } from '../slices/wildlife';
 import { DailyBanner } from '../slices/daily';
-import { ChallengePanel } from '../slices/math';
 import { SettingsPanel, SettingsToggle } from '../slices/settings';
 import { Minimapa } from '../slices/navigation';
+import { FpsMeter } from './FpsMeter';
 import './accessibility.css';
 import './loading.css';
 
@@ -29,6 +24,35 @@ import './loading.css';
  */
 const GameCanvas = lazy(() =>
   import('./GameCanvas').then((module) => ({ default: module.GameCanvas })),
+);
+
+/**
+ * Painéis DOM que só aparecem quando o jogador abre alguma coisa.
+ *
+ * Eles ficavam no chunk inicial do App; agora cada um vira um chunk pequeno que
+ * só baixa no momento do uso — loja, espelho, mural, encomendas, cama, caderneta,
+ * resumo do dia e painel de desafio. O HUD e os controles continuam estáticos
+ * porque são visíveis desde o primeiro segundo.
+ */
+const DaySummary = lazy(() => import('./DaySummary').then((module) => ({ default: module.DaySummary })));
+const AvatarPanel = lazy(() =>
+  import('../slices/avatar/AvatarPanel').then((module) => ({ default: module.AvatarPanel })),
+);
+const BedPanel = lazy(() => import('../slices/home/BedPanel').then((module) => ({ default: module.BedPanel })));
+const OrdersPanel = lazy(() =>
+  import('../slices/home/OrdersPanel').then((module) => ({ default: module.OrdersPanel })),
+);
+const WallChart = lazy(() =>
+  import('../slices/home/WallChart').then((module) => ({ default: module.WallChart })),
+);
+const ShopPanel = lazy(() =>
+  import('../slices/economy/ShopPanel').then((module) => ({ default: module.ShopPanel })),
+);
+const AnimalBookPanel = lazy(() =>
+  import('../slices/wildlife/AnimalBookPanel').then((module) => ({ default: module.AnimalBookPanel })),
+);
+const ChallengePanel = lazy(() =>
+  import('../slices/math/ChallengePanel').then((module) => ({ default: module.ChallengePanel })),
 );
 
 function LoadingScreen() {
@@ -54,6 +78,9 @@ function LoadingScreen() {
  */
 export function App() {
   const isTouch = useIsTouchDevice();
+  // Modo debug: `?fps=1` mostra o medidor de FPS sem afetar quem joga normal.
+  const showFps =
+    typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('fps');
 
   // Ponte teclado -> acao, montada uma unica vez. As slices escutam a acao, nao
   // a tecla, entao o toque aciona exatamente o mesmo caminho.
@@ -99,14 +126,17 @@ export function App() {
       <SettingsPanel />
       <Minimapa />
       <LanguagePicker />
-      <ChallengePanel />
-      <ShopPanel />
-      <AvatarPanel />
-      <WallChart />
-      <OrdersPanel />
-      <BedPanel />
-      <AnimalBookPanel />
-      <DaySummary />
+      <Suspense fallback={null}>
+        <ChallengePanel />
+        <ShopPanel />
+        <AvatarPanel />
+        <WallChart />
+        <OrdersPanel />
+        <BedPanel />
+        <AnimalBookPanel />
+        <DaySummary />
+      </Suspense>
+      {showFps && <FpsMeter />}
       {isTouch && <TouchControls />}
     </>
   );

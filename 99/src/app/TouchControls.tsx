@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useGameStore } from './store';
-import { HOME_SPOT_LABELS } from '../slices/home';
+import { HOME_SPOT_LABELS } from '../slices/home/home.logic';
 import {
   applyDeadzone,
   emitAction,
@@ -9,9 +9,9 @@ import {
   touchAxes,
   type GameAction,
 } from '../shared/input';
-import { STRUCTURES, canAfford } from '../slices/building';
-import { animalById, canFeedAnimal } from '../slices/wildlife';
-import { orderQuantity } from '../slices/npc';
+import { STRUCTURES, canAfford } from '../slices/building/building.logic';
+import { animalById, canFeedAnimal } from '../slices/wildlife/wildlife.logic';
+import { orderQuantity } from '../slices/npc/npc.logic';
 import './touch.css';
 
 /** Raio util do joystick, em pixels. Casado com o tamanho da base no CSS. */

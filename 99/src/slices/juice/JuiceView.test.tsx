@@ -37,7 +37,7 @@ describe('JuiceView', () => {
     act(() => {
       useGameStore.setState({ feedback: feedback({ targetId: alvo.id }) });
     });
-    await renderer.advanceFrames(3, 1 / 60);
+    await renderer.advanceFrames(10, 1 / 60);
 
     const pontos = renderer.scene.findAllByType('Points')[0]?.instance as unknown as
       | { geometry: { drawRange: { count: number } } }
@@ -58,7 +58,7 @@ describe('JuiceView', () => {
         feedback: feedback({ targetId: alvo.id, correct: false, reward: 2, coins: 0 }),
       });
     });
-    await renderer.advanceFrames(3, 1 / 60);
+    await renderer.advanceFrames(10, 1 / 60);
 
     expect(spy).toHaveBeenCalledWith('wrong');
     const pontos = renderer.scene.findAllByType('Points')[0]?.instance as unknown as

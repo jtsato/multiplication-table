@@ -5,14 +5,14 @@ import {
   STRUCTURES,
   canAfford,
   formatRecipe,
-} from '../slices/building';
-import { phaseLabel } from '../slices/daynight';
-import { bridgeMessage, bridgeById } from '../slices/regions';
+} from '../slices/building/building.logic';
+import { phaseLabel } from '../slices/daynight/daynight.logic';
+import { bridgeMessage, bridgeById } from '../slices/regions/bridges.logic';
 import { regionById } from '../slices/regions/regions.logic';
-import { LANTERN } from '../slices/lantern';
-import { RESOURCE_KINDS } from '../slices/resources';
-import { animalById, canFeedAnimal } from '../slices/wildlife';
-import { orderQuantity } from '../slices/npc';
+import { LANTERN } from '../slices/lantern/lantern.logic';
+import { RESOURCE_KINDS } from '../slices/resources/resources.logic';
+import { animalById, canFeedAnimal } from '../slices/wildlife/wildlife.logic';
+import { orderQuantity } from '../slices/npc/npc.logic';
 import { interpolate } from '../i18n';
 import './hud.css';
 
