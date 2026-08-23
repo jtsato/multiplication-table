@@ -113,6 +113,7 @@ function ActionButton({
       type="button"
       className={`touch__button ${variant ? `touch__button--${variant}` : ''}`}
       disabled={disabled}
+      aria-disabled={disabled || undefined}
       // `pointerdown` e nao `click`: dispara no encostar do dedo, sem os ~300 ms
       // que o navegador espera para decidir se foi toque duplo.
       onPointerDown={(event) => {

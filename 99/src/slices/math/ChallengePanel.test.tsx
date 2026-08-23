@@ -49,6 +49,19 @@ describe('ChallengePanel', () => {
     }
   });
 
+  it('respostas têm nome acessível correspondente ao número', () => {
+    state().startChallenge(alvo());
+    const challenge = state().activeChallenge!;
+    render(<ChallengePanel />);
+
+    for (const option of challenge.options) {
+      expect(screen.getByRole('button', { name: String(option) })).toHaveAttribute(
+        'aria-label',
+        String(option),
+      );
+    }
+  });
+
   it('monta o desafio na camada centralizada', () => {
     state().startChallenge(alvo());
     const { container } = render(

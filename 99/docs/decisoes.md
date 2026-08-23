@@ -1317,12 +1317,48 @@ quadro cai sem mudar a leitura do jogo.
 - `FpsMeter` em DOM aparece apenas com **`?fps=1`** na URL.
 - Testes de unidade cobrem o cálculo da janela de 1 segundo e o reset.
 
+### Fase 12 — Aprendizagem adaptativa e economia
+
+O progresso pedagógico por fato (`factProgress`) passou a ser a fonte consultada pela
+progressão das pontes. Para a ponte, domínio suficiente significa **8 de 10 fatos
+dominados**; os dois restantes continuam disponíveis para revisão e não bloqueiam a
+exploração por perfeccionismo. O formato numérico legado continua aceito somente
+como compatibilidade durante a migração.
+
+#### Questions per Reward
+
+Estimativa conservadora: um desafio de coleta acertado paga `perGroup` moedas, e um
+fato novo acrescenta 10 moedas. O bônus de sequência acrescenta 5 moedas a cada
+terceiro acerto. O tempo abaixo usa 8 segundos por desafio, incluindo leitura e
+resposta, e serve para detectar grinding, não para medir desempenho individual.
+
+| Recompensa | Custo | Desafios mínimos | Tempo estimado |
+| --- | --- | ---: | ---: |
+| Dica | 10 moedas + 4 frutas | 1 fato novo ou 5 acertos da Praia | 8–40 s |
+| Sementes | 8 moedas + 4 mel | 1 fato novo em região com tabuada alta | 8 s |
+| Lanterna maior | 30 moedas + 8 madeira | 2–3 acertos em tabuadas médias | 16–24 s |
+| Botas | 25 moedas + 6 pedra | 2–3 acertos em tabuadas médias | 16–24 s |
+| Tapete | 20 moedas + 6 conchas | 2–3 acertos | 16–24 s |
+| Aquário | 35 moedas + 8 peixes | 3–4 acertos | 24–32 s |
+| Vaso | 20 moedas + 6 cogumelos | 2–3 acertos | 16–24 s |
+| Lustre | 45 moedas + 8 cristais | 4–5 acertos | 32–40 s |
+| Prateleira | 25 moedas + 6 mel | 2–3 acertos | 16–24 s |
+| Escultura | 40 moedas + 8 gelo | 3–4 acertos | 24–32 s |
+| Ponte 1 | 60 moedas + 6 madeira + 2 pedra; 8/10 fatos da Praia | 8 acertos dominantes + coleta | ~64 s + coleta |
+| Ponte 2 | 105 moedas + 8 madeira + 3 pedra; 8/10 fatos do Porto | 8 acertos dominantes + coleta | ~64 s + coleta |
+| Pontes 3–8 | custo crescente; 8/10 fatos da região de origem | 8 acertos dominantes + coleta | ~64 s + coleta |
+
+A ponte exige domínio, não uma contagem bruta repetida, e os custos de recursos
+preservam a coleta, construção e decoração como atividades do mundo. Não há
+cronômetro de pressão no desafio; o tempo é apenas uma estimativa de design.
+
 ### Portões
 
 | Portão | Resultado |
 | --- | --- |
 | `npm run lint` | limpo |
 | `npm run typecheck` | limpo |
-| `npm run test` | 699 testes, 61 arquivos, verde |
+| `npm run test` | 740 testes, 64 arquivos, verde |
 | `npm run build` | ok |
-| `npm run e2e` | 39 testes, verde |
+| `npm run e2e` | fluxos críticos, professor, ponte, erro e acessibilidade verdes |
+| Stryker — `bridges.logic.ts` | 80,31%, acima do break threshold 80 |

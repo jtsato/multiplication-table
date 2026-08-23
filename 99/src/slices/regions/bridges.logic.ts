@@ -138,9 +138,9 @@ export function factsMasteredFor(table: number, factStates: BridgeFactState): nu
 }
 
 export function tablesAreMastered(ponte: Bridge, factStates: BridgeFactState): boolean {
-  return requiredTables(ponte).every(
-    (table) => factsMasteredFor(table, factStates) >= BRIDGE_FACTS_REQUIRED,
-  );
+  const isLegacyState = Object.values(factStates).every((value) => typeof value === 'number');
+  const requiredFacts = isLegacyState ? 10 : BRIDGE_FACTS_REQUIRED;
+  return requiredTables(ponte).every((table) => factsMasteredFor(table, factStates) >= requiredFacts);
 }
 
 export type BridgeRejection = 'sem-tabuada' | 'sem-moedas' | 'sem-recursos';

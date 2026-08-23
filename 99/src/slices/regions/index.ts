@@ -11,6 +11,7 @@ export { createRegionsSlice, unlockedRegions, type RegionsSlice } from './region
 export {
   BRIDGES,
   BRIDGE_GUARD,
+  BRIDGE_FACTS_REQUIRED,
   BRIDGE_MASTERY,
   bridgeMessage,
   bridgeAnchors,

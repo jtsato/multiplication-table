@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   BRIDGES,
   BRIDGE_GUARD,
+  BRIDGE_FACTS_REQUIRED,
   BRIDGE_MASTERY,
   bridgeAnchors,
   bridgeById,
@@ -116,7 +117,7 @@ describe('checkBridge', () => {
     });
   });
 
-  it('exige 3 repetições de cada fato — 2 não bastam', () => {
+  it('mantem compatibilidade do save legado com 3 repetições de cada fato', () => {
     const quaseLa = contagensDe(2, BRIDGE_MASTERY - 1);
     expect(checkBridge(ponte(), 999, rico, quaseLa)).toEqual({
       ok: false,
@@ -125,11 +126,27 @@ describe('checkBridge', () => {
     expect(checkBridge(ponte(), 999, rico, contagensDe(2))).toEqual({ ok: true });
   });
 
-  it('aceita factProgress com domínio mastered em vez de contagem bruta', () => {
+  it('libera com domínio suficiente no progresso novo, sem perfeccionismo', () => {
     const progresso = Object.fromEntries(
-      fatosDe(2).map((key) => [key, { key, correct: 4, wrong: 0, streak: 4, lastSeen: 4, dueAt: 999 }]),
+      fatosDe(2, BRIDGE_FACTS_REQUIRED).map((key) => [
+        key,
+        { key, correct: 4, wrong: 0, streak: 4, lastSeen: 4, dueAt: 999 },
+      ]),
     );
     expect(checkBridge(ponte(), 999, rico, progresso)).toEqual({ ok: true });
+  });
+
+  it('não libera progresso novo com um fato dominado a menos', () => {
+    const progresso = Object.fromEntries(
+      fatosDe(2, BRIDGE_FACTS_REQUIRED - 1).map((key) => [
+        key,
+        { key, correct: 4, wrong: 0, streak: 4, lastSeen: 4, dueAt: 999 },
+      ]),
+    );
+    expect(checkBridge(ponte(), 999, rico, progresso)).toEqual({
+      ok: false,
+      reason: 'sem-tabuada',
+    });
   });
 
   it('recusa factProgress sem domínio mastered mesmo com contagens altas', () => {

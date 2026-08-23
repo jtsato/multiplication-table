@@ -212,6 +212,19 @@ describe('selectNextFact', () => {
     expect(escolhido.key).toBe('2x8');
   });
 
+  it('fato dominado vencido recebe revisao de manutencao', () => {
+    const dominado = {
+      ...createFactProgress('2x4'),
+      correct: 4,
+      streak: 4,
+      dueAt: 10,
+    };
+    const novo = createFactProgress('2x3');
+    for (let seed = 1; seed <= 20; seed += 1) {
+      expect(selectNextFact([dominado, novo], 10, createRng(seed)).key).toBe('2x4');
+    }
+  });
+
   it('quando nada esta vencido, ainda sorteia um fato para manutencao', () => {
     const dominado = createFactProgress('9x9');
     const outro = createFactProgress('2x4');
