@@ -4,9 +4,19 @@ import { dayNightClock } from '../daynight/dayNightClock';
 import { LANTERN, chargeRemaining } from '../lantern';
 import { resolveAnswer } from './math.logic';
 import { emptyInventory } from '../resources/resources.logic';
-import { BRIDGES, BRIDGE_MASTERY, bridgeById, bridgeChallengeTarget } from '../regions/bridges.logic';
+import { BRIDGES, bridgeById, bridgeChallengeTarget } from '../regions/bridges.logic';
 import { regionById } from '../regions/regions.logic';
 import { orderQuantity, orderTarget } from '../npc/npc.logic';
+import type { FactProgress } from '../pedagogy/pedagogy.logic';
+
+const masteredProgressFor = (table: number): Record<string, FactProgress> =>
+  Object.fromEntries(
+    Array.from({ length: 10 }, (_, index) => {
+      const factor = index + 1;
+      const key = `${Math.min(table, factor)}x${Math.max(table, factor)}`;
+      return [key, { key, correct: 4, wrong: 0, streak: 4, lastSeen: 10, dueAt: 999 }];
+    }),
+  );
 
 const state = () => useGameStore.getState();
 
@@ -308,16 +318,10 @@ describe('slice de matematica', () => {
     it('acertar o pedagio compra a ponte', () => {
       const ponte = bridgeById(BRIDGES[0].id)!;
       const tabela = regionById(ponte.from).tables[0];
-      const factCounts: Record<string, number> = {};
-      for (let fator = 1; fator <= 10; fator += 1) {
-        const menor = Math.min(tabela, fator);
-        const maior = Math.max(tabela, fator);
-        factCounts[`${menor}x${maior}`] = BRIDGE_MASTERY;
-      }
       useGameStore.setState({
         coins: 999,
         inventory: { ...emptyInventory(), madeira: 50, pedra: 50 },
-        factCounts,
+        factProgress: masteredProgressFor(tabela),
       });
 
       state().startChallenge(bridgeChallengeTarget(ponte), 'pedagio');
@@ -329,16 +333,10 @@ describe('slice de matematica', () => {
     it('errar o pedagio nao compra a ponte', () => {
       const ponte = bridgeById(BRIDGES[0].id)!;
       const tabela = regionById(ponte.from).tables[0];
-      const factCounts: Record<string, number> = {};
-      for (let fator = 1; fator <= 10; fator += 1) {
-        const menor = Math.min(tabela, fator);
-        const maior = Math.max(tabela, fator);
-        factCounts[`${menor}x${maior}`] = BRIDGE_MASTERY;
-      }
       useGameStore.setState({
         coins: 999,
         inventory: { ...emptyInventory(), madeira: 50, pedra: 50 },
-        factCounts,
+        factProgress: masteredProgressFor(tabela),
       });
 
       state().startChallenge(bridgeChallengeTarget(ponte), 'pedagio');

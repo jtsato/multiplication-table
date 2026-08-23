@@ -125,6 +125,23 @@ describe('checkBridge', () => {
     expect(checkBridge(ponte(), 999, rico, contagensDe(2))).toEqual({ ok: true });
   });
 
+  it('aceita factProgress com domínio mastered em vez de contagem bruta', () => {
+    const progresso = Object.fromEntries(
+      fatosDe(2).map((key) => [key, { key, correct: 4, wrong: 0, streak: 4, lastSeen: 4, dueAt: 999 }]),
+    );
+    expect(checkBridge(ponte(), 999, rico, progresso)).toEqual({ ok: true });
+  });
+
+  it('recusa factProgress sem domínio mastered mesmo com contagens altas', () => {
+    const progresso = Object.fromEntries(
+      fatosDe(2).map((key) => [key, { key, correct: 10, wrong: 5, streak: 0, lastSeen: 10, dueAt: 999 }]),
+    );
+    expect(checkBridge(ponte(), 999, rico, progresso)).toEqual({
+      ok: false,
+      reason: 'sem-tabuada',
+    });
+  });
+
   it('a ilha do Porto exige a tabuada do 3', () => {
     const ponteDoPorto = bridgeFor('porto', 'bosque')!;
     expect(checkBridge(ponteDoPorto, 999, rico, contagensDe(5))).toEqual({

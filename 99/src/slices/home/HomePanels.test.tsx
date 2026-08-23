@@ -95,6 +95,22 @@ describe('painéis da casa', () => {
       expect(screen.getByText(/de 100/)).toHaveTextContent('2 de 100');
     });
 
+    it('professor abre o mural com ajuda baseada na regiao', () => {
+      act(() => {
+        useGameStore.setState({
+          factProgress: {
+            '2x3': { key: '2x3', correct: 1, wrong: 2, streak: 0, lastSeen: 3, dueAt: 5 },
+          },
+          learningStep: 3,
+        });
+        state().openChartFromNpc('praia');
+      });
+      render(<WallChart />);
+
+      expect(screen.getByRole('heading', { name: 'Ajuda do professor' })).toBeInTheDocument();
+      expect(screen.getByText('Vamos praticar 2 × 3 = 6.')).toBeInTheDocument();
+    });
+
     it('fechar volta ao jogo', async () => {
       abrir('mural');
       render(<WallChart />);

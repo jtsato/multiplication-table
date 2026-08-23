@@ -10,15 +10,19 @@ const state = () => useGameStore.getState();
 
 const fatosDe = (table: number) => Array.from({ length: 10 }, (_, i) => factKey(table, i + 1));
 
-const contagensDe = (table: number): Record<string, number> =>
-  Object.fromEntries(fatosDe(table).map((fato) => [fato, 3]));
+const progressoDe = (table: number) =>
+  Object.fromEntries(
+    fatosDe(table).map((fato) => [
+      fato,
+      { key: fato, correct: 4, wrong: 0, streak: 4, lastSeen: 4, dueAt: 999 },
+    ]),
+  );
 
-/** Deixa a crianca pronta para comprar a primeira ponte. */
 function pronta() {
   useGameStore.setState({
     coins: 999,
     inventory: { ...emptyInventory(), madeira: 99, fruta: 99, pedra: 99 },
-    factCounts: contagensDe(2),
+    factProgress: progressoDe(2),
   });
 }
 
@@ -61,7 +65,7 @@ describe('comprar uma ponte', () => {
     useGameStore.setState({
       coins: 999,
       inventory: { ...emptyInventory(), madeira: 99, fruta: 99, pedra: 99 },
-      factCounts: {},
+      factProgress: {},
     });
     const ponte = bridgeFor('praia', 'porto')!;
 
@@ -93,7 +97,7 @@ describe('comprar uma ponte', () => {
   });
 
   it('a recusa some quando pedida', () => {
-    useGameStore.setState({ factCounts: {} });
+    useGameStore.setState({ factProgress: {} });
     state().buyBridge(bridgeFor('praia', 'porto')!.id);
     expect(state().bridgeError).not.toBeNull();
 
@@ -102,13 +106,13 @@ describe('comprar uma ponte', () => {
   });
 
   it('comprando a cadeia inteira, alcanca as nove ilhas', () => {
-    const todasAsContagens = BRIDGES.flatMap((ponte) => regionById(ponte.from).tables).reduce<
-      Record<string, number>
-    >((acc, tabela) => ({ ...acc, ...contagensDe(tabela) }), {});
+    const todosOsProgressos = BRIDGES.flatMap((ponte) => regionById(ponte.from).tables).reduce<
+      Record<string, { key: string; correct: number; wrong: number; streak: number; lastSeen: number; dueAt: number }>
+    >((acc, tabela) => ({ ...acc, ...progressoDe(tabela) }), {});
     useGameStore.setState({
       coins: 9999,
       inventory: { ...emptyInventory(), madeira: 999, fruta: 999, pedra: 999 },
-      factCounts: todasAsContagens,
+      factProgress: todosOsProgressos,
     });
 
     for (const ponte of BRIDGES) state().buyBridge(ponte.id);

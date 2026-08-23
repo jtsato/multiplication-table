@@ -1,6 +1,8 @@
 import type { StateCreator } from 'zustand';
 import type { GameState } from '../../app/store';
 import type { RegionId } from '../regions/regions.logic';
+import { regionById } from '../regions/regions.logic';
+import { mentorAdvice, type MentorAdvice } from '../pedagogy/pedagogy.logic';
 import { createOrders, orderQuantity, type Order } from './npc.logic';
 
 export interface NpcSlice {
@@ -20,6 +22,7 @@ export interface NpcSlice {
    * Quem chama e a slice de matematica, no acerto do desafio de `encomenda`.
    */
   completeOrder: (orderId: string) => void;
+  getTeacherAdvice: (regionId: RegionId) => MentorAdvice | null;
   resetNpc: () => void;
 }
 
@@ -52,6 +55,13 @@ export const createNpcSlice: StateCreator<GameState, [], [], NpcSlice> = (set, g
       inventory: { ...state.inventory, [order.kind]: state.inventory[order.kind] - quantidade },
     });
     state.addCoins(order.rewardCoins);
+  },
+
+  getTeacherAdvice: (regionId) => {
+    const state = get();
+    const region = regionById(regionId);
+    if (!region || region.tables.length === 0) return null;
+    return mentorAdvice(region.tables, state.factProgress, state.learningStep);
   },
 
   resetNpc: () =>

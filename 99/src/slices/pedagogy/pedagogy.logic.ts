@@ -72,6 +72,75 @@ export function factPriority(progress: FactProgress, now = 0): number {
   return tableDifficulty(progress.key) + levelWeight + errorWeight + dueWeight + maintenanceWeight;
 }
 
+export interface MentorFocus {
+  key: string;
+  table: number;
+  factor: number;
+  answer: number;
+  level: MasteryLevel;
+  correct: number;
+  wrong: number;
+  streak: number;
+  dueAt: number;
+}
+
+export interface MentorAdvice {
+  totalFacts: number;
+  seenFacts: number;
+  masteredFacts: number;
+  focus: MentorFocus;
+}
+
+function factorFromKey(key: string, table: number): number {
+  const [first, second] = key.split('x').map(Number);
+  return first === table ? second : first;
+}
+
+function tableFromKey(key: string, tables: readonly number[]): number {
+  const factors = key.split('x').map(Number);
+  return tables.find((table) => factors.includes(table)) ?? tables[0]!;
+}
+
+export function mentorAdvice(
+  tables: readonly number[],
+  progress: FactProgressMap,
+  now = 0,
+): MentorAdvice {
+  if (tables.length === 0) throw new Error('mentorAdvice() exige ao menos uma tabuada');
+  const candidates = buildFactCandidates(tables, progress);
+
+  const ordered = [...candidates].sort((a, b) => {
+    const priority = factPriority(b, now) - factPriority(a, now);
+    if (priority !== 0) return priority;
+
+    const factorOrder =
+      factorFromKey(a.key, tableFromKey(a.key, tables)) -
+      factorFromKey(b.key, tableFromKey(b.key, tables));
+    if (factorOrder !== 0) return factorOrder;
+    return a.key.localeCompare(b.key);
+  });
+  const chosen = ordered[0]!;
+  const table = tableFromKey(chosen.key, tables);
+  const factor = factorFromKey(chosen.key, table);
+
+  return {
+    totalFacts: candidates.length,
+    seenFacts: candidates.filter((candidate) => candidate.correct > 0 || candidate.wrong > 0).length,
+    masteredFacts: candidates.filter((candidate) => masteryLevel(candidate) === 'mastered').length,
+    focus: {
+      key: chosen.key,
+      table,
+      factor,
+      answer: table * factor,
+      level: masteryLevel(chosen),
+      correct: chosen.correct,
+      wrong: chosen.wrong,
+      streak: chosen.streak,
+      dueAt: chosen.dueAt,
+    },
+  };
+}
+
 function weightedPick(items: readonly FactProgress[], now: number, rng: Rng): FactProgress {
   if (items.length === 1) return items[0];
   const weights = items.map((item) => Math.max(1, factPriority(item, now)));

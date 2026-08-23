@@ -118,8 +118,30 @@ describe('ChallengePanel', () => {
 
     expect(screen.getByText(`A resposta era ${challenge.answer}`)).toBeInTheDocument();
     expect(
-      screen.getByText(`${challenge.groups} grupos de ${challenge.perGroup} = ${challenge.answer}`),
+      screen.getByText(`${challenge.groups} grupos de ${challenge.perGroup} = ${challenge.answer}`)
     ).toBeInTheDocument();
+  });
+
+  it('erro nao tira moedas, nao zera a colheita e nao esconde a resposta', async () => {
+    const user = userEvent.setup();
+    const node = alvo();
+    state().startChallenge(node);
+    const challenge = state().activeChallenge!;
+    const errada = challenge.options.find((o) => o !== challenge.answer)!;
+    const moedasAntes = state().coins;
+
+    render(
+      <>
+        <KeyboardBridge />
+        <ChallengePanel />
+      </>,
+    );
+    await user.click(screen.getByRole('button', { name: String(errada) }));
+
+    expect(state().coins).toBe(moedasAntes);
+    expect(state().inventory[node.kind]).toBeGreaterThanOrEqual(1);
+    expect(state().feedback?.correct).toBe(false);
+    expect(state().feedback?.answer).toBe(challenge.answer);
   });
 
   it('responde pelas teclas 1, 2 e 3', async () => {

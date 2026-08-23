@@ -1,5 +1,6 @@
 import type { StateCreator } from 'zustand';
 import type { GameState } from '../../app/store';
+import type { RegionId } from '../regions/regions.logic';
 import { PHASE_BOUNDS, DAYNIGHT } from '../daynight/daynight.logic';
 import { dayNightClock } from '../daynight/dayNightClock';
 import { secondsUntilNextDawn, type HomeSpot } from './home.logic';
@@ -11,12 +12,12 @@ export interface HomeSlice {
   insideHome: boolean;
   /** Painel aberto dentro de casa, ou `null`. */
   openSpot: HomeSpot | null;
+  openTeacherRegion: RegionId | null;
   setNearbySpot: (spot: HomeSpot | null) => void;
   setInsideHome: (inside: boolean) => void;
   /** Abre o painel do movel ao alcance. Ignorado longe de tudo. */
   openNearbySpot: () => void;
-  /** Abre o mural de qualquer lugar — usado pelo professor NPC. */
-  openChartFromNpc: () => void;
+  openChartFromNpc: (regionId: RegionId) => void;
   closeSpot: () => void;
   /**
    * Dormir: adianta o relogio ate o proximo amanhecer.
@@ -31,6 +32,7 @@ export const createHomeSlice: StateCreator<GameState, [], [], HomeSlice> = (set,
   nearbySpot: null,
   insideHome: false,
   openSpot: null,
+  openTeacherRegion: null,
 
   // Guardas de igualdade: as duas acoes sao chamadas a 4 Hz pela view, e sem
   // elas o store notificaria os assinantes sem nada ter mudado.
@@ -44,17 +46,20 @@ export const createHomeSlice: StateCreator<GameState, [], [], HomeSlice> = (set,
     const state = get();
     // O desafio tem prioridade, como na loja: a conta ja esta na tela.
     if (state.activeChallenge || !state.nearbySpot) return;
-    set({ openSpot: state.nearbySpot, shopOpen: false });
+    set({ openSpot: state.nearbySpot, openTeacherRegion: null, shopOpen: false });
   },
 
-  openChartFromNpc: () => {
-    // O professor nao depende de estar perto do mural: a tabuada e de graca
-    // em qualquer lugar do mundo, como a spec manda.
+  openChartFromNpc: (regionId) => {
     if (get().activeChallenge) return;
-    set({ openSpot: 'mural', shopOpen: false });
+    set({ openSpot: 'mural', openTeacherRegion: regionId, shopOpen: false });
   },
 
-  closeSpot: () => set((state) => (state.openSpot ? { openSpot: null } : state)),
+  closeSpot: () =>
+    set((state) =>
+      state.openSpot || state.openTeacherRegion !== null
+        ? { openSpot: null, openTeacherRegion: null }
+        : state,
+    ),
 
   sleep: () => {
     if (get().openSpot !== 'cama') return;

@@ -104,4 +104,21 @@ describe('npc.store', () => {
     expect(state().nearbyMerchant).toBe(false);
     expect(state().nearbyTeacherRegion).toBeNull();
   });
+
+  it('professor oferece conselho baseado no progresso pedagógico da região', () => {
+    useGameStore.setState({
+      factProgress: {
+        '2x1': { key: '2x1', correct: 5, wrong: 0, streak: 5, lastSeen: 5, dueAt: 999 },
+        '2x2': { key: '2x2', correct: 5, wrong: 0, streak: 5, lastSeen: 5, dueAt: 999 },
+        '2x3': { key: '2x3', correct: 1, wrong: 3, streak: 0, lastSeen: 4, dueAt: 6 },
+      },
+      learningStep: 5,
+    });
+
+    const conselho = state().getTeacherAdvice('praia');
+
+    expect(conselho).not.toBeNull();
+    expect(conselho!.focus.key).toBe('2x3');
+    expect(conselho!.focus.level).toBe('review');
+  });
 });

@@ -47,7 +47,7 @@ export const createRegionsSlice: StateCreator<GameState, [], [], RegionsSlice> =
     const state = get();
     if (state.openBridges.includes(id)) return;
 
-    const check = checkBridge(ponte, state.coins, state.inventory, state.factCounts);
+    const check = checkBridge(ponte, state.coins, state.inventory, state.factProgress);
     if (!check.ok) {
       set({ bridgeError: check.reason });
       return;

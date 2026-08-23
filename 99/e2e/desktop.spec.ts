@@ -342,6 +342,9 @@ test.describe('partida no computador', () => {
     await page.waitForTimeout(700);
     await page.keyboard.press('KeyE');
     await expect(page.getByRole('dialog', { name: 'Mural da tabuada' })).toBeVisible();
+    // O professor abre o mural com a ajuda da regiao, consultando o progresso
+    // pedagogico de verdade em vez de um texto estatico.
+    await expect(page.getByRole('heading', { name: 'Ajuda do professor' })).toBeVisible();
     await page.screenshot({ path: 'e2e/telas/33-professor.png' });
   });
 
@@ -593,8 +596,15 @@ test.describe('partida no computador', () => {
     await page.goto('/');
     await esperarJogoPronto(page);
 
-    // Fatos da tabuada do 2 inteiros, moeda e recurso de sobra: falta so a ponte.
+    // Fatos da tabuada do 2 dominados, moeda e recurso de sobra: falta so a ponte.
     await page.evaluate(() => {
+      const factProgress = Object.fromEntries(
+        Array.from({ length: 10 }, (_, i) => {
+          const fator = i + 1;
+          const key = `${Math.min(2, fator)}x${Math.max(2, fator)}`;
+          return [key, { key, correct: 4, wrong: 0, streak: 4, lastSeen: 10, dueAt: 999 }];
+        }),
+      );
       window.__tabuada!.store.setState({
         coins: 300,
         inventory: {
@@ -603,12 +613,7 @@ test.describe('partida no computador', () => {
           fruta: 20,
           pedra: 40,
         },
-        factCounts: Object.fromEntries(
-          Array.from({ length: 10 }, (_, i) => [
-            `${Math.min(2, i + 1)}x${Math.max(2, i + 1)}`,
-            3,
-          ]),
-        ),
+        factProgress,
       });
     });
 

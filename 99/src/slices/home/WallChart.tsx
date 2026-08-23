@@ -1,4 +1,5 @@
 import { useGameStore } from '../../app/store';
+import { interpolate } from '../../i18n';
 import { factKey } from '../economy';
 import './wallchart.css';
 
@@ -19,11 +20,16 @@ const FATORES = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
  */
 export function WallChart() {
   const openSpot = useGameStore((state) => state.openSpot);
+  const openTeacherRegion = useGameStore((state) => state.openTeacherRegion);
   const knownFacts = useGameStore((state) => state.knownFacts);
+  const getTeacherAdvice = useGameStore((state) => state.getTeacherAdvice);
   const closeSpot = useGameStore((state) => state.closeSpot);
-  const t = useGameStore((state) => state.text).strings;
+  const bundle = useGameStore((state) => state.text);
+  const t = bundle.strings;
 
   if (openSpot !== 'mural') return null;
+
+  const advice = openTeacherRegion ? getTeacherAdvice(openTeacherRegion) : null;
 
   const dominados = FATORES.flatMap((linha) =>
     FATORES.filter((coluna) => knownFacts.includes(factKey(linha, coluna))),
@@ -38,6 +44,19 @@ export function WallChart() {
             {dominados} de {FATORES.length * FATORES.length}
           </span>
         </header>
+
+        {advice && (
+          <section className="chart__teacher" aria-labelledby="teacher-advice-title">
+            <h3 id="teacher-advice-title">{t.teacherTitle}</h3>
+            <p>
+              {interpolate(t.teacherAdvice, {
+                table: advice.focus.table,
+                factor: advice.focus.factor,
+                answer: advice.focus.answer,
+              })}
+            </p>
+          </section>
+        )}
 
         <table className="chart__grid">
           <caption className="chart__caption">{t.chartFree}</caption>

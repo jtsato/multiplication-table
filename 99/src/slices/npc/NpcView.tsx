@@ -218,7 +218,7 @@ export function NpcView() {
     }
 
     if (state.nearbyTeacherRegion) {
-      state.openChartFromNpc();
+      state.openChartFromNpc(state.nearbyTeacherRegion);
     }
   });
 

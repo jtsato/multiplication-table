@@ -47,6 +47,29 @@
   padding-bottom: 8px;
 }
 
+.chart__teacher {
+  margin: 12px 0;
+  padding: 10px 12px;
+  border: 1px solid rgba(255, 209, 102, 0.5);
+  border-radius: 10px;
+  background: rgba(255, 209, 102, 0.08);
+}
+
+.chart__teacher h3,
+.chart__teacher p {
+  margin: 0;
+}
+
+.chart__teacher h3 {
+  color: #ffd166;
+  font-size: 14px;
+}
+
+.chart__teacher p {
+  margin-top: 4px;
+  font-size: 13px;
+}
+
 .chart__grid {
   width: 100%;
   border-collapse: collapse;

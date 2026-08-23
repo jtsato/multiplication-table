@@ -164,6 +164,8 @@ export interface AppStrings {
   mirrorTitle: string;
   chartTitle: string;
   chartFree: string;
+  teacherTitle: string;
+  teacherAdvice: string;
   bedTitle: string;
   bedQuestion: string;
   bedSleep: string;
