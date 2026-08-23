@@ -4,6 +4,7 @@ import { act } from 'react';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { useGameStore } from '../../app/store';
 import { renderScene } from '../../test/sceneHarness';
+import { DAYNIGHT, PHASE_BOUNDS } from '../daynight/daynight.logic';
 import { dayNightClock, resetDayNightClock } from '../daynight/dayNightClock';
 import { playerTransform, resetPlayerTransform } from '../player';
 import { BuildingView } from './BuildingView';
@@ -40,6 +41,10 @@ function encheInventario() {
  * Leva o jogador para um ponto onde a construção à frente dele é válida:
  * dentro da ilha e longe dos nós de recurso.
  */
+function setDusk() {
+  dayNightClock.seconds = PHASE_BOUNDS.entardecer.start * DAYNIGHT.cycleSeconds + 1;
+}
+
 function posicionaEmLocalLivre() {
   const alvoValido = state().nodes.every((node) => {
     const alvo = placementPosition({ x: 0, y: 0, z: 0 }, 0);
@@ -59,9 +64,14 @@ describe('BuildingView', () => {
     resetDayNightClock();
   });
 
-  it('B entra no modo fogueira e B de novo sai', async () => {
+  it('B só entra no modo fogueira ao entardecer e B de novo sai', async () => {
     const renderer = await renderScene(<BuildingView />);
 
+    pressKey('KeyB');
+    expect(state().buildMode).toBeNull();
+    expect(state().buildError).toBe('fora-da-janela-da-fogueira');
+
+    setDusk();
     pressKey('KeyB');
     expect(state().buildMode).toBe('fogueira');
     pressKey('KeyB');
@@ -220,6 +230,7 @@ describe('BuildingView', () => {
 
   it('sem recursos nao constroi nem debita nada', async () => {
     posicionaEmLocalLivre();
+    setDusk();
     const renderer = await renderScene(<BuildingView />);
     await renderer.advanceFrames(1, 1 / 60);
 
@@ -235,6 +246,7 @@ describe('BuildingView', () => {
 
   it('recusa construir uma fogueira sobre outra construcao', async () => {
     posicionaEmLocalLivre();
+    setDusk();
     encheInventario();
     const renderer = await renderScene(<BuildingView />);
     await renderer.advanceFrames(1, 1 / 60);
@@ -256,6 +268,7 @@ describe('BuildingView', () => {
   });
 
   it('recusa construir fora da ilha', async () => {
+    setDusk();
     encheInventario();
     const renderer = await renderScene(<BuildingView />);
 
@@ -334,6 +347,7 @@ describe('BuildingView', () => {
     posicionaEmLocalLivre();
     encheInventario();
     resetDayNightClock();
+    setDusk();
     const renderer = await renderScene(<BuildingView />);
     await renderer.advanceFrames(1, 1 / 60);
 
@@ -357,6 +371,7 @@ describe('BuildingView', () => {
     posicionaEmLocalLivre();
     encheInventario();
     resetDayNightClock();
+    setDusk();
     const renderer = await renderScene(<BuildingView />);
     await renderer.advanceFrames(1, 1 / 60);
 
@@ -383,6 +398,7 @@ describe('BuildingView', () => {
     const renderer = await renderScene(<BuildingView />);
 
     const criaFogueira = () => {
+      setDusk();
       encheInventario();
       posicionaEmLocalLivre();
       pressKey('KeyB');
@@ -413,6 +429,7 @@ describe('BuildingView', () => {
 
   it('errar o desafio de lenha rende menos fogo que acertar', async () => {
     resetDayNightClock();
+    setDusk();
     const renderer = await renderScene(<BuildingView />);
     encheInventario();
     posicionaEmLocalLivre();
@@ -445,6 +462,7 @@ describe('BuildingView', () => {
 
   it('a fogueira construida entra na cena com a sua luz', async () => {
     posicionaEmLocalLivre();
+    setDusk();
     encheInventario();
     const renderer = await renderScene(<BuildingView />);
     await renderer.advanceFrames(1, 1 / 60);

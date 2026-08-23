@@ -16,6 +16,7 @@ import type { Inventory } from '../resources/resources.logic';
  */
 
 export const ECONOMY = {
+  startingSeeds: 2,
   /** Bonus a cada `streakEvery` acertos seguidos. */
   streakBonus: 5,
   /** Bonus da primeira vez que um fato e resolvido. Uma vez por fato. */

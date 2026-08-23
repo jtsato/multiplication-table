@@ -24,9 +24,9 @@ const SHOP_COLORS: Record<ShopItemKind, string> = {
   escultura: '#bcd9e8',
 };
 
-function ShopImage({ kind }: { kind: ShopItemKind }) {
+function ShopImage({ kind, label }: { kind: ShopItemKind; label: string }) {
   return (
-    <svg className="shop__image" viewBox="0 0 80 80" role="img" aria-label={kind}>
+    <svg className="shop__image" viewBox="0 0 80 80" role="img" aria-label={label}>
       <rect x="8" y="8" width="64" height="64" rx="16" fill={SHOP_COLORS[kind]} opacity="0.22" />
       <circle cx="40" cy="34" r="16" fill={SHOP_COLORS[kind]} />
       <path d="M24 58h32" stroke={SHOP_COLORS[kind]} strokeWidth="7" strokeLinecap="round" />
@@ -87,7 +87,7 @@ export function ShopPanel() {
                   onClick={() => buy(kind)}
                 >
                   <span className="shop__icon">
-                    <ShopImage kind={kind} />
+                    <ShopImage kind={kind} label={texto.shop[kind].label} />
                   </span>
                   <strong className="shop__label">{texto.shop[kind].label}</strong>
                   <span className="shop__effect">{texto.shop[kind].effect}</span>

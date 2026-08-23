@@ -41,7 +41,7 @@ export interface StructureSpec {
 export const STRUCTURES: Record<StructureKind, StructureSpec> = {
   fogueira: {
     kind: 'fogueira',
-    recipe: { madeira: 8, pedra: 4 },
+    recipe: { madeira: 8, pedra: 2 },
     footprint: 1.4,
   },
   cerca: {
@@ -121,7 +121,11 @@ export function refuelUntil(structure: Structure, now: number, ratio: number): n
 
 /** Motivo pelo qual uma posicao foi recusada — vira feedback na tela. */
 export type PlacementRejection =
-  'fora-da-ilha' | 'sobreposta' | 'perto-de-recurso' | 'sem-recursos';
+  | 'fora-da-ilha'
+  | 'sobreposta'
+  | 'perto-de-recurso'
+  | 'sem-recursos'
+  | 'fora-da-janela-da-fogueira';
 
 export type PlacementCheck = { ok: true } | { ok: false; reason: PlacementRejection };
 
@@ -208,7 +212,6 @@ export function checkPlacement(
 
   const nodeClearance = spec.footprint + BUILDING.clearanceFromNodes;
   for (const node of nodes) {
-    if (node.depleted) continue;
     const distanceToNodeSq =
       spec.kind === 'cerca'
         ? pointToFenceSegmentDistanceSq(node.position, position, rotation)
@@ -330,6 +333,7 @@ export function nearestRefuelable(
   structures: readonly Structure[],
   position: Vec3,
   range: number = BUILDING.refuelRange,
+  now = 0,
 ): Structure | null {
   const rangeSq = range * range;
   let best: Structure | null = null;
@@ -337,6 +341,7 @@ export function nearestRefuelable(
 
   for (const structure of structures) {
     if (structure.kind !== 'fogueira') continue;
+    if (fuelRemaining(structure, now) >= BUILDING.fireFuelSeconds * 2) continue;
     const distanceSq = distanceSqXZ(position, structure.position);
     if (distanceSq <= rangeSq && distanceSq < bestDistanceSq) {
       best = structure;
@@ -379,6 +384,7 @@ export function structureLabel(kind: StructureKind, strings: AppStrings): string
 }
 
 export function rejectionMessage(reason: PlacementRejection, strings: AppStrings): string {
+  if (reason === 'fora-da-janela-da-fogueira') return strings.buildCampfireAtNight;
   if (reason === 'fora-da-ilha') return strings.buildOffLand;
   if (reason === 'sobreposta') return strings.buildOverlaps;
   if (reason === 'perto-de-recurso') return strings.buildTooClose;

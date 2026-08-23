@@ -30,6 +30,8 @@ export function snapshot(): GameSave {
     pet: state.pet,
     locale: state.locale,
     structures: state.structures,
+    depletedNodeIds: state.nodes.filter((node) => node.depleted && !node.planted).map((node) => node.id),
+    plantedNodes: state.nodes.filter((node) => node.planted),
     clockSeconds: dayNightClock.seconds,
     volume: state.volume,
     cameraSensitivity: state.cameraSensitivity,
@@ -72,6 +74,7 @@ export function applySave(save: GameSave): void {
 
   // Restaura as construções e ajusta o contador de ids para não duplicar.
   useGameStore.getState().loadStructures(save.structures);
+  useGameStore.getState().loadResourceState(save.depletedNodeIds, save.plantedNodes);
 
   // Volume e sensibilidade voltam com o save; loadSettings também aplica o
   // volume no AudioContext (que ainda pode estar fechado — o valor fica salvo).

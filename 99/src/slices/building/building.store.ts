@@ -2,6 +2,7 @@ import type { StateCreator } from 'zustand';
 import type { GameState } from '../../app/store';
 import type { Vec3 } from '../../shared/vec';
 import { dayNightClock } from '../daynight/dayNightClock';
+import { campfireWindowOpen, cyclePosition, phaseFor } from '../daynight/daynight.logic';
 import {
   BUILDING,
   STRUCTURES,
@@ -54,13 +55,17 @@ export const createBuildingSlice: StateCreator<GameState, [], [], BuildingSlice>
   buildError: null,
   pendingBuild: null,
 
-  toggleBuildMode: (kind) =>
+  toggleBuildMode: (kind) => {
+    if (kind === 'fogueira' && !campfireWindowOpen(phaseFor(cyclePosition(dayNightClock.seconds)))) {
+      set({ buildError: 'fora-da-janela-da-fogueira' as PlacementRejection });
+      return;
+    }
     set((state) => ({
-      // Apertar a mesma tecla de novo sai do modo — evita ficar preso nele.
       buildMode: state.buildMode === kind ? null : kind,
       buildError: null,
       pendingBuild: null,
-    })),
+    }));
+  },
 
   exitBuildMode: () => set({ buildMode: null, buildError: null, pendingBuild: null }),
 
@@ -68,6 +73,10 @@ export const createBuildingSlice: StateCreator<GameState, [], [], BuildingSlice>
     const state = get();
     const kind = state.buildMode;
     if (!kind) return;
+    if (kind === 'fogueira' && !campfireWindowOpen(phaseFor(cyclePosition(dayNightClock.seconds)))) {
+      set({ buildError: 'fora-da-janela-da-fogueira' });
+      return;
+    }
 
     const spec = STRUCTURES[kind];
     const check = checkPlacement(
@@ -134,14 +143,16 @@ export const createBuildingSlice: StateCreator<GameState, [], [], BuildingSlice>
       structures: state.structures.filter((structure) => structure.id !== structureId),
     })),
 
-  refuelStructure: (structureId, ratio, now = dayNightClock.seconds) =>
+  refuelStructure: (structureId, ratio, now = dayNightClock.seconds) => {
+    if (!campfireWindowOpen(phaseFor(cyclePosition(now)))) return;
     set((state) => ({
       structures: state.structures.map((structure) =>
         structure.id === structureId && structure.kind === 'fogueira'
           ? { ...structure, fuelUntil: refuelUntil(structure, now, ratio) }
           : structure,
       ),
-    })),
+    }));
+  },
 
   clearBuildError: () => set({ buildError: null }),
 

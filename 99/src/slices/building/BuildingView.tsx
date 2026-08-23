@@ -6,7 +6,9 @@ import { useGameStore } from '../../app/store';
 import { useGameAction } from '../../shared/input';
 import { palette } from '../../shared/palette';
 import { dayNightClock } from '../daynight/dayNightClock';
+import { campfireWindowOpen, cyclePosition, phaseFor } from '../daynight/daynight.logic';
 import { playerTransform } from '../player';
+import { regionAt } from '../regions/regions.logic';
 import { DEFAULT_PER_GROUP } from '../resources/resources.logic';
 import {
   BUILDING,
@@ -260,17 +262,17 @@ export function BuildingView() {
     // Um movel da casa tambem vem antes — dentro de casa nao se abastece nada.
     if (state.activeChallenge || state.highlightedNodeId || state.nearbySpot) return;
 
-    const fogueira = nearestRefuelable(state.structures, playerTransform);
+    if (!campfireWindowOpen(phaseFor(cyclePosition(dayNightClock.seconds)))) return;
+    const fogueira = nearestRefuelable(state.structures, playerTransform, undefined, dayNightClock.seconds);
     if (!fogueira) return;
+    const tabela = regionAt(fogueira.position)?.tables[0] ?? DEFAULT_PER_GROUP;
 
     state.startChallenge(
       {
         id: fogueira.id,
         kind: 'madeira',
         groups: state.rollFuelGroups(),
-        // A fogueira pergunta a tabuada de onde ela esta. Enquanto nao ha
-        // regioes, e a da Praia.
-        perGroup: DEFAULT_PER_GROUP,
+        perGroup: tabela,
       },
       'abastecer',
     );

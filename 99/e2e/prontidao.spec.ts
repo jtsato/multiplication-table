@@ -1,6 +1,10 @@
 import { expect, test } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
-import { ficarAoLadoDeUmRecurso, esperarPainelCentralizado } from './jogo';
+import {
+  ficarAoLadoDeUmRecurso,
+  esperarPainelCentralizado,
+  irParaOMeioDe,
+} from './jogo';
 
 /** Aguarda o canvas do jogo (e o HUD) aparecerem. */
 async function esperarJogoPronto(page: import('@playwright/test').Page) {
@@ -40,8 +44,7 @@ test('sem violações críticas de acessibilidade na tela inicial', async ({ pag
 
 test('movimento reduzido desliga a animação de aviso no HUD', async ({ page }) => {
   await esperarJogoPronto(page);
-  await page.evaluate(() => window.__tabuada!.store.setState({ clock: { phase: 'entardecer', day: 1, secondsToNextPhase: 12 } }));
-  await page.waitForTimeout(300);
+  await irParaOMeioDe(page, 'entardecer');
 
   await page.emulateMedia({ reducedMotion: 'reduce' });
   const aviso = page.locator('.hud__prompt--aviso');

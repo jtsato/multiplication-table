@@ -1,3 +1,4 @@
+import type { AppStrings } from '../../i18n';
 import { distanceSqXZ, type Vec3, vec3 } from '../../shared/vec';
 
 /**
@@ -87,13 +88,16 @@ export const HOME_SPOTS: Record<HomeSpot, Vec3> = {
   ),
 };
 
-export const HOME_SPOT_LABELS: Record<HomeSpot, string> = {
-  espelho: 'Espelho',
-  mural: 'Mural da tabuada',
-  cama: 'Cama',
-  caderneta: 'Caderneta dos animais',
-  encomendas: 'Quadro de encomendas',
-};
+export function homeSpotLabel(spot: HomeSpot, strings: AppStrings): string {
+  const labels: Record<HomeSpot, string> = {
+    espelho: strings.mirrorTitle,
+    mural: strings.chartTitle,
+    cama: strings.bedLabel,
+    caderneta: strings.bookTitle,
+    encomendas: strings.ordersTitle,
+  };
+  return labels[spot];
+}
 
 /**
  * As seis decorações da loja que a casa desenha.

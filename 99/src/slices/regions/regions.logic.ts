@@ -34,6 +34,8 @@ export type RegionId = (typeof REGION_ORDER)[number];
 export interface Region {
   id: RegionId;
   nome: string;
+  /** Depositos minerais permanentes disponiveis na ilha. */
+  deposits: ResourceKind[];
   /** Centro do disco, no plano. */
   center: Vec3;
   radius: number;
@@ -76,17 +78,19 @@ export const REGIONS: Region[] = [
   {
     id: 'praia',
     nome: 'Praia',
+    deposits: ['pedra', 'concha'],
     center: vec3(0, 0, 0),
     radius: 16,
     groundY: 0,
     tables: [2],
-    harvest: ['concha', 'madeira'],
+     harvest: ['concha', 'madeira', 'pedra'],
     clearance: 6,
   },
   {
     id: 'porto',
     nome: 'Porto',
-    center: vec3(36, 0, 0),
+     deposits: ['peixe', 'pedra'],
+     center: vec3(36, 0, 0),
     radius: 13,
     groundY: 0,
     tables: [3],
@@ -96,6 +100,7 @@ export const REGIONS: Region[] = [
   {
     id: 'bosque',
     nome: 'Bosque',
+    deposits: ['pedra', 'cristal'],
     center: vec3(55, 0, 27),
     radius: 13,
     groundY: 1.5,
@@ -106,6 +111,7 @@ export const REGIONS: Region[] = [
   {
     id: 'cachoeira',
     nome: 'Cachoeira',
+    deposits: ['cristal', 'pedra'],
     center: vec3(44, 0, 58),
     radius: 13,
     groundY: 4,
@@ -116,6 +122,7 @@ export const REGIONS: Region[] = [
   {
     id: 'pomar',
     nome: 'Pomar',
+    deposits: ['mel'],
     center: vec3(12, 0, 66),
     radius: 13,
     groundY: 2,
@@ -126,6 +133,7 @@ export const REGIONS: Region[] = [
   {
     id: 'pico',
     nome: 'Pico',
+    deposits: ['gelo', 'pedra'],
     center: vec3(-14, 0, 45),
     radius: 13,
     groundY: 7,
@@ -136,6 +144,7 @@ export const REGIONS: Region[] = [
   {
     id: 'vale',
     nome: 'Vale',
+    deposits: ['pedra'],
     center: vec3(-36, 0, 20),
     radius: 13,
     groundY: 2,
@@ -146,6 +155,7 @@ export const REGIONS: Region[] = [
   {
     id: 'montanha',
     nome: 'Montanha',
+    deposits: ['pedra', 'gelo'],
     center: vec3(-44, 0, -12),
     radius: 13,
     groundY: 6,
@@ -156,6 +166,7 @@ export const REGIONS: Region[] = [
   {
     id: 'observatorio',
     nome: 'Observatório',
+    deposits: ['cristal', 'pedra'],
     center: vec3(-26, 0, -38),
     radius: 13,
     groundY: 3,

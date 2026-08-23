@@ -41,7 +41,10 @@ export function WallChart() {
         <header className="chart__head">
           <h2 className="chart__title">{t.chartTitle}</h2>
           <span className="chart__count">
-            {dominados} de {FATORES.length * FATORES.length}
+            {interpolate(t.chartProgress, {
+              known: dominados,
+              total: FATORES.length * FATORES.length,
+            })}
           </span>
         </header>
 
@@ -82,9 +85,11 @@ export function WallChart() {
                     <td
                       key={coluna}
                       className={conhecido ? 'chart__cell chart__cell--known' : 'chart__cell'}
-                      aria-label={`${linha} vezes ${coluna} é ${linha * coluna}${
-                        conhecido ? ', você já sabe' : ''
-                      }`}
+                      aria-label={interpolate(conhecido ? t.chartCellKnown : t.chartCell, {
+                        a: linha,
+                        b: coluna,
+                        answer: linha * coluna,
+                      })}
                     >
                       {linha * coluna}
                     </td>

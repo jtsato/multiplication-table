@@ -330,10 +330,10 @@ describe('as colheitas das regioes', () => {
    * nasce em toda regiao nao conta historia nenhuma, e um tipo que nao nasce em
    * lugar nenhum e conteudo morto.
    */
-  it('todo tipo de recurso nasce em alguma regiao', () => {
-    const colhidos = new Set(REGIONS.flatMap((r) => r.harvest));
-    for (const kind of RESOURCE_KINDS) {
-      expect(colhidos, `${kind} nao nasce em regiao nenhuma`).toContain(kind);
+  it('todo deposito permanente nasce em alguma regiao', () => {
+    const depositos = new Set(REGIONS.flatMap((r) => r.deposits));
+    for (const kind of new Set(REGIONS.flatMap((region) => region.deposits))) {
+      expect(depositos, `${kind} nao nasce em regiao nenhuma`).toContain(kind);
     }
   });
 
@@ -355,19 +355,36 @@ describe('as colheitas das regioes', () => {
     }
   });
 
-  it('o tipo de um no e uma das colheitas da regiao onde ele nasceu', () => {
+  it('o tipo de um no e um dos depositos da regiao onde ele nasceu', () => {
     for (const n of createNodes(createRng(55))) {
-      expect(regionAt(n.position)!.harvest).toContain(n.kind);
+      expect(regionAt(n.position)!.deposits).toContain(n.kind);
     }
   });
 
-  it('toda regiao oferece todas as suas colheitas', () => {
+  it('a ilha comeca sem vegetacao: nada de madeira ou fruta espalhada', () => {
+    for (let seed = 0; seed < 25; seed += 1) {
+      for (const n of createNodes(createRng(seed))) {
+        expect(['madeira', 'fruta']).not.toContain(n.kind);
+      }
+    }
+  });
+
+  it('a Praia oferece pedra desde o inicio, para a primeira fogueira', () => {
+    for (let seed = 0; seed < 25; seed += 1) {
+      const praia = createNodes(createRng(seed)).filter(
+        (n) => regionAt(n.position)?.id === 'praia',
+      );
+      expect(praia.some((n) => n.kind === 'pedra'), `semente ${seed}`).toBe(true);
+    }
+  });
+
+  it('toda regiao oferece todos os seus depositos', () => {
     const nodes = createNodes(createRng(66));
     for (const regiao of REGIONS) {
-      const oferecidas = new Set(
+      const oferecidos = new Set(
         nodes.filter((n) => regionAt(n.position)?.id === regiao.id).map((n) => n.kind),
       );
-      expect([...oferecidas].sort()).toEqual([...regiao.harvest].sort());
+      expect([...oferecidos].sort()).toEqual([...new Set(regiao.deposits)].sort());
     }
   });
 

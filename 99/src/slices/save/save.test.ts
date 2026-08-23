@@ -63,11 +63,13 @@ const saveValido = (): GameSave => ({
   ],
   pet: 'cachorro',
   locale: 'en-US',
-  structures: [
-    { id: 'fogueira-1', kind: 'fogueira', position: { x: 1, y: 0, z: 2 }, rotation: 0, fuelUntil: 500 },
-    { id: 'cerca-2', kind: 'cerca', position: { x: 3, y: 0, z: 4 }, rotation: 0.5, fuelUntil: 0 },
-  ],
-  clockSeconds: 12345,
+   structures: [
+     { id: 'fogueira-1', kind: 'fogueira', position: { x: 1, y: 0, z: 2 }, rotation: 0, fuelUntil: 500 },
+     { id: 'cerca-2', kind: 'cerca', position: { x: 3, y: 0, z: 4 }, rotation: 0.5, fuelUntil: 0 },
+   ],
+   depletedNodeIds: [],
+   plantedNodes: [],
+   clockSeconds: 12345,
   volume: 0.7,
   cameraSensitivity: 1.5,
 });
@@ -104,6 +106,8 @@ describe('migrateSave', () => {
     expect(resultado.seeds).toBe(0);
     expect(resultado.garden).toEqual({ planted: false, plantedDay: 0 });
     expect(resultado.structures).toEqual([]);
+    expect(resultado.depletedNodeIds).toEqual([]);
+    expect(resultado.plantedNodes).toEqual([]);
     expect(resultado.clockSeconds).toBe(0);
     expect(resultado.volume).toBe(0.5);
     expect(resultado.cameraSensitivity).toBe(1);
@@ -360,8 +364,10 @@ describe('snapshot e applySave', () => {
         'owned',
         'pet',
         'seeds',
-        'structures',
-        'version',
+         'structures',
+         'depletedNodeIds',
+         'plantedNodes',
+         'version',
         'volume',
       ].sort(),
     );

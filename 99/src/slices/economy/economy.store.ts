@@ -2,6 +2,7 @@ import type { StateCreator } from 'zustand';
 import type { GameState } from '../../app/store';
 import { payCost } from '../building/building.logic';
 import {
+  ECONOMY,
   SHOP_ITEMS,
   checkPurchase,
   coinsFor,
@@ -43,7 +44,7 @@ export const createEconomySlice: StateCreator<GameState, [], [], EconomySlice> =
   streak: 0,
   owned: [],
   hints: 0,
-  seeds: 0,
+  seeds: ECONOMY.startingSeeds,
   purchaseError: null,
   shopOpen: false,
   summaryOpen: false,
@@ -133,7 +134,7 @@ export const createEconomySlice: StateCreator<GameState, [], [], EconomySlice> =
       lastFactKey: null,
       owned: [],
       hints: 0,
-      seeds: 0,
+      seeds: ECONOMY.startingSeeds,
       purchaseError: null,
       shopOpen: false,
       summaryOpen: false,

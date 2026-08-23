@@ -5,6 +5,7 @@ import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it } from 'vitest';
 import '@testing-library/jest-dom/vitest';
 import { useGameStore } from '../../app/store';
+import { interpolate } from '../../i18n';
 import { AvatarPanel } from '../avatar';
 import { DAYNIGHT, PHASE_BOUNDS, cyclePosition, phaseFor } from '../daynight/daynight.logic';
 import { dayNightClock, resetDayNightClock } from '../daynight/dayNightClock';
@@ -66,7 +67,11 @@ describe('painéis da casa', () => {
       abrir('mural');
       render(<WallChart />);
 
-      expect(screen.getByLabelText('7 vezes 8 é 56')).toHaveTextContent('56');
+      expect(
+        screen.getByLabelText(
+          interpolate(state().text.strings.chartCell, { a: 7, b: 8, answer: 56 }),
+        ),
+      ).toHaveTextContent('56');
       expect(state().coins).toBe(0);
       expect(state().hints).toBe(0);
     });
@@ -78,10 +83,16 @@ describe('painéis da casa', () => {
       abrir('mural');
       render(<WallChart />);
 
-      expect(screen.getByLabelText('2 vezes 4 é 8, você já sabe')).toHaveClass(
-        'chart__cell--known',
-      );
-      expect(screen.getByLabelText('7 vezes 8 é 56')).not.toHaveClass('chart__cell--known');
+      expect(
+        screen.getByLabelText(
+          interpolate(state().text.strings.chartCellKnown, { a: 2, b: 4, answer: 8 }),
+        ),
+      ).toHaveClass('chart__cell--known');
+      expect(
+        screen.getByLabelText(
+          interpolate(state().text.strings.chartCell, { a: 7, b: 8, answer: 56 }),
+        ),
+      ).not.toHaveClass('chart__cell--known');
     });
 
     it('conta quantos fatos ja foram dominados', () => {

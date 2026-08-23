@@ -671,6 +671,7 @@ test.describe('partida no computador', () => {
       });
     });
 
+    await irParaOMeioDe(page, 'entardecer');
     await page.keyboard.press('KeyB');
     await page.waitForTimeout(300);
     await page.screenshot({ path: 'e2e/telas/08-modo-construcao.png' });
@@ -685,9 +686,9 @@ test.describe('partida no computador', () => {
 
     const estado = await lerEstado(page);
     expect(estado.construcoes).toBe(1);
-    // 8 madeira e 4 pedra debitados.
+    // 8 madeira e 2 pedras debitados.
     expect(estado.inventario.madeira).toBe(32);
-    expect(estado.inventario.pedra).toBe(16);
+    expect(estado.inventario.pedra).toBe(18);
 
     await page.screenshot({ path: 'e2e/telas/09-fogueira.png' });
   });

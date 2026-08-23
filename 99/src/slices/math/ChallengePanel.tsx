@@ -138,7 +138,7 @@ export function ChallengePanel() {
                 o recurso é o resultado da conta, a moeda é o prêmio por ter
                 acertado. Juntá-las num número só apagaria essa distinção. */}
             <p className="challenge__coins">
-              {feedback.coins > 0 ? `+${feedback.coins} moedas` : ' '}
+              {feedback.coins > 0 ? `+${feedback.coins} ${t.coins}` : ' '}
             </p>
           </div>
         )

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from 'react';
+import { useMemo, useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { Instance, Instances } from '@react-three/drei';
 import type { Group, Mesh } from 'three';
@@ -185,8 +185,6 @@ export function ResourcesView() {
   const nodes = useGameStore((state) => state.nodes);
   const highlightedNodeId = useGameStore((state) => state.highlightedNodeId);
   const setHighlightedNodeId = useGameStore((state) => state.setHighlightedNodeId);
-  const restoreNode = useGameStore((state) => state.restoreNode);
-
   const readyNodes = useMemo(() => nodes.filter((node) => !node.depleted), [nodes]);
   const highlighted = readyNodes.find((node) => node.id === highlightedNodeId) ?? null;
 
@@ -237,6 +235,14 @@ export function ResourcesView() {
     }
   });
 
+  useGameAction('plantar-arvore', () => {
+    useGameStore.getState().plantResource('arvore-madeira');
+  });
+
+  useGameAction('plantar-frutifera', () => {
+    useGameStore.getState().plantResource('arvore-frutifera');
+  });
+
   // Interagir nao coleta direto: abre o desafio ancorado no recurso. A colheita
   // acontece quando a crianca responde (slice de matematica).
   useGameAction('interagir', () => {
@@ -246,29 +252,9 @@ export function ResourcesView() {
     state.startChallenge(target);
   });
 
-  /**
-   * Recuperacao dos nos colhidos.
-   *
-   * Um timer por no colhido, limpo no desmonte. A alternativa — comparar um
-   * `readyAt` com o relogio a cada quadro — obrigaria a recalcular a lista de
-   * nos disponiveis durante o render, 60 vezes por segundo.
-   */
-  const depletedIds = nodes
-    .filter((node) => node.depleted)
-    .map((node) => node.id)
-    .join(',');
-
-  useEffect(() => {
-    if (!depletedIds) return;
-    const timers = depletedIds
-      .split(',')
-      .map((id) => setTimeout(() => restoreNode(id), RESOURCES.respawnSeconds * 1000));
-    return () => timers.forEach(clearTimeout);
-  }, [depletedIds, restoreNode]);
-
   return (
     <>
-      {readyNodes.map((node) => (
+      {nodes.map((node) => (
         <NodeBase key={node.id} node={node} highlighted={node.id === highlightedNodeId} />
       ))}
 

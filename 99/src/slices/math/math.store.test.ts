@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import { useGameStore } from '../../app/store';
+import { DAYNIGHT, PHASE_BOUNDS } from '../daynight/daynight.logic';
 import { dayNightClock } from '../daynight/dayNightClock';
 import { LANTERN, chargeRemaining } from '../lantern';
 import { resolveAnswer } from './math.logic';
@@ -149,19 +150,30 @@ describe('slice de matematica', () => {
   });
 
   describe('a conta da fogueira', () => {
-    const AGORA = 100;
+    const AGORA = PHASE_BOUNDS.entardecer.start * DAYNIGHT.cycleSeconds + 1;
     const fogueira = { id: 'fogueira-1', kind: 'madeira' as const, groups: 4, perGroup: 2 };
 
     beforeEach(() => {
       state().resetLantern();
       dayNightClock.seconds = AGORA;
+      useGameStore.setState({
+        structures: [
+          {
+            id: fogueira.id,
+            kind: 'fogueira',
+            position: { x: 0, y: 0, z: 0 },
+            rotation: 0,
+            fuelUntil: AGORA + 1,
+          },
+        ],
+      });
     });
 
     it('tambem acende a lanterna', () => {
       state().startChallenge(fogueira, 'abastecer');
       state().answerChallenge(state().activeChallenge!.answer);
 
-      expect(chargeRemaining(state().lantern, AGORA)).toBe(LANTERN.chargeSeconds);
+      expect(chargeRemaining(state().lantern, AGORA)).toBeCloseTo(LANTERN.chargeSeconds);
     });
 
     it('errar acende menos, e nunca deixa a lanterna apagada', () => {
@@ -224,6 +236,18 @@ describe('slice de matematica', () => {
     });
 
     it('a conta da fogueira tambem paga moeda', () => {
+      dayNightClock.seconds = PHASE_BOUNDS.entardecer.start * DAYNIGHT.cycleSeconds + 1;
+      useGameStore.setState({
+        structures: [
+          {
+            id: 'fogueira-1',
+            kind: 'fogueira',
+            position: { x: 0, y: 0, z: 0 },
+            rotation: 0,
+            fuelUntil: dayNightClock.seconds + 1,
+          },
+        ],
+      });
       state().startChallenge(
         { id: 'fogueira-1', kind: 'madeira', groups: 4, perGroup: 2 },
         'abastecer',

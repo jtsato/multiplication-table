@@ -43,9 +43,9 @@ export function Hud({ isTouch = false }: { isTouch?: boolean } = {}) {
   const orderPerto = nearbyOrderId ? orders.find((order) => order.id === nearbyOrderId) : null;
   const podeEntregar = orderPerto ? inventory[orderPerto.kind] >= orderQuantity(orderPerto) : false;
 
-  const colheitaDaqui = regionById(currentRegion).harvest;
+  const depositosDaqui = regionById(currentRegion).deposits;
   const visiveis = RESOURCE_KINDS.filter(
-    (kind) => inventory[kind] > 0 || colheitaDaqui.includes(kind),
+    (kind) => inventory[kind] > 0 || depositosDaqui.includes(kind),
   );
   const clock = useGameStore((state) => state.clock);
   const lanternCharge = useGameStore((state) => state.lanternCharge);

@@ -1,14 +1,23 @@
 import type { StateCreator } from 'zustand';
 import type { GameState } from '../../app/store';
 import { createRng } from '../../shared/rng';
+import { distanceSqXZ } from '../../shared/vec';
+import { playerTransform } from '../player/playerTransform';
 import { DEFAULT_WORLD_SEED } from '../world/world.store';
+import { fitsOnLand, regionAt } from '../regions/regions.logic';
 import {
   addToInventory,
   createNodes,
   emptyInventory,
+  startingInventory,
+  plantedResourceKind,
+  plantingPosition,
   type Inventory,
+  type PlantingKind,
   type ResourceNode,
 } from './resources.logic';
+
+let nextPlantedNodeId = 0;
 
 export interface ResourcesSlice {
   nodes: ResourceNode[];
@@ -21,8 +30,9 @@ export interface ResourcesSlice {
   setHighlightedNodeId: (id: string | null) => void;
   /** Marca o no como colhido e credita os itens no inventario. */
   collectNode: (nodeId: string, amount: number) => void;
-  /** Devolve o no ao mundo depois do tempo de recuperacao. */
-  restoreNode: (nodeId: string) => void;
+  plantResource: (kind: PlantingKind) => void;
+  refreshPlantedNodes: (day: number) => void;
+  loadResourceState: (depletedNodeIds: readonly string[], plantedNodes?: readonly ResourceNode[]) => void;
   resetResources: () => void;
 }
 
@@ -41,22 +51,75 @@ export const createResourcesSlice: StateCreator<GameState, [], [], ResourcesSlic
       // render recurso em dobro.
       if (!target || target.depleted) return state;
 
+       return {
+         nodes: state.nodes.map((node) =>
+           node.id === nodeId
+             ? node.planted
+               ? { ...node, depleted: true, lastHarvestDay: state.clock.day }
+               : { ...node, depleted: true }
+             : node,
+         ),
+         inventory: addToInventory(state.inventory, target.kind, amount),
+         highlightedNodeId: state.highlightedNodeId === nodeId ? null : state.highlightedNodeId,
+       };
+     }),
+
+  plantResource: (kind) =>
+    set((state) => {
+      if (state.seeds <= 0) return state;
+      const position = plantingPosition(playerTransform, playerTransform.yaw);
+      if (!fitsOnLand(position, 1.2) || state.nodes.some((node) => distanceSqXZ(node.position, position) < 16)) {
+        return state;
+      }
+      const region = regionAt(position);
+      const perGroup = region?.tables[0] ?? 2;
+      nextPlantedNodeId += 1;
       return {
-        nodes: state.nodes.map((node) => (node.id === nodeId ? { ...node, depleted: true } : node)),
-        inventory: addToInventory(state.inventory, target.kind, amount),
-        highlightedNodeId: state.highlightedNodeId === nodeId ? null : state.highlightedNodeId,
+        seeds: state.seeds - 1,
+        nodes: [
+          ...state.nodes,
+          {
+            id: `planta-${nextPlantedNodeId}`,
+            kind: plantedResourceKind(kind),
+            position,
+            groups: 1,
+            perGroup,
+            depleted: false,
+            planted: true,
+          },
+        ],
       };
     }),
 
-  restoreNode: (nodeId) =>
+  refreshPlantedNodes: (day) =>
+    set((state) => {
+      const nodes = state.nodes.map((node) =>
+        node.planted && node.depleted && (node.lastHarvestDay ?? day) < day
+          ? { ...node, depleted: false }
+          : node,
+      );
+      return nodes.some((node, index) => node !== state.nodes[index]) ? { nodes } : state;
+    }),
+
+  loadResourceState: (depletedNodeIds, plantedNodes = []) => {
+    nextPlantedNodeId = plantedNodes.reduce((highest, node) => {
+      const suffix = Number(node.id.replace('planta-', ''));
+      return Number.isFinite(suffix) ? Math.max(highest, suffix) : highest;
+    }, 0);
+    const depleted = new Set(depletedNodeIds);
     set((state) => ({
-      nodes: state.nodes.map((node) => (node.id === nodeId ? { ...node, depleted: false } : node)),
-    })),
+      nodes: [
+        ...state.nodes.filter((node) => !node.planted).map((node) => ({ ...node, depleted: depleted.has(node.id) })),
+        ...plantedNodes,
+      ],
+      highlightedNodeId: null,
+    }));
+  },
 
   resetResources: () =>
     set({
       nodes: createNodes(createRng(DEFAULT_WORLD_SEED)),
-      inventory: emptyInventory(),
+  inventory: startingInventory(),
       highlightedNodeId: null,
     }),
 });

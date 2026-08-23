@@ -8,7 +8,7 @@ export {
   HOME,
   HOME_SPOTS,
   HOME_SPOT_OFFSETS,
-  HOME_SPOT_LABELS,
+  homeSpotLabel,
   HOME_DECORATION_KINDS,
   HOME_DECORATION_OFFSETS,
   blocksHome,

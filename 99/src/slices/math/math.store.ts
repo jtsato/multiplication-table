@@ -4,6 +4,9 @@ import { createRng, randomInt } from '../../shared/rng';
 import { DEFAULT_WORLD_SEED } from '../world/world.store';
 import { WRONG_ANSWER_RATIO, generateChallenge, resolveAnswer } from './math.logic';
 import { eventForDay, harvestMultiplier } from '../daily/daily.logic';
+import { campfireWindowOpen, cyclePosition, phaseFor } from '../daynight/daynight.logic';
+import { dayNightClock } from '../daynight/dayNightClock';
+import { BUILDING, fuelRemaining } from '../building/building.logic';
 import { factKey } from '../economy/economy.logic';
 import { factFactorForTable } from '../pedagogy/pedagogy.logic';
 import { regionAt } from '../regions/regions.logic';
@@ -112,6 +115,20 @@ export const createMathSlice: StateCreator<GameState, [], [], MathSlice> = (set,
     answerChallenge: (choice) => {
       const challenge = get().activeChallenge;
       if (!challenge) return;
+
+      const refuelTarget =
+        challenge.purpose === 'abastecer'
+          ? get().structures.find((structure) => structure.id === challenge.targetId)
+          : null;
+      if (
+        challenge.purpose === 'abastecer' &&
+        (!refuelTarget ||
+          !campfireWindowOpen(phaseFor(cyclePosition(dayNightClock.seconds))) ||
+          fuelRemaining(refuelTarget, dayNightClock.seconds) >= BUILDING.fireFuelSeconds * 2)
+      ) {
+        set({ activeChallenge: null, hiddenOptions: [], challengeOriginalNode: null });
+        return;
+      }
 
       const outcome = resolveAnswer(challenge, choice);
 

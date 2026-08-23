@@ -140,7 +140,7 @@ export function AvatarPanel() {
         />
 
         <button type="button" className="avatar__close" onClick={closeSpot}>
-          Pronto
+          {t.ready}
         </button>
       </div>
     </div>

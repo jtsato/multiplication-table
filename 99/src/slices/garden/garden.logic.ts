@@ -20,6 +20,7 @@ export interface GardenState {
   planted: boolean;
   /** Dia em que foi plantada. `0` significa nunca. */
   plantedDay: number;
+  position?: Vec3;
 }
 
 export type GardenStatus = 'empty' | 'growing' | 'ready';

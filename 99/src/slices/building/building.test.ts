@@ -44,12 +44,12 @@ const rico = inv({ madeira: 999, fruta: 999, pedra: 999 });
 
 describe('canAfford', () => {
   it('aceita exatamente o custo — a borda conta como suficiente', () => {
-    expect(canAfford(inv({ madeira: 8, pedra: 4 }), STRUCTURES.fogueira.recipe)).toBe(true);
+    expect(canAfford(inv({ madeira: 8, pedra: 2 }), STRUCTURES.fogueira.recipe)).toBe(true);
   });
 
   it('recusa faltando uma unidade de qualquer ingrediente', () => {
-    expect(canAfford(inv({ madeira: 7, pedra: 4 }), STRUCTURES.fogueira.recipe)).toBe(false);
-    expect(canAfford(inv({ madeira: 8, pedra: 3 }), STRUCTURES.fogueira.recipe)).toBe(false);
+    expect(canAfford(inv({ madeira: 7, pedra: 2 }), STRUCTURES.fogueira.recipe)).toBe(false);
+    expect(canAfford(inv({ madeira: 8, pedra: 1 }), STRUCTURES.fogueira.recipe)).toBe(false);
   });
 
   it('ignora recursos que nao estao na receita', () => {
@@ -69,7 +69,7 @@ describe('payCost', () => {
   it('debita cada ingrediente da receita', () => {
     const depois = payCost(inv({ madeira: 10, pedra: 6 }), STRUCTURES.fogueira.recipe);
     expect(depois.madeira).toBe(2);
-    expect(depois.pedra).toBe(2);
+    expect(depois.pedra).toBe(4);
   });
 
   it('nao mexe em recursos fora da receita', () => {
@@ -96,7 +96,7 @@ describe('payCost', () => {
   });
 
   it('pagar exatamente o custo zera os ingredientes', () => {
-    const depois = payCost(inv({ madeira: 8, pedra: 4 }), STRUCTURES.fogueira.recipe);
+    const depois = payCost(inv({ madeira: 8, pedra: 2 }), STRUCTURES.fogueira.recipe);
     expect(depois.madeira).toBe(0);
     expect(depois.pedra).toBe(0);
   });
@@ -206,9 +206,9 @@ describe('checkPlacement', () => {
     expect(resultado).toEqual({ ok: false, reason: 'perto-de-recurso' });
   });
 
-  it('ignora recurso ja colhido — ele nao atrapalha a construcao', () => {
+  it('mantem o deposito esgotado ocupando o espaco da construcao', () => {
     expect(checkPlacement(STRUCTURES.cerca, vec3(0, 0, 0), rico, [], [node(1.5, 0, true)])).toEqual(
-      { ok: true },
+      { ok: false, reason: 'perto-de-recurso' },
     );
   });
 
@@ -274,7 +274,7 @@ describe('snapFencePlacement', () => {
 describe('formatRecipe', () => {
   it('descreve o custo de forma legivel', () => {
     expect(formatRecipe(STRUCTURES.cerca.recipe, pt)).toBe('6 madeira');
-    expect(formatRecipe(STRUCTURES.fogueira.recipe, pt)).toBe('8 madeira · 4 pedras');
+    expect(formatRecipe(STRUCTURES.fogueira.recipe, pt)).toBe('8 madeira · 2 pedras');
   });
 
   it('concorda em numero — "1 pedra", "4 pedras"', () => {
@@ -339,12 +339,12 @@ describe('regras que a mutacao encontrou sem teste', () => {
 });
 
 describe('constructionTarget', () => {
-  it('a fogueira pede 8 grupos de 4 — a própria receita', () => {
+  it('a fogueira pede 8 grupos de 2 — a própria receita', () => {
     expect(constructionTarget('fogueira')).toMatchObject({
       id: 'construir-fogueira',
       kind: 'madeira',
       groups: 8,
-      perGroup: 4,
+      perGroup: 2,
     });
   });
 

@@ -135,6 +135,7 @@ test.describe('partida no celular', () => {
       });
     });
 
+    await irParaOMeioDe(page, 'entardecer');
     await page.getByRole('button', { name: /Fogueira/ }).tap();
     // No modo construcao os botoes trocam para confirmar e cancelar.
     const construir = page.getByRole('button', { name: 'Construir' });

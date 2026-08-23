@@ -87,6 +87,10 @@ export function phaseFor(position: number): DayPhase {
   return 'amanhecer';
 }
 
+export function campfireWindowOpen(phase: DayPhase): boolean {
+  return phase === 'entardecer' || phase === 'noite';
+}
+
 /** Progresso dentro da fase atual, de 0 a 1. */
 export function phaseProgress(position: number): number {
   const t = normalizePosition(position);

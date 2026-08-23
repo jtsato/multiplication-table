@@ -3,7 +3,12 @@ import { bridgeById } from '../regions/bridges.logic';
 import { migrateLocale, type UserLocale } from '../../i18n';
 import type { ShopItemKind } from '../economy/economy.logic';
 import { SHOP_ITEMS } from '../economy/economy.logic';
-import { emptyInventory, RESOURCE_KINDS, type Inventory } from '../resources/resources.logic';
+import {
+  emptyInventory,
+  RESOURCE_KINDS,
+  type Inventory,
+  type ResourceNode,
+} from '../resources/resources.logic';
 import type { GardenState } from '../garden/garden.logic';
 import { vec3, type Vec3 } from '../../shared/vec';
 import type { Structure, StructureKind } from '../building/building.logic';
@@ -33,7 +38,7 @@ import {
  * `localStorage` indisponivel (aba privada, cota cheia) e um fato da vida, e nao
  * pode impedir a crianca de jogar.
  */
-export const SAVE_VERSION = 6;
+export const SAVE_VERSION = 7;
 
 export const SAVE_STORAGE_KEY = 'numi-99.save';
 
@@ -68,6 +73,10 @@ export interface GameSave {
    * `[]` — a crianca nao perde o que construiu ao fechar a tela.
    */
   structures: Structure[];
+  /** IDs de depositos ja esgotados; o mundo nao reativa recursos automaticamente. */
+  depletedNodeIds: string[];
+  /** Vegetacao plantada pela crianca, com posicao e progresso persistidos. */
+  plantedNodes: ResourceNode[];
   /**
    * Segundos do relogio do jogo. Sem isto o combustivel da fogueira e o numero
    * do dia voltariam ao zero no reload, e uma horta plantada no dia 3 abriria
@@ -199,6 +208,37 @@ export function migrateFactCounts(raw: unknown): Record<string, number> {
   return resultado;
 }
 
+function migrateNodeIds(raw: unknown): string[] {
+  if (raw === undefined) return [];
+  if (!Array.isArray(raw)) throw new Error('nos esgotados invalidos');
+  return raw.filter((item): item is string => typeof item === 'string' && item.length > 0);
+}
+
+function migratePlantedNodes(raw: unknown): ResourceNode[] {
+  if (raw === undefined) return [];
+  if (!Array.isArray(raw)) throw new Error('plantas invalidas');
+  return raw.map((item, index) => {
+    if (typeof item !== 'object' || item === null) throw new Error(`planta invalida: ${index}`);
+    const candidate = item as Record<string, unknown>;
+    if (typeof candidate.id !== 'string' || !candidate.id.startsWith('planta-')) {
+      throw new Error(`planta invalida: ${index}`);
+    }
+    if (typeof candidate.kind !== 'string' || !RESOURCE_KINDS.includes(candidate.kind as never)) {
+      throw new Error(`planta invalida: ${index}`);
+    }
+    return {
+      id: candidate.id,
+      kind: candidate.kind as ResourceNode['kind'],
+      position: migrateVec3(candidate.position, `plantas[${index}].position`),
+      groups: migrateCount(candidate.groups, `plantas[${index}].groups`),
+      perGroup: migrateCount(candidate.perGroup, `plantas[${index}].perGroup`),
+      depleted: candidate.depleted === true,
+      planted: true,
+      lastHarvestDay: migrateCount(candidate.lastHarvestDay, `plantas[${index}].lastHarvestDay`),
+    };
+  });
+}
+
 export function migrateInventory(raw: unknown): Inventory {
   if (raw === undefined) return emptyInventory();
   if (typeof raw !== 'object' || raw === null) throw new Error('inventario invalido');
@@ -304,8 +344,9 @@ export function migrateSave(raw: unknown): GameSave {
     rawVersion !== 2 &&
     rawVersion !== 3 &&
     rawVersion !== 4 &&
-    rawVersion !== 5 &&
-    rawVersion !== SAVE_VERSION
+     rawVersion !== 5 &&
+     rawVersion !== 6 &&
+     rawVersion !== SAVE_VERSION
   ) {
     throw new Error(`versao de save nao suportada: ${String(rawVersion)}`);
   }
@@ -334,8 +375,10 @@ export function migrateSave(raw: unknown): GameSave {
     animalBook: migrateAnimalBook(candidate.animalBook),
     pet: migratePet(candidate.pet),
     locale: migrateLocale(candidate.locale),
-    structures: migrateStructures(candidate.structures),
-    clockSeconds: migrateCount(candidate.clockSeconds, 'relogio'),
+     structures: migrateStructures(candidate.structures),
+     depletedNodeIds: migrateNodeIds(candidate.depletedNodeIds),
+     plantedNodes: migratePlantedNodes(candidate.plantedNodes),
+     clockSeconds: migrateCount(candidate.clockSeconds, 'relogio'),
     volume: migrateVolume(candidate.volume),
     cameraSensitivity: migrateSensitivity(candidate.cameraSensitivity),
   };

@@ -7,13 +7,33 @@ import { scatterPositions } from '../world/world.logic';
 /**
  * O que se colhe.
  *
- * Tres tipos sao **materiais** e aparecem em mais de uma regiao — madeira, pedra
- * e fruta. Os outros seis sao **colheita de regiao**: cada um so existe num
- * lugar, o que faz o inventario virar registro de onde a crianca esteve. Antes
- * disto, atravessar a ilha inteira rendia os mesmos tres montinhos.
+ * Os nos que nascem no mundo agora sao depositos minerais permanentes. Vegetacao
+ * nao aparece espontaneamente: madeira e frutas entram no mundo por plantio
+ * deliberado, para a ilha comecar deserta e a crianca cuidar do que construiu.
  */
 export type ResourceKind =
   'madeira' | 'fruta' | 'pedra' | 'concha' | 'peixe' | 'cogumelo' | 'cristal' | 'mel' | 'gelo';
+
+export type PlantableResourceKind = 'madeira' | 'fruta';
+export type PlantingKind = 'arvore-frutifera' | 'arvore-madeira';
+
+export const PLANTABLE_RESOURCE_KINDS: readonly PlantableResourceKind[] = ['madeira', 'fruta'];
+
+export function isPlantableKind(kind: ResourceKind): kind is PlantableResourceKind {
+  return PLANTABLE_RESOURCE_KINDS.includes(kind as PlantableResourceKind);
+}
+
+export function plantedResourceKind(kind: PlantingKind): PlantableResourceKind {
+  return kind === 'arvore-frutifera' ? 'fruta' : 'madeira';
+}
+
+export function plantingPosition(player: Vec3, yaw: number, distance = 3.4): Vec3 {
+  return {
+    x: player.x - Math.sin(yaw) * distance,
+    y: 0,
+    z: player.z - Math.cos(yaw) * distance,
+  };
+}
 
 /** Um no coletavel no mundo. */
 export interface ResourceNode {
@@ -35,16 +55,12 @@ export interface ResourceNode {
    * tabuada so, e metade do conteudo ja escrito era inalcancavel.
    */
   perGroup: number;
-  /**
-   * Colhido e ainda em recuperacao.
-   *
-   * Estado explicito em vez de um `readyAt` comparado com o relogio: prontidao
-   * baseada em tempo obrigaria recalcular quem esta disponivel a cada quadro
-   * *durante o render*, que e justamente o que a regra de performance do projeto
-   * proibe. Como booleano, a arvore so re-renderiza nos dois eventos reais —
-   * colher e voltar.
-   */
+  /** Estado persistente do deposito ou da planta. */
   depleted: boolean;
+  /** Vegetacao plantada pela crianca; depositos do mapa nao possuem esta marca. */
+  planted?: boolean;
+  /** Ultimo dia em que uma planta produziu, para evitar colheita infinita no mesmo dia. */
+  lastHarvestDay?: number;
 }
 
 export type Inventory = Record<ResourceKind, number>;
@@ -74,9 +90,7 @@ export const RESOURCES = {
    * e sumir so quando ela realmente vai embora.
    */
   cancelRange: 5.2,
-  /** Tempo ate um no esgotado voltar, em segundos. */
-  respawnSeconds: 12,
-  /** Quantidade de nos gerados em cada regiao. */
+  /** Quantidade de depositos permanentes gerados em cada regiao. */
   nodesPerRegion: 6,
   /**
    * Distancia minima entre nos, para nao nascerem sobrepostos.
@@ -117,6 +131,10 @@ export function emptyInventory(): Inventory {
   return Object.fromEntries(RESOURCE_KINDS.map((kind) => [kind, 0])) as Inventory;
 }
 
+export function startingInventory(): Inventory {
+  return emptyInventory();
+}
+
 /**
  * Gera os nos da ilha.
  *
@@ -128,29 +146,22 @@ export function createNodes(rng: Rng): ResourceNode[] {
   const nodes: ResourceNode[] = [];
 
   for (const regiao of REGIONS) {
+    const quantidade = Math.max(RESOURCES.nodesPerRegion, regiao.deposits.length);
     const positions = scatterPositions(
       rng,
-      RESOURCES.nodesPerRegion,
+      quantidade,
       RESOURCES.minSpacing,
       blocksHome,
       (semente) => randomGroundPositionIn(regiao, semente),
     );
 
     positions.forEach((position, index) => {
+      const kind = regiao.deposits[index % regiao.deposits.length];
       nodes.push({
         id: `${regiao.id}-${index}`,
-        // Rodizio entre as colheitas da regiao, pelo mesmo motivo da tabuada:
-        // sorteando, uma colheita podia nao aparecer e viraria conteudo morto.
-        kind: regiao.harvest[index % regiao.harvest.length],
+        kind,
         position,
-        // 1 a 10 grupos: cobre a tabuada inteira, qualquer que seja ela.
         groups: 1 + Math.floor(rng() * 10),
-        // Rodizio, e nao sorteio, entre as tabuadas da regiao.
-        //
-        // Sorteando, uma regiao de duas tabuadas poderia sair so com uma — e uma
-        // tabuada sem nenhum no no mundo e um acessorio inalcancavel de novo,
-        // que e o defeito exato que esta fase existe para consertar. O rodizio
-        // garante a cobertura em qualquer semente, de graca.
         perGroup: regiao.tables[index % regiao.tables.length],
         depleted: false,
       });

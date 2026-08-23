@@ -109,6 +109,7 @@ export interface AppStrings {
   buildOffLand: string;
   buildOverlaps: string;
   buildTooClose: string;
+  buildCampfireAtNight: string;
   bridgePrompt: string;
 
   controlsTitle: string;
@@ -118,6 +119,14 @@ export interface AppStrings {
   controlsBuild: string;
   controlsSpace: string;
   joystickLabel: string;
+  touchHarvest: string;
+  touchFeed: string;
+  touchOrder: string;
+  touchRefuel: string;
+  touchBuild: string;
+  touchCancel: string;
+  plantTree: string;
+  plantFruitTree: string;
   summaryLabel: string;
   bedLabel: string;
   tableHeader: string;
@@ -164,6 +173,9 @@ export interface AppStrings {
   mirrorTitle: string;
   chartTitle: string;
   chartFree: string;
+  chartProgress: string;
+  chartCell: string;
+  chartCellKnown: string;
   teacherTitle: string;
   teacherAdvice: string;
   bedTitle: string;

@@ -4,6 +4,7 @@ import {
   NIGHT_SKY,
   PHASE_BOUNDS,
   advanceClock,
+  campfireWindowOpen,
   createStarPositions,
   cyclePosition,
   dayNumber,
@@ -108,6 +109,13 @@ describe('phaseFor', () => {
     expect(phaseFor(0.999)).toBe('amanhecer');
     // Uma volta completa volta ao dia.
     expect(phaseFor(1)).toBe('dia');
+  });
+
+  it('so entardecer e noite permitem fogueira', () => {
+    expect(campfireWindowOpen('dia')).toBe(false);
+    expect(campfireWindowOpen('entardecer')).toBe(true);
+    expect(campfireWindowOpen('noite')).toBe(true);
+    expect(campfireWindowOpen('amanhecer')).toBe(false);
   });
 
   it('cobre o ciclo inteiro sem buraco', () => {

@@ -52,15 +52,19 @@ describe('slice de recursos', () => {
     expect(state().highlightedNodeId).toBe(second.id);
   });
 
-  it('restaurar devolve o no ao mundo sem mexer no inventario', () => {
+  it('um no colhido permanece esgotado até uma decisão explícita de conteúdo', () => {
     const target = state().nodes[0];
     state().collectNode(target.id, fullYield(target));
-    const depois = state().inventory[target.kind];
 
-    state().restoreNode(target.id);
+    expect(state().nodes.find((node) => node.id === target.id)?.depleted).toBe(true);
+  });
 
-    expect(state().nodes.find((node) => node.id === target.id)?.depleted).toBe(false);
-    expect(state().inventory[target.kind]).toBe(depois);
+  it('restaura o estado persistente dos nós por IDs', () => {
+    const [first, second] = state().nodes;
+    state().loadResourceState([first.id]);
+
+    expect(state().nodes.find((node) => node.id === first.id)?.depleted).toBe(true);
+    expect(state().nodes.find((node) => node.id === second.id)?.depleted).toBe(false);
   });
 
   it('nao troca a referencia do estado quando o destaque nao muda', () => {

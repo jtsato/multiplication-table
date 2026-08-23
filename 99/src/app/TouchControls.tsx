@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useGameStore } from './store';
-import { HOME_SPOT_LABELS } from '../slices/home/home.logic';
+import { homeSpotLabel } from '../slices/home/home.logic';
 import {
   applyDeadzone,
   emitAction,
@@ -9,7 +9,9 @@ import {
   touchAxes,
   type GameAction,
 } from '../shared/input';
-import { STRUCTURES, canAfford } from '../slices/building/building.logic';
+import { BUILDING, STRUCTURES, canAfford, formatRecipe, fuelRemaining } from '../slices/building/building.logic';
+import { campfireWindowOpen } from '../slices/daynight/daynight.logic';
+import { dayNightClock } from '../slices/daynight/dayNightClock';
 import { animalById, canFeedAnimal } from '../slices/wildlife/wildlife.logic';
 import { orderQuantity } from '../slices/npc/npc.logic';
 import './touch.css';
@@ -146,13 +148,23 @@ export function TouchControls() {
   const animals = useGameStore((state) => state.animals);
   const nearbyOrderId = useGameStore((state) => state.nearbyOrderId);
   const orders = useGameStore((state) => state.orders);
+  const seeds = useGameStore((state) => state.seeds);
+  const clock = useGameStore((state) => state.clock);
+  const bundle = useGameStore((state) => state.text);
+  const t = bundle.strings;
 
   const animalPerto = nearbyAnimalId ? animalById(animals, nearbyAnimalId) : null;
   const podeAlimentar = animalPerto ? canFeedAnimal(animalPerto, inventory) : false;
   const orderPerto = nearbyOrderId ? orders.find((order) => order.id === nearbyOrderId) : null;
   const podeEntregar = orderPerto ? inventory[orderPerto.kind] >= orderQuantity(orderPerto) : false;
 
-  const temFogueira = structures.some((structure) => structure.kind === 'fogueira');
+  const temFogueira =
+    campfireWindowOpen(clock.phase) &&
+    structures.some(
+      (structure) =>
+        structure.kind === 'fogueira' &&
+        fuelRemaining(structure, dayNightClock.seconds) < BUILDING.fireFuelSeconds * 2,
+    );
   // Colher aparece com recurso ao alcance; abastecer, quando ja existe fogueira;
   // o movel, quando a crianca esta em frente a ele dentro de casa; alimentar,
   // quando um animal amigavel esta perto; e entregar, com um NPC de encomenda.
@@ -164,14 +176,14 @@ export function TouchControls() {
     podeEntregar;
 
   const rotuloInteragir = highlightedNodeId
-    ? 'Colher'
+    ? t.touchHarvest
     : nearbySpot
-      ? HOME_SPOT_LABELS[nearbySpot]
+      ? homeSpotLabel(nearbySpot, t)
       : podeAlimentar
-        ? 'Alimentar'
+        ? t.touchFeed
         : podeEntregar
-          ? 'Entregar'
-          : 'Acender';
+          ? t.touchOrder
+          : t.touchRefuel;
 
   return (
     <div className="touch">
@@ -180,8 +192,8 @@ export function TouchControls() {
       <div className="touch__actions">
         {buildMode ? (
           <>
-            <ActionButton action="confirmar" label="Construir" variant="confirmar" />
-            <ActionButton action="cancelar" label="Cancelar" variant="cancelar" />
+            <ActionButton action="confirmar" label={t.touchBuild} variant="confirmar" />
+            <ActionButton action="cancelar" label={t.touchCancel} variant="cancelar" />
           </>
         ) : (
           <>
@@ -190,19 +202,25 @@ export function TouchControls() {
             )}
             <ActionButton
               action="construir-fogueira"
-              label="Fogueira"
-              hint="8 mad · 4 ped"
+              label={t.campfire}
+              hint={formatRecipe(STRUCTURES.fogueira.recipe, bundle)}
               disabled={!canAfford(inventory, STRUCTURES.fogueira.recipe)}
             />
             <ActionButton
               action="construir-cerca"
-              label="Cerca"
-              hint="6 mad"
+              label={t.fence}
+              hint={formatRecipe(STRUCTURES.cerca.recipe, bundle)}
               disabled={!canAfford(inventory, STRUCTURES.cerca.recipe)}
             />
+            {seeds > 0 && (
+              <>
+                <ActionButton action="plantar-arvore" label={t.plantTree} />
+                <ActionButton action="plantar-frutifera" label={t.plantFruitTree} />
+              </>
+            )}
             {/* A loja fica por último: é a ação menos frequente das quatro, e o
                 polegar alcança melhor as de cima. */}
-            {!activeChallenge && <ActionButton action="loja" label="Loja" />}
+            {!activeChallenge && <ActionButton action="loja" label={t.shopTitle} />}
           </>
         )}
       </div>
