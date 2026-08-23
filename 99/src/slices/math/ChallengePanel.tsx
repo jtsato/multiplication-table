@@ -98,6 +98,15 @@ export function ChallengePanel() {
                 {interpolate(t.answerWas, { n: feedback.answer })}
               </p>
             )}
+            {!feedback.correct && (
+              <p className="challenge__explanation">
+                {interpolate(t.errorExplain, {
+                  grupos: feedback.groups,
+                  porGrupo: feedback.perGroup,
+                  resposta: feedback.answer,
+                })}
+              </p>
+            )}
             <p className="challenge__reward">
               {/* A conta na fogueira rende duas coisas, e o feedback diz as
                   duas: sem isso a criança não liga a resposta certa à luz que

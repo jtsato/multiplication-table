@@ -51,6 +51,7 @@ export const enUS: LocaleDefinition = {
     correct: 'Yes!',
     wrong: 'Almost!',
     answerWas: 'The answer was {{n}}',
+    errorExplain: '{{grupos}} groups of {{porGrupo}} = {{resposta}}',
     useHint: 'Use a hint ({{n}})',
     fireFull: 'Campfire full and lantern lit!',
     fireSome: 'A little wood and a little light',

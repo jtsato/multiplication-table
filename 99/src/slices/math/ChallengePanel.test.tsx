@@ -101,6 +101,27 @@ describe('ChallengePanel', () => {
     expect(screen.getByText(`A resposta era ${challenge.answer}`)).toBeInTheDocument();
   });
 
+  it('erro mostra a resposta e a explicacao concreta da conta', async () => {
+    const user = userEvent.setup();
+    const node = alvo();
+    state().startChallenge(node);
+    const challenge = state().activeChallenge!;
+    const errada = challenge.options.find((o) => o !== challenge.answer)!;
+
+    render(
+      <>
+        <KeyboardBridge />
+        <ChallengePanel />
+      </>,
+    );
+    await user.click(screen.getByRole('button', { name: String(errada) }));
+
+    expect(screen.getByText(`A resposta era ${challenge.answer}`)).toBeInTheDocument();
+    expect(
+      screen.getByText(`${challenge.groups} grupos de ${challenge.perGroup} = ${challenge.answer}`),
+    ).toBeInTheDocument();
+  });
+
   it('responde pelas teclas 1, 2 e 3', async () => {
     const user = userEvent.setup();
     const node = alvo();

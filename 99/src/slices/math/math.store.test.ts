@@ -66,6 +66,8 @@ describe('slice de matematica', () => {
       purpose: 'colher',
       correct: true,
       answer: challenge.answer,
+      groups: challenge.groups,
+      perGroup: challenge.perGroup,
       reward: challenge.answer,
       coins: expect.any(Number),
     });

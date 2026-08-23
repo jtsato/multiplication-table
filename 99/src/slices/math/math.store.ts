@@ -16,6 +16,8 @@ export interface ChallengeFeedback {
   correct: boolean;
   /** Resposta certa, mostrada tambem no erro — errar tem que ensinar. */
   answer: number;
+  groups: number;
+  perGroup: number;
   reward: number;
   /** Moedas pagas por esta resposta. Zero no erro: moeda so sai do acerto. */
   coins: number;
@@ -187,6 +189,8 @@ export const createMathSlice: StateCreator<GameState, [], [], MathSlice> = (set,
           purpose: challenge.purpose,
           correct: outcome.correct,
           answer: challenge.answer,
+          groups: challenge.groups,
+          perGroup: challenge.perGroup,
           reward: recompensa,
           coins: get().coins - coinsAntes,
         },

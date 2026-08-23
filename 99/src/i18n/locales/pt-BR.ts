@@ -47,6 +47,7 @@ export const ptBR: LocaleDefinition = {
     correct: 'Isso!',
     wrong: 'Quase!',
     answerWas: 'A resposta era {{n}}',
+    errorExplain: '{{grupos}} grupos de {{porGrupo}} = {{resposta}}',
     useHint: 'Usar dica ({{n}})',
     fireFull: 'Fogueira cheia e lanterna acesa!',
     fireSome: 'Um pouco de lenha e de luz',

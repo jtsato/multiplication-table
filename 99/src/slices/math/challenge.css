@@ -124,6 +124,13 @@
   opacity: 0.85;
 }
 
+.challenge__explanation {
+  margin: 6px 0 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #d7e3ff;
+}
+
 .challenge__reward {
   margin: 6px 0 0;
   font-size: 20px;

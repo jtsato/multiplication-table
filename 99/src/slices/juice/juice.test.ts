@@ -8,6 +8,8 @@ function feedback(partial: Partial<ChallengeFeedback>): ChallengeFeedback {
     purpose: 'colher',
     correct: true,
     answer: 8,
+    groups: 4,
+    perGroup: 2,
     reward: 8,
     coins: 2,
     ...partial,

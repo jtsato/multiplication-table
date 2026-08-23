@@ -130,6 +130,7 @@ export interface AppStrings {
   correct: string;
   wrong: string;
   answerWas: string;
+  errorExplain: string;
   useHint: string;
   fireFull: string;
   fireSome: string;
