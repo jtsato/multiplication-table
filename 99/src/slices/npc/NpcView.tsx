@@ -11,11 +11,11 @@ import {
   NPC,
   merchantPosition,
   nearestOrder,
-  npcPosition,
+  npcRolePosition,
+  npcRolesFor,
   orderTarget,
   teacherPosition,
   type NpcRole,
-  type Order,
 } from './npc.logic';
 
 /** Um NPC: corpo, rosto expressivo e acessório do papel. */
@@ -149,12 +149,6 @@ function NpcMesh({
   );
 }
 
-/** NPC de encomendas: um por regiao. */
-function OrderNpc({ order }: { order: Order }) {
-  const pos = npcPosition(order.regionId);
-  return <NpcMesh role="encomendas" regionId={order.regionId} position={[pos.x, pos.y, pos.z]} />;
-}
-
 /**
  * Os NPCs do mundo.
  *
@@ -162,6 +156,9 @@ function OrderNpc({ order }: { order: Order }) {
  * - **Comerciante**: na Praia; falar abre a loja (o mesmo painel do `L`).
  * - **Professor**: um por regiao; falar abre a tabuada de graca, em qualquer
  *   lugar do mundo — o porto seguro da matematica nao e so a casa.
+ *
+ * Quem esta em cada regiao sai de `npcRolesFor`, que ja aplica o teto de tres.
+ * A view nao decide isso: assim a regra vale para o jogo e para o teste.
  */
 export function NpcView() {
   const orders = useGameStore((state) => state.orders);
@@ -224,31 +221,24 @@ export function NpcView() {
 
   return (
     <group name="npcs">
-      {REGIONS.map((regiao) => {
-        const order = orders.find((candidate) => candidate.regionId === regiao.id);
-        return (
-          <group key={regiao.id}>
-            {order && <OrderNpc order={order} />}
-            <NpcMesh
-              role="professor"
-              regionId={regiao.id}
-              position={(() => {
-                const pos = teacherPosition(regiao.id);
-                return [pos.x, pos.y, pos.z];
-              })()}
-            />
-          </group>
-        );
-      })}
-
-      <NpcMesh
-        role="comerciante"
-        regionId="praia"
-        position={(() => {
-          const pos = merchantPosition();
-          return [pos.x, pos.y, pos.z];
-        })()}
-      />
+      {REGIONS.map((regiao) => (
+        <group key={regiao.id}>
+          {npcRolesFor(regiao.id).map((role) => {
+            // Sem encomenda do dia nao ha NPC de encomenda: um boneco parado
+            // sem nada a pedir e exatamente o excesso que o teto evita.
+            if (role === 'encomendas' && !orders.some((o) => o.regionId === regiao.id)) return null;
+            const pos = npcRolePosition(role, regiao.id);
+            return (
+              <NpcMesh
+                key={role}
+                role={role}
+                regionId={regiao.id}
+                position={[pos.x, pos.y, pos.z]}
+              />
+            );
+          })}
+        </group>
+      ))}
     </group>
   );
 }

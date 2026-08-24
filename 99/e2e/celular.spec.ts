@@ -37,13 +37,14 @@ test.describe('partida no celular', () => {
     // e dos botoes, e as receitas ja aparecem nos proprios botoes.
     await expect(page.locator('.hud__recipes')).toBeHidden();
 
-    // O idioma não pode cobrir o joystick: os dois ficavam no canto inferior
-    // esquerdo e a criança perdia a área de movimento.
-    const idioma = await page.locator('.language').boundingBox();
+    // O botao de configuracoes nao pode cobrir o joystick: os dois ficavam no
+    // canto superior direito e o joystick no inferior esquerdo, e uma tela cheia
+    // de botoes deixa a crianca sem onde apoiar o polegar.
+    const config = await page.locator('.settings-toggle').boundingBox();
     const joystick = await page.locator('.touch__joystick').boundingBox();
-    expect(idioma).not.toBeNull();
+    expect(config).not.toBeNull();
     expect(joystick).not.toBeNull();
-    expect(idioma!.y + idioma!.height).toBeLessThanOrEqual(joystick!.y);
+    expect(config!.y + config!.height).toBeLessThanOrEqual(joystick!.y);
 
     await page.screenshot({ path: 'e2e/telas/celular-01-inicio.png' });
   });
@@ -155,9 +156,30 @@ test.describe('partida no celular', () => {
     await page.screenshot({ path: 'e2e/telas/celular-07-fogueira.png' });
   });
 
-  test('o botao de construir fica desabilitado sem recurso', async ({ page }) => {
-    const fogueira = page.getByRole('button', { name: /Fogueira/ });
-    await expect(fogueira).toBeDisabled();
+  test('o botao de construir nao aparece sem recurso ou fora da noite', async ({ page }) => {
+    // De dia, sem madeira nem pedra, a fogueira nem oferece: o botao sumiu em vez
+    // de ficar cinza.
+    await expect(page.getByRole('button', { name: /Fogueira/ })).toHaveCount(0);
+
+    // Com o material mas ainda de dia, continua ausente — so aparece no
+    // entardecer/atardecer, como a própria janela de construção exige.
+    await page.evaluate(() => {
+      window.__tabuada!.store.setState({
+        inventory: {
+          ...window.__tabuada!.store.getState().inventory,
+          madeira: 40,
+          pedra: 20,
+        },
+      });
+    });
+    await page.waitForTimeout(300);
+    await expect(page.getByRole('button', { name: /Fogueira/ })).toHaveCount(0);
+
+    // No entardecer, com material, o botao surge.
+    await irParaOMeioDe(page, 'entardecer');
+    await page.waitForTimeout(300);
+    await expect(page.getByRole('button', { name: /Fogueira/ })).toBeVisible();
+    await page.screenshot({ path: 'e2e/telas/celular-08-fogueira-noturna.png' });
   });
 
   test('a loja cabe na tela do celular e compra pelo toque', async ({ page }) => {

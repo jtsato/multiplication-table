@@ -11,6 +11,8 @@ import { clampSensitivity, clampVolume, SETTINGS } from './settings.logic';
  */
 export interface SettingsSlice {
   settingsOpen: boolean;
+  /** Tela de mapa cheio aberta? */
+  mapOpen: boolean;
   /** Volume mestre do áudio, de 0 a 1. */
   volume: number;
   /** Multiplicador da sensibilidade da câmera, de 0.5 a 2. */
@@ -18,6 +20,9 @@ export interface SettingsSlice {
   openSettings: () => void;
   closeSettings: () => void;
   toggleSettings: () => void;
+  openMap: () => void;
+  closeMap: () => void;
+  toggleMap: () => void;
   setVolume: (value: number) => void;
   setCameraSensitivity: (value: number) => void;
   resetSettings: () => void;
@@ -27,12 +32,17 @@ export interface SettingsSlice {
 
 export const createSettingsSlice: StateCreator<GameState, [], [], SettingsSlice> = (set) => ({
   settingsOpen: false,
+  mapOpen: false,
   volume: SETTINGS.defaultVolume,
   cameraSensitivity: SETTINGS.defaultSensitivity,
 
   openSettings: () => set({ settingsOpen: true }),
   closeSettings: () => set({ settingsOpen: false }),
   toggleSettings: () => set((state) => ({ settingsOpen: !state.settingsOpen })),
+
+  openMap: () => set({ mapOpen: true }),
+  closeMap: () => set({ mapOpen: false }),
+  toggleMap: () => set((state) => ({ mapOpen: !state.mapOpen })),
 
   setVolume: (value) => {
     const volume = clampVolume(value);
@@ -47,6 +57,7 @@ export const createSettingsSlice: StateCreator<GameState, [], [], SettingsSlice>
     set({
       volume: SETTINGS.defaultVolume,
       cameraSensitivity: SETTINGS.defaultSensitivity,
+      mapOpen: false,
     });
   },
 

@@ -19,6 +19,17 @@ export const NPC = {
   orderReward: 8,
 } as const;
 
+/**
+ * Quantos NPCs cabem numa regiao.
+ *
+ * Tres e o teto, e nao uma consequencia. A Praia — onde a crianca nasce e passa
+ * os primeiros minutos — juntava o NPC de encomendas, o professor e a
+ * comerciante, e qualquer papel novo cairia ali tambem, transformando a primeira
+ * ilha num balcao de atendimento. Com um numero explicito, acrescentar um papel
+ * obriga a escolher qual sai, em vez de empilhar mais um boneco no mesmo lugar.
+ */
+export const MAX_NPCS_PER_REGION = 3;
+
 /** O papel de um NPC: o que ele oferece quando a crianca fala com ele. */
 export type NpcRole = 'encomendas' | 'comerciante' | 'professor';
 
@@ -49,6 +60,31 @@ export function merchantPosition(): Vec3 {
 export function teacherPosition(regionId: RegionId): Vec3 {
   const regiao = REGIONS.find((candidate) => candidate.id === regionId)!;
   return vec3(regiao.center.x + 4, regiao.groundY, regiao.center.z - 4);
+}
+
+/**
+ * Quem mora em cada regiao, ja respeitando o teto de `MAX_NPCS_PER_REGION`.
+ *
+ * A lista e **a unica fonte** do que a view desenha: antes cada papel se
+ * espalhava por conta propria — encomendas e professor em toda regiao, mais a
+ * comerciante na Praia — e ninguem somava o total. Assim o corte fica num lugar
+ * so, e um papel novo nao consegue entrar sem passar por aqui.
+ *
+ * A ordem e de prioridade: encomendas paga a conta, professor ensina, e a
+ * comerciante e a menos urgente das tres — se um dia houver um quarto papel, e
+ * ela que sai da Praia.
+ */
+export function npcRolesFor(regionId: RegionId): NpcRole[] {
+  const papeis: NpcRole[] = ['encomendas', 'professor'];
+  if (regionId === 'praia') papeis.push('comerciante');
+  return papeis.slice(0, MAX_NPCS_PER_REGION);
+}
+
+/** Onde fica o NPC de um papel, dentro da regiao. */
+export function npcRolePosition(role: NpcRole, regionId: RegionId): Vec3 {
+  if (role === 'comerciante') return merchantPosition();
+  if (role === 'professor') return teacherPosition(regionId);
+  return npcPosition(regionId);
 }
 
 /**

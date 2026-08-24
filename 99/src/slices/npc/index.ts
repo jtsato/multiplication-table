@@ -2,10 +2,13 @@ export { NpcView } from './NpcView';
 export { createNpcSlice, type NpcSlice } from './npc.store';
 export {
   NPC,
+  MAX_NPCS_PER_REGION,
   createOrders,
   merchantPosition,
   nearestOrder,
   npcPosition,
+  npcRolePosition,
+  npcRolesFor,
   orderQuantity,
   orderTarget,
   teacherPosition,

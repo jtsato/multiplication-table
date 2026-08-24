@@ -6,7 +6,7 @@ import {
   canAfford,
   formatRecipe,
 } from '../slices/building/building.logic';
-import { phaseLabel } from '../slices/daynight/daynight.logic';
+import { campfireWindowOpen, phaseLabel } from '../slices/daynight/daynight.logic';
 import { gardenStatus } from '../slices/garden/garden.logic';
 import { bridgeMessage, bridgeById } from '../slices/regions/bridges.logic';
 import { regionById } from '../slices/regions/regions.logic';
@@ -145,18 +145,23 @@ export function Hud({ isTouch = false }: { isTouch?: boolean } = {}) {
       )}
 
       <div className={`hud__bottom ${isTouch ? 'hud__bottom--touch' : ''}`}>
-        {/* Receitas: mostradas o tempo todo para a criança saber o que perseguir. */}
+        {/* Receitas: mostradas o tempo todo para a criança saber o que
+            perseguir. A fogueira só entra na lista dentro da janela dela — de
+            dia a receita continuaria válida, mas a construção não sai, e uma
+            linha que promete o que não acontece é pior que uma linha a menos. */}
         <div className="hud__recipes">
-          {Object.values(STRUCTURES).map((spec) => (
-            <span
-              key={spec.kind}
-              className={`hud__recipe ${
-                canAfford(inventory, spec.recipe) ? 'hud__recipe--ready' : ''
-              } ${buildMode === spec.kind ? 'hud__recipe--active' : ''}`}
-            >
-              <strong>{structureLabel(spec.kind, t)}</strong> {formatRecipe(spec.recipe, texto)}
-            </span>
-          ))}
+          {Object.values(STRUCTURES)
+            .filter((spec) => spec.kind !== 'fogueira' || campfireWindowOpen(clock.phase))
+            .map((spec) => (
+              <span
+                key={spec.kind}
+                className={`hud__recipe ${
+                  canAfford(inventory, spec.recipe) ? 'hud__recipe--ready' : ''
+                } ${buildMode === spec.kind ? 'hud__recipe--active' : ''}`}
+              >
+                <strong>{structureLabel(spec.kind, t)}</strong> {formatRecipe(spec.recipe, texto)}
+              </span>
+            ))}
         </div>
 
         {/* A recusa da ponte vem antes de tudo: e a unica que diz para a

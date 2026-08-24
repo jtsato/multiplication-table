@@ -4,9 +4,11 @@ import { emptyInventory } from '../resources/resources.logic';
 import { REGIONS } from '../regions/regions.logic';
 import {
   createOrders,
+  MAX_NPCS_PER_REGION,
   merchantPosition,
   nearestOrder,
   npcPosition,
+  npcRolesFor,
   orderQuantity,
   orderTarget,
   teacherPosition,
@@ -48,6 +50,14 @@ describe('npc.logic', () => {
 
     // Perto do NPC da Praia, longe dos outros.
     expect(nearestOrder(npcPosition('praia'), orders)?.id).toBe(praia.id);
+  });
+
+  it('limita a tres NPCs por regiao e a Praia usa tres papeis', () => {
+    for (const region of REGIONS) {
+      expect(npcRolesFor(region.id).length).toBeLessThanOrEqual(MAX_NPCS_PER_REGION);
+    }
+
+    expect(npcRolesFor('praia')).toEqual(['encomendas', 'professor', 'comerciante']);
   });
 
   it('comerciante e professor tem posicoes dentro das regioes', () => {

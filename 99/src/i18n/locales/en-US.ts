@@ -58,6 +58,8 @@ export const enUS: LocaleDefinition = {
     tableHeader: 'times table',
     language: 'Language',
     mapLabel: 'Island map',
+    mapTitle: 'Island map',
+    mapButton: 'Open the map',
 
     challengePrompt: '{{grupos}} with {{itens}} each',
     correct: 'Yes!',
@@ -142,6 +144,8 @@ export const enUS: LocaleDefinition = {
     dailyFartura: 'Bountiful day — harvests yield double',
     dailyVisitante: 'Special visitor at the harbor',
     dailyBaleiaNaPraia: 'The whale is near the beach',
+    dailyButton: "Today's news",
+    dailyDismiss: 'Got it',
   },
 
   resources: {

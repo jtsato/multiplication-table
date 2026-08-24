@@ -54,6 +54,8 @@ export const ptBR: LocaleDefinition = {
     tableHeader: 'tabuada',
     language: 'Idioma',
     mapLabel: 'Mapa da ilha',
+    mapTitle: 'Mapa da ilha',
+    mapButton: 'Abrir o mapa',
 
     challengePrompt: '{{grupos}} com {{itens}} cada',
     correct: 'Isso!',
@@ -138,6 +140,8 @@ export const ptBR: LocaleDefinition = {
     dailyFartura: 'Dia de fartura — colheitas rendem o dobro',
     dailyVisitante: 'Visitante especial no Porto',
     dailyBaleiaNaPraia: 'A baleia apareceu perto da Praia',
+    dailyButton: 'Novidade de hoje',
+    dailyDismiss: 'Entendi',
   },
 
   resources: {

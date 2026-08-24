@@ -1,52 +1,132 @@
-.minimap {
+/*
+  Botao do mapa no canto da tela.
+
+  O mapa completo e grande demais para ficar fixo no canto — caberia numa tela de
+  notebook, mas no celular rouba espaco de jogo. Virou um botao: a crianca aperta
+  e o arquipelago inteiro abre em tela cheia (`WorldMap`). Fica no mesmo canto de
+  antes (superior direito), abaixo do botao de configuracoes, para ela achar pelo
+  costume.
+*/
+.minimap-button {
   position: fixed;
-  top: 64px;
+  top: 60px;
   right: 12px;
   z-index: 6;
-  border-radius: 50%;
-  background: rgba(14, 20, 32, 0.55);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 999px;
   border: 2px solid rgba(255, 255, 255, 0.25);
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
-  pointer-events: none;
+  background: rgba(14, 20, 32, 0.85);
+  color: #f5f7fa;
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+  backdrop-filter: blur(3px);
+}
+
+.minimap-button:hover {
+  background: rgba(14, 20, 32, 0.95);
+}
+
+/* Icone de mapa desenhado em CSS: um losango com uma dobradiça. */
+.minimap-button__icon {
+  width: 16px;
+  height: 16px;
+  border-radius: 3px;
+  background: #ffe66d;
+  box-shadow: inset 0 0 0 2px rgba(14, 20, 32, 0.55);
+  transform: rotate(45deg);
+  flex: none;
+}
+
+.minimap-button__label {
+  font-weight: 600;
+}
+
+/* Tela cheia que envolve o mapa. */
+.worldmap-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  display: grid;
+  place-items: center;
+  background: rgba(10, 14, 22, 0.6);
+  backdrop-filter: blur(2px);
+}
+
+.worldmap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+}
+
+.worldmap__board {
+  position: relative;
+  width: min(560px, 90vmin);
+  height: min(560px, 90vmin);
+  max-width: 90vmin;
+  max-height: 90vmin;
+  border-radius: 24px;
+  background: rgba(14, 20, 32, 0.92);
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.5);
   overflow: hidden;
 }
 
-.minimap__region {
+.worldmap__marker {
   position: absolute;
-  width: 40px;
-  height: 20px;
+  width: 56px;
+  height: 28px;
+  transform: translate(-50%, -50%);
   border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
   display: grid;
   place-items: center;
-  border: 1px solid rgba(255, 255, 255, 0.45);
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
 }
 
-.minimap__region span {
-  font-size: 9px;
+.worldmap__marker-label {
+  position: absolute;
+  bottom: -16px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 10px;
   font-weight: 700;
   color: #16202e;
   text-shadow: 0 0 2px rgba(255, 255, 255, 0.6);
   white-space: nowrap;
+  pointer-events: none;
 }
 
-.minimap__player {
+.worldmap__marker--here .worldmap__marker-label {
+  color: #ffe66d;
+  text-shadow: 0 0 4px rgba(0, 0, 0, 0.8);
+}
+
+.worldmap__player {
   position: absolute;
   left: 0;
   top: 0;
-  width: 10px;
-  height: 10px;
+  width: 14px;
+  height: 14px;
   border-radius: 50%;
   background: #fff6e0;
   border: 2px solid #0e1420;
-  box-shadow: 0 0 0 2px rgba(255, 230, 109, 0.85);
+  box-shadow: 0 0 0 3px rgba(255, 230, 109, 0.85);
   will-change: transform;
 }
 
-/* Em telas muito pequenas o minimapa não pode roubar a área de jogo. */
-@media (max-width: 420px) {
-  .minimap {
-    transform: scale(0.82);
-    transform-origin: top right;
-  }
+.worldmap__close {
+  padding: 10px 18px;
+  border-radius: 12px;
+  border: 2px solid rgba(255, 255, 255, 0.25);
+  background: rgba(255, 230, 109, 0.18);
+  color: #ffe66d;
+  font: inherit;
+  font-size: 14px;
+  cursor: pointer;
 }

@@ -539,27 +539,30 @@ test.describe('partida no computador', () => {
    * texto em inglês é mais curto aqui e mais longo ali, e um botão que cresce
    * escapa do painel. As capturas dos dois idiomas existem para serem olhadas.
    */
-  test('trocar de idioma repinta o jogo sem recarregar', async ({ page }) => {
+   test('trocar de idioma repinta o jogo sem recarregar', async ({ page }) => {
     await page.goto('/');
     await esperarJogoPronto(page);
 
     await expect(page.getByTestId('hud-controls')).toContainText('Controles');
     await page.screenshot({ path: 'e2e/telas/25-idioma-pt.png' });
 
+    // O idioma nao e mais um seletor fixo no canto: esta no painel de
+    // configuracoes. Abrir, trocar, fechar.
+    await page.getByLabel('Configurações').click();
+    await page.getByRole('dialog', { name: 'Configurações' });
     await page.getByRole('button', { name: 'English' }).click();
     await page.waitForTimeout(300);
 
     // O HUD inteiro trocou, sem recarregar a página.
     await expect(page.getByTestId('hud-controls')).toContainText('Controls');
-    // O minimapa também tem o nome da região; o teste mira o HUD para continuar
-    // verificando a repintura sem depender de quantos rótulos repetidos existem.
+    // O nome da regiao tambem troca.
     await expect(page.getByTestId('hud-regiao')).toHaveText('Beach');
     await expect(page.getByTestId('hud-controls')).not.toContainText('Controles');
     // O idioma selecionado tem que continuar legível com o ponteiro em cima: o
     // `:hover` tem especificidade maior que a classe de selecionado, e já ganhou
     // dela uma vez, deixando texto escuro sobre fundo escuro.
     const selecionado = await page.evaluate(() => {
-      const botao = document.querySelector('.language__option--on')!;
+      const botao = document.querySelector('.settings__language--on')!;
       const cs = getComputedStyle(botao);
       return { cor: cs.color, fundo: cs.backgroundColor };
     });
@@ -567,10 +570,13 @@ test.describe('partida no computador', () => {
 
     await page.screenshot({ path: 'e2e/telas/26-idioma-en.png' });
 
-    // E a escolha sobrevive a recarregar.
-    await page.reload();
-    await esperarJogoPronto(page);
-    await expect(page.getByTestId('hud-controls')).toContainText('Controls');
+    // Fechar o painel e voltar ao portugues: a troca tambem funciona no menu.
+    await page.getByRole('button', { name: 'Fechar' }).click();
+    await page.getByLabel('Configurações').click();
+    await page.getByRole('button', { name: 'Português' }).click();
+    await page.getByRole('button', { name: 'Fechar' }).click();
+    await page.waitForTimeout(300);
+    await expect(page.getByTestId('hud-controls')).toContainText('Controles');
   });
 
   test('o arquipelago inteiro: uma captura de cada regiao', async ({ page }) => {

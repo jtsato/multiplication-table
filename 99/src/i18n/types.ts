@@ -136,6 +136,10 @@ export interface AppStrings {
   language: string;
   /** Rótulo acessível do minimapa. */
   mapLabel: string;
+  /** Titulo do mapa em tela cheia. */
+  mapTitle: string;
+  /** Texto alternativo do botao do mapa no canto da tela. */
+  mapButton: string;
 
   // Desafio
   challengePrompt: string;
@@ -237,6 +241,10 @@ export interface AppStrings {
   dailyFartura: string;
   dailyVisitante: string;
   dailyBaleiaNaPraia: string;
+  /** Acessivel: botao do sino de eventos do dia. */
+  dailyButton: string;
+  /** Texto do botao "fechar/marcar como lido" no aviso expandido do dia. */
+  dailyDismiss: string;
 }
 
 /** Um idioma completo: interface, gramatica e os substantivos do mundo. */

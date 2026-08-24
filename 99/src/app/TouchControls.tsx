@@ -98,25 +98,30 @@ function Joystick() {
   );
 }
 
+/**
+ * Um botao de acao.
+ *
+ * **Nao existe mais estado desabilitado.** Um botao cinza que nao responde
+ * ensina a crianca a ignorar aquele canto da tela, e ainda ocupa o espaco que o
+ * polegar precisa para o que da para fazer agora. Quem decide se o botao existe
+ * e quem monta a lista: se a acao nao cabe neste momento, o botao nao e
+ * renderizado — o mesmo criterio que "Colher" ja seguia.
+ */
 function ActionButton({
   action,
   label,
   hint,
   variant,
-  disabled,
 }: {
   action: GameAction;
   label: string;
   hint?: string;
   variant?: string;
-  disabled?: boolean;
 }) {
   return (
     <button
       type="button"
       className={`touch__button ${variant ? `touch__button--${variant}` : ''}`}
-      disabled={disabled}
-      aria-disabled={disabled || undefined}
       // `pointerdown` e nao `click`: dispara no encostar do dedo, sem os ~300 ms
       // que o navegador espera para decidir se foi toque duplo.
       onPointerDown={(event) => {
@@ -185,6 +190,14 @@ export function TouchControls() {
     podeEntregar ||
     Boolean(podeInteragirComHorta);
 
+  // Construir e contextual como o resto: a fogueira depende da hora **e** do
+  // material; a cerca, so do material. Sem material nao ha o que construir, e o
+  // que a crianca precisa nesse momento e a receita — que o HUD ja mostra o
+  // tempo todo, com destaque quando ela junta o suficiente.
+  const podeConstruirFogueira =
+    campfireWindowOpen(clock.phase) && canAfford(inventory, STRUCTURES.fogueira.recipe);
+  const podeConstruirCerca = canAfford(inventory, STRUCTURES.cerca.recipe);
+
   const rotuloInteragir = highlightedNodeId
     ? t.touchHarvest
     : nearbySpot
@@ -214,18 +227,24 @@ export function TouchControls() {
             {!activeChallenge && podeInteragir && (
               <ActionButton action="interagir" label={rotuloInteragir} variant="interagir" />
             )}
-            <ActionButton
-              action="construir-fogueira"
-              label={t.campfire}
-              hint={formatRecipe(STRUCTURES.fogueira.recipe, bundle)}
-              disabled={!canAfford(inventory, STRUCTURES.fogueira.recipe)}
-            />
-            <ActionButton
-              action="construir-cerca"
-              label={t.fence}
-              hint={formatRecipe(STRUCTURES.cerca.recipe, bundle)}
-              disabled={!canAfford(inventory, STRUCTURES.cerca.recipe)}
-            />
+            {/* A fogueira so aparece quando da para erguer uma: no entardecer ou
+                a noite (a janela que `campfireWindowOpen` define) e com os 8
+                gravetos e 2 pedras na mochila. De dia ela nao serve para nada, e
+                um botao que nao serve para nada nao precisa estar na tela. */}
+            {podeConstruirFogueira && (
+              <ActionButton
+                action="construir-fogueira"
+                label={t.campfire}
+                hint={formatRecipe(STRUCTURES.fogueira.recipe, bundle)}
+              />
+            )}
+            {podeConstruirCerca && (
+              <ActionButton
+                action="construir-cerca"
+                label={t.fence}
+                hint={formatRecipe(STRUCTURES.cerca.recipe, bundle)}
+              />
+            )}
             {seeds > 0 && (
               <>
                 <ActionButton action="plantar-arvore" label={t.plantTree} />

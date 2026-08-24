@@ -1,57 +1,30 @@
-import { useEffect, useRef } from 'react';
 import { useGameStore } from '../../app/store';
-import { playerTransform } from '../player/playerTransform';
-import { minimapRegions, projectToMinimap } from './navigation.logic';
 import './navigation.css';
 
-/** Lado do painel quadrado do minimapa, em pixels. */
-const MINIMAP_SIZE = 150;
-
 /**
- * Minimapa.
+ * Botao do mapa.
  *
- * Regiões são marcadores estáticos (a geografia não muda); o ponto do jogador é
- * atualizado por `requestAnimationFrame` lendo `playerTransform`, sem passar pelo
- * React a cada quadro — mesmo padrão do joystick e do relógio.
+ * O mapa completo e grande demais para ficar fixo no canto da tela, entao ele
+ * virou um botao: a crianca aperta e o arquipelago inteiro abre em tela cheia
+ * (`WorldMap`). O nome continua `Minimapa` para nao quebrar a importacao, mas o
+ * componente agora e so o disparador.
  */
 export function Minimapa() {
-  const labels = useGameStore((state) => state.text.regions);
+  const toggleMap = useGameStore((state) => state.toggleMap);
   const mapLabel = useGameStore((state) => state.text.strings.mapLabel);
-  const dotRef = useRef<HTMLDivElement>(null);
-
-  const regions = minimapRegions(MINIMAP_SIZE);
-
-  useEffect(() => {
-    let raf = 0;
-    const update = () => {
-      const ponto = projectToMinimap(playerTransform.x, playerTransform.z, MINIMAP_SIZE);
-      if (dotRef.current) {
-        dotRef.current.style.transform = `translate(${ponto.x - 5}px, ${ponto.y - 5}px)`;
-      }
-      raf = requestAnimationFrame(update);
-    };
-    raf = requestAnimationFrame(update);
-    return () => cancelAnimationFrame(raf);
-  }, []);
+  const currentRegion = useGameStore((state) => state.currentRegion);
+  const regionName = useGameStore((state) => state.text.regions[currentRegion]);
 
   return (
-    <div
-      className="minimap"
-      style={{ width: MINIMAP_SIZE, height: MINIMAP_SIZE }}
-      role="img"
+    <button
+      type="button"
+      className="minimap-button"
+      onClick={toggleMap}
       aria-label={mapLabel}
+      title={regionName}
     >
-      {regions.map((regiao) => (
-        <div
-          key={regiao.id}
-          className="minimap__region"
-          style={{ left: regiao.x - 20, top: regiao.y - 10, background: regiao.color }}
-          title={labels[regiao.id]}
-        >
-          <span>{labels[regiao.id]}</span>
-        </div>
-      ))}
-      <div ref={dotRef} className="minimap__player" />
-    </div>
+      <span className="minimap-button__icon" aria-hidden="true" />
+      <span className="minimap-button__label">{regionName}</span>
+    </button>
   );
 }
