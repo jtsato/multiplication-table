@@ -4,7 +4,7 @@ import { type ResourceKind, type ResourceNode } from '../resources/resources.log
 import { createRng } from '../../shared/rng';
 import { vec3 } from '../../shared/vec';
 
-const node = (groups: number, kind: ResourceKind = 'madeira', perGroup = 2): ResourceNode => ({
+const node = (groups: number, kind: ResourceKind = 'concha', perGroup = 2): ResourceNode => ({
   id: `no-${groups}x${perGroup}`,
   kind,
   position: vec3(0, 0, 0),
@@ -16,8 +16,8 @@ const node = (groups: number, kind: ResourceKind = 'madeira', perGroup = 2): Res
 /** As dez tabuadas que o jogo passa a cobrir. */
 const TABUADAS = [2, 3, 4, 5, 6, 7, 8, 9, 10];
 
-/** Toda a grade: 1 a 10 grupos, nas dez tabuadas, nos três tipos originais. */
-const todosOsNos = (['madeira', 'fruta', 'pedra'] as const).flatMap((kind) =>
+/** Toda a grade: 1 a 10 grupos, nas dez tabuadas, nos tres tipos originais. */
+const todosOsNos = (['concha', 'fruta', 'pedra'] as const).flatMap((kind) =>
   TABUADAS.flatMap((perGroup) => Array.from({ length: 10 }, (_, i) => node(i + 1, kind, perGroup))),
 );
 

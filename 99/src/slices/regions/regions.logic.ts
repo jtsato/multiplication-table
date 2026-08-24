@@ -83,7 +83,7 @@ export const REGIONS: Region[] = [
     radius: 16,
     groundY: 0,
     tables: [2],
-     harvest: ['concha', 'madeira', 'pedra'],
+    harvest: ['concha', 'pedra'],
     clearance: 6,
   },
   {
@@ -94,7 +94,7 @@ export const REGIONS: Region[] = [
     radius: 13,
     groundY: 0,
     tables: [3],
-    harvest: ['peixe', 'madeira'],
+    harvest: ['peixe', 'concha'],
     clearance: 0,
   },
   {
@@ -105,7 +105,7 @@ export const REGIONS: Region[] = [
     radius: 13,
     groundY: 1.5,
     tables: [4],
-    harvest: ['cogumelo', 'madeira'],
+    harvest: ['cogumelo', 'fruta'],
     clearance: 0,
   },
   {
@@ -149,7 +149,7 @@ export const REGIONS: Region[] = [
     radius: 13,
     groundY: 2,
     tables: [8],
-    harvest: ['madeira', 'fruta'],
+    harvest: ['fruta', 'pedra'],
     clearance: 0,
   },
   {

@@ -21,7 +21,7 @@ const progressoDe = (table: number) =>
 function pronta() {
   useGameStore.setState({
     coins: 999,
-    inventory: { ...emptyInventory(), madeira: 99, fruta: 99, pedra: 99 },
+     inventory: { ...emptyInventory(), concha: 99, fruta: 99, pedra: 99 },
     factProgress: progressoDe(2),
   });
 }
@@ -41,13 +41,13 @@ describe('comprar uma ponte', () => {
   it('abre a ponte e cobra moeda e recurso', () => {
     pronta();
     const ponte = bridgeFor('praia', 'porto')!;
-    const antes = { moedas: state().coins, madeira: state().inventory.madeira };
+    const antes = { moedas: state().coins, concha: state().inventory.concha };
 
     state().buyBridge(ponte.id);
 
     expect(state().openBridges).toContain(ponte.id);
     expect(state().coins).toBe(antes.moedas - ponte.coins);
-    expect(state().inventory.madeira).toBe(antes.madeira - (ponte.recipe.madeira ?? 0));
+    expect(state().inventory.concha).toBe(antes.concha - (ponte.recipe.concha ?? 0));
     expect(state().bridgeError).toBeNull();
   });
 
@@ -64,7 +64,7 @@ describe('comprar uma ponte', () => {
   it('recusa sem a tabuada, e nao cobra nada', () => {
     useGameStore.setState({
       coins: 999,
-      inventory: { ...emptyInventory(), madeira: 99, fruta: 99, pedra: 99 },
+      inventory: { ...emptyInventory(), concha: 99, fruta: 99, pedra: 99 },
       factProgress: {},
     });
     const ponte = bridgeFor('praia', 'porto')!;
@@ -74,7 +74,7 @@ describe('comprar uma ponte', () => {
     expect(state().openBridges).toEqual([]);
     expect(state().bridgeError).toBe('sem-tabuada');
     expect(state().coins).toBe(999);
-    expect(state().inventory.madeira).toBe(99);
+    expect(state().inventory.concha).toBe(99);
   });
 
   it('nao cobra duas vezes pela mesma ponte', () => {
@@ -111,7 +111,7 @@ describe('comprar uma ponte', () => {
     >((acc, tabela) => ({ ...acc, ...progressoDe(tabela) }), {});
     useGameStore.setState({
       coins: 9999,
-      inventory: { ...emptyInventory(), madeira: 999, fruta: 999, pedra: 999 },
+      inventory: { ...emptyInventory(), concha: 999, fruta: 999, pedra: 999 },
       factProgress: todosOsProgressos,
     });
 

@@ -68,7 +68,7 @@ export const enUS: LocaleDefinition = {
     errorExplain: '{{grupos}} groups of {{porGrupo}} = {{resposta}}',
     useHint: 'Use a hint ({{n}})',
     fireFull: 'Campfire full and lantern lit!',
-    fireSome: 'A little wood and a little light',
+     fireSome: 'A little shell and a little light',
     npcGreeting: 'Hello!',
     feedPrompt: 'Press E to feed',
     feedFriend: 'Made a friend!',
@@ -149,11 +149,6 @@ export const enUS: LocaleDefinition = {
   },
 
   resources: {
-    madeira: {
-      group: { one: 'branch', many: 'branches' },
-      item: { one: 'stick', many: 'sticks' },
-      stock: { one: 'wood', many: 'wood' },
-    },
     fruta: {
       group: { one: 'bunch', many: 'bunches' },
       item: { one: 'berry', many: 'berries' },

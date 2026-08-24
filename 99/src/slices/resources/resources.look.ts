@@ -6,13 +6,12 @@ import type { ResourceKind } from './resources.logic';
  *
  * Mora fora da view porque **e regra, nao decoracao**: o item tem que contrastar
  * com a base em que esta pousado. Contar na tela e o que separa este jogo de um
- * quiz com enfeite 3D, e um graveto cinza sobre uma rocha cinza nao se conta.
+ * quiz com enfeite 3D, e uma pedrinha cinza sobre uma rocha cinza nao se conta.
  * Ha um teste que mede o contraste par a par.
  */
 
 /** Cor dos itens contaveis de cada tipo de no. */
 export const ITEM_COLOR: Record<ResourceKind, string> = {
-  madeira: '#c98d4f',
   fruta: palette.berry,
   pedra: palette.rock,
   concha: palette.shell,
@@ -32,8 +31,9 @@ export const ITEM_COLOR: Record<ResourceKind, string> = {
  */
 export const NODE_BASE: Record<ResourceKind, { cor: string; altura: number; forma: FormaDeBase }> =
   {
-    madeira: { cor: palette.trunk, altura: 0.9, forma: 'arvore' },
-    fruta: { cor: palette.bushDark, altura: 0.75, forma: 'moita' },
+    // A macieira e a unica arvore do jogo: o que se colhe dela e maca, nunca
+    // fruta. O tronco existe para a copa se apoiar, e nao para ser cortado.
+    fruta: { cor: palette.trunk, altura: 0.9, forma: 'arvore' },
     pedra: { cor: palette.rockDark, altura: 0.55, forma: 'rocha' },
     concha: { cor: palette.shellBase, altura: 0.35, forma: 'monte' },
     peixe: { cor: palette.barrel, altura: 0.55, forma: 'barril' },
@@ -48,16 +48,15 @@ export type FormaDeBase = 'arvore' | 'moita' | 'rocha' | 'monte' | 'barril' | 'c
 /**
  * A forma do item contavel de cada tipo.
  *
- * Existe porque a view desenhava **tres blocos escritos a mao** — madeira, fruta
- * e pedra — enquanto a lista de itens ja era montada para os nove tipos. Os seis
- * recursos novos eram calculados e nunca desenhados: os nos de mel apareciam
- * pelados na tela, sem nada para contar. Com a forma nos dados, acrescentar um
- * tipo deixa de exigir mexer no meio do JSX.
+ * Existe porque a view desenhava **tres blocos escritos a mao** enquanto a
+ * lista de itens ja era montada para todos os tipos. Os recursos novos eram
+ * calculados e nunca desenhados: os nos de mel apareciam pelados na tela, sem
+ * nada para contar. Com a forma nos dados, acrescentar um tipo deixa de exigir
+ * mexer no meio do JSX.
  */
-export type FormaDeItem = 'graveto' | 'bolinha' | 'pedrinha' | 'lasca' | 'pote' | 'chapeu';
+export type FormaDeItem = 'bolinha' | 'pedrinha' | 'lasca' | 'pote' | 'chapeu';
 
 export const ITEM_SHAPE: Record<ResourceKind, FormaDeItem> = {
-  madeira: 'graveto',
   fruta: 'bolinha',
   pedra: 'pedrinha',
   concha: 'bolinha',

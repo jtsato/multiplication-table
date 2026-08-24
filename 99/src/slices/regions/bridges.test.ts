@@ -32,7 +32,7 @@ const dominaSaidaDe = (id: RegionId) =>
     {},
   );
 
-const rico: Inventory = { ...emptyInventory(), madeira: 99, fruta: 99, pedra: 99 };
+const rico: Inventory = { ...emptyInventory(), concha: 99, fruta: 99, pedra: 99 };
 
 describe('o catalogo de pontes', () => {
   it('liga a cadeia inteira, uma ponte por par de vizinhas', () => {

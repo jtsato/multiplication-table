@@ -154,9 +154,11 @@ describe('KEY_BINDINGS', () => {
     }
   });
 
-  it('mapeia cada tecla para uma acao unica', () => {
+  it('mapeia cada tecla para uma acao (duas teclas podem compartilhar uma acao)', () => {
     const acoes = Object.values(KEY_BINDINGS);
-    expect(new Set(acoes).size).toBe(acoes.length);
+    // `T` e `F` sao alias da unica arvore para plantar: compartilham acao, e isso
+    // e intencional, nao duplicacao.
+    expect(new Set(acoes).size).toBe(acoes.length - 1);
   });
 });
 

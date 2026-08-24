@@ -41,7 +41,7 @@ export interface MathSlice {
   useHintOnChallenge: () => void;
   /** Abre um desafio ancorado no alvo. Ignorado se ja houver um aberto. */
   startChallenge: (target: ChallengeTarget, purpose?: ChallengePurpose) => void;
-  /** Sorteia quantos feixes de lenha a fogueira vai pedir. */
+  /** Sorteia quantos grupos de combustivel a fogueira vai pedir. */
   rollFuelGroups: () => number;
   /** Responde o desafio aberto e entrega a recompensa correspondente. */
   answerChallenge: (choice: number) => void;

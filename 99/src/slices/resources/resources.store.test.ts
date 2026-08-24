@@ -76,7 +76,7 @@ describe('slice de recursos', () => {
     playerTransform.z = plot.position.z + 3.4;
     playerTransform.yaw = 0;
 
-    state().plantResource('arvore-madeira');
+    state().plantResource('arvore-frutifera');
 
     expect(state().nodes.some((node) => node.planted)).toBe(false);
     expect(state().seeds).toBe(1);

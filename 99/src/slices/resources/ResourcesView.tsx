@@ -30,8 +30,6 @@ const CANCEL_RANGE_SQ = RESOURCES.cancelRange * RESOURCES.cancelRange;
 /** A geometria do item contavel, escolhida pela forma do tipo. */
 function GeometriaDoItem({ forma }: { forma: FormaDeItem }) {
   switch (forma) {
-    case 'graveto':
-      return <boxGeometry args={[0.12, 0.34, 0.12]} />;
     case 'bolinha':
       return <icosahedronGeometry args={[0.16, 0]} />;
     case 'pedrinha':
@@ -235,10 +233,8 @@ export function ResourcesView() {
     }
   });
 
-  useGameAction('plantar-arvore', () => {
-    useGameStore.getState().plantResource('arvore-madeira');
-  });
-
+  // So existe uma arvore para plantar: a macieira. As duas acoes apontam para
+  // ela para nao quebrar o costume de quem ja usava `T`.
   useGameAction('plantar-frutifera', () => {
     useGameStore.getState().plantResource('arvore-frutifera');
   });

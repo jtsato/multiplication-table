@@ -5,7 +5,7 @@ import { bundleFor } from '../../i18n';
 import { RESOURCE_KINDS, type ResourceKind } from '../resources/resources.logic';
 import { createRng } from '../../shared/rng';
 
-const desafio = (groups: number, kind: ResourceKind = 'madeira', perGroup = 2) =>
+const desafio = (groups: number, kind: ResourceKind = 'fruta', perGroup = 2) =>
   generateChallenge({ id: 'x', kind, groups, perGroup }, createRng(1));
 
 const pt = bundleFor('pt-BR');
@@ -21,14 +21,14 @@ describe('o enunciado em portugues', () => {
     expect(challengeText(desafio(4, 'fruta'), pt).question).toBe('Quantas frutas ao todo?');
   });
 
-  it('concorda o singular quando ha um unico grupo', () => {
-    expect(challengeText(desafio(1, 'madeira'), pt).prompt).toBe('1 galho com 2 gravetos cada');
+  it('usa artigos definidos pela forma do item', () => {
+    expect(challengeText(desafio(1, 'concha'), pt).prompt).toBe('1 cestinho com 2 conchas cada');
   });
 
   it('concorda o genero da pergunta com o substantivo do item', () => {
-    expect(challengeText(desafio(3, 'madeira'), pt).question).toBe('Quantos gravetos ao todo?');
     expect(challengeText(desafio(3, 'fruta'), pt).question).toBe('Quantas frutas ao todo?');
     expect(challengeText(desafio(3, 'concha'), pt).question).toBe('Quantas conchas ao todo?');
+    expect(challengeText(desafio(3, 'peixe'), pt).question).toBe('Quantos peixes ao todo?');
     expect(challengeText(desafio(3, 'peixe'), pt).question).toBe('Quantos peixes ao todo?');
   });
 

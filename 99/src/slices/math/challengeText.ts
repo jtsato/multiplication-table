@@ -14,9 +14,9 @@ import type { Challenge } from './math.logic';
  * em que o desafio foi aberto, e obrigaria o store a conhecer traducao.
  */
 export interface ChallengeText {
-  /** Descreve o que esta em cena: "4 galhos com 2 gravetos cada". */
+  /** Descreve o que esta em cena. */
   prompt: string;
-  /** A pergunta em destaque: "Quantos gravetos ao todo?". */
+  /** A pergunta em destaque. */
   question: string;
 }
 

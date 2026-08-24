@@ -7,24 +7,32 @@ import { scatterPositions } from '../world/world.logic';
 /**
  * O que se colhe.
  *
- * Os nos que nascem no mundo agora sao depositos minerais permanentes. Vegetacao
- * nao aparece espontaneamente: madeira e frutas entram no mundo por plantio
- * deliberado, para a ilha comecar deserta e a crianca cuidar do que construiu.
+ * Os nos que nascem no mundo sao depositos minerais permanentes. Vegetacao
+ * nao aparece espontaneamente: as arvores (apenas frutiferas) entram no mundo
+ * por plantio deliberado, para a ilha comecar deserta e a crianca cuidar do
+ * que construiu.
  */
 export type ResourceKind =
-  'madeira' | 'fruta' | 'pedra' | 'concha' | 'peixe' | 'cogumelo' | 'cristal' | 'mel' | 'gelo';
+  'fruta' | 'pedra' | 'concha' | 'peixe' | 'cogumelo' | 'cristal' | 'mel' | 'gelo';
 
-export type PlantableResourceKind = 'madeira' | 'fruta';
-export type PlantingKind = 'arvore-frutifera' | 'arvore-madeira';
+export type PlantableResourceKind = 'fruta';
+export type PlantingKind = 'arvore-frutifera';
 
-export const PLANTABLE_RESOURCE_KINDS: readonly PlantableResourceKind[] = ['madeira', 'fruta'];
+export const PLANTABLE_RESOURCE_KINDS: readonly PlantableResourceKind[] = ['fruta'];
 
 export function isPlantableKind(kind: ResourceKind): kind is PlantableResourceKind {
   return PLANTABLE_RESOURCE_KINDS.includes(kind as PlantableResourceKind);
 }
 
-export function plantedResourceKind(kind: PlantingKind): PlantableResourceKind {
-  return kind === 'arvore-frutifera' ? 'fruta' : 'madeira';
+/**
+ * O que uma muda vira quando cresce.
+ *
+ * So existe um tipo de arvore — a macieira. A funcao permanece para o caso de
+ * uma segunda frutifera entrar depois, e para que quem planta nao precise
+ * conhecer o nome do recurso.
+ */
+export function plantedResourceKind(_kind: PlantingKind): PlantableResourceKind {
+  return 'fruta';
 }
 
 export function plantingPosition(player: Vec3, yaw: number, distance = 3.4): Vec3 {
@@ -41,8 +49,8 @@ export interface ResourceNode {
   kind: ResourceKind;
   position: Vec3;
   /**
-   * Quantos grupos o objeto exibe na geometria. A Fatia 3 usa este numero como
-   * multiplicando do desafio ("4 galhos x 2 gravetos"), entao o que a crianca
+    * Quantos grupos o objeto exibe na geometria. A Fatia 3 usa este numero como
+    * multiplicando do desafio, entao o que a crianca
    * conta na tela e exatamente o que a conta pergunta.
    */
   groups: number;
@@ -66,7 +74,6 @@ export interface ResourceNode {
 export type Inventory = Record<ResourceKind, number>;
 
 export const RESOURCE_KINDS: readonly ResourceKind[] = [
-  'madeira',
   'fruta',
   'pedra',
   'concha',
@@ -114,7 +121,6 @@ export const DEFAULT_PER_GROUP = 2;
 
 /** Rotulo no singular/plural para o HUD e para os enunciados. */
 export const RESOURCE_LABELS: Record<ResourceKind, { one: string; many: string }> = {
-  madeira: { one: 'madeira', many: 'madeira' },
   fruta: { one: 'fruta', many: 'frutas' },
   pedra: { one: 'pedra', many: 'pedras' },
   concha: { one: 'concha', many: 'conchas' },
@@ -122,7 +128,7 @@ export const RESOURCE_LABELS: Record<ResourceKind, { one: string; many: string }
   cogumelo: { one: 'cogumelo', many: 'cogumelos' },
   cristal: { one: 'cristal', many: 'cristais' },
   // Contaveis no enunciado ("potes de mel", "lascas de gelo") mas tratados como
-  // massa no HUD, do mesmo jeito que a madeira ja era.
+  // massa no HUD.
   mel: { one: 'mel', many: 'mel' },
   gelo: { one: 'gelo', many: 'gelo' },
 };
@@ -237,7 +243,6 @@ const BASE_RING_RADIUS = 0.62;
  * para os dois nao poderem divergir.
  */
 export const BASE_RADIUS: Record<ResourceKind, number> = {
-  madeira: 0.3,
   fruta: 0.85,
   pedra: 0.8,
   concha: 0.95,
@@ -254,7 +259,7 @@ const BASE_CLEARANCE = 0.32;
 /**
  * Quantos grupos cabem numa volta em torno do tronco.
  *
- * Os que sobram sobem para uma volta acima, como galhos em andares. Sem isto
+ * Os que sobram sobem para uma volta acima, como itens em andares. Sem isto
  * todos disputavam um anel so: com dez grupos da tabuada do 10 o raio passava de
  * dois metros, e o no virava uma palicada de quatro metros de diametro — parava
  * de ler como planta e passava a ler como cerca.
@@ -265,7 +270,7 @@ const GROUPS_PER_LEVEL = 5;
 const LEVEL_HEIGHT = 0.62;
 
 /**
- * Recursos que ficam no chão, em vez de pendurados em galhos.
+ * Recursos que ficam no chão, em vez de elevados na base.
  *
  * Conchas e pedras no ar quebravam a física do mundo: a criança vê a concha
  * flutuando na altura do peito. Elas continuam contáveis, mas espalhadas no
@@ -338,8 +343,8 @@ export function itemPlacements(node: ResourceNode): ItemPlacement[] {
       // mantem o grupo simetrico em vez de deixar um rabo de fora.
       const itemsNaFileira = Math.min(ITEMS_PER_ROW, node.perGroup - row * ITEMS_PER_ROW);
       const offset = (column - (itemsNaFileira - 1) / 2) * itemSpread;
-      // Concha e pedra ficam rentes ao chao; o resto (madeira, fruta, cristal...)
-      // sobe como galhos para a crianca contar de frente.
+      // Concha e pedra ficam rentes ao chao; o resto (fruta, cristal...)
+      // sobe na copa para a crianca contar de frente.
       const y = node.position.y + (isGroundItem
         ? 0.08 + row * rowSpacing
         : 1.15 + volta * LEVEL_HEIGHT + row * rowSpacing);

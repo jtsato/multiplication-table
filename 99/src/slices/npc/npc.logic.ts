@@ -7,7 +7,7 @@ import type { ChallengeTarget } from '../math/math.logic';
 /**
  * Encomendas dos NPCs.
  *
- * O pedido e uma conta: "preciso de 12 gravetos" vira "3 feixes de 4". A crianca
+ * O pedido e uma conta: "preciso de 12 conchas" vira "3 cestinhos de 4". A crianca
  * resolve a multiplicacao, entrega a quantidade da mochila e recebe moedas — o
  * recurso finalmente ganha um destino que paga em moeda sem virar venda.
  */

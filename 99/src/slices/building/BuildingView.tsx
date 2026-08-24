@@ -269,9 +269,9 @@ export function BuildingView() {
 
     state.startChallenge(
       {
-        id: fogueira.id,
-        kind: 'madeira',
-        groups: state.rollFuelGroups(),
+         id: fogueira.id,
+         kind: 'concha',
+         groups: state.rollFuelGroups(),
         perGroup: tabela,
       },
       'abastecer',

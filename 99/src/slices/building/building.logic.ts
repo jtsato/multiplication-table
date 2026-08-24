@@ -41,32 +41,47 @@ export interface StructureSpec {
 export const STRUCTURES: Record<StructureKind, StructureSpec> = {
   fogueira: {
     kind: 'fogueira',
-    recipe: { madeira: 8, pedra: 2 },
+    // A concha entrou no lugar da madeira quando os galhos sairam do jogo. A
+    // quantidade nao mudou: o que muda e o que se junta na praia, e nao o
+    // quanto a crianca precisa juntar.
+    recipe: { concha: 8, pedra: 2 },
     footprint: 1.4,
   },
   cerca: {
     kind: 'cerca',
-    recipe: { madeira: 6 },
+    recipe: { concha: 6 },
     footprint: 1.1,
   },
 };
 
 /**
+ * O material principal de uma receita — o que a conta de construir pergunta.
+ *
+ * Derivado da receita, e nao escrito a mao: quando a madeira virou concha, uma
+ * constante paralela teria continuado apontando para um recurso que nao existe
+ * mais, e o desafio pediria "8 gravetos" para uma fogueira de conchas.
+ */
+export function primaryRecipeKind(recipe: Recipe): ResourceKind {
+  const kinds = Object.keys(recipe) as ResourceKind[];
+  return kinds[0] ?? 'concha';
+}
+
+/**
  * A conta que ergue uma construção.
  *
- * Usa a própria receita para montar a tabuada: a fogueira pede 8 grupos de 4
- * (8×4 = madeira 8 + pedra 4 é a receita); a cerca vira 3 grupos de 2 (3×2 =
- * 6 madeiras). Assim o desafio nunca é arbitrário — a criança está contando o
+ * Usa a própria receita para montar a tabuada: a fogueira pede 8 grupos de 2
+ * (8 conchas + 2 pedras é a receita); a cerca vira 3 grupos de 2 (3×2 = 6
+ * conchas). Assim o desafio nunca é arbitrário — a criança está contando o
  * material que vai gastar.
  */
 export function constructionTarget(kind: StructureKind): ChallengeTarget {
   const recipe = STRUCTURES[kind].recipe;
-  const numeros = [recipe.madeira, recipe.pedra].filter((n): n is number => n !== undefined);
+  const numeros = (Object.values(recipe) as number[]).filter((n) => n !== undefined);
   const [a, b] =
     numeros.length === 1 ? [Math.max(1, Math.ceil(numeros[0] / 2)), 2] : [numeros[0], numeros[1] ?? 1];
   return {
     id: `construir-${kind}`,
-    kind: 'madeira',
+    kind: primaryRecipeKind(recipe),
     groups: a,
     perGroup: b,
   };
@@ -91,7 +106,7 @@ export const BUILDING = {
   fireFuelSeconds: 50,
   /** Alcance para abastecer a fogueira. */
   refuelRange: 3.2,
-  /** Abaixo disto a fogueira pede lenha no HUD. */
+  /** Abaixo disto a fogueira pede combustivel no HUD. */
   lowFuelSeconds: 20,
 } as const;
 
@@ -392,7 +407,7 @@ export function rejectionMessage(reason: PlacementRejection, strings: AppStrings
 }
 
 /**
- * Texto do custo: "8 madeira · 4 pedras".
+ * Texto do custo: "8 conchas · 2 pedras".
  *
  * Passa pela gramatica do idioma em vez de concatenar numero e chave. A chave e
  * sempre singular e em ingles, e

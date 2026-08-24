@@ -151,7 +151,7 @@ describe('slice de matematica', () => {
 
   describe('a conta da fogueira', () => {
     const AGORA = PHASE_BOUNDS.entardecer.start * DAYNIGHT.cycleSeconds + 1;
-    const fogueira = { id: 'fogueira-1', kind: 'madeira' as const, groups: 4, perGroup: 2 };
+    const fogueira = { id: 'fogueira-1', kind: 'concha' as const, groups: 4, perGroup: 2 };
 
     beforeEach(() => {
       state().resetLantern();
@@ -249,7 +249,7 @@ describe('slice de matematica', () => {
         ],
       });
       state().startChallenge(
-        { id: 'fogueira-1', kind: 'madeira', groups: 4, perGroup: 2 },
+         { id: 'fogueira-1', kind: 'concha', groups: 4, perGroup: 2 },
         'abastecer',
       );
       state().answerChallenge(state().activeChallenge!.answer);
@@ -344,7 +344,7 @@ describe('slice de matematica', () => {
       const tabela = regionById(ponte.from).tables[0];
       useGameStore.setState({
         coins: 999,
-        inventory: { ...emptyInventory(), madeira: 50, pedra: 50 },
+         inventory: { ...emptyInventory(), concha: 50, pedra: 50 },
         factProgress: masteredProgressFor(tabela),
       });
 
@@ -359,7 +359,7 @@ describe('slice de matematica', () => {
       const tabela = regionById(ponte.from).tables[0];
       useGameStore.setState({
         coins: 999,
-        inventory: { ...emptyInventory(), madeira: 50, pedra: 50 },
+         inventory: { ...emptyInventory(), concha: 50, pedra: 50 },
         factProgress: masteredProgressFor(tabela),
       });
 

@@ -26,7 +26,7 @@ export const palette = {
   // Rocha escura: a base sob as pedras. Sem ela, item e base tinham a mesma
   // cor exata e as pedras a contar sumiam dentro do proprio no.
   rockDark: '#4e545d',
-  berry: '#d94f6a',
+  berry: '#ff6b6b',
 
   // As colheitas de regiao. Cada uma precisa ler de longe como "isto e daqui":
   // a concha da praia, o peixe do porto, o cogumelo do bosque, o cristal da

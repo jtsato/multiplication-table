@@ -25,7 +25,7 @@ function enriquecer() {
   act(() => {
     useGameStore.setState({
       coins: 200,
-      inventory: { ...emptyInventory(), madeira: 50, fruta: 50, pedra: 50 },
+      inventory: { ...emptyInventory(), concha: 50, fruta: 50, pedra: 50 },
     });
   });
 }

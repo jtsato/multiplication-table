@@ -7,7 +7,7 @@ import type { Inventory } from '../resources/resources.logic';
  *
  * A regra que sustenta a slice inteira: **o recurso e o resultado da conta, a
  * moeda e o premio por ter acertado**. O recurso e concreto e vem em quantidade
- * calculada — a crianca conta 4 galhos de 2 gravetos e passa a ter 8 gravetos.
+ * calculada — a crianca conta 4 cestinhos de 2 conchas e passa a ter 8 conchas.
  * A moeda e abstrata e diz apenas *se* ela acertou.
  *
  * Por isso nao existe vender recurso por moeda em lugar nenhum do jogo: isso
@@ -120,7 +120,7 @@ export const SHOP_ITEMS: Record<ShopItemKind, ShopItem> = {
     kind: 'lanterna-maior',
     category: 'ferramenta',
     coins: 30,
-    recipe: { madeira: 8 },
+    recipe: { concha: 8 },
     repeatable: false,
   },
   botas: {

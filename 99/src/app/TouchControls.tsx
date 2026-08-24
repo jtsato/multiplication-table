@@ -227,10 +227,10 @@ export function TouchControls() {
             {!activeChallenge && podeInteragir && (
               <ActionButton action="interagir" label={rotuloInteragir} variant="interagir" />
             )}
-            {/* A fogueira so aparece quando da para erguer uma: no entardecer ou
-                a noite (a janela que `campfireWindowOpen` define) e com os 8
-                gravetos e 2 pedras na mochila. De dia ela nao serve para nada, e
-                um botao que nao serve para nada nao precisa estar na tela. */}
+             {/* A fogueira so aparece quando da para erguer uma: no entardecer ou
+                 a noite (a janela que `campfireWindowOpen` define) e com as
+                 conchas e pedras da receita na mochila. De dia ela nao serve para
+                 nada, e um botao que nao serve para nada nao precisa estar na tela. */}
             {podeConstruirFogueira && (
               <ActionButton
                 action="construir-fogueira"
@@ -247,7 +247,6 @@ export function TouchControls() {
             )}
             {seeds > 0 && (
               <>
-                <ActionButton action="plantar-arvore" label={t.plantTree} />
                 <ActionButton action="plantar-frutifera" label={t.plantFruitTree} />
                 <ActionButton action="plantar-canteiro" label={t.touchPlant} />
               </>

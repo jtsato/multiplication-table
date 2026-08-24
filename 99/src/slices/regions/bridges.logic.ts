@@ -51,7 +51,7 @@ export const BRIDGES: Bridge[] = REGION_ORDER.slice(0, -1).map((from, index) => 
     // 30 acertos na tabuada da ilha (3x cada fato) pagam a ponte de saída;
     // cada ilha seguinte soma um extra pelo custo crescente do mundo.
     coins: 30 * tabela + index * 15,
-    recipe: { madeira: 6 + index * 2, pedra: 2 + index },
+    recipe: { concha: 6 + index * 2, pedra: 2 + index },
   };
 });
 

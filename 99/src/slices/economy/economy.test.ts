@@ -124,7 +124,7 @@ describe('loja', () => {
   const rico = () => {
     useGameStore.setState({
       coins: 200,
-      inventory: { ...emptyInventory(), madeira: 50, fruta: 50, pedra: 50 },
+      inventory: { ...emptyInventory(), concha: 50, fruta: 50, pedra: 50 },
     });
   };
 
@@ -143,7 +143,7 @@ describe('loja', () => {
   it('recusa sem moeda suficiente', () => {
     useGameStore.setState({
       coins: 0,
-      inventory: { ...emptyInventory(), madeira: 50, fruta: 50, pedra: 50 },
+      inventory: { ...emptyInventory(), concha: 50, fruta: 50, pedra: 50 },
     });
     state().buy('lanterna-maior');
 
@@ -154,7 +154,7 @@ describe('loja', () => {
   it('recusa sem recurso, mesmo com moeda de sobra', () => {
     useGameStore.setState({
       coins: 999,
-      inventory: { ...emptyInventory(), madeira: 0, fruta: 0, pedra: 0 },
+      inventory: { ...emptyInventory(), concha: 0, fruta: 0, pedra: 0 },
     });
     state().buy('lanterna-maior');
 
@@ -167,7 +167,7 @@ describe('loja', () => {
     state().buy('lanterna-maior');
 
     expect(state().coins).toBe(200 - SHOP_ITEMS['lanterna-maior'].coins);
-    expect(state().inventory.madeira).toBe(50 - (SHOP_ITEMS['lanterna-maior'].recipe.madeira ?? 0));
+    expect(state().inventory.concha).toBe(50 - (SHOP_ITEMS['lanterna-maior'].recipe.concha ?? 0));
     expect(state().owned).toContain('lanterna-maior');
     expect(state().purchaseError).toBeNull();
   });

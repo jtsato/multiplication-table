@@ -32,7 +32,7 @@ const structure = (kind: Structure['kind'], x: number, z: number): Structure => 
 
 const node = (x: number, z: number, depleted = false): ResourceNode => ({
   id: `no-${x}-${z}`,
-  kind: 'madeira',
+  kind: 'concha',
   perGroup: 2,
   position: vec3(x, 0, z),
   groups: 3,
@@ -40,20 +40,20 @@ const node = (x: number, z: number, depleted = false): ResourceNode => ({
 });
 
 /** Inventário folgado para testes que não são sobre custo. */
-const rico = inv({ madeira: 999, fruta: 999, pedra: 999 });
+const rico = inv({ concha: 999, fruta: 999, pedra: 999 });
 
 describe('canAfford', () => {
   it('aceita exatamente o custo — a borda conta como suficiente', () => {
-    expect(canAfford(inv({ madeira: 8, pedra: 2 }), STRUCTURES.fogueira.recipe)).toBe(true);
+    expect(canAfford(inv({ concha: 8, pedra: 2 }), STRUCTURES.fogueira.recipe)).toBe(true);
   });
 
   it('recusa faltando uma unidade de qualquer ingrediente', () => {
-    expect(canAfford(inv({ madeira: 7, pedra: 2 }), STRUCTURES.fogueira.recipe)).toBe(false);
-    expect(canAfford(inv({ madeira: 8, pedra: 1 }), STRUCTURES.fogueira.recipe)).toBe(false);
+    expect(canAfford(inv({ concha: 7, pedra: 2 }), STRUCTURES.fogueira.recipe)).toBe(false);
+    expect(canAfford(inv({ concha: 8, pedra: 1 }), STRUCTURES.fogueira.recipe)).toBe(false);
   });
 
   it('ignora recursos que nao estao na receita', () => {
-    expect(canAfford(inv({ madeira: 6 }), STRUCTURES.cerca.recipe)).toBe(true);
+    expect(canAfford(inv({ concha: 6 }), STRUCTURES.cerca.recipe)).toBe(true);
   });
 
   it('recusa inventario vazio', () => {
@@ -67,37 +67,37 @@ describe('canAfford', () => {
 
 describe('payCost', () => {
   it('debita cada ingrediente da receita', () => {
-    const depois = payCost(inv({ madeira: 10, pedra: 6 }), STRUCTURES.fogueira.recipe);
-    expect(depois.madeira).toBe(2);
+    const depois = payCost(inv({ concha: 10, pedra: 6 }), STRUCTURES.fogueira.recipe);
+    expect(depois.concha).toBe(2);
     expect(depois.pedra).toBe(4);
   });
 
   it('nao mexe em recursos fora da receita', () => {
-    const depois = payCost(inv({ madeira: 10, fruta: 5 }), STRUCTURES.cerca.recipe);
+    const depois = payCost(inv({ concha: 10, fruta: 5 }), STRUCTURES.cerca.recipe);
     expect(depois.fruta).toBe(5);
   });
 
   it('nao cobra nada quando nao da para pagar', () => {
-    const antes = inv({ madeira: 3 });
+    const antes = inv({ concha: 3 });
     expect(payCost(antes, STRUCTURES.cerca.recipe)).toEqual(antes);
   });
 
   it('nunca deixa o inventario negativo', () => {
     for (const spec of Object.values(STRUCTURES)) {
-      const depois = payCost(inv({ madeira: 1, pedra: 1 }), spec.recipe);
+      const depois = payCost(inv({ concha: 1, pedra: 1 }), spec.recipe);
       expect(Object.values(depois).every((valor) => valor >= 0)).toBe(true);
     }
   });
 
   it('nao muta o inventario original', () => {
-    const original = inv({ madeira: 10, pedra: 6 });
+    const original = inv({ concha: 10, pedra: 6 });
     payCost(original, STRUCTURES.fogueira.recipe);
-    expect(original.madeira).toBe(10);
+    expect(original.concha).toBe(10);
   });
 
   it('pagar exatamente o custo zera os ingredientes', () => {
-    const depois = payCost(inv({ madeira: 8, pedra: 2 }), STRUCTURES.fogueira.recipe);
-    expect(depois.madeira).toBe(0);
+    const depois = payCost(inv({ concha: 8, pedra: 2 }), STRUCTURES.fogueira.recipe);
+    expect(depois.concha).toBe(0);
     expect(depois.pedra).toBe(0);
   });
 });
@@ -273,8 +273,8 @@ describe('snapFencePlacement', () => {
 
 describe('formatRecipe', () => {
   it('descreve o custo de forma legivel', () => {
-    expect(formatRecipe(STRUCTURES.cerca.recipe, pt)).toBe('6 madeira');
-    expect(formatRecipe(STRUCTURES.fogueira.recipe, pt)).toBe('8 madeira · 2 pedras');
+    expect(formatRecipe(STRUCTURES.cerca.recipe, pt)).toBe('6 conchas');
+    expect(formatRecipe(STRUCTURES.fogueira.recipe, pt)).toBe('8 conchas · 2 pedras');
   });
 
   it('concorda em numero — "1 pedra", "4 pedras"', () => {
@@ -284,9 +284,9 @@ describe('formatRecipe', () => {
     expect(formatRecipe({ fruta: 4 }, pt)).toBe('4 frutas');
   });
 
-  it('madeira e invariavel', () => {
-    expect(formatRecipe({ madeira: 1 }, pt)).toBe('1 madeira');
-    expect(formatRecipe({ madeira: 8 }, pt)).toBe('8 madeira');
+  it('concha e invariavel', () => {
+    expect(formatRecipe({ concha: 1 }, pt)).toBe('1 concha');
+    expect(formatRecipe({ concha: 8 }, pt)).toBe('8 conchas');
   });
 });
 
@@ -314,7 +314,7 @@ describe('regras que a mutacao encontrou sem teste', () => {
    */
   it('a isencao de emenda e so entre cercas', () => {
     const cercaExistente = structure('cerca', 0, 0);
-    const rico = inv({ madeira: 99, pedra: 99 });
+    const rico = inv({ concha: 99, pedra: 99 });
 
     // Fogueira encostada numa cerca: sem isencao, e recusada.
     expect(
@@ -329,7 +329,7 @@ describe('regras que a mutacao encontrou sem teste', () => {
   });
 
   it('duas cercas continuam podendo se emendar', () => {
-    const rico = inv({ madeira: 99 });
+    const rico = inv({ concha: 99 });
     const existente = structure('cerca', 0, 0);
     const emenda = vec3(STRUCTURES.cerca.footprint * 2, 0, 0);
 
@@ -342,16 +342,16 @@ describe('constructionTarget', () => {
   it('a fogueira pede 8 grupos de 2 — a própria receita', () => {
     expect(constructionTarget('fogueira')).toMatchObject({
       id: 'construir-fogueira',
-      kind: 'madeira',
+      kind: 'concha',
       groups: 8,
       perGroup: 2,
     });
   });
 
-  it('a cerca vira 3 grupos de 2 madeiras', () => {
+  it('a cerca vira 3 grupos de 2 conchas', () => {
     const alvo = constructionTarget('cerca');
     expect(alvo.groups).toBe(3);
     expect(alvo.perGroup).toBe(2);
-    expect(alvo.groups * alvo.perGroup).toBe(STRUCTURES.cerca.recipe.madeira);
+    expect(alvo.groups * alvo.perGroup).toBe(STRUCTURES.cerca.recipe.concha);
   });
 });

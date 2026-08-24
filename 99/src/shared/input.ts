@@ -13,7 +13,6 @@ export type GameAction =
   | 'interagir'
   | 'construir-fogueira'
   | 'construir-cerca'
-  | 'plantar-arvore'
   | 'plantar-frutifera'
   | 'plantar-canteiro'
   | 'remover-cerca'
@@ -73,7 +72,7 @@ export const KEY_BINDINGS: Record<string, GameAction> = {
   KeyE: 'interagir',
   KeyB: 'construir-fogueira',
   KeyC: 'construir-cerca',
-  KeyT: 'plantar-arvore',
+  KeyT: 'plantar-frutifera',
   KeyF: 'plantar-frutifera',
   KeyG: 'plantar-canteiro',
   KeyR: 'remover-cerca',

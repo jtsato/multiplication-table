@@ -24,6 +24,8 @@ export interface PendingBuild {
 
 export interface BuildingSlice {
   structures: Structure[];
+  nearbyCampfireId: string | null;
+  setNearbyCampfireId: (id: string | null) => void;
   /** Tipo em construcao, ou `null` fora do modo construcao. */
   buildMode: StructureKind | null;
   /** Ultima recusa, exibida no HUD. */
@@ -51,6 +53,9 @@ let nextStructureId = 0;
 
 export const createBuildingSlice: StateCreator<GameState, [], [], BuildingSlice> = (set, get) => ({
   structures: [],
+  nearbyCampfireId: null,
+  setNearbyCampfireId: (id) =>
+    set((state) => (state.nearbyCampfireId === id ? state : { nearbyCampfireId: id })),
   buildMode: null,
   buildError: null,
   pendingBuild: null,
@@ -156,7 +161,8 @@ export const createBuildingSlice: StateCreator<GameState, [], [], BuildingSlice>
 
   clearBuildError: () => set({ buildError: null }),
 
-  resetBuilding: () => set({ structures: [], buildMode: null, buildError: null, pendingBuild: null }),
+  resetBuilding: () =>
+    set({ structures: [], buildMode: null, buildError: null, pendingBuild: null, nearbyCampfireId: null }),
 
   loadStructures: (structures) => {
     // O contador de ids vive fora do store; sem este ajuste, construir depois de

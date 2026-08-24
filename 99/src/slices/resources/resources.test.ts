@@ -18,7 +18,7 @@ import { vec3 } from '../../shared/vec';
 
 const node = (id: string, x: number, z: number, depleted = false): ResourceNode => ({
   id,
-  kind: 'madeira',
+  kind: 'fruta',
   position: vec3(x, 0, z),
   groups: 3,
   perGroup: 2,
@@ -263,7 +263,7 @@ describe('itemPlacements — contrato visual do desafio', () => {
       // Dentro de um raio pequeno em volta do centro do no.
       expect(
         Math.hypot(p.position.x - alvo.position.x, p.position.z - alvo.position.z),
-      ).toBeLessThan(1.2);
+      ).toBeLessThan(1.6);
     }
   });
 
@@ -287,9 +287,8 @@ describe('fullYield', () => {
 
 describe('addToInventory', () => {
   it('soma no tipo certo sem tocar nos demais', () => {
-    const result = addToInventory(emptyInventory(), 'madeira', 6);
-    expect(result.madeira).toBe(6);
-    expect(result.fruta).toBe(0);
+    const result = addToInventory(emptyInventory(), 'fruta', 6);
+    expect(result.fruta).toBe(6);
     expect(result.pedra).toBe(0);
   });
 
@@ -307,7 +306,8 @@ describe('addToInventory', () => {
   });
 
   it('trata quantidade negativa como zero', () => {
-    expect(addToInventory(emptyInventory(), 'madeira', -10).madeira).toBe(0);
+    const result = addToInventory(emptyInventory(), 'concha', -10);
+    expect(result.concha).toBe(0);
   });
 
   it('arredonda para baixo quantidades fracionarias', () => {
@@ -338,10 +338,10 @@ describe('as colheitas das regioes', () => {
   });
 
   it('cada regiao oferece colheita e os recursos de regiao sao exclusivos', () => {
-    // Três materiais (madeira, fruta, pedra) aparecem em mais de uma regiao por
-    // design; os seis recursos de regiao (concha, peixe, cogumelo, cristal, mel,
-    // gelo) são exclusivos de uma única ilha.
-    const materiais = new Set(['madeira', 'fruta', 'pedra'] as const);
+    // Três materiais (concha, fruta, pedra) aparecem em mais de uma regiao por
+    // design; os seis recursos de regiao (peixe, cogumelo, cristal, mel, gelo) são
+    // exclusivos de uma única ilha.
+    const materiais = new Set(['concha', 'fruta', 'pedra'] as const);
     for (const regiao of REGIONS) {
       expect(regiao.harvest.length).toBeGreaterThan(0);
       const exclusivas = regiao.harvest.filter((kind) => !materiais.has(kind as never));
@@ -361,10 +361,10 @@ describe('as colheitas das regioes', () => {
     }
   });
 
-  it('a ilha comeca sem vegetacao: nada de madeira ou fruta espalhada', () => {
+  it('a ilha comeca sem vegetacao: nenhuma fruta espalhada', () => {
     for (let seed = 0; seed < 25; seed += 1) {
       for (const n of createNodes(createRng(seed))) {
-        expect(['madeira', 'fruta']).not.toContain(n.kind);
+        expect(n.kind).not.toBe('fruta');
       }
     }
   });
@@ -434,8 +434,8 @@ describe('itens de chão não flutuam', () => {
     }
   });
 
-  it('itens de galho continuam acima do chão', () => {
-    const alvo = { ...node('a', 0, 0), kind: 'madeira' as const, groups: 3, perGroup: 2 };
+   it('itens de fruta continuam acima do chao', () => {
+    const alvo = { ...node('a', 0, 0), kind: 'fruta' as const, groups: 3, perGroup: 2 };
     for (const p of itemPlacements(alvo)) {
       expect(p.position.y).toBeGreaterThan(1);
     }

@@ -146,7 +146,7 @@ export function migrateGarden(raw: unknown, version = 7): GardenState {
     if (typeof candidate.id !== 'string' || !candidate.id.startsWith('canteiro-')) {
       throw new Error(`canteiro invalido: ${index}`);
     }
-    if (!RESOURCE_KINDS.includes(candidate.crop as never)) {
+    if (!RESOURCE_KINDS.includes(candidate.crop as never) && candidate.crop !== 'madeira') {
       throw new Error(`canteiro invalido: ${index}`);
     }
     return {
@@ -154,7 +154,7 @@ export function migrateGarden(raw: unknown, version = 7): GardenState {
       position: migrateVec3(candidate.position, `canteiros[${index}].position`),
       planted: candidate.planted === true,
       plantedDay: migrateCount(candidate.plantedDay, `canteiros[${index}].plantedDay`),
-      crop: candidate.crop as GardenPlot['crop'],
+      crop: (candidate.crop === 'madeira' ? 'fruta' : candidate.crop) as GardenPlot['crop'],
       table: migrateCount(candidate.table, `canteiros[${index}].table`),
     };
   });
@@ -258,12 +258,17 @@ function migratePlantedNodes(raw: unknown): ResourceNode[] {
     if (typeof candidate.id !== 'string' || !candidate.id.startsWith('planta-')) {
       throw new Error(`planta invalida: ${index}`);
     }
-    if (typeof candidate.kind !== 'string' || !RESOURCE_KINDS.includes(candidate.kind as never)) {
+    if (
+      typeof candidate.kind !== 'string' ||
+      (!RESOURCE_KINDS.includes(candidate.kind as never) && candidate.kind !== 'madeira')
+    ) {
       throw new Error(`planta invalida: ${index}`);
     }
     return {
       id: candidate.id,
-      kind: candidate.kind as ResourceNode['kind'],
+      // Saves anteriores podiam conter uma arvore de madeira. Ela migra para a
+      // unica arvore que continua existindo: a frutifera.
+      kind: (candidate.kind === 'madeira' ? 'fruta' : candidate.kind) as ResourceNode['kind'],
       position: migrateVec3(candidate.position, `plantas[${index}].position`),
       groups: migrateCount(candidate.groups, `plantas[${index}].groups`),
       perGroup: migrateCount(candidate.perGroup, `plantas[${index}].perGroup`),

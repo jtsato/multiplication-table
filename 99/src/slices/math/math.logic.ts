@@ -34,8 +34,8 @@ export type ChallengePurpose =
  * Alvo minimo de um desafio.
  *
  * `ResourceNode` satisfaz esta forma estruturalmente; a fogueira monta uma na
- * hora de pedir lenha. Assim a slice de matematica nao precisa conhecer nem
- * recurso nem construcao.
+ * hora de pedir combustivel. Assim a slice de matematica nao precisa conhecer
+ * nem recurso nem construcao.
  */
 export interface ChallengeTarget {
   id: string;

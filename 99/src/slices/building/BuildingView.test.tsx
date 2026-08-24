@@ -32,7 +32,7 @@ function resolveBuildChallenge() {
 function encheInventario() {
   act(() => {
     useGameStore.setState({
-      inventory: { ...emptyInventory(), madeira: 99, fruta: 99, pedra: 99 },
+      inventory: { ...emptyInventory(), concha: 99, fruta: 99, pedra: 99 },
     });
   });
 }
@@ -113,7 +113,7 @@ describe('BuildingView', () => {
 
     expect(state().structures).toHaveLength(1);
     expect(state().structures[0].kind).toBe('cerca');
-    expect(state().inventory.madeira).toBe(99 - STRUCTURES.cerca.recipe.madeira!);
+    expect(state().inventory.concha).toBe(99 - STRUCTURES.cerca.recipe.concha!);
     expect(state().buildMode).toBeNull();
 
     await renderer.unmount();
@@ -238,7 +238,7 @@ describe('BuildingView', () => {
     pressKey('Space');
 
     expect(state().structures).toHaveLength(0);
-    expect(state().inventory).toEqual({ ...emptyInventory(), madeira: 0, fruta: 0, pedra: 0 });
+    expect(state().inventory).toEqual({ ...emptyInventory(), concha: 0, fruta: 0, pedra: 0 });
     expect(state().buildError).toBe('sem-recursos');
 
     await renderer.unmount();
@@ -254,7 +254,7 @@ describe('BuildingView', () => {
     pressKey('KeyC');
     pressKey('Space');
     resolveBuildChallenge();
-    const madeiraDepoisDaPrimeira = state().inventory.madeira;
+    const conchaDepoisDaPrimeira = state().inventory.concha;
 
     // A fogueira na mesma posicao nao pode usar o encaixe exclusivo da cerca.
     pressKey('KeyB');
@@ -262,7 +262,7 @@ describe('BuildingView', () => {
 
     expect(state().structures).toHaveLength(1);
     expect(state().buildError).toBe('sobreposta');
-    expect(state().inventory.madeira).toBe(madeiraDepoisDaPrimeira);
+    expect(state().inventory.concha).toBe(conchaDepoisDaPrimeira);
 
     await renderer.unmount();
   });

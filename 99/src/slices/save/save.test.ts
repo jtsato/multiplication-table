@@ -51,7 +51,7 @@ const saveValido = (): GameSave => ({
   },
   learningStep: 12,
   lastFactKey: '3x7',
-  inventory: { ...emptyInventory(), madeira: 5, fruta: 2, pedra: 9 },
+  inventory: { ...emptyInventory(), concha: 5, fruta: 2, pedra: 9 },
   owned: ['botas'],
   hints: 3,
   seeds: 2,
@@ -227,6 +227,38 @@ describe('migrateSave', () => {
     expect(() => migrateSave({ ...saveValido(), inventory: null })).toThrow();
   });
 
+  it('ignora campos de madeira num inventario antigo sem quebrar o save', () => {
+    const comMadeira: Record<string, unknown> = {
+      ...saveValido().inventory,
+      madeira: 99,
+      galgo: 1,
+    };
+    const migrated = migrateSave({ ...saveValido(), inventory: comMadeira });
+    // madeira some (nao e mais um recurso), e o resto sobrevive.
+    expect(migrated.inventory).not.toHaveProperty('madeira');
+    expect(migrated.inventory.concha).toBe(5);
+  });
+
+  it('migra plantas de madeira antigas para frutas sem quebrar o save', () => {
+    const antigo = {
+      ...saveValido(),
+      plantedNodes: [
+        {
+          id: 'planta-1',
+          kind: 'madeira',
+          position: { x: 1, y: 0, z: 2 },
+          groups: 3,
+          perGroup: 2,
+          depleted: false,
+          planted: true,
+        },
+      ],
+    };
+    const migrated = migrateSave(antigo);
+    expect(migrated.plantedNodes).toHaveLength(1);
+    expect(migrated.plantedNodes[0].kind).toBe('fruta');
+  });
+
   it('recusa uma lista de itens que nem lista e', () => {
     expect(() => migrateSave({ ...saveValido(), owned: 'botas' })).toThrow();
   });
@@ -277,7 +309,7 @@ describe('migrateSave', () => {
       coins: 42,
       knownFacts: ['2x4', '3x7'],
       factCounts: { '2x4': 3, '3x7': 1 },
-      inventory: { ...emptyInventory(), madeira: 5, fruta: 2, pedra: 9 },
+      inventory: { ...emptyInventory(), concha: 5, fruta: 2, pedra: 9 },
       owned: ['botas'] as const,
       hints: 3,
       seeds: 2,
@@ -435,7 +467,7 @@ describe('snapshot e applySave', () => {
   it('construir depois de um reload nao duplica id de estrutura', () => {
     applySave(saveValido());
     // Ambiente controlado: sem nós por perto, a nova cerca não esbarra em nada.
-    useGameStore.setState({ nodes: [], inventory: { ...state().inventory, madeira: 100 } });
+    useGameStore.setState({ nodes: [], inventory: { ...state().inventory, concha: 100 } });
     state().toggleBuildMode('cerca');
     state().requestBuild(vec3(10, 0, 10), 0);
     const desafio = state().activeChallenge;

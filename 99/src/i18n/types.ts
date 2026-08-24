@@ -63,19 +63,19 @@ export interface LocaleGrammar {
 /**
  * Como um recurso se descreve no enunciado.
  *
- * `group` e o que junta ("galho", "cacho", "colmeia") e `item` e o que se conta.
+ * `group` e o que junta ("cestinho", "cacho", "colmeia") e `item` e o que se conta.
  * Os dois precisam de formas proprias porque a frase concorda com os dois.
  */
 export interface ResourceNouns {
   group: NounForms;
-  /** O que se conta no desafio: "graveto", "pote de mel". */
+  /** O que se conta no desafio: "concha", "pote de mel". */
   item: NounForms;
   /**
-   * Como o recurso aparece no inventario e nas receitas: "madeira", "mel".
+   * Como o recurso aparece no inventario e nas receitas: "concha", "mel".
    *
-   * **Nao e o mesmo que `item`**, e a diferenca importa: o enunciado conta
-   * gravetos, mas o HUD guarda madeira. Alguns sao nomes de massa e nem tem
-   * plural. Confundir os dois faz a receita da fogueira dizer "8 gravetos".
+   * **Nao e o mesmo que `item`**, e a diferenca importa: o enunciado pode contar
+   * unidades agrupadas, enquanto o HUD guarda o recurso. Alguns sao nomes de
+   * massa e nem tem plural. Confundir os dois faz a receita perder a forma correta.
    */
   stock: NounForms;
 }

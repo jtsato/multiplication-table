@@ -64,7 +64,7 @@ export const ptBR: LocaleDefinition = {
     errorExplain: '{{grupos}} grupos de {{porGrupo}} = {{resposta}}',
     useHint: 'Usar dica ({{n}})',
     fireFull: 'Fogueira cheia e lanterna acesa!',
-    fireSome: 'Um pouco de lenha e de luz',
+     fireSome: 'Um pouco de concha e de luz',
     npcGreeting: 'Olá!',
     feedPrompt: 'Aperte E para alimentar',
     feedFriend: 'Virou seu amigo!',
@@ -145,11 +145,6 @@ export const ptBR: LocaleDefinition = {
   },
 
   resources: {
-    madeira: {
-      group: { one: 'galho', many: 'galhos', gender: 'm' },
-      item: { one: 'graveto', many: 'gravetos', gender: 'm' },
-      stock: { one: 'madeira', many: 'madeira' },
-    },
     fruta: {
       group: { one: 'cacho', many: 'cachos', gender: 'm' },
       item: { one: 'fruta', many: 'frutas', gender: 'f' },
