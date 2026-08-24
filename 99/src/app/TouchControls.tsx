@@ -11,6 +11,7 @@ import {
 } from '../shared/input';
 import { BUILDING, STRUCTURES, canAfford, formatRecipe, fuelRemaining } from '../slices/building/building.logic';
 import { campfireWindowOpen } from '../slices/daynight/daynight.logic';
+import { gardenStatus } from '../slices/garden/garden.logic';
 import { dayNightClock } from '../slices/daynight/dayNightClock';
 import { animalById, canFeedAnimal } from '../slices/wildlife/wildlife.logic';
 import { orderQuantity } from '../slices/npc/npc.logic';
@@ -149,6 +150,8 @@ export function TouchControls() {
   const nearbyOrderId = useGameStore((state) => state.nearbyOrderId);
   const orders = useGameStore((state) => state.orders);
   const seeds = useGameStore((state) => state.seeds);
+  const nearbyGardenId = useGameStore((state) => state.nearbyGardenId);
+  const garden = useGameStore((state) => state.garden);
   const clock = useGameStore((state) => state.clock);
   const bundle = useGameStore((state) => state.text);
   const t = bundle.strings;
@@ -168,12 +171,19 @@ export function TouchControls() {
   // Colher aparece com recurso ao alcance; abastecer, quando ja existe fogueira;
   // o movel, quando a crianca esta em frente a ele dentro de casa; alimentar,
   // quando um animal amigavel esta perto; e entregar, com um NPC de encomenda.
+  const nearbyGarden = nearbyGardenId
+    ? garden.find((plot) => plot.id === nearbyGardenId) ?? null
+    : null;
+  const gardenStatusNearby = nearbyGarden ? gardenStatus(nearbyGarden, clock.day) : null;
+  const podeInteragirComHorta =
+    nearbyGarden && (gardenStatusNearby === 'ready' || (gardenStatusNearby === 'empty' && seeds > 0));
   const podeInteragir =
     Boolean(highlightedNodeId) ||
     Boolean(nearbySpot) ||
     temFogueira ||
     podeAlimentar ||
-    podeEntregar;
+    podeEntregar ||
+    Boolean(podeInteragirComHorta);
 
   const rotuloInteragir = highlightedNodeId
     ? t.touchHarvest
@@ -183,7 +193,11 @@ export function TouchControls() {
         ? t.touchFeed
         : podeEntregar
           ? t.touchOrder
-          : t.touchRefuel;
+          : nearbyGarden && gardenStatus(nearbyGarden, clock.day) === 'empty'
+            ? t.touchPlant
+            : nearbyGarden && gardenStatus(nearbyGarden, clock.day) === 'ready'
+              ? t.touchHarvest
+              : t.touchRefuel;
 
   return (
     <div className="touch">
@@ -216,6 +230,7 @@ export function TouchControls() {
               <>
                 <ActionButton action="plantar-arvore" label={t.plantTree} />
                 <ActionButton action="plantar-frutifera" label={t.plantFruitTree} />
+                <ActionButton action="plantar-canteiro" label={t.touchPlant} />
               </>
             )}
             {/* A loja fica por último: é a ação menos frequente das quatro, e o

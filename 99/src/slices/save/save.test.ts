@@ -15,6 +15,7 @@ import { emptyInventory } from '../resources/resources.logic';
 import { dayNightClock, resetDayNightClock } from '../daynight/dayNightClock';
 import { dayNumber } from '../daynight/daynight.logic';
 import { vec3 } from '../../shared/vec';
+import { gardenPlotForRegion } from '../garden/garden.logic';
 
 const state = () => useGameStore.getState();
 
@@ -54,7 +55,7 @@ const saveValido = (): GameSave => ({
   owned: ['botas'],
   hints: 3,
   seeds: 2,
-  garden: { planted: true, plantedDay: 1 },
+  garden: [{ ...gardenPlotForRegion('pomar'), planted: true, plantedDay: 1 }],
   avatar: { silhouette: 'menina', skin: 4, clothes: 6, head: 'bone', face: 'nenhum' },
   openBridges: ['praia-porto'],
   animalBook: [
@@ -89,6 +90,15 @@ describe('migrateSave', () => {
     expect(() => migrateSave({ ...saveValido(), version: 99 })).toThrow(/versao/);
   });
 
+  it('migra a horta antiga do Pomar para o formato de canteiro', () => {
+    const antigo = { ...saveValido(), version: 7, garden: { planted: true, plantedDay: 5 } };
+    const resultado = migrateSave(antigo);
+
+    expect(resultado.garden).toEqual([
+      expect.objectContaining({ id: 'canteiro-pomar', planted: true, plantedDay: 5, crop: 'fruta' }),
+    ]);
+  });
+
   it('campo ausente recebe o padrao', () => {
     const parcial = { version: SAVE_VERSION };
     const resultado = migrateSave(parcial);
@@ -104,7 +114,7 @@ describe('migrateSave', () => {
     expect(resultado.animalBook).toEqual([]);
     expect(resultado.pet).toBeNull();
     expect(resultado.seeds).toBe(0);
-    expect(resultado.garden).toEqual({ planted: false, plantedDay: 0 });
+    expect(resultado.garden).toEqual([gardenPlotForRegion('pomar')]);
     expect(resultado.structures).toEqual([]);
     expect(resultado.depletedNodeIds).toEqual([]);
     expect(resultado.plantedNodes).toEqual([]);
@@ -139,6 +149,17 @@ describe('migrateSave', () => {
     expect(resultado.volume).toBe(0.5);
     expect(resultado.cameraSensitivity).toBe(1);
     expect(resultado.structures).toHaveLength(2);
+  });
+
+  it('aceita varios canteiros persistidos no formato atual', () => {
+    const praia = { ...gardenPlotForRegion('praia'), planted: true, plantedDay: 4 };
+    const resultado = migrateSave({ ...saveValido(), garden: [praia] });
+
+    expect(resultado.garden).toEqual([praia]);
+  });
+
+  it('recusa canteiro sem formato valido', () => {
+    expect(() => migrateSave({ ...saveValido(), garden: [{ id: 'canteiro-praia' }] })).toThrow();
   });
 
   it('recusa numero negativo ou nao finito', () => {
@@ -260,7 +281,7 @@ describe('migrateSave', () => {
       owned: ['botas'] as const,
       hints: 3,
       seeds: 2,
-      garden: { planted: true, plantedDay: 1 },
+       garden: { planted: true, plantedDay: 1 },
       avatar: { silhouette: 'menina', skin: 4, clothes: 6, head: 'bone', face: 'nenhum' },
       openBridges: ['praia-porto'] as const,
       animalBook: [],
@@ -381,7 +402,7 @@ describe('snapshot e applySave', () => {
     expect(state().owned).toEqual(['botas']);
     expect(state().hints).toBe(3);
     expect(state().seeds).toBe(2);
-    expect(state().garden).toEqual({ planted: true, plantedDay: 1 });
+    expect(state().garden).toEqual([expect.objectContaining({ id: 'canteiro-pomar', planted: true, plantedDay: 1 })]);
     expect(state().avatar.silhouette).toBe('menina');
     // As pontes atravessam junto: sem isto a crianca perderia a travessia que
     // conquistou so por fechar a pagina.

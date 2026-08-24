@@ -9,7 +9,12 @@ import {
   type Inventory,
   type ResourceNode,
 } from '../resources/resources.logic';
-import type { GardenState } from '../garden/garden.logic';
+import {
+  gardenPlotForRegion,
+  initialGardenState,
+  type GardenPlot,
+  type GardenState,
+} from '../garden/garden.logic';
 import { vec3, type Vec3 } from '../../shared/vec';
 import type { Structure, StructureKind } from '../building/building.logic';
 import { clampSensitivity, clampVolume, SETTINGS } from '../settings/settings.logic';
@@ -38,7 +43,7 @@ import {
  * `localStorage` indisponivel (aba privada, cota cheia) e um fato da vida, e nao
  * pode impedir a crianca de jogar.
  */
-export const SAVE_VERSION = 7;
+export const SAVE_VERSION = 8;
 
 export const SAVE_STORAGE_KEY = 'numi-99.save';
 
@@ -115,14 +120,44 @@ function migrateSensitivity(raw: unknown): number {
   return clampSensitivity(raw);
 }
 
-function migrateGarden(raw: unknown): GardenState {
-  if (raw === undefined) return { planted: false, plantedDay: 0 };
+export function migrateGarden(raw: unknown, version = 7): GardenState {
+  if (raw === undefined) return initialGardenState();
+
   if (typeof raw !== 'object' || raw === null) throw new Error('horta invalida');
-  const candidate = raw as Record<string, unknown>;
-  return {
-    planted: candidate.planted === true,
-    plantedDay: migrateCount(candidate.plantedDay, 'horta.plantedDay'),
-  };
+
+  if (!Array.isArray(raw)) {
+    const candidate = raw as Record<string, unknown>;
+    if (version >= 8 && !('planted' in candidate || 'plantedDay' in candidate)) {
+      throw new Error('horta invalida');
+    }
+    const pomar = gardenPlotForRegion('pomar');
+    return [
+      {
+        ...pomar,
+        planted: candidate.planted === true,
+        plantedDay: migrateCount(candidate.plantedDay, 'horta.plantedDay'),
+      },
+    ];
+  }
+
+  return raw.map((item, index) => {
+    if (typeof item !== 'object' || item === null) throw new Error(`canteiro invalido: ${index}`);
+    const candidate = item as Record<string, unknown>;
+    if (typeof candidate.id !== 'string' || !candidate.id.startsWith('canteiro-')) {
+      throw new Error(`canteiro invalido: ${index}`);
+    }
+    if (!RESOURCE_KINDS.includes(candidate.crop as never)) {
+      throw new Error(`canteiro invalido: ${index}`);
+    }
+    return {
+      id: candidate.id,
+      position: migrateVec3(candidate.position, `canteiros[${index}].position`),
+      planted: candidate.planted === true,
+      plantedDay: migrateCount(candidate.plantedDay, `canteiros[${index}].plantedDay`),
+      crop: candidate.crop as GardenPlot['crop'],
+      table: migrateCount(candidate.table, `canteiros[${index}].table`),
+    };
+  });
 }
 
 /** Número finito que pode ser negativo (rotação, por exemplo). */
@@ -346,6 +381,7 @@ export function migrateSave(raw: unknown): GameSave {
     rawVersion !== 4 &&
      rawVersion !== 5 &&
      rawVersion !== 6 &&
+     rawVersion !== 7 &&
      rawVersion !== SAVE_VERSION
   ) {
     throw new Error(`versao de save nao suportada: ${String(rawVersion)}`);
@@ -369,7 +405,7 @@ export function migrateSave(raw: unknown): GameSave {
     owned: migrateOwned(candidate.owned),
     hints: migrateCount(candidate.hints, 'dicas'),
     seeds: migrateCount(candidate.seeds, 'sementes'),
-    garden: migrateGarden(candidate.garden),
+      garden: migrateGarden(candidate.garden, rawVersion as number),
     avatar: migrateAvatar(candidate.avatar),
     openBridges: migrateBridges(candidate.openBridges),
     animalBook: migrateAnimalBook(candidate.animalBook),

@@ -1,54 +1,114 @@
 import type { StateCreator } from 'zustand';
 import type { GameState } from '../../app/store';
-import { eventForDay, gardenPlantedDay } from '../daily/daily.logic';
-import { GARDEN, gardenStatus, type GardenState } from './garden.logic';
+import { eventForDay, gardenPlantedDay, harvestMultiplier } from '../daily/daily.logic';
+import { blocksHome } from '../home/home.logic';
+import { fitsOnLand, regionAt } from '../regions/regions.logic';
+import { playerTransform } from '../player/playerTransform';
+import { distanceSqXZ, vec3 } from '../../shared/vec';
+import {
+  GARDEN,
+  gardenPlantingPosition,
+  gardenStatus,
+  initialGardenState,
+  type GardenPlot,
+  type GardenState,
+} from './garden.logic';
+
+let nextGardenPlotId = 0;
 
 export interface GardenSlice {
   garden: GardenState;
-  /** A horta esta ao alcance? */
-  nearbyGarden: boolean;
-  setNearbyGarden: (perto: boolean) => void;
-  /** Planta uma semente. Sem semente ou ja plantada, nao faz nada. */
+  nearbyGardenId: string | null;
+  setNearbyGarden: (id: string | null) => void;
   plantGarden: () => void;
-  /** Colhe a horta madura. So funciona no dia seguinte ao plantio. */
+  plantGardenAtPlayer: () => void;
   harvestGarden: () => void;
   resetGarden: () => void;
 }
 
-export const createGardenSlice: StateCreator<GameState, [], [], GardenSlice> = (set, get) => ({
-  garden: { planted: false, plantedDay: 0 },
-  nearbyGarden: false,
+function nextId(garden: GardenState): string {
+  nextGardenPlotId += 1;
+  const used = new Set(garden.map((plot) => plot.id));
+  while (used.has(`canteiro-${nextGardenPlotId}`)) nextGardenPlotId += 1;
+  return `canteiro-${nextGardenPlotId}`;
+}
 
-  setNearbyGarden: (perto) =>
-    set((state) => (state.nearbyGarden === perto ? state : { nearbyGarden: perto })),
+function canPlaceGarden(state: GameState, position: GardenPlot['position']): boolean {
+  const spacingSq = GARDEN.spacing * GARDEN.spacing;
+  return (
+    fitsOnLand(position, GARDEN.bedMargin) &&
+    !blocksHome(position) &&
+    !state.garden.some((plot) => distanceSqXZ(plot.position, position) < spacingSq) &&
+    !state.nodes.some((node) => distanceSqXZ(node.position, position) < spacingSq) &&
+    !state.structures.some((structure) => distanceSqXZ(structure.position, position) < spacingSq)
+  );
+}
+
+function plantedPlot(plot: GardenPlot, day: number): GardenPlot {
+  return {
+    ...plot,
+    planted: true,
+    plantedDay: gardenPlantedDay(eventForDay(day).kind, day),
+  };
+}
+
+export const createGardenSlice: StateCreator<GameState, [], [], GardenSlice> = (set, get) => ({
+  garden: initialGardenState(),
+  nearbyGardenId: null,
+
+  setNearbyGarden: (id) =>
+    set((state) => (state.nearbyGardenId === id ? state : { nearbyGardenId: id })),
 
   plantGarden: () => {
     const state = get();
-    if (state.seeds <= 0 || state.garden.planted) return;
+    const plot = state.garden.find((candidate) => candidate.id === state.nearbyGardenId);
+    if (!plot || plot.planted || state.seeds <= 0) return;
 
     set({
       seeds: state.seeds - 1,
-      garden: {
-        planted: true,
-        // Dia de chuva: a horta já amanhece regada e rende no mesmo dia.
-        plantedDay: gardenPlantedDay(eventForDay(state.clock.day).kind, state.clock.day),
-      },
+      garden: state.garden.map((candidate) =>
+        candidate.id === plot.id ? plantedPlot(candidate, state.clock.day) : candidate,
+      ),
     });
+  },
+
+  plantGardenAtPlayer: () => {
+    const state = get();
+    if (state.seeds <= 0) return;
+    const position = gardenPlantingPosition(playerTransform, playerTransform.yaw);
+    if (!canPlaceGarden(state, position)) return;
+
+    const region = regionAt(position);
+    if (!region) return;
+
+    const plot: GardenPlot = {
+      id: nextId(state.garden),
+      position: vec3(position.x, position.y, position.z),
+      planted: true,
+      plantedDay: gardenPlantedDay(eventForDay(state.clock.day).kind, state.clock.day),
+      crop: region.harvest[0],
+      table: region.tables[0],
+    };
+
+    set({ seeds: state.seeds - 1, garden: [...state.garden, plot] });
   },
 
   harvestGarden: () => {
     const state = get();
-    if (gardenStatus(state.garden, state.clock.day) !== 'ready') return;
+    const plot = state.garden.find((candidate) => candidate.id === state.nearbyGardenId);
+    if (!plot || gardenStatus(plot, state.clock.day) !== 'ready') return;
 
+    const amount = GARDEN.yield * harvestMultiplier(eventForDay(state.clock.day).kind);
     set({
-      inventory: { ...state.inventory, fruta: state.inventory.fruta + GARDEN.yield },
-      garden: { planted: false, plantedDay: 0 },
+      inventory: { ...state.inventory, [plot.crop]: state.inventory[plot.crop] + amount },
+      garden: state.garden.map((candidate) =>
+        candidate.id === plot.id ? { ...candidate, planted: false, plantedDay: 0 } : candidate,
+      ),
     });
   },
 
-  resetGarden: () =>
-    set({
-      garden: { planted: false, plantedDay: 0 },
-      nearbyGarden: false,
-    }),
+  resetGarden: () => {
+    nextGardenPlotId = 0;
+    set({ garden: initialGardenState(), nearbyGardenId: null });
+  },
 });

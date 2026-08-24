@@ -34,6 +34,14 @@ describe('npc.logic', () => {
     expect(orderQuantity(order)).toBe(order.groups * order.perGroup);
   });
 
+  it('cada pedido usa um recurso da colheita da propria regiao', () => {
+    for (const order of createOrders(1)) {
+      const region = REGIONS.find((candidate) => candidate.id === order.regionId)!;
+      expect(region.harvest).toContain(order.kind);
+      expect(region.tables).toContain(order.perGroup);
+    }
+  });
+
   it('nearestOrder acha o NPC mais proximo dentro do alcance', () => {
     const orders = createOrders(1);
     const praia = orders.find((order) => order.regionId === 'praia')!;

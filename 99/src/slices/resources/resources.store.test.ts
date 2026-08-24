@@ -2,6 +2,8 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import { useGameStore } from '../../app/store';
 import { fullYield } from './resources.logic';
 import { emptyInventory } from './resources.logic';
+import { gardenPlotForRegion } from '../garden/garden.logic';
+import { playerTransform } from '../player/playerTransform';
 
 const state = () => useGameStore.getState();
 
@@ -65,6 +67,19 @@ describe('slice de recursos', () => {
 
     expect(state().nodes.find((node) => node.id === first.id)?.depleted).toBe(true);
     expect(state().nodes.find((node) => node.id === second.id)?.depleted).toBe(false);
+  });
+
+  it('nao planta arvore em cima de um canteiro', () => {
+    const plot = gardenPlotForRegion('pomar');
+    useGameStore.setState({ garden: [plot], seeds: 1 });
+    playerTransform.x = plot.position.x;
+    playerTransform.z = plot.position.z + 3.4;
+    playerTransform.yaw = 0;
+
+    state().plantResource('arvore-madeira');
+
+    expect(state().nodes.some((node) => node.planted)).toBe(false);
+    expect(state().seeds).toBe(1);
   });
 
   it('nao troca a referencia do estado quando o destaque nao muda', () => {

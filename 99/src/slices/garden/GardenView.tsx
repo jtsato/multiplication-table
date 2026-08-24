@@ -3,23 +3,19 @@ import { useGameStore } from '../../app/store';
 import { palette } from '../../shared/palette';
 import { useGameAction } from '../../shared/input';
 import { playerTransform } from '../player/playerTransform';
-import { GARDEN, gardenPosition, gardenStatus } from './garden.logic';
+import { ITEM_COLOR } from '../resources/resources.look';
+import { GARDEN, gardenStatus, type GardenPlot } from './garden.logic';
 
-/** A horta do Pomar, em tres estados: terra, brotando e madura. */
-function GardenMesh() {
-  const pos = gardenPosition();
-  const estado = useGameStore((state) => state.garden);
-  const day = useGameStore((state) => state.clock.day);
-  const status = gardenStatus(estado, day);
+function GardenMesh({ plot }: { plot: GardenPlot }) {
+  const status = useGameStore((state) => gardenStatus(plot, state.clock.day));
+  const produceColor = ITEM_COLOR[plot.crop];
 
   return (
-    <group position={[pos.x, pos.y, pos.z]} name="horta">
-      {/* Canteiro */}
+    <group position={[plot.position.x, plot.position.y, plot.position.z]} name={plot.id}>
       <mesh position={[0, 0.12, 0]} castShadow receiveShadow>
         <boxGeometry args={[2.2, 0.24, 1.4]} />
         <meshLambertMaterial color={palette.trunk} flatShading />
       </mesh>
-      {/* Terra */}
       <mesh position={[0, 0.26, 0]}>
         <boxGeometry args={[1.9, 0.08, 1.1]} />
         <meshLambertMaterial color={palette.rock} flatShading />
@@ -46,7 +42,7 @@ function GardenMesh() {
               </mesh>
               <mesh position={[0, 0.42, 0]} castShadow>
                 <sphereGeometry args={[0.18, 6, 5]} />
-                <meshLambertMaterial color={palette.berry} flatShading />
+                <meshLambertMaterial color={produceColor} flatShading />
               </mesh>
             </group>
           ))}
@@ -56,20 +52,28 @@ function GardenMesh() {
   );
 }
 
-/**
- * A horta do Pomar.
- *
- * Plantar usa uma semente; a horta fica "crescendo" no mesmo dia e "pronta" a
- * partir do dia seguinte. Colher entrega frutas de graca — a recompensa e por
- * voltar, nao por resolver mais uma conta.
- */
 export function GardenView() {
+  const garden = useGameStore((state) => state.garden);
+
   useFrame(() => {
     const state = useGameStore.getState();
-    const pos = gardenPosition();
-    const perto =
-      Math.hypot(playerTransform.x - pos.x, playerTransform.z - pos.z) <= GARDEN.interactRange;
-    state.setNearbyGarden(perto);
+    let nearestId: string | null = null;
+    let nearestDistanceSq = GARDEN.interactRange * GARDEN.interactRange;
+
+    for (const plot of state.garden) {
+      const distanceSq =
+        (playerTransform.x - plot.position.x) ** 2 + (playerTransform.z - plot.position.z) ** 2;
+      if (distanceSq <= nearestDistanceSq) {
+        nearestId = plot.id;
+        nearestDistanceSq = distanceSq;
+      }
+    }
+
+    state.setNearbyGarden(nearestId);
+  });
+
+  useGameAction('plantar-canteiro', () => {
+    useGameStore.getState().plantGardenAtPlayer();
   });
 
   useGameAction('interagir', () => {
@@ -86,12 +90,20 @@ export function GardenView() {
     ) {
       return;
     }
-    if (!state.nearbyGarden) return;
 
-    const status = gardenStatus(state.garden, state.clock.day);
+    const plot = state.garden.find((candidate) => candidate.id === state.nearbyGardenId);
+    if (!plot) return;
+
+    const status = gardenStatus(plot, state.clock.day);
     if (status === 'empty') state.plantGarden();
     if (status === 'ready') state.harvestGarden();
   });
 
-  return <GardenMesh />;
+  return (
+    <>
+      {garden.map((plot) => (
+        <GardenMesh key={plot.id} plot={plot} />
+      ))}
+    </>
+  );
 }

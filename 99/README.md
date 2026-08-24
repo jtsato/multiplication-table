@@ -156,9 +156,10 @@ não custa nada. Ponte aberta, a guardiã vai embora — não há mais pedágio 
 ### Horta
 
 A loja vende **sementes** (moedas + mel). Com uma semente na mão, a criança planta
-na **horta do Pomar**; a horta cresce no mesmo dia e fica **pronta no dia
-seguinte**. Colher entrega frutas de graça — a recompensa é por voltar, não por
-resolver mais uma conta. O estado da horta e as sementes sobrevivem ao reload.
+em um **canteiro**; o Pomar já começa com um, e novos canteiros podem ser plantados
+em qualquer região. Cada canteiro cresce no mesmo dia e fica **pronto no dia
+seguinte**, entregando a colheita local de graça — a recompensa é por voltar, não por
+resolver mais uma conta. O estado dos canteiros e as sementes sobrevivem ao reload.
 
 ### A noite
 

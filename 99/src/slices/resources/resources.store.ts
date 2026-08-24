@@ -5,6 +5,7 @@ import { distanceSqXZ } from '../../shared/vec';
 import { playerTransform } from '../player/playerTransform';
 import { DEFAULT_WORLD_SEED } from '../world/world.store';
 import { fitsOnLand, regionAt } from '../regions/regions.logic';
+import { GARDEN } from '../garden/garden.logic';
 import {
   addToInventory,
   createNodes,
@@ -68,7 +69,12 @@ export const createResourcesSlice: StateCreator<GameState, [], [], ResourcesSlic
     set((state) => {
       if (state.seeds <= 0) return state;
       const position = plantingPosition(playerTransform, playerTransform.yaw);
-      if (!fitsOnLand(position, 1.2) || state.nodes.some((node) => distanceSqXZ(node.position, position) < 16)) {
+      const gardenSpacingSq = GARDEN.spacing * GARDEN.spacing;
+      if (
+        !fitsOnLand(position, 1.2) ||
+        state.nodes.some((node) => distanceSqXZ(node.position, position) < 16) ||
+        state.garden.some((plot) => distanceSqXZ(plot.position, position) < gardenSpacingSq)
+      ) {
         return state;
       }
       const region = regionAt(position);

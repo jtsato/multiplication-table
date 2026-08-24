@@ -105,6 +105,7 @@ export interface AppStrings {
   lanternLow: string;
   duskWarning: string;
   harvestPrompt: string;
+  plantSeedPrompt: string;
   buildPrompt: string;
   buildOffLand: string;
   buildOverlaps: string;
@@ -117,9 +118,11 @@ export interface AppStrings {
   controlsCamera: string;
   controlsSolve: string;
   controlsBuild: string;
+  controlsPlant: string;
   controlsSpace: string;
   joystickLabel: string;
   touchHarvest: string;
+  touchPlant: string;
   touchFeed: string;
   touchOrder: string;
   touchRefuel: string;

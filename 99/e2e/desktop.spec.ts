@@ -301,7 +301,9 @@ test.describe('partida no computador', () => {
     await page.waitForTimeout(700);
 
     await page.keyboard.press('KeyE');
-    expect(await page.evaluate(() => window.__tabuada!.store.getState().garden.planted)).toBe(true);
+    expect(
+      await page.evaluate(() => window.__tabuada!.store.getState().garden[0]?.planted),
+    ).toBe(true);
     await page.screenshot({ path: 'e2e/telas/35-horta-plantada.png' });
 
     // No dia seguinte a horta esta pronta; colher entrega frutas de graca.
@@ -313,9 +315,9 @@ test.describe('partida no computador', () => {
     await page.keyboard.press('KeyE');
     const depois = await lerEstado(page);
     expect(depois.inventario.fruta).toBeGreaterThan(0);
-    expect(await page.evaluate(() => window.__tabuada!.store.getState().garden.planted)).toBe(
-      false,
-    );
+    expect(
+      await page.evaluate(() => window.__tabuada!.store.getState().garden[0]?.planted),
+    ).toBe(false);
     await page.screenshot({ path: 'e2e/telas/36-horta-colhida.png' });
   });
 

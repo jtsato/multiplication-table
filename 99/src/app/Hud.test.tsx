@@ -7,6 +7,7 @@ import { LANTERN } from '../slices/lantern';
 import { Hud } from './Hud';
 import { useGameStore } from './store';
 import { RESOURCE_LABELS, emptyInventory } from '../slices/resources/resources.logic';
+import { gardenPlotForRegion } from '../slices/garden/garden.logic';
 
 const state = () => useGameStore.getState();
 
@@ -106,6 +107,32 @@ describe('Hud', () => {
     render(<Hud />);
 
     expect(screen.queryByTestId('hud-dezenas')).not.toBeInTheDocument();
+  });
+
+  it('convida a plantar quando um canteiro vazio esta perto', () => {
+    act(() => {
+      useGameStore.setState({
+        seeds: 1,
+        garden: [gardenPlotForRegion('pomar')],
+        nearbyGardenId: 'canteiro-pomar',
+      });
+    });
+    render(<Hud />);
+
+    expect(screen.getByText('Aperte E para plantar')).toBeInTheDocument();
+  });
+
+  it('convida a colher quando o canteiro esta pronto', () => {
+    act(() => {
+      useGameStore.setState({
+        garden: [{ ...gardenPlotForRegion('pomar'), planted: true, plantedDay: 1 }],
+        nearbyGardenId: 'canteiro-pomar',
+        clock: { ...state().clock, day: 2 },
+      });
+    });
+    render(<Hud />);
+
+    expect(screen.getByText('Aperte E para colher')).toBeInTheDocument();
   });
 });
 

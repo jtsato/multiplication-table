@@ -7,6 +7,7 @@ import {
   formatRecipe,
 } from '../slices/building/building.logic';
 import { phaseLabel } from '../slices/daynight/daynight.logic';
+import { gardenStatus } from '../slices/garden/garden.logic';
 import { bridgeMessage, bridgeById } from '../slices/regions/bridges.logic';
 import { regionById } from '../slices/regions/regions.logic';
 import { LANTERN } from '../slices/lantern/lantern.logic';
@@ -35,6 +36,10 @@ export function Hud({ isTouch = false }: { isTouch?: boolean } = {}) {
   const animals = useGameStore((state) => state.animals);
   const nearbyOrderId = useGameStore((state) => state.nearbyOrderId);
   const orders = useGameStore((state) => state.orders);
+  const nearbyGardenId = useGameStore((state) => state.nearbyGardenId);
+  const garden = useGameStore((state) => state.garden);
+  const clock = useGameStore((state) => state.clock);
+  const seeds = useGameStore((state) => state.seeds);
   const texto = useGameStore((state) => state.text);
   const t = texto.strings;
 
@@ -42,12 +47,19 @@ export function Hud({ isTouch = false }: { isTouch?: boolean } = {}) {
   const podeAlimentar = animalPerto ? canFeedAnimal(animalPerto, inventory) : false;
   const orderPerto = nearbyOrderId ? orders.find((order) => order.id === nearbyOrderId) : null;
   const podeEntregar = orderPerto ? inventory[orderPerto.kind] >= orderQuantity(orderPerto) : false;
+  const nearbyGarden = nearbyGardenId
+    ? garden.find((plot) => plot.id === nearbyGardenId) ?? null
+    : null;
+  const nearbyGardenStatus = nearbyGarden ? gardenStatus(nearbyGarden, clock.day) : null;
+  const podeInteragirComHorta = Boolean(
+    nearbyGarden &&
+      (nearbyGardenStatus === 'ready' || (nearbyGardenStatus === 'empty' && seeds > 0)),
+  );
 
   const depositosDaqui = regionById(currentRegion).deposits;
   const visiveis = RESOURCE_KINDS.filter(
     (kind) => inventory[kind] > 0 || depositosDaqui.includes(kind),
   );
-  const clock = useGameStore((state) => state.clock);
   const lanternCharge = useGameStore((state) => state.lanternCharge);
   const coins = useGameStore((state) => state.coins);
 
@@ -127,6 +139,7 @@ export function Hud({ isTouch = false }: { isTouch?: boolean } = {}) {
           <span>{t.controlsCamera}</span>
           <span>{t.controlsSolve}</span>
           <span>{t.controlsBuild}</span>
+          <span>{t.controlsPlant}</span>
           <span>{t.controlsSpace}</span>
         </div>
       )}
@@ -199,15 +212,22 @@ export function Hud({ isTouch = false }: { isTouch?: boolean } = {}) {
           !buildMode &&
           !isTouch &&
           !activeChallenge &&
-          (highlightedNodeId || (animalPerto && podeAlimentar) || (orderPerto && podeEntregar)) && (
-            <div className="hud__prompt" role="status">
-              {highlightedNodeId
-                ? t.harvestPrompt
-                : animalPerto && podeAlimentar
-                  ? t.feedPrompt
-                  : t.orderPrompt}
-            </div>
-          )}
+           (highlightedNodeId ||
+             (animalPerto && podeAlimentar) ||
+             (orderPerto && podeEntregar) ||
+             podeInteragirComHorta) && (
+             <div className="hud__prompt" role="status">
+               {highlightedNodeId
+                 ? t.harvestPrompt
+                 : animalPerto && podeAlimentar
+                   ? t.feedPrompt
+                   : orderPerto && podeEntregar
+                     ? t.orderPrompt
+                     : nearbyGardenStatus === 'empty'
+                       ? t.plantSeedPrompt
+                       : t.harvestPrompt}
+             </div>
+           )}
       </div>
     </div>
   );
