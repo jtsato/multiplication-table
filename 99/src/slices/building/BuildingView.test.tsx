@@ -479,3 +479,123 @@ describe('BuildingView', () => {
     await renderer.unmount();
   });
 });
+
+/**
+ * O convite da fogueira.
+ *
+ * A acao de acender ja existia e funcionava; o que faltava era **dizer** que ela
+ * existe. `nearbyCampfireId` estava declarado no store e nunca era escrito, e o
+ * HUD do desktop nao tinha como oferecer nada — a crianca so descobria apertando
+ * E na sorte. Estes testes prendem as tres condicoes que a spec pede: distancia,
+ * estado da fogueira e periodo do dia.
+ */
+describe('o aviso da fogueira ao alcance', () => {
+  beforeEach(() => {
+    state().resetResources();
+    state().resetBuilding();
+    state().cancelChallenge();
+    state().clearFeedback();
+    resetPlayerTransform();
+    resetDayNightClock();
+  });
+
+  /** Fogueira de pe ao lado do jogador, com o combustivel que o teste pedir. */
+  function fogueiraAoLado(fuelUntil: number) {
+    act(() => {
+      useGameStore.setState({
+        structures: [
+          {
+            id: 'fogueira-teste',
+            kind: 'fogueira' as const,
+            position: { x: playerTransform.x, y: 0, z: playerTransform.z },
+            rotation: 0,
+            fuelUntil,
+          },
+        ],
+      });
+    });
+  }
+
+  function setNight() {
+    dayNightClock.seconds = PHASE_BOUNDS.noite.start * DAYNIGHT.cycleSeconds + 1;
+  }
+
+  it('a noite, perto da fogueira apagada, oferece acender', async () => {
+    setNight();
+    fogueiraAoLado(0);
+    const renderer = await renderScene(<BuildingView />);
+    await renderer.advanceFrames(1, 1 / 60);
+
+    expect(state().nearbyCampfireId).toBe('fogueira-teste');
+
+    await renderer.unmount();
+  });
+
+  it('de dia nao oferece, mesmo colado na fogueira apagada', async () => {
+    resetDayNightClock();
+    fogueiraAoLado(0);
+    const renderer = await renderScene(<BuildingView />);
+    await renderer.advanceFrames(1, 1 / 60);
+
+    expect(state().nearbyCampfireId).toBeNull();
+
+    await renderer.unmount();
+  });
+
+  /**
+   * Fogueira no teto do combustivel nao tem o que receber. `nearestRefuelable`
+   * ja recusava, e este caso prende a regra na publicacao: oferecer "acender"
+   * para um fogo que nao aceita lenha e prometer o que nao acontece.
+   */
+  it('fogueira ja cheia nao pede para ser acesa de novo', async () => {
+    setNight();
+    fogueiraAoLado(dayNightClock.seconds + BUILDING.fireFuelSeconds * 2);
+    const renderer = await renderScene(<BuildingView />);
+    await renderer.advanceFrames(1, 1 / 60);
+
+    expect(state().nearbyCampfireId).toBeNull();
+
+    await renderer.unmount();
+  });
+
+  it('o aviso some ao sair do alcance', async () => {
+    setNight();
+    fogueiraAoLado(0);
+    const renderer = await renderScene(<BuildingView />);
+    await renderer.advanceFrames(1, 1 / 60);
+    expect(state().nearbyCampfireId).toBe('fogueira-teste');
+
+    // Longe o bastante para sair do alcance de abastecer.
+    playerTransform.x += BUILDING.refuelRange + 2;
+    await renderer.advanceFrames(1, 1 / 60);
+
+    expect(state().nearbyCampfireId).toBeNull();
+
+    await renderer.unmount();
+  });
+
+  /**
+   * Nao pode haver dois convites na tela ao mesmo tempo.
+   *
+   * O no de recurso tem prioridade — e a mesma ordem que a acao `interagir` ja
+   * seguia. Sem esta guarda, a crianca leria "aperte E para colher" e "aperte E
+   * para acender a fogueira" juntos, sem saber qual dos dois E faria.
+   */
+  it('cede a vez para o recurso ao alcance', async () => {
+    setNight();
+    const no = state().nodes[0];
+    playerTransform.x = no.position.x;
+    playerTransform.z = no.position.z;
+    fogueiraAoLado(0);
+
+    const renderer = await renderScene(<BuildingView />);
+    act(() => {
+      state().setHighlightedNodeId(no.id);
+    });
+    await renderer.advanceFrames(1, 1 / 60);
+
+    expect(state().nearbyCampfireId).toBeNull();
+
+    await renderer.unmount();
+  });
+});

@@ -40,6 +40,8 @@ export function Hud({ isTouch = false }: { isTouch?: boolean } = {}) {
   const garden = useGameStore((state) => state.garden);
   const clock = useGameStore((state) => state.clock);
   const seeds = useGameStore((state) => state.seeds);
+  const nearbySpot = useGameStore((state) => state.nearbySpot);
+  const nearbyCampfireId = useGameStore((state) => state.nearbyCampfireId);
   const texto = useGameStore((state) => state.text);
   const t = texto.strings;
 
@@ -208,6 +210,26 @@ export function Hud({ isTouch = false }: { isTouch?: boolean } = {}) {
             {t.buildPrompt}
           </div>
         )}
+
+        {/*
+          Convite da fogueira apagada: so no desktop o jogador precisa ler o
+          que fazer — no celular o proprio botao "Acender" ja diz.
+          As prioridades sao as mesmas da acao: no na frente, movel de casa
+          dentro, desafio aberto. Sem esta camada a crianca apertava E por
+          tentativa ate descobrir.
+        */}
+        {!isTouch &&
+          !activeChallenge &&
+          !highlightedNodeId &&
+          !nearbySpot &&
+          !nearbyBridge &&
+          !bridgeError &&
+          !buildError &&
+          nearbyCampfireId && (
+            <div className="hud__prompt" role="status">
+              {t.campfirePrompt}
+            </div>
+          )}
 
         {/* O aviso some enquanto o desafio está aberto: nesse momento o próprio
             painel ancorado no recurso já diz o que fazer. No celular, o botão

@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
+
 import { CuboidCollider, RigidBody } from '@react-three/rapier';
 import type { Group, Mesh, MeshBasicMaterial, PointLight } from 'three';
 import { useGameStore } from '../../app/store';
@@ -284,6 +285,31 @@ export function BuildingView() {
     const timer = setTimeout(clearBuildError, 2200);
     return () => clearTimeout(timer);
   }, [buildError, clearBuildError]);
+
+  /**
+   * Publica o id da fogueira mais proxima que pode ser acesa.
+   *
+   * Espelha o que a fatia de regioes faz com `nearbyBridge`: o HUD precisa
+   * saber o que esta ao alcance para mostrar "Aperte E para acender a fogueira"
+   * no desktop, enquanto a fatia de toque mostra "Acender". Sem este calculo,
+   * o desktop nao tinha como dizer a crianca o que fazer perto da fogueira
+   * apagada — ela apertava E por tentativa.
+   */
+  useFrame(() => {
+    const state = useGameStore.getState();
+    const janelaAberta = campfireWindowOpen(phaseFor(cyclePosition(dayNightClock.seconds)));
+
+    const bloqueado =
+      state.activeChallenge !== null ||
+      state.highlightedNodeId !== null ||
+      state.nearbySpot !== null;
+
+    const id = bloqueado || !janelaAberta
+      ? null
+      : nearestRefuelable(state.structures, playerTransform, undefined, dayNightClock.seconds)?.id ?? null;
+
+    if (id !== state.nearbyCampfireId) state.setNearbyCampfireId(id);
+  });
 
   return (
     <>

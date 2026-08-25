@@ -134,6 +134,43 @@ describe('Hud', () => {
 
     expect(screen.getByText('Aperte E para colher')).toBeInTheDocument();
   });
+
+  /**
+   * O convite da fogueira, do lado de quem le.
+   *
+   * `BuildingView` decide *quando* a fogueira esta ao alcance; aqui se prova que
+   * o HUD **mostra** isso, e que nao mostra dois convites de E ao mesmo tempo.
+   */
+  it('convida a acender quando a fogueira apagada esta ao alcance', () => {
+    relogio('noite');
+    act(() => {
+      useGameStore.setState({ nearbyCampfireId: 'fogueira-1' });
+    });
+    render(<Hud />);
+
+    expect(screen.getByText('Aperte E para acender a fogueira')).toBeInTheDocument();
+  });
+
+  it('nao convida a acender sem fogueira ao alcance', () => {
+    relogio('noite');
+    render(<Hud />);
+
+    expect(screen.queryByText('Aperte E para acender a fogueira')).not.toBeInTheDocument();
+  });
+
+  it('o recurso ao alcance ganha do convite da fogueira', () => {
+    relogio('noite');
+    act(() => {
+      useGameStore.setState({
+        nearbyCampfireId: 'fogueira-1',
+        highlightedNodeId: state().nodes[0].id,
+      });
+    });
+    render(<Hud />);
+
+    expect(screen.getByText('Aperte E para colher')).toBeInTheDocument();
+    expect(screen.queryByText('Aperte E para acender a fogueira')).not.toBeInTheDocument();
+  });
 });
 
 describe('a lista de recursos', () => {

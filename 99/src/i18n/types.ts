@@ -111,6 +111,8 @@ export interface AppStrings {
   buildOverlaps: string;
   buildTooClose: string;
   buildCampfireAtNight: string;
+  /** Convite para acender a fogueira apagada a noite. */
+  campfirePrompt: string;
   bridgePrompt: string;
 
   controlsTitle: string;

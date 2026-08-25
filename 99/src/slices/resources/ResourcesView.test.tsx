@@ -6,7 +6,7 @@ import { useGameStore } from '../../app/store';
 import { renderScene } from '../../test/sceneHarness';
 import { playerTransform, resetPlayerTransform } from '../player';
 import { ResourcesView } from './ResourcesView';
-import { RESOURCE_KINDS, fullYield, itemPlacements } from './resources.logic';
+import { RESOURCES, RESOURCE_KINDS, fullYield, itemPlacements } from './resources.logic';
 import { emptyInventory } from './resources.logic';
 import { vec3 } from '../../shared/vec';
 
@@ -175,6 +175,75 @@ describe('todo tipo de recurso chega a cena', () => {
 
     expect(esperados).toBe(RESOURCE_KINDS.length * 3 * 4);
     expect(grupos, 'itens calculados que nao chegaram ao render').toBeGreaterThanOrEqual(esperados);
+
+    await renderer.unmount();
+  });
+
+  /**
+   * A pedra tem que oferecer coleta como qualquer outro tipo.
+   *
+   * A queixa era de que chegar perto da pedra nao mostrava o botao. O alcance e
+   * o mesmo para todos os tipos (`RESOURCES.interactRange`), mas a pedra e um
+   * dos dois tipos com itens **no chao** e base larga — se o realce dependesse
+   * da geometria, ela seria o tipo a falhar. Este teste percorre o caminho
+   * inteiro num no de pedra: aproximar, destacar, apertar E, responder, receber.
+   */
+  it('a pedra oferece coleta e credita o inventario como os demais', async () => {
+    const pedra = {
+      id: 'no-pedra-teste',
+      kind: 'pedra' as const,
+      position: vec3(0, 0, 0),
+      groups: 3,
+      perGroup: 2,
+      depleted: false,
+    };
+    useGameStore.setState({ nodes: [pedra], highlightedNodeId: null });
+    resetPlayerTransform();
+
+    // A borda do alcance, e nao o centro: e onde a crianca de fato para, e o
+    // ponto em que "preciso mirar melhor" apareceria se existisse.
+    playerTransform.x = RESOURCES.interactRange - 0.1;
+    playerTransform.z = 0;
+
+    const renderer = await renderScene(<ResourcesView />);
+    await renderer.advanceFrames(1, 1 / 60);
+
+    expect(state().highlightedNodeId).toBe(pedra.id);
+
+    pressKey('KeyE');
+    expect(state().activeChallenge?.targetId).toBe(pedra.id);
+
+    act(() => {
+      state().answerChallenge(state().activeChallenge!.answer);
+    });
+
+    expect(state().inventory.pedra).toBe(fullYield(pedra));
+
+    await renderer.unmount();
+  });
+
+  /** O realce solta o no ao sair do alcance — nada de interagir a distancia. */
+  it('a pedra deixa de se oferecer quando o jogador se afasta', async () => {
+    const pedra = {
+      id: 'no-pedra-longe',
+      kind: 'pedra' as const,
+      position: vec3(0, 0, 0),
+      groups: 2,
+      perGroup: 2,
+      depleted: false,
+    };
+    useGameStore.setState({ nodes: [pedra], highlightedNodeId: null });
+    resetPlayerTransform();
+    playerTransform.x = RESOURCES.interactRange - 0.1;
+
+    const renderer = await renderScene(<ResourcesView />);
+    await renderer.advanceFrames(1, 1 / 60);
+    expect(state().highlightedNodeId).toBe(pedra.id);
+
+    playerTransform.x = RESOURCES.interactRange + 1;
+    await renderer.advanceFrames(1, 1 / 60);
+
+    expect(state().highlightedNodeId).toBeNull();
 
     await renderer.unmount();
   });

@@ -132,7 +132,7 @@ test.describe('partida no computador', () => {
         coins: 120,
         inventory: {
           ...window.__tabuada!.store.getState().inventory,
-          madeira: 40,
+          concha: 40,
           fruta: 20,
           pedra: 20,
         },
@@ -151,7 +151,9 @@ test.describe('partida no computador', () => {
     const depois = await lerEstado(page);
     expect(depois.comprados).toContain('lanterna-maior');
     expect(depois.moedas).toBeLessThan(antes.moedas);
-    expect(depois.inventario.madeira).toBeLessThan(antes.inventario.madeira);
+    // A lanterna maior custa conchas: a madeira saiu do jogo e a concha ocupou
+    // o lugar dela nas receitas.
+    expect(depois.inventario.concha).toBeLessThan(antes.inventario.concha);
 
     // O item comprado nao pode ser comprado de novo.
     await expect(page.getByRole('button', { name: /Lanterna maior/ })).toBeDisabled();
@@ -617,7 +619,7 @@ test.describe('partida no computador', () => {
         coins: 300,
         inventory: {
           ...window.__tabuada!.store.getState().inventory,
-          madeira: 60,
+          concha: 60,
           fruta: 20,
           pedra: 40,
         },
@@ -672,7 +674,7 @@ test.describe('partida no computador', () => {
       window.__tabuada!.store.setState({
         inventory: {
           ...window.__tabuada!.store.getState().inventory,
-          madeira: 40,
+          concha: 40,
           fruta: 10,
           pedra: 20,
         },
@@ -694,8 +696,8 @@ test.describe('partida no computador', () => {
 
     const estado = await lerEstado(page);
     expect(estado.construcoes).toBe(1);
-    // 8 madeira e 2 pedras debitados.
-    expect(estado.inventario.madeira).toBe(32);
+    // 8 conchas e 2 pedras debitados — a receita da fogueira.
+    expect(estado.inventario.concha).toBe(32);
     expect(estado.inventario.pedra).toBe(18);
 
     await page.screenshot({ path: 'e2e/telas/09-fogueira.png' });
@@ -725,7 +727,7 @@ test.describe('partida no computador', () => {
       ponte.store.setState({
         inventory: {
           ...window.__tabuada!.store.getState().inventory,
-          madeira: 40,
+          concha: 40,
           fruta: 10,
           pedra: 20,
         },

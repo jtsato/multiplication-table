@@ -129,7 +129,7 @@ test.describe('partida no celular', () => {
       window.__tabuada!.store.setState({
         inventory: {
           ...window.__tabuada!.store.getState().inventory,
-          madeira: 40,
+          concha: 40,
           fruta: 10,
           pedra: 20,
         },
@@ -157,7 +157,7 @@ test.describe('partida no celular', () => {
   });
 
   test('o botao de construir nao aparece sem recurso ou fora da noite', async ({ page }) => {
-    // De dia, sem madeira nem pedra, a fogueira nem oferece: o botao sumiu em vez
+    // De dia, sem concha nem pedra, a fogueira nem oferece: o botao sumiu em vez
     // de ficar cinza.
     await expect(page.getByRole('button', { name: /Fogueira/ })).toHaveCount(0);
 
@@ -167,7 +167,7 @@ test.describe('partida no celular', () => {
       window.__tabuada!.store.setState({
         inventory: {
           ...window.__tabuada!.store.getState().inventory,
-          madeira: 40,
+          concha: 40,
           pedra: 20,
         },
       });
@@ -188,7 +188,7 @@ test.describe('partida no celular', () => {
         coins: 120,
         inventory: {
           ...window.__tabuada!.store.getState().inventory,
-          madeira: 40,
+          concha: 40,
           fruta: 20,
           pedra: 20,
         },

@@ -30,6 +30,7 @@ export const ptBR: LocaleDefinition = {
      buildOverlaps: 'Já tem algo construído aqui',
      buildTooClose: 'Perto demais de um recurso',
      buildCampfireAtNight: 'A fogueira pode ser construída ao entardecer ou à noite',
+     campfirePrompt: 'Aperte E para acender a fogueira',
      bridgePrompt: 'Aperte E para construir a ponte ({{moedas}} moedas · {{receita}})',
 
     controlsTitle: 'Controles',
