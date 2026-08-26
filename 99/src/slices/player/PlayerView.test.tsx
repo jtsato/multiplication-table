@@ -8,6 +8,7 @@ import { advanceUntil, renderScene } from '../../test/sceneHarness';
 import { PlayerView } from './PlayerView';
 import { followCameraTarget } from './player.logic';
 import { playerTransform, resetPlayerTransform } from './playerTransform';
+import { useGameStore } from '../../app/store';
 import { vec3 } from '../../shared/vec';
 
 /** Captura a camera do R3F para o teste poder inspecionar a suavizacao. */
@@ -76,6 +77,40 @@ describe('PlayerView', () => {
     expect(actual!.position.x).toBeCloseTo(expected.x, 1);
     expect(actual!.position.y).toBeCloseTo(expected.y, 1);
     expect(actual!.position.z).toBeCloseTo(expected.z, 1);
+
+    await renderer.unmount();
+  });
+
+  it('aplica o zoom na distancia da camera', async () => {
+    let camera: Camera | null = null;
+    const renderer = await renderScene(
+      <>
+        <CameraProbe
+          onReady={(instance) => {
+            camera = instance;
+          }}
+        />
+        <PlayerView />
+      </>,
+    );
+
+    await advanceUntil(renderer, () => playerTransform.y !== 0);
+    await renderer.advanceFrames(180, 1 / 60);
+
+    const base = followCameraTarget(vec3(0, 2, 0), 0);
+    const zoomed = followCameraTarget(vec3(0, 2, 0), 0, 11 * 1.8);
+
+    // Sem zoom, a camera fica a distancia base.
+    expect(camera!.position.x).toBeCloseTo(base.x, 1);
+    expect(camera!.position.z).toBeCloseTo(base.z, 1);
+
+    // Zoom maximo afasta a camera do jogador.
+    useGameStore.getState().setCameraZoom(1.8);
+    await renderer.advanceFrames(180, 1 / 60);
+
+    expect(camera!.position.x).toBeCloseTo(zoomed.x, 1);
+    expect(camera!.position.z).toBeCloseTo(zoomed.z, 1);
+    expect(camera!.position.z).toBeGreaterThan(base.z);
 
     await renderer.unmount();
   });

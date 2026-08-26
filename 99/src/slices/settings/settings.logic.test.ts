@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { clampSensitivity, clampVolume, SETTINGS } from './settings.logic';
+import { clampSensitivity, clampVolume, clampZoom, SETTINGS } from './settings.logic';
 
 describe('settings.logic', () => {
   it('limita o volume ao intervalo de 0 a 1', () => {
@@ -14,9 +14,16 @@ describe('settings.logic', () => {
     expect(clampSensitivity(9)).toBe(SETTINGS.maxSensitivity);
   });
 
+  it('limita o zoom ao intervalo de 0.6 a 1.8', () => {
+    expect(clampZoom(0.1)).toBe(SETTINGS.minZoom);
+    expect(clampZoom(1)).toBe(1);
+    expect(clampZoom(9)).toBe(SETTINGS.maxZoom);
+  });
+
   it('tela cheia não lança quando o navegador não suporta', () => {
     expect(() => clampVolume(0.5)).not.toThrow();
     expect(SETTINGS.defaultVolume).toBe(0.5);
     expect(SETTINGS.defaultSensitivity).toBe(1);
+    expect(SETTINGS.defaultZoom).toBe(1);
   });
 });

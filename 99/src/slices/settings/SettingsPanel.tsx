@@ -14,8 +14,10 @@ export function SettingsPanel() {
   const open = useGameStore((state) => state.settingsOpen);
   const volume = useGameStore((state) => state.volume);
   const cameraSensitivity = useGameStore((state) => state.cameraSensitivity);
+  const cameraZoom = useGameStore((state) => state.cameraZoom);
   const setVolume = useGameStore((state) => state.setVolume);
   const setCameraSensitivity = useGameStore((state) => state.setCameraSensitivity);
+  const setCameraZoom = useGameStore((state) => state.setCameraZoom);
   const closeSettings = useGameStore((state) => state.closeSettings);
   const locale = useGameStore((state) => state.locale);
   const setLocale = useGameStore((state) => state.setLocale);
@@ -63,6 +65,21 @@ export function SettingsPanel() {
             value={cameraSensitivity}
             aria-label={t.settingsSensitivity}
             onChange={(event) => setCameraSensitivity(Number(event.target.value))}
+          />
+        </label>
+
+        <label className="settings__field">
+          <span>
+            {t.settingsZoom}: {cameraZoom.toFixed(2)}×
+          </span>
+          <input
+            type="range"
+            min={SETTINGS.minZoom}
+            max={SETTINGS.maxZoom}
+            step={0.05}
+            value={cameraZoom}
+            aria-label={t.settingsZoom}
+            onChange={(event) => setCameraZoom(Number(event.target.value))}
           />
         </label>
 

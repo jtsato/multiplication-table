@@ -71,8 +71,9 @@ const saveValido = (): GameSave => ({
    depletedNodeIds: [],
    plantedNodes: [],
    clockSeconds: 12345,
-  volume: 0.7,
+   volume: 0.7,
   cameraSensitivity: 1.5,
+  cameraZoom: 1.2,
 });
 
 describe('migrateSave', () => {
@@ -323,6 +324,7 @@ describe('migrateSave', () => {
       clockSeconds: 12345,
       volume: 0.7,
       cameraSensitivity: 1.5,
+      cameraZoom: 1.2,
     };
 
     const resultado = migrateSave(antigo);
@@ -402,6 +404,7 @@ describe('snapshot e applySave', () => {
         'animalBook',
         'avatar',
         'cameraSensitivity',
+        'cameraZoom',
         'clockSeconds',
         'coins',
         'factCounts',
@@ -455,6 +458,7 @@ describe('snapshot e applySave', () => {
     expect(state().clock.day).toBe(dayNumber(12345));
     expect(state().volume).toBe(0.7);
     expect(state().cameraSensitivity).toBe(1.5);
+    expect(state().cameraZoom).toBe(1.2);
     expect(snapshot()).toEqual(saveValido());
   });
 

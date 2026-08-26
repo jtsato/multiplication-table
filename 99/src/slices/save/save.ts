@@ -35,6 +35,7 @@ export function snapshot(): GameSave {
     clockSeconds: dayNightClock.seconds,
     volume: state.volume,
     cameraSensitivity: state.cameraSensitivity,
+    cameraZoom: state.cameraZoom,
   };
 }
 
@@ -78,7 +79,7 @@ export function applySave(save: GameSave): void {
 
   // Volume e sensibilidade voltam com o save; loadSettings também aplica o
   // volume no AudioContext (que ainda pode estar fechado — o valor fica salvo).
-  useGameStore.getState().loadSettings(save.volume, save.cameraSensitivity);
+  useGameStore.getState().loadSettings(save.volume, save.cameraSensitivity, save.cameraZoom);
 }
 
 /** Carrega o save, se houver. Devolve `false` quando comeca do zero. */

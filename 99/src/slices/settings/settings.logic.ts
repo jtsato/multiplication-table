@@ -12,6 +12,9 @@ export const SETTINGS = {
   defaultSensitivity: 1,
   minSensitivity: 0.5,
   maxSensitivity: 2,
+  defaultZoom: 1,
+  minZoom: 0.6,
+  maxZoom: 1.8,
 } as const;
 
 /** Limita o volume a [0, 1]. */
@@ -22,6 +25,11 @@ export function clampVolume(value: number): number {
 /** Limita o multiplicador de sensibilidade a [0.5, 2]. */
 export function clampSensitivity(value: number): number {
   return Math.min(SETTINGS.maxSensitivity, Math.max(SETTINGS.minSensitivity, value));
+}
+
+/** Limita o zoom da camera a [0.6, 1.8]: mais perto de 0.6, mais longe de 1.8. */
+export function clampZoom(value: number): number {
+  return Math.min(SETTINGS.maxZoom, Math.max(SETTINGS.minZoom, value));
 }
 
 /** O navegador está em tela cheia? */

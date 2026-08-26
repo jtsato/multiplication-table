@@ -17,7 +17,7 @@ import {
 } from '../garden/garden.logic';
 import { vec3, type Vec3 } from '../../shared/vec';
 import type { Structure, StructureKind } from '../building/building.logic';
-import { clampSensitivity, clampVolume, SETTINGS } from '../settings/settings.logic';
+import { clampSensitivity, clampVolume, clampZoom, SETTINGS } from '../settings/settings.logic';
 import {
   migrateAnimalBook,
   migratePet,
@@ -43,7 +43,7 @@ import {
  * `localStorage` indisponivel (aba privada, cota cheia) e um fato da vida, e nao
  * pode impedir a crianca de jogar.
  */
-export const SAVE_VERSION = 8;
+export const SAVE_VERSION = 9;
 
 export const SAVE_STORAGE_KEY = 'numi-99.save';
 
@@ -92,6 +92,8 @@ export interface GameSave {
   volume: number;
   /** Multiplicador da sensibilidade da câmera, de 0.5 a 2. Ausente antes da Fase 9F. */
   cameraSensitivity: number;
+  /** Multiplicador da distância da câmera, de 0.6 a 1.8. Ausente antes do Zoom. */
+  cameraZoom: number;
 }
 
 export interface SaveRepository {
@@ -118,6 +120,12 @@ function migrateSensitivity(raw: unknown): number {
   if (raw === undefined) return SETTINGS.defaultSensitivity;
   if (typeof raw !== 'number' || !Number.isFinite(raw)) throw new Error('sensibilidade invalida');
   return clampSensitivity(raw);
+}
+
+function migrateZoom(raw: unknown): number {
+  if (raw === undefined) return SETTINGS.defaultZoom;
+  if (typeof raw !== 'number' || !Number.isFinite(raw)) throw new Error('zoom invalido');
+  return clampZoom(raw);
 }
 
 export function migrateGarden(raw: unknown, version = 7): GardenState {
@@ -422,6 +430,7 @@ export function migrateSave(raw: unknown): GameSave {
      clockSeconds: migrateCount(candidate.clockSeconds, 'relogio'),
     volume: migrateVolume(candidate.volume),
     cameraSensitivity: migrateSensitivity(candidate.cameraSensitivity),
+    cameraZoom: migrateZoom(candidate.cameraZoom),
   };
 }
 

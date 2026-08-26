@@ -101,6 +101,7 @@ export const ptBR: LocaleDefinition = {
     settingsTitle: 'Configurações',
     settingsVolume: 'Volume',
     settingsSensitivity: 'Sensibilidade da câmera',
+    settingsZoom: 'Zoom da câmera',
     settingsLanguage: 'Idioma',
     settingsFullscreen: 'Entrar em tela cheia',
     settingsExitFullscreen: 'Sair da tela cheia',

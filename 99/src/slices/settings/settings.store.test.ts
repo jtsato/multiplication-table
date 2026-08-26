@@ -30,10 +30,18 @@ describe('settings.store', () => {
     expect(state().cameraSensitivity).toBe(SETTINGS.minSensitivity);
   });
 
+  it('setCameraZoom limita ao intervalo', () => {
+    state().setCameraZoom(9);
+    expect(state().cameraZoom).toBe(SETTINGS.maxZoom);
+    state().setCameraZoom(0.1);
+    expect(state().cameraZoom).toBe(SETTINGS.minZoom);
+  });
+
   it('loadSettings restaura valores e aplica o volume', () => {
-    state().loadSettings(0.2, 1.8);
+    state().loadSettings(0.2, 1.8, 1.4);
     expect(state().volume).toBe(0.2);
     expect(state().cameraSensitivity).toBe(1.8);
+    expect(state().cameraZoom).toBe(1.4);
     expect(setAudioVolume).toHaveBeenCalledWith(0.2);
   });
 });

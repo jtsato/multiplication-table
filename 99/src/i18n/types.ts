@@ -197,6 +197,7 @@ export interface AppStrings {
   settingsTitle: string;
   settingsVolume: string;
   settingsSensitivity: string;
+  settingsZoom: string;
   settingsLanguage: string;
   settingsFullscreen: string;
   settingsExitFullscreen: string;

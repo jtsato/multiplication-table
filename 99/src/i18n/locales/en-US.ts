@@ -105,6 +105,7 @@ export const enUS: LocaleDefinition = {
     settingsTitle: 'Settings',
     settingsVolume: 'Volume',
     settingsSensitivity: 'Camera sensitivity',
+    settingsZoom: 'Camera zoom',
     settingsLanguage: 'Language',
     settingsFullscreen: 'Enter fullscreen',
     settingsExitFullscreen: 'Exit fullscreen',

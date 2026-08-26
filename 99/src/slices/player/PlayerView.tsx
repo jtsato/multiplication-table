@@ -329,7 +329,8 @@ export function PlayerView() {
     }
 
     // 5. Camera seguidora com suavizacao independente de framerate.
-    const desired = followCameraTarget(playerTransform, yaw);
+    const zoom = useGameStore.getState().cameraZoom;
+    const desired = followCameraTarget(playerTransform, yaw, PLAYER.cameraDistance * zoom);
     cameraTarget.set(desired.x, desired.y, desired.z);
     camera.position.lerp(cameraTarget, smoothingFactor(PLAYER.cameraStiffness, delta));
     lookAtTarget.set(
