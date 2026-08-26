@@ -1,4 +1,5 @@
 import { useFrame } from '@react-three/fiber';
+import { CapsuleCollider, RigidBody } from '@react-three/rapier';
 import { useRef, useState } from 'react';
 import type { Group } from 'three';
 import { Text } from '@react-three/drei';
@@ -11,8 +12,7 @@ import {
   NPC,
   merchantPosition,
   nearestOrder,
-  npcRolePosition,
-  npcRolesFor,
+  npcPositionsFor,
   orderTarget,
   teacherPosition,
   type NpcRole,
@@ -38,18 +38,15 @@ function NpcMesh({
     const group = groupRef.current;
     if (!group) return;
     const elapsed = clock.getElapsedTime() + phase;
-    const offsetX = Math.sin(elapsed * 0.35) * 0.8;
-    const offsetZ = Math.cos(elapsed * 0.27) * 0.8;
-    const currentX = position[0] + offsetX;
-    const currentZ = position[2] + offsetZ;
-    const distance = Math.hypot(playerTransform.x - currentX, playerTransform.z - currentZ);
+    const distance = Math.hypot(
+      playerTransform.x - position[0],
+      playerTransform.z - position[2],
+    );
     const nextGreeting = distance <= NPC.interactRange;
     if (greetingRef.current !== nextGreeting) {
       greetingRef.current = nextGreeting;
       setGreeting(nextGreeting);
     }
-    group.position.x = offsetX;
-    group.position.z = offsetZ;
     group.position.y = Math.abs(Math.sin(elapsed * 1.8)) * 0.04;
     group.scale.setScalar(distance <= NPC.interactRange ? 1.08 : 1);
   });
@@ -61,9 +58,16 @@ function NpcMesh({
         ? palette.mushroom
         : palette.playerBody;
   return (
-    <group ref={groupRef} position={position} name={`npc-${role}-${regionId}`}>
-      {/* Corpo */}
-      <mesh position={[0, 0.7, 0]} castShadow>
+    <RigidBody
+      type="fixed"
+      colliders={false}
+      position={[position[0], position[1], position[2]]}
+      name={`npc-${role}-${regionId}-body`}
+    >
+      <CapsuleCollider args={[0.45, 0.35]} />
+      <group ref={groupRef} name={`npc-${role}-${regionId}`}>
+        {/* Corpo */}
+        <mesh position={[0, 0.7, 0]} castShadow>
         <boxGeometry args={[0.6, 0.9, 0.4]} />
         <meshLambertMaterial color={cor} flatShading />
       </mesh>
@@ -145,7 +149,8 @@ function NpcMesh({
           {greetingText}
         </Text>
       )}
-    </group>
+      </group>
+    </RigidBody>
   );
 }
 
@@ -221,23 +226,16 @@ export function NpcView() {
 
   return (
     <group name="npcs">
-      {REGIONS.map((regiao) => (
-        <group key={regiao.id}>
-          {npcRolesFor(regiao.id).map((role) => {
-            // Sem encomenda do dia nao ha NPC de encomenda: um boneco parado
-            // sem nada a pedir e exatamente o excesso que o teto evita.
-            if (role === 'encomendas' && !orders.some((o) => o.regionId === regiao.id)) return null;
-            const pos = npcRolePosition(role, regiao.id);
-            return (
-              <NpcMesh
-                key={role}
-                role={role}
-                regionId={regiao.id}
-                position={[pos.x, pos.y, pos.z]}
-              />
-            );
-          })}
-        </group>
+      {/* Quem existe, onde, e a regra de que sem encomenda do dia nao ha NPC de
+          encomenda moram todas em `npcPositionsFor`. A view so desenha o que
+          ela devolve: assim o jogo e o teste nunca discordam da contagem. */}
+      {npcPositionsFor(orders).map(({ role, regionId, position }) => (
+        <NpcMesh
+          key={`${regionId}-${role}`}
+          role={role}
+          regionId={regionId}
+          position={[position.x, position.y, position.z]}
+        />
       ))}
     </group>
   );

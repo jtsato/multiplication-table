@@ -88,6 +88,26 @@ export function npcRolePosition(role: NpcRole, regionId: RegionId): Vec3 {
 }
 
 /**
+ * Todos os NPCs que a view desenha, com suas posicoes reais.
+ *
+ * Unico ponto que cruza o catalogo de papeis (`npcRolesFor`) com a geometria e
+ * com a regra da view de que o NPC de encomendas some quando nao ha encomenda
+ * do dia: a view desenha um corpo por entrada daqui, e os testes usam isto para
+ * saber quantos corpos esperar e onde — sem duplicar a regra de quantidade/papeis/
+ * filtro de encomendas em cada consumidor.
+ */
+export function npcPositionsFor(orders: readonly Order[]): { role: NpcRole; regionId: RegionId; position: Vec3 }[] {
+  const resultado: { role: NpcRole; regionId: RegionId; position: Vec3 }[] = [];
+  for (const regiao of REGIONS) {
+    for (const role of npcRolesFor(regiao.id)) {
+      if (role === 'encomendas' && !orders.some((order) => order.regionId === regiao.id)) continue;
+      resultado.push({ role, regionId: regiao.id, position: npcRolePosition(role, regiao.id) });
+    }
+  }
+  return resultado;
+}
+
+/**
  * Uma encomenda por regiao por dia, deterministica.
  *
  * Determinismo importa aqui: o pedido do dia tem que ser o mesmo para a crianca

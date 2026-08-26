@@ -9,6 +9,7 @@ export {
   npcPosition,
   npcRolePosition,
   npcRolesFor,
+  npcPositionsFor,
   orderQuantity,
   orderTarget,
   teacherPosition,
