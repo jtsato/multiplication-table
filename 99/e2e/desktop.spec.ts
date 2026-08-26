@@ -573,8 +573,8 @@ test.describe('partida no computador', () => {
     await page.screenshot({ path: 'e2e/telas/26-idioma-en.png' });
 
     // Fechar o painel e voltar ao portugues: a troca tambem funciona no menu.
-    await page.getByRole('button', { name: 'Fechar' }).click();
-    await page.getByLabel('Configurações').click();
+    await page.getByRole('button', { name: 'Close' }).click();
+    await page.getByLabel('Settings').click();
     await page.getByRole('button', { name: 'Português' }).click();
     await page.getByRole('button', { name: 'Fechar' }).click();
     await page.waitForTimeout(300);
