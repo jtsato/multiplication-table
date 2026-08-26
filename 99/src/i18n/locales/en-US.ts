@@ -35,6 +35,7 @@ export const enUS: LocaleDefinition = {
      buildTooClose: 'Too close to a resource',
      buildCampfireAtNight: 'The campfire can be built at dusk or at night',
      campfirePrompt: 'Press E to light the campfire',
+     spotPrompt: 'Press E to use: {{movel}}',
      bridgePrompt: 'Press E to build the bridge ({{moedas}} coins · {{receita}})',
 
     controlsTitle: 'Controls',

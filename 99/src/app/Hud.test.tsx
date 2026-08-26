@@ -24,6 +24,8 @@ describe('Hud', () => {
     state().resetClock();
     state().resetLantern();
     state().resetEconomy();
+    state().setNearbySpot(null);
+    state().cancelChallenge();
   });
 
   it('mostra a barra de carga da lanterna', () => {
@@ -170,6 +172,31 @@ describe('Hud', () => {
 
     expect(screen.getByText('Aperte E para colher')).toBeInTheDocument();
     expect(screen.queryByText('Aperte E para acender a fogueira')).not.toBeInTheDocument();
+  });
+
+  it('convida a usar o movel de casa ao alcance, dizendo qual e', () => {
+    act(() => {
+      useGameStore.setState({ nearbySpot: 'espelho' });
+    });
+    render(<Hud />);
+
+    expect(screen.getByText('Aperte E para usar: Espelho')).toBeInTheDocument();
+  });
+
+  it('nao convida a usar movel nenhum longe deles', () => {
+    render(<Hud />);
+
+    expect(screen.queryByText(/Aperte E para usar/)).not.toBeInTheDocument();
+  });
+
+  it('o desafio aberto tira o convite do movel — o E pertence a conta', () => {
+    act(() => {
+      useGameStore.setState({ nearbySpot: 'espelho' });
+      state().startChallenge(state().nodes[0]);
+    });
+    render(<Hud />);
+
+    expect(screen.queryByText(/Aperte E para usar/)).not.toBeInTheDocument();
   });
 });
 

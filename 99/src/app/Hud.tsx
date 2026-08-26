@@ -8,6 +8,7 @@ import {
 } from '../slices/building/building.logic';
 import { campfireWindowOpen, phaseLabel } from '../slices/daynight/daynight.logic';
 import { gardenStatus } from '../slices/garden/garden.logic';
+import { homeSpotLabel } from '../slices/home/home.logic';
 import { bridgeMessage, bridgeById } from '../slices/regions/bridges.logic';
 import { regionById } from '../slices/regions/regions.logic';
 import { LANTERN } from '../slices/lantern/lantern.logic';
@@ -208,6 +209,12 @@ export function Hud({ isTouch = false }: { isTouch?: boolean } = {}) {
         {!buildError && clock.phase !== 'entardecer' && buildMode && !isTouch && (
           <div className="hud__prompt" role="status">
             {t.buildPrompt}
+          </div>
+        )}
+
+        {!isTouch && !activeChallenge && nearbySpot && (
+          <div className="hud__prompt" role="status">
+            {interpolate(t.spotPrompt, { movel: homeSpotLabel(nearbySpot, t) })}
           </div>
         )}
 

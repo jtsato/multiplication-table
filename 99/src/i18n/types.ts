@@ -113,6 +113,7 @@ export interface AppStrings {
   buildCampfireAtNight: string;
   /** Convite para acender a fogueira apagada a noite. */
   campfirePrompt: string;
+  spotPrompt: string;
   bridgePrompt: string;
 
   controlsTitle: string;
