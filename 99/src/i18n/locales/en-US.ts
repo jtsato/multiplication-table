@@ -77,7 +77,6 @@ export const enUS: LocaleDefinition = {
     orderDone: 'Order delivered!',
     tollOpen: 'Bridge open!',
     buildDone: 'Building done!',
-    ordersTitle: 'Order board',
 
     hintsStored: 'Hints saved: {{n}}',
     shopTitle: 'Shop',

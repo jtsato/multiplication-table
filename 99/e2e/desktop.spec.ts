@@ -384,19 +384,6 @@ test.describe('partida no computador', () => {
     await expect(mural).toHaveCount(0);
   });
 
-  test('o quadro de encomendas mostra os pedidos do dia', async ({ page }) => {
-    await irParaOMovel(page, 'encomendas');
-    await page.keyboard.press('KeyE');
-
-    const quadro = page.getByRole('dialog', { name: 'Quadro de encomendas' });
-    await expect(quadro).toBeVisible();
-    await expect(quadro).toContainText('moedas');
-    await page.screenshot({ path: 'e2e/telas/34-quadro-encomendas.png' });
-
-    await page.getByRole('button', { name: 'Fechar' }).click();
-    await expect(quadro).toHaveCount(0);
-  });
-
   test('o espelho troca a aparencia, e ela sobrevive a recarregar a pagina', async ({ page }) => {
     await irParaOMovel(page, 'espelho');
     await page.keyboard.press('KeyE');

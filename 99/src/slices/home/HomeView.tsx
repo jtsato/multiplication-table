@@ -70,24 +70,6 @@ function Furniture() {
         </mesh>
       </RigidBody>
 
-      {/* Quadro de encomendas: placa num cavalete no meio da sala. */}
-      <RigidBody type="fixed" colliders={false}>
-        <CuboidCollider
-          args={[0.55, 0.35, 0.05]}
-          position={[0, 0.5, 0]}
-        />
-        <group position={[HOME_SPOT_OFFSETS.encomendas.x, 0, HOME_SPOT_OFFSETS.encomendas.z]}>
-          <mesh position={[0, 0.5, 0]} castShadow>
-            <boxGeometry args={[0.9, 0.7, 0.1]} />
-            <meshLambertMaterial color={palette.homeChart} flatShading />
-          </mesh>
-          <mesh position={[0, 0.08, 0]} castShadow>
-            <boxGeometry args={[1.1, 0.16, 0.5]} />
-            <meshLambertMaterial color={palette.homeBed} flatShading />
-          </mesh>
-        </group>
-      </RigidBody>
-
       {/* Cama: colchao e travesseiro. */}
       <RigidBody type="fixed" colliders={false}>
         <CuboidCollider

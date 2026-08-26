@@ -138,7 +138,7 @@ describe('coordenadas dos moveis', () => {
    * moveis apareceram no gramado do lado de fora — visivel so na tela gravada.
    */
   it('o deslocamento relativo mais a casa da a posicao absoluta', () => {
-    for (const spot of ['espelho', 'mural', 'cama', 'caderneta', 'encomendas'] as const) {
+    for (const spot of ['espelho', 'mural', 'cama', 'caderneta'] as const) {
       expect(HOME_SPOTS[spot].x).toBeCloseTo(HOME.position.x + HOME_SPOT_OFFSETS[spot].x);
       expect(HOME_SPOTS[spot].z).toBeCloseTo(HOME.position.z + HOME_SPOT_OFFSETS[spot].z);
     }

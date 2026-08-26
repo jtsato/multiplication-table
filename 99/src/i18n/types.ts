@@ -166,8 +166,6 @@ export interface AppStrings {
   tollOpen: string;
   /** Feedback de acerto no desafio de construir. */
   buildDone: string;
-  /** Titulo do quadro de encomendas dentro de casa. */
-  ordersTitle: string;
 
   // Loja
   hintsStored: string;

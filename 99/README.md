@@ -106,8 +106,6 @@ Cinco móveis:
 - **Cama** — dormir pula para o próximo amanhecer.
 - **Caderneta dos animais** — quem já foi visto, quem já virou amigo, e o amigo que
   a criança escolhe para acompanhá-la como pet.
-- **Quadro de encomendas** — os pedidos do dia, para a criança ver sem precisar
-  andar atrás de cada NPC.
 
 E as **seis decorações da loja** — tapete, aquário, vaso, lustre, prateleira e
 escultura — aparecem dentro da casa assim que compradas, e continuam lá depois de

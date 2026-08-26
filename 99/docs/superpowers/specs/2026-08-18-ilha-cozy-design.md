@@ -78,7 +78,6 @@ Dentro dela:
 - **Baú** — guarda recursos além da capacidade da mochila.
 - **Cama** — dormir pula para o amanhecer e mostra o resumo do dia. Existe mesmo com
   a noite sendo desejável: a escolha é da criança.
-- **Quadro de encomendas** — os pedidos do dia.
 - **Caderneta dos animais** — quem já foi visto, quem já virou amigo.
 - **Mural da tabuada** — preenche sozinho conforme os fatos são dominados.
 

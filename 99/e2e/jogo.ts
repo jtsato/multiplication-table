@@ -358,7 +358,7 @@ export async function centroDe(page: Page, seletor: string): Promise<Ponto> {
  */
 export async function irParaOMovel(
   page: Page,
-  movel: 'espelho' | 'mural' | 'cama' | 'caderneta' | 'encomendas',
+  movel: 'espelho' | 'mural' | 'cama' | 'caderneta',
 ): Promise<void> {
   await page.evaluate((alvo) => {
     const ponte = window.__tabuada!;

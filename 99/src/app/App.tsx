@@ -29,7 +29,7 @@ const GameCanvas = lazy(() =>
  * Painéis DOM que só aparecem quando o jogador abre alguma coisa.
  *
  * Eles ficavam no chunk inicial do App; agora cada um vira um chunk pequeno que
- * só baixa no momento do uso — loja, espelho, mural, encomendas, cama, caderneta,
+ * só baixa no momento do uso — loja, espelho, mural, cama, caderneta,
  * resumo do dia e painel de desafio. O HUD e os controles continuam estáticos
  * porque são visíveis desde o primeiro segundo.
  */
@@ -38,9 +38,6 @@ const AvatarPanel = lazy(() =>
   import('../slices/avatar/AvatarPanel').then((module) => ({ default: module.AvatarPanel })),
 );
 const BedPanel = lazy(() => import('../slices/home/BedPanel').then((module) => ({ default: module.BedPanel })));
-const OrdersPanel = lazy(() =>
-  import('../slices/home/OrdersPanel').then((module) => ({ default: module.OrdersPanel })),
-);
 const WallChart = lazy(() =>
   import('../slices/home/WallChart').then((module) => ({ default: module.WallChart })),
 );
@@ -130,7 +127,6 @@ export function App() {
         <ShopPanel />
         <AvatarPanel />
         <WallChart />
-        <OrdersPanel />
         <BedPanel />
         <AnimalBookPanel />
         <DaySummary />

@@ -73,7 +73,6 @@ export const ptBR: LocaleDefinition = {
     orderDone: 'Encomenda entregue!',
     tollOpen: 'Ponte liberada!',
     buildDone: 'Construção pronta!',
-    ordersTitle: 'Quadro de encomendas',
 
     hintsStored: 'Dicas guardadas: {{n}}',
     shopTitle: 'Loja',
