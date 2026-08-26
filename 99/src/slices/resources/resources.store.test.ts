@@ -3,6 +3,7 @@ import { useGameStore } from '../../app/store';
 import { fullYield } from './resources.logic';
 import { emptyInventory } from './resources.logic';
 import { gardenPlotForRegion } from '../garden/garden.logic';
+import { HOME } from '../home/home.logic';
 import { playerTransform } from '../player/playerTransform';
 
 const state = () => useGameStore.getState();
@@ -74,6 +75,41 @@ describe('slice de recursos', () => {
     useGameStore.setState({ garden: [plot], seeds: 1 });
     playerTransform.x = plot.position.x;
     playerTransform.z = plot.position.z + 3.4;
+    playerTransform.yaw = 0;
+
+    state().plantResource('arvore-frutifera');
+
+    expect(state().nodes.some((node) => node.planted)).toBe(false);
+    expect(state().seeds).toBe(1);
+  });
+
+  it('nao planta arvore dentro de casa', () => {
+    // `plantingPosition` avanca o ponto de plantio numa casa à frente do jogador;
+    // basta alinhá-lo com a casa e apontar a frente para dentro dela.
+    playerTransform.x = HOME.position.x;
+    playerTransform.z = HOME.position.z;
+    playerTransform.yaw = Math.atan2(HOME.position.x - playerTransform.x, HOME.position.z - playerTransform.z);
+    useGameStore.setState({ seeds: 1 });
+
+    state().plantResource('arvore-frutifera');
+
+    expect(state().nodes.some((node) => node.planted)).toBe(false);
+    expect(state().seeds).toBe(1);
+  });
+
+  it('nao planta arvore em cima de uma estrutura', () => {
+    const pos = { x: 10, y: 0, z: 10 };
+    useGameStore.setState({
+      seeds: 1,
+      // Isola a regra de estrutura: sem nos no caminho e sem casa por perto.
+      nodes: [],
+      garden: [],
+      structures: [{ id: 'fogueira-teste', kind: 'fogueira', position: pos, rotation: 0, fuelUntil: 0 }],
+    });
+    // `plantingPosition` avanca 3,4m a frente do jogador; encosta o jogador
+    // 3,4m atras da estrutura para o ponto de plantio cair em cima dela.
+    playerTransform.x = pos.x;
+    playerTransform.z = pos.z + 3.4;
     playerTransform.yaw = 0;
 
     state().plantResource('arvore-frutifera');

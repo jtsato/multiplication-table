@@ -6,6 +6,7 @@ import { playerTransform } from '../player/playerTransform';
 import { DEFAULT_WORLD_SEED } from '../world/world.store';
 import { fitsOnLand, regionAt } from '../regions/regions.logic';
 import { GARDEN } from '../garden/garden.logic';
+import { blocksHome } from '../home/home.logic';
 import {
   addToInventory,
   createNodes,
@@ -72,8 +73,10 @@ export const createResourcesSlice: StateCreator<GameState, [], [], ResourcesSlic
       const gardenSpacingSq = GARDEN.spacing * GARDEN.spacing;
       if (
         !fitsOnLand(position, 1.2) ||
+        blocksHome(position) ||
         state.nodes.some((node) => distanceSqXZ(node.position, position) < 16) ||
-        state.garden.some((plot) => distanceSqXZ(plot.position, position) < gardenSpacingSq)
+        state.garden.some((plot) => distanceSqXZ(plot.position, position) < gardenSpacingSq) ||
+        state.structures.some((structure) => distanceSqXZ(structure.position, position) < gardenSpacingSq)
       ) {
         return state;
       }
