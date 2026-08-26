@@ -200,18 +200,7 @@ export const SHOP_ITEMS: Record<ShopItemKind, ShopItem> = {
   },
 };
 
-export const SHOP_ORDER: readonly ShopItemKind[] = [
-  'lanterna-maior',
-  'botas',
-  'dica',
-  'sementes',
-  'tapete',
-  'aquario',
-  'vaso',
-  'lustre',
-  'prateleira',
-  'escultura',
-];
+export const SHOP_ORDER: readonly ShopItemKind[] = Object.keys(SHOP_ITEMS) as ShopItemKind[];
 
 export type PurchaseRejection = 'sem-moedas' | 'sem-recursos' | 'ja-comprado';
 

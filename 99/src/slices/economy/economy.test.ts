@@ -3,7 +3,7 @@ import { useGameStore } from '../../app/store';
 import { lanternChargeSeconds, lanternRadius } from '../lantern/lantern.logic';
 import { playerSpeed } from '../player/player.logic';
 import { RESOURCE_KINDS } from '../resources/resources.logic';
-import { ECONOMY, SHOP_ITEMS, coinsFor, factKey } from './economy.logic';
+import { ECONOMY, SHOP_ITEMS, SHOP_ORDER, coinsFor, factKey } from './economy.logic';
 import { emptyInventory } from '../resources/resources.logic';
 
 const state = () => useGameStore.getState();
@@ -131,6 +131,12 @@ describe('loja', () => {
   beforeEach(() => {
     state().resetEconomy();
     state().resetResources();
+  });
+
+  it('SHOP_ORDER é ordem de exibição derivada do catalogo, sem duplicata', () => {
+    expect(SHOP_ORDER).toEqual(Object.keys(SHOP_ITEMS));
+    const kinds = new Set(SHOP_ORDER);
+    expect(kinds.size).toBe(SHOP_ORDER.length);
   });
 
   it('todo tipo de recurso do jogo e consumido por algum item', () => {
