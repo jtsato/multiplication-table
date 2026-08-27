@@ -1363,3 +1363,39 @@ cronômetro de pressão no desafio; o tempo é apenas uma estimativa de design.
 | `npm run build` | ok |
 | `npm run e2e` | fluxos críticos, professor, ponte, erro e acessibilidade verdes |
 | Stryker — `bridges.logic.ts` | 80,31%, acima do break threshold 80 |
+
+---
+
+## Fase 13 — Progressão das pontes pelo ciclo diário
+
+**O que mudou:** a ponte deixou de depender só de moedas, recursos e domínio.
+A **n-ésima** travessia da cadeia só fica disponível a partir do **dia n**, e
+continua exigindo que a anterior já esteja aberta.
+
+**Por que o ciclo entrou no portão.** Domínio sozinho tem um limite: uma criança
+com moedas de sobra atravessava o arquipélago inteiro numa tarde, e cada tabuada
+virava pedágio pago em vez de lugar onde se ficou tempo suficiente para aprender.
+O ciclo já existia, já era determinístico (`clock.day`, derivado de
+`dayNumber`) e já dava ritmo à horta — usá-lo aqui não criou estado novo nem
+mexeu no save.
+
+**Regra derivada do índice, não de um contador novo.** `bridgeAvailability` lê
+a posição da ponte em `BRIDGES` e o dia publicado. Nada é persistido: um save da
+versão 9 continua válido, `SAVE_VERSION` não subiu e uma ponte já aberta
+permanece aberta em qualquer dia — o portão nunca reverte progresso conquistado.
+
+**A recusa não gasta uma conta.** `RegionsView` consulta a disponibilidade
+antes de abrir o pedágio: numa ponte fora do dia, a guardiã diz o que falta em
+vez de cobrar uma multiplicação por um portão que não vai ceder. As duas recusas
+novas (`aguardando-dia`, `aguardando-anterior`) têm texto próprio nos dois
+idiomas e apontam para o mundo — "aproveite a ilha de hoje" —, não para grinding.
+
+### Portões
+
+| Portão | Resultado |
+| --- | --- |
+| `npm run lint` | limpo |
+| `npm run typecheck` | limpo |
+| `npm run test` | 803 testes, 66 arquivos, verde |
+| `npm run build` | ok |
+| Mutação manual — checagem em `buyBridge` | 2 testes falharam ao remover o portão |

@@ -26,6 +26,10 @@ function pronta() {
   });
 }
 
+function noDia(day: number) {
+  useGameStore.setState({ clock: { ...state().clock, day } });
+}
+
 describe('comprar uma ponte', () => {
   beforeEach(() => {
     state().resetRegions();
@@ -77,6 +81,50 @@ describe('comprar uma ponte', () => {
     expect(state().inventory.concha).toBe(99);
   });
 
+  it('recusa a segunda ponte no mesmo dia, e nao cobra nada', () => {
+    pronta();
+    noDia(1);
+    state().buyBridge(bridgeFor('praia', 'porto')!.id);
+
+    const segunda = bridgeFor('porto', 'bosque')!;
+    const antes = { moedas: state().coins, concha: state().inventory.concha };
+
+    state().buyBridge(segunda.id);
+
+    expect(state().openBridges).not.toContain(segunda.id);
+    expect(state().bridgeError).toBe('aguardando-dia');
+    expect(state().coins).toBe(antes.moedas);
+    expect(state().inventory.concha).toBe(antes.concha);
+  });
+
+  it('no dia seguinte a proxima ponte abre', () => {
+    useGameStore.setState({
+      coins: 9999,
+      inventory: { ...emptyInventory(), concha: 999, fruta: 999, pedra: 999 },
+      factProgress: { ...progressoDe(2), ...progressoDe(3) },
+    });
+    noDia(1);
+    state().buyBridge(bridgeFor('praia', 'porto')!.id);
+
+    noDia(2);
+    const segunda = bridgeFor('porto', 'bosque')!;
+    state().buyBridge(segunda.id);
+
+    expect(state().openBridges).toContain(segunda.id);
+    expect(state().bridgeError).toBeNull();
+  });
+
+  it('uma ponte no meio da cadeia espera a anterior, mesmo num dia adiantado', () => {
+    pronta();
+    noDia(9);
+    const terceira = bridgeFor('bosque', 'cachoeira')!;
+
+    state().buyBridge(terceira.id);
+
+    expect(state().openBridges).toEqual([]);
+    expect(state().bridgeError).toBe('aguardando-anterior');
+  });
+
   it('nao cobra duas vezes pela mesma ponte', () => {
     pronta();
     const ponte = bridgeFor('praia', 'porto')!;
@@ -115,7 +163,10 @@ describe('comprar uma ponte', () => {
       factProgress: todosOsProgressos,
     });
 
-    for (const ponte of BRIDGES) state().buyBridge(ponte.id);
+    BRIDGES.forEach((ponte, index) => {
+      noDia(index + 1);
+      state().buyBridge(ponte.id);
+    });
 
     expect(unlockedRegions(state().openBridges)).toHaveLength(9);
   });

@@ -82,6 +82,8 @@ export const ptBR: LocaleDefinition = {
     noResources: 'Faltam recursos',
     alreadyOwned: 'Você já tem',
     needTable: 'Treine a tabuada daqui',
+    bridgeAnotherDay: 'Esta ponte abre amanhã — aproveite a ilha de hoje',
+    bridgePreviousFirst: 'Atravesse a ponte anterior primeiro',
 
     mirrorTitle: 'Espelho',
      chartTitle: 'Mural da tabuada',

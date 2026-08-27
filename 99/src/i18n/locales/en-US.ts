@@ -86,6 +86,8 @@ export const enUS: LocaleDefinition = {
     noResources: 'Not enough resources',
     alreadyOwned: 'You already have one',
     needTable: 'Practise the table here',
+    bridgeAnotherDay: 'This bridge opens tomorrow — enjoy today’s island',
+    bridgePreviousFirst: 'Cross the previous bridge first',
 
     mirrorTitle: 'Mirror',
      chartTitle: 'Times table chart',

@@ -9,6 +9,7 @@ import { BridgeGuardView } from './BridgeGuardView';
 import {
   BRIDGES,
   bridgeAnchors,
+  bridgeAvailability,
   bridgeById,
   bridgeChallengeTarget,
   type Bridge,
@@ -168,6 +169,14 @@ export function RegionsView() {
     if (!state.nearbyBridge) return;
     const ponte = bridgeById(state.nearbyBridge);
     if (!ponte) return;
+
+    const availability = bridgeAvailability(ponte, state.openBridges, state.clock.day);
+    if (availability === 'aberta') return;
+    if (availability !== 'disponivel') {
+      state.rejectBridge(availability);
+      return;
+    }
+
     // A guardia cobra uma conta antes de liberar a compra; errar nao custa nada.
     state.startChallenge(bridgeChallengeTarget(ponte), 'pedagio');
   });

@@ -176,6 +176,8 @@ export interface AppStrings {
   noResources: string;
   alreadyOwned: string;
   needTable: string;
+  bridgeAnotherDay: string;
+  bridgePreviousFirst: string;
 
   // Casa
   mirrorTitle: string;

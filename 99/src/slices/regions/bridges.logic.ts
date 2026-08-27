@@ -68,6 +68,30 @@ export function bridgeFor(a: RegionId, b: RegionId): Bridge | undefined {
   );
 }
 
+export type BridgeAvailability = 'aberta' | 'disponivel' | 'aguardando-dia' | 'aguardando-anterior';
+
+export function bridgeAvailableFromDay(ponte: Bridge): number {
+  const index = BRIDGES.findIndex((candidate) => candidate.id === ponte.id);
+  return index < 0 ? Number.POSITIVE_INFINITY : index + 1;
+}
+
+export function bridgeAvailability(
+  ponte: Bridge,
+  openBridges: readonly string[],
+  day: number,
+): BridgeAvailability {
+  if (openBridges.includes(ponte.id)) return 'aberta';
+
+  const index = BRIDGES.findIndex((candidate) => candidate.id === ponte.id);
+  if (index < 0) return 'aguardando-anterior';
+  if (BRIDGES.slice(0, index).some((candidate) => !openBridges.includes(candidate.id))) {
+    return 'aguardando-anterior';
+  }
+
+  const safeDay = Number.isFinite(day) ? Math.floor(day) : 0;
+  return safeDay >= bridgeAvailableFromDay(ponte) ? 'disponivel' : 'aguardando-dia';
+}
+
 /**
  * Onde a guardia fica: na margem de origem, um passo para dentro da regiao e
  * para o lado da ponte.
@@ -143,7 +167,12 @@ export function tablesAreMastered(ponte: Bridge, factStates: BridgeFactState): b
   return requiredTables(ponte).every((table) => factsMasteredFor(table, factStates) >= requiredFacts);
 }
 
-export type BridgeRejection = 'sem-tabuada' | 'sem-moedas' | 'sem-recursos';
+export type BridgeRejection =
+  | 'sem-tabuada'
+  | 'sem-moedas'
+  | 'sem-recursos'
+  | 'aguardando-dia'
+  | 'aguardando-anterior';
 export type BridgeCheck = { ok: true } | { ok: false; reason: BridgeRejection };
 
 /**
@@ -174,6 +203,8 @@ export function checkBridge(
 export function bridgeMessage(reason: BridgeRejection, strings: AppStrings): string {
   if (reason === 'sem-tabuada') return strings.needTable;
   if (reason === 'sem-moedas') return strings.noCoins;
+  if (reason === 'aguardando-dia') return strings.bridgeAnotherDay;
+  if (reason === 'aguardando-anterior') return strings.bridgePreviousFirst;
   return strings.noResources;
 }
 

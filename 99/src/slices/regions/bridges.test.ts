@@ -5,6 +5,7 @@ import {
   BRIDGE_FACTS_REQUIRED,
   BRIDGE_MASTERY,
   bridgeAnchors,
+  bridgeAvailability,
   bridgeById,
   bridgeFor,
   bridgeGuardPosition,
@@ -68,6 +69,29 @@ describe('o catalogo de pontes', () => {
   it('exige a tabuada da regiao de origem', () => {
     expect(requiredTables(bridgeFor('praia', 'porto')!)).toEqual([2]);
     expect(requiredTables(bridgeFor('porto', 'bosque')!)).toEqual([3]);
+  });
+});
+
+describe('progressao diaria das pontes', () => {
+  it('no primeiro dia so a primeira ponte fica disponivel', () => {
+    expect(bridgeAvailability(BRIDGES[0], [], 1)).toBe('disponivel');
+    expect(bridgeAvailability(BRIDGES[1], [BRIDGES[0].id], 1)).toBe('aguardando-dia');
+  });
+
+  it('cada amanhecer libera a proxima ponte da cadeia', () => {
+    const abertas = BRIDGES.slice(0, 2).map((ponte) => ponte.id);
+
+    expect(bridgeAvailability(BRIDGES[2], abertas, 2)).toBe('aguardando-dia');
+    expect(bridgeAvailability(BRIDGES[2], abertas, 3)).toBe('disponivel');
+  });
+
+  it('nao libera uma ponte sem a anterior, mesmo depois do dia correspondente', () => {
+    expect(bridgeAvailability(BRIDGES[2], [BRIDGES[0].id], 3)).toBe('aguardando-anterior');
+  });
+
+  it('uma ponte aberta continua aberta em qualquer dia', () => {
+    expect(bridgeAvailability(BRIDGES[0], [BRIDGES[0].id], 1)).toBe('aberta');
+    expect(bridgeAvailability(BRIDGES[0], [BRIDGES[0].id], 99)).toBe('aberta');
   });
 });
 

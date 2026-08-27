@@ -1,7 +1,13 @@
 import type { StateCreator } from 'zustand';
 import type { GameState } from '../../app/store';
 import { payCost } from '../building/building.logic';
-import { bridgeById, checkBridge, reachableFrom, type BridgeRejection } from './bridges.logic';
+import {
+  bridgeAvailability,
+  bridgeById,
+  checkBridge,
+  reachableFrom,
+  type BridgeRejection,
+} from './bridges.logic';
 import { REGION_ORDER, type RegionId } from './regions.logic';
 
 /**
@@ -24,6 +30,7 @@ export interface RegionsSlice {
   nearbyBridge: string | null;
 
   buyBridge: (id: string) => void;
+  rejectBridge: (reason: BridgeRejection) => void;
   clearBridgeError: () => void;
   publishRegion: (id: RegionId) => void;
   setNearbyBridge: (id: string | null) => void;
@@ -47,6 +54,12 @@ export const createRegionsSlice: StateCreator<GameState, [], [], RegionsSlice> =
     const state = get();
     if (state.openBridges.includes(id)) return;
 
+    const availability = bridgeAvailability(ponte, state.openBridges, state.clock.day);
+    if (availability !== 'disponivel') {
+      set({ bridgeError: availability === 'aberta' ? null : availability });
+      return;
+    }
+
     const check = checkBridge(ponte, state.coins, state.inventory, state.factProgress);
     if (!check.ok) {
       set({ bridgeError: check.reason });
@@ -62,6 +75,9 @@ export const createRegionsSlice: StateCreator<GameState, [], [], RegionsSlice> =
       bridgeError: null,
     });
   },
+
+  rejectBridge: (reason) =>
+    set((state) => (state.bridgeError === reason ? state : { bridgeError: reason })),
 
   clearBridgeError: () =>
     set((state) => (state.bridgeError === null ? state : { bridgeError: null })),
