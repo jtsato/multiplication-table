@@ -110,6 +110,17 @@ describe('npc.store', () => {
     expect(state().nearbyOrderId).toBeNull();
   });
 
+  it('advanceOrders renova os pedidos para o dia informado', () => {
+    state().resetNpc();
+    const diaUm = state().orders;
+
+    state().advanceOrders(5);
+
+    expect(state().orders).toEqual(createOrders(5));
+    expect(state().orders).not.toEqual(diaUm);
+    expect(state().nearbyOrderId).toBeNull();
+  });
+
   it('publica comerciante e professor e reseta junto', () => {
     state().setNearbyMerchant(true);
     state().setNearbyTeacherRegion('pomar');

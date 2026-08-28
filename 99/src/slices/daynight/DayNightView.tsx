@@ -84,9 +84,10 @@ secondsToNextPhase: secondsUntilNextPhase(dayNightClock.seconds),
        });
        if (phase === 'amanhecer') useGameStore.getState().refreshPlantedNodes(day);
 
-      // O dia fecha no amanhecer. A guarda de "uma vez por dia" mora no store,
-      // porque a virada de fase e publicada em mais de um quadro seguido.
-      if (phase === 'amanhecer') useGameStore.getState().openSummary(day);
+       // O dia fecha no amanhecer. A guarda de "uma vez por dia" mora no store,
+       // porque a virada de fase e publicada em mais de um quadro seguido.
+       if (phase === 'amanhecer') useGameStore.getState().openSummary(day);
+       if (phase === 'amanhecer') useGameStore.getState().advanceOrders(day);
     }
   });
 

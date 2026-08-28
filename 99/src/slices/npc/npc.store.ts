@@ -23,6 +23,14 @@ export interface NpcSlice {
    */
   completeOrder: (orderId: string) => void;
   getTeacherAdvice: (regionId: RegionId) => MentorAdvice | null;
+  /**
+   * Renova as encomendas para o novo dia.
+   *
+   * Chamado no amanhecer: cada dia traz pedidos diferentes, e um pedido de dia
+   * novo pode ter um recurso ou uma quantidade que o anterior não tinha — por isso
+   * o NPC mais próximo publicado antes da virada fica inválido.
+   */
+  advanceOrders: (day: number) => void;
   resetNpc: () => void;
 }
 
@@ -63,6 +71,14 @@ export const createNpcSlice: StateCreator<GameState, [], [], NpcSlice> = (set, g
     if (!region || region.tables.length === 0) return null;
     return mentorAdvice(region.tables, state.factProgress, state.learningStep);
   },
+
+  advanceOrders: (day) =>
+    set({
+      orders: createOrders(day),
+      nearbyOrderId: null,
+      nearbyMerchant: false,
+      nearbyTeacherRegion: null,
+    }),
 
   resetNpc: () =>
     set({
