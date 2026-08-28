@@ -3,6 +3,7 @@ import { createSwarms, swarmSeed } from '../src/slices/lantern/fireflies.logic';
 import { createRng } from '../src/shared/rng';
 import { DEFAULT_WORLD_SEED } from '../src/slices/world/world.store';
 import { REGIONS } from '../src/slices/regions/regions.logic';
+import { bridgeAnchors, bridgeFor } from '../src/slices/regions/bridges.logic';
 import { whaleMidWindow } from '../src/slices/wildlife/whale.logic';
 import { merchantPosition, npcPosition, teacherPosition } from '../src/slices/npc/npc.logic';
 import { gardenPosition } from '../src/slices/garden/garden.logic';
@@ -652,6 +653,69 @@ test.describe('partida no computador', () => {
     // Nao caiu na agua no caminho.
     expect(doOutroLado.jogador.y).toBeGreaterThan(-1);
     await page.screenshot({ path: 'e2e/telas/23-do-outro-lado.png' });
+  });
+
+  /**
+   * O portao do ciclo, no navegador.
+   *
+   * A regra tem teste de unidade, mas nenhum deles sabe se a guardia realmente
+   * recusa sem cobrar a conta e se o dia seguinte destrava a travessia.
+   */
+  test('a segunda ponte espera o dia seguinte, e entao abre', async ({ page }) => {
+    await page.goto('/');
+    await esperarJogoPronto(page);
+
+    // Primeira ponte ja aberta, tabuada do Porto dominada e recurso de sobra:
+    // o unico portao que resta e o dia.
+    await page.evaluate(() => {
+      const factProgress = Object.fromEntries(
+        Array.from({ length: 10 }, (_, i) => {
+          const fator = i + 1;
+          const key = `${Math.min(3, fator)}x${Math.max(3, fator)}`;
+          return [key, { key, correct: 4, wrong: 0, streak: 4, lastSeen: 10, dueAt: 999 }];
+        }),
+      );
+      window.__tabuada!.clock.seconds = 0;
+      window.__tabuada!.store.setState((atual) => ({
+        coins: 500,
+        inventory: { ...atual.inventory, concha: 80, pedra: 60 },
+        factProgress,
+        openBridges: ['praia-porto'],
+        clock: { ...atual.clock, day: 1 },
+      }));
+    });
+
+    const ponte = bridgeFor('porto', 'bosque')!;
+    const margem = bridgeAnchors(ponte).from;
+    await page.evaluate(({ x, z }) => window.__tabuada!.teleportar?.(x, z), {
+      x: margem.x - 0.5,
+      z: margem.z - 0.5,
+    });
+    await page.waitForTimeout(900);
+
+    // No dia 1 a guardia recusa — e a recusa nao abre conta nenhuma.
+    await page.keyboard.press('KeyE');
+    await page.waitForTimeout(400);
+    await expect(page.getByText('Esta ponte abre amanhã — aproveite a ilha de hoje')).toBeVisible();
+    await expect(page.locator('.challenge')).toHaveCount(0);
+
+    const recusado = await lerEstado(page);
+    expect(recusado.pontes).not.toContain(ponte.id);
+    expect(recusado.moedas).toBe(500);
+    await page.screenshot({ path: 'e2e/telas/22b-ponte-espera-o-dia.png' });
+
+    // O amanhecer seguinte destrava a travessia: agora a conta e cobrada.
+    await page.evaluate(() => {
+      window.__tabuada!.clock.seconds = 301;
+    });
+    await page.waitForTimeout(900);
+
+    await page.keyboard.press('KeyE');
+    await expect(page.locator('.challenge')).toBeVisible();
+    await responderPeloEnunciado(page, true);
+    await page.waitForTimeout(400);
+
+    expect((await lerEstado(page)).pontes).toContain(ponte.id);
   });
 
   test('construir uma fogueira com o recurso colhido', async ({ page }) => {
