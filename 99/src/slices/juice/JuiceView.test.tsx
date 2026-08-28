@@ -2,7 +2,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { act } from 'react';
 import { useGameStore } from '../../app/store';
-import { renderScene } from '../../test/sceneHarness';
+import { advanceUntil, renderScene } from '../../test/sceneHarness';
 import * as audio from '../../shared/audio';
 import type { ChallengeFeedback } from '../math/math.store';
 import { JuiceView } from './JuiceView';
@@ -39,7 +39,17 @@ describe('JuiceView', () => {
     act(() => {
       useGameStore.setState({ feedback: feedback({ targetId: alvo.id }) });
     });
-    await renderer.advanceFrames(10, 1 / 60);
+
+    // O spawn de partículas vem num useEffect passivo; sob carga o useFrame
+    // inicial pode rodar antes dele e deixar drawRange em 0. Espera explícita
+    // em vez de chutar N quadros (veja `advanceUntil` em sceneHarness).
+    await advanceUntil(renderer, () => {
+      const pontos = renderer.scene.findAllByType('Points')[0]?.instance as
+        | { geometry: { drawRange: { count: number } } }
+        | undefined;
+      const count = pontos?.geometry.drawRange.count ?? 0;
+      return Number.isFinite(count) && count > 0;
+    });
 
     const pontos = renderer.scene.findAllByType('Points')[0]?.instance as unknown as
       | { geometry: { drawRange: { count: number } } }
@@ -60,7 +70,14 @@ describe('JuiceView', () => {
         feedback: feedback({ targetId: alvo.id, correct: false, reward: 2, coins: 0 }),
       });
     });
-    await renderer.advanceFrames(10, 1 / 60);
+
+    await advanceUntil(renderer, () => {
+      const pontos = renderer.scene.findAllByType('Points')[0]?.instance as
+        | { geometry: { drawRange: { count: number } } }
+        | undefined;
+      const count = pontos?.geometry.drawRange.count ?? 0;
+      return Number.isFinite(count) && count > 0;
+    });
 
     expect(spy).toHaveBeenCalledWith('wrong');
     const pontos = renderer.scene.findAllByType('Points')[0]?.instance as unknown as
