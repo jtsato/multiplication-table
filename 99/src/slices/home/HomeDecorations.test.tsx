@@ -33,7 +33,7 @@ describe('HomeDecorations', () => {
   });
 
   it('nao desenha ferramentas nem consumiveis — so a categoria casa', async () => {
-    useGameStore.setState({ owned: ['lanterna-maior', 'botas', 'dica'] });
+    useGameStore.setState({ owned: ['lanterna-maior', 'botas', 'sementes'] });
     const renderer = await renderScene(<HomeDecorations />);
     await renderer.advanceFrames(2, 1 / 60);
 

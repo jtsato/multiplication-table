@@ -44,7 +44,7 @@ describe('JuiceView', () => {
     // inicial pode rodar antes dele e deixar drawRange em 0. Espera explícita
     // em vez de chutar N quadros (veja `advanceUntil` em sceneHarness).
     await advanceUntil(renderer, () => {
-      const pontos = renderer.scene.findAllByType('Points')[0]?.instance as
+      const pontos = renderer.scene.findAllByType('Points')[0]?.instance as unknown as
         | { geometry: { drawRange: { count: number } } }
         | undefined;
       const count = pontos?.geometry.drawRange.count ?? 0;
@@ -72,7 +72,7 @@ describe('JuiceView', () => {
     });
 
     await advanceUntil(renderer, () => {
-      const pontos = renderer.scene.findAllByType('Points')[0]?.instance as
+      const pontos = renderer.scene.findAllByType('Points')[0]?.instance as unknown as
         | { geometry: { drawRange: { count: number } } }
         | undefined;
       const count = pontos?.geometry.drawRange.count ?? 0;

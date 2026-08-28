@@ -103,7 +103,6 @@ export const createEconomySlice: StateCreator<GameState, [], [], EconomySlice> =
       coins: state.coins - item.coins,
       inventory: payCost(state.inventory, item.recipe),
       owned: item.repeatable ? state.owned : [...state.owned, kind],
-      hints: kind === 'dica' ? state.hints + 1 : state.hints,
       seeds: kind === 'sementes' ? state.seeds + 1 : state.seeds,
       purchaseError: null,
     });

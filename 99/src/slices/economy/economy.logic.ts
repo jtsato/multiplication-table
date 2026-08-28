@@ -62,7 +62,6 @@ export function coinsFor({ perGroup, streak, factIsNew }: CoinInput): number {
 export type ShopItemKind =
   | 'lanterna-maior'
   | 'botas'
-  | 'dica'
   | 'sementes'
   // Decoracao da casa: o ralo permanente das colheitas de regiao.
   | 'tapete'
@@ -129,13 +128,6 @@ export const SHOP_ITEMS: Record<ShopItemKind, ShopItem> = {
     coins: 25,
     recipe: { pedra: 6 },
     repeatable: false,
-  },
-  dica: {
-    kind: 'dica',
-    category: 'ferramenta',
-    coins: 10,
-    recipe: { fruta: 4 },
-    repeatable: true,
   },
   sementes: {
     kind: 'sementes',

@@ -14,7 +14,6 @@ import './shop.css';
 const SHOP_COLORS: Record<ShopItemKind, string> = {
   'lanterna-maior': '#ffd166',
   botas: '#8fd3f4',
-  dica: '#c8f77a',
   sementes: '#3fbf6f',
   tapete: '#d94f6a',
   aquario: '#7fe3f0',

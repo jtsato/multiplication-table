@@ -222,7 +222,6 @@ export const enUS: LocaleDefinition = {
   shop: {
     'lanterna-maior': { label: 'Bigger lantern', effect: 'Shines farther and lasts longer.' },
     botas: { label: 'Boots', effect: 'You walk faster.' },
-    dica: { label: 'Hint', effect: 'Removes one wrong answer.' },
     sementes: {
       label: 'Seeds',
        effect: 'Plant them in a garden bed; they grow by the next day.',

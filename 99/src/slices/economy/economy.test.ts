@@ -139,10 +139,10 @@ describe('loja', () => {
     expect(kinds.size).toBe(SHOP_ORDER.length);
   });
 
-  it('todo tipo de recurso do jogo e consumido por algum item', () => {
+  it('a fruta nao e consumida pela loja, os demais recursos tem destino', () => {
     for (const kind of RESOURCE_KINDS) {
       const temDestino = Object.values(SHOP_ITEMS).some((item) => (item.recipe[kind] ?? 0) > 0);
-      expect(temDestino, `${kind} nao e gasto em nada`).toBe(true);
+      expect(temDestino, `${kind} nao e gasto em nada`).toBe(kind !== 'fruta');
     }
   });
 
@@ -186,24 +186,6 @@ describe('loja', () => {
 
     expect(state().purchaseError).toBe('ja-comprado');
     expect(state().coins).toBe(depoisDaPrimeira);
-  });
-
-  it('a dica e comprada mais de uma vez e acumula', () => {
-    rico();
-    state().buy('dica');
-    state().buy('dica');
-
-    expect(state().hints).toBe(2);
-    expect(state().owned).not.toContain('dica');
-  });
-
-  it('gastar dica desconta do estoque e avisa quando acaba', () => {
-    rico();
-    state().buy('dica');
-
-    expect(state().useHint()).toBe(true);
-    expect(state().hints).toBe(0);
-    expect(state().useHint()).toBe(false);
   });
 
   it('a loja nao abre com um desafio na tela', () => {

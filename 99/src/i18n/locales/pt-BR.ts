@@ -218,7 +218,6 @@ export const ptBR: LocaleDefinition = {
   shop: {
     'lanterna-maior': { label: 'Lanterna maior', effect: 'Ilumina mais longe e dura mais.' },
     botas: { label: 'Botas', effect: 'Você anda mais rápido.' },
-    dica: { label: 'Dica', effect: 'Apaga uma resposta errada.' },
     sementes: {
       label: 'Sementes',
        effect: 'Plante em um canteiro; rende no dia seguinte.',

@@ -92,16 +92,6 @@ describe('ShopPanel', () => {
     expect(screen.getByRole('button', { name: /Botas/ })).toHaveTextContent(/já tem/i);
   });
 
-  it('a dica comprada aparece no estoque', async () => {
-    enriquecer();
-    act(() => state().toggleShop());
-    montar();
-
-    await userEvent.click(screen.getByRole('button', { name: /Dica/ }));
-
-    expect(screen.getByText(/Dicas guardadas/)).toHaveTextContent('1');
-  });
-
   it('o botao fechar fecha a loja', async () => {
     act(() => state().toggleShop());
     montar();
