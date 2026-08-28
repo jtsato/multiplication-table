@@ -71,25 +71,21 @@ function Furniture() {
       </RigidBody>
 
       {/* Cama: colchao e travesseiro. */}
-      <RigidBody type="fixed" colliders={false}>
-        <CuboidCollider
-          args={[0.55, 0.25, 0.95]}
-          position={[0, 0.3, 0]}
-        />
-        <CuboidCollider
-          args={[0.45, 0.11, 0.25]}
-          position={[0, 0.62, -0.6]}
-        />
-        <group position={[HOME_SPOT_OFFSETS.cama.x, 0, HOME_SPOT_OFFSETS.cama.z]}>
-          <mesh position={[0, 0.3, 0]} castShadow receiveShadow>
-            <boxGeometry args={[1.1, 0.5, 1.9]} />
-            <meshLambertMaterial color={palette.homeBed} flatShading />
-          </mesh>
-          <mesh position={[0, 0.62, -0.6]} castShadow>
-            <boxGeometry args={[0.9, 0.22, 0.5]} />
-            <meshLambertMaterial color={palette.homePillow} flatShading />
-          </mesh>
-        </group>
+      <RigidBody
+        type="fixed"
+        colliders={false}
+        position={[HOME_SPOT_OFFSETS.cama.x, 0, HOME_SPOT_OFFSETS.cama.z]}
+      >
+        <CuboidCollider args={[0.55, 0.25, 0.95]} position={[0, 0.3, 0]} />
+        <CuboidCollider args={[0.45, 0.11, 0.25]} position={[0, 0.62, -0.6]} />
+        <mesh position={[0, 0.3, 0]} castShadow receiveShadow>
+          <boxGeometry args={[1.1, 0.5, 1.9]} />
+          <meshLambertMaterial color={palette.homeBed} flatShading />
+        </mesh>
+        <mesh position={[0, 0.62, -0.6]} castShadow>
+          <boxGeometry args={[0.9, 0.22, 0.5]} />
+          <meshLambertMaterial color={palette.homePillow} flatShading />
+        </mesh>
       </RigidBody>
     </>
   );
