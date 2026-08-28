@@ -172,7 +172,7 @@ export function RegionsView() {
 
     const availability = bridgeAvailability(ponte, state.openBridges, state.clock.day);
     if (availability === 'aberta') return;
-    if (availability !== 'disponivel') {
+    if (availability === 'nunca') {
       state.rejectBridge(availability);
       return;
     }
