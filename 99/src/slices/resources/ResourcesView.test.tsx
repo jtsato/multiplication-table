@@ -1,9 +1,10 @@
 // @vitest-environment jsdom
 // ResourcesView escuta a tecla E em `window`.
 import { beforeEach, describe, expect, it } from 'vitest';
-import { act } from 'react';
+import { act, useEffect } from 'react';
+import { useRapier } from '@react-three/rapier';
 import { useGameStore } from '../../app/store';
-import { renderScene } from '../../test/sceneHarness';
+import { advanceUntil, renderScene } from '../../test/sceneHarness';
 import { playerTransform, resetPlayerTransform } from '../player';
 import { ResourcesView } from './ResourcesView';
 import { RESOURCES, RESOURCE_KINDS, fullYield, itemPlacements } from './resources.logic';
@@ -27,6 +28,17 @@ function pressKey(code: string) {
   });
 }
 
+function WorldProbe({ onSample }: { onSample: (colliders: number, bodies: number) => void }) {
+  const { world } = useRapier();
+
+  useEffect(() => {
+    const id = setInterval(() => onSample(world.colliders.len(), world.bodies.len()), 25);
+    return () => clearInterval(id);
+  }, [world, onSample]);
+
+  return null;
+}
+
 /**
  * Teste de integracao da fatia: percorre o caminho real de coleta — aproximar,
  * destacar, apertar E, creditar o inventario — pelos mesmos componentes e
@@ -38,6 +50,39 @@ describe('ResourcesView', () => {
     state().cancelChallenge();
     state().clearFeedback();
     resetPlayerTransform();
+  });
+
+  it('registra a colisao da pedra grande no mundo da fisica', async () => {
+    const pedra = {
+      id: 'pedra-colisao',
+      kind: 'pedra' as const,
+      position: vec3(8, 0, 8),
+      groups: 3,
+      perGroup: 2,
+      depleted: false,
+    };
+    useGameStore.setState({ nodes: [pedra], highlightedNodeId: null });
+
+    let corpos = 0;
+    let colisores = 0;
+    const renderer = await renderScene(
+      <>
+        <ResourcesView />
+        <WorldProbe
+          onSample={(colliders, bodies) => {
+            colisores = colliders;
+            corpos = bodies;
+          }}
+        />
+      </>,
+    );
+
+    await advanceUntil(renderer, () => corpos === 1 && colisores === 1);
+
+    expect(corpos).toBe(1);
+    expect(colisores).toBe(1);
+
+    await renderer.unmount();
   });
 
   it('destaca o no mais proximo quando o jogador se aproxima', async () => {

@@ -1,6 +1,7 @@
 import { useMemo, useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { Instance, Instances } from '@react-three/drei';
+import { BallCollider, RigidBody } from '@react-three/rapier';
 import type { Group, Mesh } from 'three';
 import { useGameStore } from '../../app/store';
 import { useGameAction } from '../../shared/input';
@@ -117,30 +118,10 @@ function NodeBase({ node, highlighted }: { node: ResourceNode; highlighted: bool
   });
 
   // A arvore e o unico tipo com duas pecas: tronco e copa.
-  if (look.forma === 'arvore') {
-    return (
-      <group ref={groupRef} position={[x, y, z]}>
-        <mesh position={[0, look.altura, 0]} castShadow receiveShadow>
-          <cylinderGeometry args={[0.18, 0.26, 1.8, 6]} />
-          <meshLambertMaterial
-            color={look.cor}
-            flatShading
-            emissive={emissive}
-            emissiveIntensity={emissiveIntensity}
-          />
-        </mesh>
-        <mesh position={[0, 2.1, 0]} castShadow>
-          <icosahedronGeometry args={[0.95, 0]} />
-          <meshLambertMaterial color={palette.leaves} flatShading />
-        </mesh>
-      </group>
-    );
-  }
-
-  return (
-    <group ref={groupRef} position={[x, y, z]}>
+  const visual = look.forma === 'arvore' ? (
+    <>
       <mesh position={[0, look.altura, 0]} castShadow receiveShadow>
-        <GeometriaDaBase forma={look.forma} raio={BASE_RADIUS[node.kind]} />
+        <cylinderGeometry args={[0.18, 0.26, 1.8, 6]} />
         <meshLambertMaterial
           color={look.cor}
           flatShading
@@ -148,7 +129,36 @@ function NodeBase({ node, highlighted }: { node: ResourceNode; highlighted: bool
           emissiveIntensity={emissiveIntensity}
         />
       </mesh>
-    </group>
+      <mesh position={[0, 2.1, 0]} castShadow>
+        <icosahedronGeometry args={[0.95, 0]} />
+        <meshLambertMaterial color={palette.leaves} flatShading />
+      </mesh>
+    </>
+  ) : (
+    <mesh position={[0, look.altura, 0]} castShadow receiveShadow>
+      <GeometriaDaBase forma={look.forma} raio={BASE_RADIUS[node.kind]} />
+      <meshLambertMaterial
+        color={look.cor}
+        flatShading
+        emissive={emissive}
+        emissiveIntensity={emissiveIntensity}
+      />
+    </mesh>
+  );
+
+  if (node.kind !== 'pedra') {
+    return (
+      <group ref={groupRef} position={[x, y, z]}>
+        {visual}
+      </group>
+    );
+  }
+
+  return (
+    <RigidBody type="fixed" colliders={false} position={[x, y, z]}>
+      <BallCollider args={[BASE_RADIUS.pedra]} position={[0, look.altura, 0]} />
+      <group ref={groupRef}>{visual}</group>
+    </RigidBody>
   );
 }
 
