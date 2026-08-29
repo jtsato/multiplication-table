@@ -62,6 +62,20 @@ describe('slice de recursos', () => {
     expect(state().nodes.find((node) => node.id === target.id)?.depleted).toBe(true);
   });
 
+  it('um deposito colhido volta no amanhecer do dia seguinte', () => {
+    const today = state().clock.day;
+    const target = state().nodes[0];
+    state().collectNode(target.id, fullYield(target));
+
+    // Não volta no mesmo amanhecer: a colheita é do dia de hoje.
+    state().refreshNodes(today);
+    expect(state().nodes.find((node) => node.id === target.id)?.depleted).toBe(true);
+
+    // Volta no amanhecer do dia seguinte.
+    state().refreshNodes(today + 1);
+    expect(state().nodes.find((node) => node.id === target.id)?.depleted).toBe(false);
+  });
+
   it('restaura o estado persistente dos nós por IDs', () => {
     const [first, second] = state().nodes;
     state().loadResourceState([first.id]);

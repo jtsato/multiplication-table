@@ -33,7 +33,8 @@ export interface ResourcesSlice {
   /** Marca o no como colhido e credita os itens no inventario. */
   collectNode: (nodeId: string, amount: number) => void;
   plantResource: (kind: PlantingKind) => void;
-  refreshPlantedNodes: (day: number) => void;
+  /** Regrow de colheita no amanhecer: restaura plantas e depósitos esgotados. */
+  refreshNodes: (day: number) => void;
   loadResourceState: (depletedNodeIds: readonly string[], plantedNodes?: readonly ResourceNode[]) => void;
   resetResources: () => void;
 }
@@ -53,18 +54,19 @@ export const createResourcesSlice: StateCreator<GameState, [], [], ResourcesSlic
       // render recurso em dobro.
       if (!target || target.depleted) return state;
 
-       return {
-         nodes: state.nodes.map((node) =>
-           node.id === nodeId
-             ? node.planted
-               ? { ...node, depleted: true, lastHarvestDay: state.clock.day }
-               : { ...node, depleted: true }
-             : node,
-         ),
-         inventory: addToInventory(state.inventory, target.kind, amount),
-         highlightedNodeId: state.highlightedNodeId === nodeId ? null : state.highlightedNodeId,
-       };
-     }),
+      // Toda colheita registra o dia, nao so as plantas: o regrow do amanhecer
+      // vale para conchas, pedras e os demais depositos permanentes. Sem este
+      // carimbo, o deposito colhido nunca mais voltava ate recarregar o save.
+      return {
+        nodes: state.nodes.map((node) =>
+          node.id === nodeId
+            ? { ...node, depleted: true, lastHarvestDay: state.clock.day }
+            : node,
+        ),
+        inventory: addToInventory(state.inventory, target.kind, amount),
+        highlightedNodeId: state.highlightedNodeId === nodeId ? null : state.highlightedNodeId,
+      };
+    }),
 
   plantResource: (kind) =>
     set((state) => {
@@ -100,10 +102,13 @@ export const createResourcesSlice: StateCreator<GameState, [], [], ResourcesSlic
       };
     }),
 
-  refreshPlantedNodes: (day) =>
+  refreshNodes: (day) =>
     set((state) => {
       const nodes = state.nodes.map((node) =>
-        node.planted && node.depleted && (node.lastHarvestDay ?? day) < day
+        // Soh no amanhecer: um no colhido voltam no dia seguinte. `lastHarvestDay`
+        // indefinido (deposito carregado de um save antigo) e tratado como
+        // "colhido antes de ontem", entao tambem volta.
+        node.depleted && (node.lastHarvestDay === undefined || node.lastHarvestDay < day)
           ? { ...node, depleted: false }
           : node,
       );

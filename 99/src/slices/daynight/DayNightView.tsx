@@ -82,7 +82,7 @@ export function DayNightView({ isTouch = false }: { isTouch?: boolean } = {}) {
         day,
 secondsToNextPhase: secondsUntilNextPhase(dayNightClock.seconds),
        });
-       if (phase === 'amanhecer') useGameStore.getState().refreshPlantedNodes(day);
+        if (phase === 'amanhecer') useGameStore.getState().refreshNodes(day);
 
        // O dia fecha no amanhecer. A guarda de "uma vez por dia" mora no store,
        // porque a virada de fase e publicada em mais de um quadro seguido.
