@@ -18,7 +18,8 @@ export interface NpcSlice {
   setNearbyMerchant: (perto: boolean) => void;
   setNearbyTeacherRegion: (region: RegionId | null) => void;
   /**
-   * Entrega a encomenda: debita a quantidade da mochila e paga as moedas.
+   * Entrega a encomenda: debita a quantidade da mochila, paga as moedas e
+   * **tira o pedido da lista**.
    * Quem chama e a slice de matematica, no acerto do desafio de `encomenda`.
    */
   completeOrder: (orderId: string) => void;
@@ -59,8 +60,23 @@ export const createNpcSlice: StateCreator<GameState, [], [], NpcSlice> = (set, g
     const quantidade = orderQuantity(order);
     if (state.inventory[order.kind] < quantidade) return;
 
+    /**
+     * O pedido sai da lista assim que e entregue.
+     *
+     * Sem isto o NPC continuava de pe com a mesma encomenda: cada `E` reabria a
+     * *mesma* conta — mesmos fatores, dia inteiro — e pagava de novo as moedas.
+     * A regra sempre foi uma encomenda por regiao por dia, e a propria
+     * `npcPositionsFor` ja conta com ela: sem pedido na regiao, o NPC de
+     * encomendas nao aparece. Entregar e o que fecha o pedido; o amanhecer, em
+     * `advanceOrders`, e que traz os proximos.
+     *
+     * `nearbyOrderId` cai junto, para o HUD nao continuar convidando a entregar
+     * o que ja foi entregue no quadro em que a view ainda nao recalculou.
+     */
     set({
       inventory: { ...state.inventory, [order.kind]: state.inventory[order.kind] - quantidade },
+      orders: state.orders.filter((candidate) => candidate.id !== orderId),
+      nearbyOrderId: state.nearbyOrderId === orderId ? null : state.nearbyOrderId,
     });
     state.addCoins(order.rewardCoins);
   },

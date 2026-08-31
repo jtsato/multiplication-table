@@ -91,6 +91,47 @@ describe('npc.store', () => {
     expect(state().coins).toBe(antes + order.rewardCoins);
   });
 
+  /**
+   * A encomenda entregue sai da lista.
+   *
+   * Enquanto ela ficava, o NPC continuava de pe e cada `E` reabria a *mesma*
+   * conta — os fatores sao deterministicos por dia — e pagava as moedas de
+   * novo. Uma por regiao por dia so vale se a entrega fechar o pedido.
+   */
+  it('a encomenda entregue sai da lista e nao pode ser entregue de novo', () => {
+    const order = state().orders[0];
+    useGameStore.setState({
+      inventory: { ...emptyInventory(), [order.kind]: orderQuantity(order) * 2 },
+    });
+    state().setNearbyOrder(order.id);
+
+    state().completeOrder(order.id);
+
+    expect(state().orders.map((candidate) => candidate.id)).not.toContain(order.id);
+    expect(state().nearbyOrderId).toBeNull();
+
+    const moedas = state().coins;
+    state().completeOrder(order.id);
+
+    // A segunda tentativa nao acha o pedido: nem debita a mochila, nem paga.
+    expect(state().inventory[order.kind]).toBe(orderQuantity(order));
+    expect(state().coins).toBe(moedas);
+  });
+
+  it('entregar numa regiao nao mexe nas encomendas das outras', () => {
+    const order = state().orders[0];
+    const outras = state()
+      .orders.slice(1)
+      .map((candidate) => candidate.id);
+    useGameStore.setState({
+      inventory: { ...emptyInventory(), [order.kind]: orderQuantity(order) },
+    });
+
+    state().completeOrder(order.id);
+
+    expect(state().orders.map((candidate) => candidate.id)).toEqual(outras);
+  });
+
   it('sem a quantidade na mochila, nao entrega nem paga', () => {
     const order = state().orders[0];
     useGameStore.setState({ inventory: emptyInventory() });
