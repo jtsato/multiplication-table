@@ -87,9 +87,16 @@ export function constructionTarget(kind: StructureKind): ChallengeTarget {
   };
 }
 
+/**
+ * A que distancia a frente do jogador o fantasma e posicionado.
+ *
+ * Fora do objeto para que `refuelRange` possa se declarar em relacao a ela: os
+ * dois numeros so fazem sentido juntos, e ja divergiram uma vez.
+ */
+const placementDistance = 3.4;
+
 export const BUILDING = {
-  /** A que distancia a frente do jogador o fantasma e posicionado. */
-  placementDistance: 3.4,
+  placementDistance,
   fenceLength: 2,
   fenceSnapDistance: 1.5,
   /** Folga minima entre uma construcao e um no de recurso. */
@@ -104,8 +111,17 @@ export const BUILDING = {
   fireLightRadius: 14,
   /** Quanto tempo a fogueira queima quando e acesa, em segundos. */
   fireFuelSeconds: 50,
-  /** Alcance para abastecer a fogueira. */
-  refuelRange: 3.2,
+  /**
+   * Alcance para abastecer a fogueira.
+   *
+   * **Maior que `placementDistance`, e essa e a razao do numero.** A fogueira
+   * nasce 3,4 m a frente de quem constroi; com o alcance nos 3,2 m das demais
+   * interacoes, a crianca acendia a fogueira e ficava 20 cm fora do proprio
+   * fogo — o HUD nao oferecia nada, o `E` nao fazia nada, e a lanterna, que so
+   * carrega ali, nunca acendia na primeira noite. A folga cobre o gesto de
+   * construir e abastecer sem dar um passo entre os dois.
+   */
+  refuelRange: placementDistance + 0.6,
   /** Abaixo disto a fogueira pede combustivel no HUD. */
   lowFuelSeconds: 20,
 } as const;

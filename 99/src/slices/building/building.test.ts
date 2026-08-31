@@ -8,6 +8,7 @@ import {
   formatRecipe,
   fuelRemaining,
   isLit,
+  nearestRefuelable,
   payCost,
   placementPosition,
   snapFencePlacement,
@@ -125,6 +126,30 @@ describe('placementPosition', () => {
 
   it('sempre devolve altura zero — construcoes ficam no chao', () => {
     expect(placementPosition(vec3(0, 5, 0), 1).y).toBe(0);
+  });
+
+  /**
+   * O bug que este teste tranca: `placementDistance` era 3,4 e `refuelRange`
+   * era 3,2. A crianca erguia a fogueira, ficava exatamente onde estava — e o
+   * proprio fogo estava fora de alcance. Nenhuma dica no HUD, `E` sem efeito,
+   * lanterna apagada a noite inteira.
+   */
+  it('a fogueira recem-erguida fica ao alcance de quem a ergueu', () => {
+    expect(BUILDING.refuelRange).toBeGreaterThan(BUILDING.placementDistance);
+
+    for (let yaw = -Math.PI; yaw <= Math.PI; yaw += 0.35) {
+      const jogador = vec3(4, 0, -2);
+      const alvo = placementPosition(jogador, yaw, BUILDING.placementDistance);
+      const fogueira: Structure = {
+        id: 'fogueira-recem-erguida',
+        kind: 'fogueira',
+        position: alvo,
+        rotation: 0,
+        fuelUntil: BUILDING.fireFuelSeconds,
+      };
+
+      expect(nearestRefuelable([fogueira], jogador)).toBe(fogueira);
+    }
   });
 });
 
